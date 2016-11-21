@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "de563010e22bad8c982f67294d55939c",
-    "content-hash": "362c42db7baee2ba53df7593a8cef67d",
+    "hash": "74a6d5133bf5eba7977367887c21b0cd",
+    "content-hash": "cddcae2a97afe3c1af0a681aef8f4164",
     "packages": [
         {
             "name": "commercetools/commons",
@@ -1740,7 +1740,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.0"
+        "php": "^7.0",
+        "ext-intl": "^1.1"
     },
     "platform-dev": []
 }
