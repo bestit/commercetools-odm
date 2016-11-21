@@ -1,4 +1,4 @@
-image: phpunit/phpunit:5.5.0
+image: php:7
 
 pipelines:
   default:
