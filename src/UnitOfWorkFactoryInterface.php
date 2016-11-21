@@ -7,7 +7,6 @@
  */
 namespace BestIt\CommercetoolsODM;
 
-
 /**
  * Provides unit of works for this odm package.
  * @author lange <lange@bestit-online.de>

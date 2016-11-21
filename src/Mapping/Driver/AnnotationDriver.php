@@ -61,8 +61,6 @@ class AnnotationDriver extends BasicDriver
         if ($repoAnno = $this->getReader()->getClassAnnotation($classReflection, Repository::class)) {
             $metadata->setRepository($repoAnno->getClass());
         }
-
-
     }
 
     /**

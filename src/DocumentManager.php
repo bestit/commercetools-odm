@@ -133,7 +133,6 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function find($className, $id)
     {
-
     }
 
     /**

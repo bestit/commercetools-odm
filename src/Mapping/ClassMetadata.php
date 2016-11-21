@@ -224,7 +224,8 @@ class ClassMetadata implements ClassMetadataInterface
      * @param string $fieldName
      * @return bool
      */
-    public function isVersion(string $fieldName): bool {
+    public function isVersion(string $fieldName): bool
+    {
         return $this->getVersion() === $fieldName;
     }
 

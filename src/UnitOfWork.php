@@ -111,7 +111,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
         // TODO Check if $targetDocument is an instance of $className
 
-        array_map(function($field) use ($responseObject, $targetDocument) {
+        array_map(function ($field) use ($responseObject, $targetDocument) {
             $targetDocument->{'set' . ucfirst($field)}($responseObject->{'get' . ucfirst($field)}());
         }, $metadata->getFieldNames());
 
@@ -162,7 +162,7 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         $client = $this->getClient();
 
-        foreach ($this->identityMap AS $id => $document) {
+        foreach ($this->identityMap as $id => $document) {
             $state = $this->getDocumentState($document);
             if ($state == self::STATE_MANAGED) {
                 $client->addBatchRequest(
@@ -254,7 +254,6 @@ class UnitOfWork implements UnitOfWorkInterface
 
                 $this->registerAsManaged($sourceDocument, $id, $version);
             }
-
         }
 
         /*foreach ($this->scheduledRemovals AS $oid => $document) {

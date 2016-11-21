@@ -31,7 +31,7 @@ class LifecycleEventArgs extends EventArgs
      * @param mixed $document
      * @param DocumentManagerInterface $documentManager
      */
-    function __construct($document, DocumentManagerInterface $documentManager)
+    public function __construct($document, DocumentManagerInterface $documentManager)
     {
         $this->document = $document;
         $this->documentManager = $documentManager;
