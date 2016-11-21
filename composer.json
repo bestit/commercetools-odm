@@ -1,6 +1,8 @@
 {
     "autoload": {
-        "BestIt\\CommercetoolsODM\\": "src/"
+        "psr-4": {
+            "BestIt\\CommercetoolsODM\\": "src/"
+        }
     },
     "name": "bestit/commercetools-odm",
     "description": "Makes the commercetools database accessible with the doctrine commons api.",
