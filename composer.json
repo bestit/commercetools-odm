@@ -1,0 +1,29 @@
+{
+    "autoload": {
+        "psr-4": {
+            "BestIt\\CommercetoolsODM\\": "src/"
+        }
+    },
+    "name": "bestit/commercetools-odm",
+    "description": "Makes the commercetools database accessible with the doctrine commons api.",
+    "type": "lib",
+    "require": {
+        "php": "^7.0",
+        "commercetools/commons": "^0.2",
+        "commercetools/php-sdk": "^1.4",
+        "ext-intl": "^1.1",
+        "doctrine/common": "^2.6"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.6",
+        "phpunit/phpunit": "^5.5"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bjoern Lange",
+            "email": "lange@bestit-online.de"
+        }
+    ],
+    "minimum-stability": "dev"
+}
