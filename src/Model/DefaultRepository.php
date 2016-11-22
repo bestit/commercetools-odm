@@ -2,7 +2,6 @@
 
 namespace BestIt\CommercetoolsODM\Model;
 
-use BestIt\CommercetoolsODM\DocumentManager;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\APIException;
 use BestIt\CommercetoolsODM\Helper\DocumentManagerAwareTrait;
@@ -10,7 +9,7 @@ use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Model\Common\Collection;
-use Commercetools\Core\Model\ProductType\ProductTypeCollection;
+use Commercetools\Core\Request\AbstractQueryRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -125,6 +124,41 @@ class DefaultRepository implements ObjectRepository
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
+        /** @var DocumentManagerInterface $documentManager */
+        $documents = [];
+        $documentManager = $this->getDocumentManager();
+        $uow = $documentManager->getUnitOfWork();
+
+        /** @var AbstractQueryRequest $request */
+        $request = $documentManager->createRequest($this->getClassName(), DocumentManagerInterface::REQUEST_TYPE_QUERY);
+
+        if ($criteria) {
+            array_walk($criteria, function ($value, string $field) use ($request) {
+                $request->where(sprintf('%s="%s"', $field, $value));
+            });
+        }
+
+        if ($limit) {
+            $request->limit($limit);
+        }
+
+        if ($offset) {
+            $request->offset($offset);
+        }
+
+        if ($orderBy) {
+            array_walk($orderBy, function (string $direction, string $key) use ($request) {
+                $request->sort($key . ' ' . $direction);
+            });
+        }
+
+        list($rawDocuments) = $this->processQuery($request);
+
+        foreach ($rawDocuments as $rawDocument) {
+            $documents[$rawDocument->getId()] = $uow->createDocument($this->getClassName(), $rawDocument, []);
+        }
+
+        return $documents;
     }
 
     /**
@@ -134,6 +168,7 @@ class DefaultRepository implements ObjectRepository
      */
     public function findOneBy(array $criteria)
     {
+        return $this->findBy($criteria, [], 1);
     }
 
     /**
