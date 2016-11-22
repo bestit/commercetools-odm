@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="bestit/commercetools-odm">
     <rule ref="PSR2" />
-    <exclude-pattern>*/Events.php</exclude-pattern>
 </ruleset>
 
 

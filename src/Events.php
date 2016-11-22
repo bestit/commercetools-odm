@@ -6,25 +6,57 @@ namespace BestIt\CommercetoolsODM;
  * Event Storage for this odm.
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @todo Rename Constants.
  * @version $id$
  */
 final class Events
 {
-    const onConflict = 'onConflict';
-    const onFlush = 'onFlush';
+    /**
+     * Conflict event.
+     * @var string
+     */
+    const ON_CONFLICT = 'onConflict';
+
+    /**
+     * Event for the flush event.
+     * @var string
+     */
+    const ON_FLUSH = 'onFlush';
 
     /**
      * Event before the persisting in the unit of work.
      * @var string
      */
-    const prePersist = 'prePersist';
+    const PRE_PERSIST = 'prePersist';
 
-    const preRemove = 'preRemove';
-    const preUpdate = 'preUpdate';
-    const postRemove = 'postRemove';
-    const postUpdate = 'postUpdate';
-    const postLoad = 'postLoad';
+    /**
+     * Event for the preparation of the remove.
+     * ar string
+     */
+    const PRE_REMOVE = 'preRemove';
+
+    /**
+     * Event for the update preparation.
+     * @var string
+     */
+    const PRE_UPDATE = 'preUpdate';
+
+    /**
+     * Event after the removal.
+     * @var string
+     */
+    const POST_REMOVE = 'postRemove';
+
+    /**
+     * Event after the update.
+     * @var string
+     */
+    const POST_UPDATE = 'postUpdate';
+
+    /**
+     * Event after the load.
+     * @var string
+     */
+    const POST_LOAD = 'postLoad';
 
     /**
      * Events constructor.

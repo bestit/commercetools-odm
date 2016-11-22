@@ -43,9 +43,8 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * The event dispatcher.
      * @var EventManager
-     * @todo Rename.
      */
-    private $evm = null;
+    private $eventManager = null;
 
     /**
      * Maps documents to ids.
@@ -77,7 +76,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $this
             ->setClient($documentManager->getClient())
             ->setDocumentManager($documentManager)
-            ->setEvm($eventManager);
+            ->setEventManager($eventManager);
     }
 
     /**
@@ -126,6 +125,11 @@ class UnitOfWork implements UnitOfWorkInterface
         // TODO Find in new objects.
 
         $this->registerAsManaged($targetDocument, $id, $version);
+
+        $this->getEventManager()->dispatchEvent(
+            Events::POST_LOAD,
+            new LifecycleEventArgs($targetDocument, $this->getDocumentManager())
+        );
 
         return $targetDocument;
     }
@@ -223,9 +227,9 @@ class UnitOfWork implements UnitOfWorkInterface
         $this->detectChangedDocuments();
 
         $dm = $this->getDocumentManager();
-        $evm = $this->getEvm();
+        $eventManager = $this->getEventManager();
 
-        $evm->dispatchEvent(Events::onFlush, new OnFlushEventArgs($this));
+        $eventManager->dispatchEvent(Events::ON_FLUSH, new OnFlushEventArgs($this));
 
         $responses = $this->getClient()->executeBatch();
 
@@ -257,13 +261,13 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         /*foreach ($this->scheduledRemovals AS $oid => $document) {
-            $evm->dispatchEvent(Events::postRemove, new LifecycleEventArgs($document, $dm));
+            $eventManager->dispatchEvent(Events::POST_REMOVE, new LifecycleEventArgs($document, $dm));
         }
 
         foreach ($this->scheduledUpdates AS $oid => $document) {
-            $evm->dispatchEvent(Events::preUpdate, new LifecycleEventArgs($document, $dm));
+            $eventManager->dispatchEvent(Events::PRE_UPDATE, new LifecycleEventArgs($document, $dm));
 
-            $evm->dispatchEvent(Events::postUpdate, new LifecycleEventArgs($document, $dm));
+            $eventManager->dispatchEvent(Events::POST_UPDATE, new LifecycleEventArgs($document, $dm));
         }
 
         $this->scheduledUpdates =
@@ -341,9 +345,9 @@ class UnitOfWork implements UnitOfWorkInterface
      * Returns the event manager,
      * @return EventManager
      */
-    protected function getEvm(): EventManager
+    protected function getEventManager(): EventManager
     {
-        return $this->evm;
+        return $this->eventManager;
     }
 
     /**
@@ -358,8 +362,8 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         $this->registerAsManaged($document);
 
-        $this->getEvm()->dispatchEvent(
-            Events::prePersist,
+        $this->getEventManager()->dispatchEvent(
+            Events::PRE_PERSIST,
             new LifecycleEventArgs($document, $this->getDocumentManager())
         );
 
@@ -419,12 +423,12 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Sets the event manager.
-     * @param EventManager $evm
+     * @param EventManager $eventManager
      * @return UnitOfWork
      */
-    protected function setEvm(EventManager $evm): UnitOfWork
+    protected function setEventManager(EventManager $eventManager): UnitOfWork
     {
-        $this->evm = $evm;
+        $this->eventManager = $eventManager;
 
         return $this;
     }
@@ -436,7 +440,6 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param mixed $id The document identifier to look for.
      * @return mixed Returns the document with the specified identifier if it exists in
      *               this UnitOfWork, FALSE otherwise.
-     * @todo TryByKey?
      */
     public function tryGetById($id)
     {
