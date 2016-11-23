@@ -3,7 +3,6 @@
 namespace BestIt\CommercetoolsODM\Entity;
 
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
-use Commercetools\Core\Request\ProductTypes\ProductTypeQueryRequest;
 
 /**
  * Entity for Product Types.
@@ -30,6 +29,7 @@ class ProductType
     /**
      * The description for the type.
      * @Commercetools\Field(type="string")
+     * @Commercetools\Description
      * @var string
      */
     private $description = '';
