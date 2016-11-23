@@ -13,7 +13,7 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Target({"PROPERTY","ANNOTATION"})
  * @version $id$
  */
-class Field
+class Field implements Annotation
 {
     /**
      * The type for this field in the commercetools platform.

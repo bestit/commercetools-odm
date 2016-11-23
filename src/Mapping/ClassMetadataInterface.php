@@ -15,6 +15,14 @@ use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
 interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\ClassMetadata
 {
     /**
+     * Adds a lifecycle event callback for the persistent class.
+     * @param string $eventName
+     * @param string $callbackName
+     * @return ClassMetadataInterface
+     */
+    public function addLifecycleEvent(string $eventName, string $callbackName): ClassMetadataInterface;
+
+    /**
      * Returns the draft class for inserting the row.
      * @return string
      */
@@ -25,6 +33,13 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
      * @return string
      */
     public function getKey(): string;
+
+    /**
+     * Returns the lifecycle events of the persistent class.
+     * string $eventName
+     * @return array
+     */
+    public function getLifecycleEvents(string $eventName = ''): array;
 
     /**
      * Returns a new instance for the persistent class.
@@ -50,6 +65,12 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
      * @return string
      */
     public function getVersion(): string;
+
+    /**
+     * Has the persistent class lifecycle events.
+     * @return bool
+     */
+    public function hasLifecycleEvents(string $eventName): bool;
 
     /**
      * Returns true if the given field name is used for the commercetools version.
@@ -78,6 +99,13 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
      * @return ClassMetadataInterface
      */
     public function setIdentifier(string $identifier): ClassMetadataInterface;
+
+    /**
+     * Sets the lifecycle events of the persistent class.
+     * @param array $lifecycleEvents
+     * @return ClassMetadataInterface
+     */
+    public function setLifecycleEvents(array $lifecycleEvents): ClassMetadataInterface;
 
     /**
      * Sets the repository defined by the persistent class.

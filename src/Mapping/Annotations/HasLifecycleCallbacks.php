@@ -3,15 +3,14 @@
 namespace BestIt\CommercetoolsODM\Mapping\Annotations;
 
 /**
- * Marks the Version field.
+ * Has this entity lifecycle event callbacks?
  * @Annotation
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @subpackage Mapping\Annotations
- * @Target("PROPERTY")
- * @version $id$
+ * @Target("CLASS")
+ * @version $id%
  */
-class Version implements Annotation
+class HasLifecycleCallbacks implements Annotation
 {
-
 }

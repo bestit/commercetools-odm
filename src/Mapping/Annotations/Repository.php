@@ -13,7 +13,7 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Target("CLASS")
  * @version $id$
  */
-class Repository
+class Repository implements Annotation
 {
     /**
      * The required class name.

@@ -11,7 +11,7 @@ namespace BestIt\CommercetoolsODM\Mapping\Annotations;
  * @Target("CLASS")
  * @version $id$
  */
-class Entity
+class Entity implements Annotation
 {
     /**
      * The request map for this entity.

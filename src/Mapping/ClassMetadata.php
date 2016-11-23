@@ -40,6 +40,12 @@ class ClassMetadata implements ClassMetadataInterface
     private $key = '';
 
     /**
+     * The lifecycle events of the persistent class.
+     * @var array
+     */
+    private $lifecycleEvents = [];
+
+    /**
      * The fully-qualified class name of this persistent class.
      * @var string
      */
@@ -76,6 +82,26 @@ class ClassMetadata implements ClassMetadataInterface
     public function __construct(string $name)
     {
         $this->setName($name);
+    }
+
+
+    /**
+     * Adds a lifecycle event callback for the persistent class.
+     * @param string $eventName
+     * @param string $callbackName
+     * @return ClassMetadataInterface
+     */
+    public function addLifecycleEvent(string $eventName, string $callbackName): ClassMetadataInterface
+    {
+        if (!array_key_exists($eventName, $this->lifecycleEvents)) {
+            $this->lifecycleEvents[$eventName] = [];
+        }
+
+        if (!in_array($callbackName, $this->lifecycleEvents[$eventName])) {
+            $this->lifecycleEvents[$eventName][] = $callbackName;
+        }
+
+        return $this;
     }
 
     /**
@@ -126,6 +152,16 @@ class ClassMetadata implements ClassMetadataInterface
     public function getKey(): string
     {
         return $this->key;
+    }
+
+    /**
+     * Returns the lifecycle events of the persistent class.
+     * @param string $eventName
+     * @return array
+     */
+    public function getLifecycleEvents(string $eventName = ''): array
+    {
+        return $eventName ? $this->lifecycleEvents[$eventName] : $this->lifecycleEvents;
     }
 
     /**
@@ -210,6 +246,16 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
+     * Has the persistent class events for the given event name.
+     * @param string $eventName
+     * @return bool
+     */
+    public function hasLifecycleEvents(string $eventName): bool
+    {
+        return (bool) @ $this->lifecycleEvents[$eventName];
+    }
+
+    /**
      * Checks if the given field name is a mapped identifier for this class.
      * @param string $fieldName
      * @return bool
@@ -272,6 +318,18 @@ class ClassMetadata implements ClassMetadataInterface
     public function setKey(string $key): ClassMetadataInterface
     {
         $this->key = $key;
+        return $this;
+    }
+
+    /**
+     * Sets the lifecycle events of the persistent class.
+     * @param array $lifecycleEvents
+     * @return ClassMetadataInterface
+     */
+    public function setLifecycleEvents(array $lifecycleEvents): ClassMetadataInterface
+    {
+        $this->lifecycleEvents = $lifecycleEvents;
+
         return $this;
     }
 

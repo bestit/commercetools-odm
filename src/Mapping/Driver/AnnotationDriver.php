@@ -2,10 +2,19 @@
 
 namespace BestIt\CommercetoolsODM\Mapping\Driver;
 
+use BestIt\CommercetoolsODM\Mapping\Annotations\Annotation;
 use BestIt\CommercetoolsODM\Mapping\Annotations\DraftClass;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Entity;
+use BestIt\CommercetoolsODM\Mapping\Annotations\HasLifecycleCallbacks;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Id;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Key;
+use BestIt\CommercetoolsODM\Mapping\Annotations\PostLoad;
+use BestIt\CommercetoolsODM\Mapping\Annotations\PostPersist;
+use BestIt\CommercetoolsODM\Mapping\Annotations\PostRemove;
+use BestIt\CommercetoolsODM\Mapping\Annotations\PostUpdate;
+use BestIt\CommercetoolsODM\Mapping\Annotations\PreFlush;
+use BestIt\CommercetoolsODM\Mapping\Annotations\PrePersist;
+use BestIt\CommercetoolsODM\Mapping\Annotations\PreUpdate;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Repository;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Version;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface as SpecialClassMetadataInterface;
@@ -13,6 +22,8 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata as OrignalClassMetadataInt
 use Doctrine\Common\Persistence\Mapping\Driver\AnnotationDriver as BasicDriver;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * Loads the annotations for a persisting class.
@@ -30,6 +41,66 @@ class AnnotationDriver extends BasicDriver
     protected $entityAnnotationClasses = [Entity::class => true];
 
     /**
+     * Loads the class annotations for this metadata
+     * @param SpecialClassMetadataInterface $metadata
+     * @param ReflectionClass $classReflection
+     */
+    private function loadClassAnnotations(SpecialClassMetadataInterface $metadata, ReflectionClass $classReflection)
+    {
+        $reader = $this->getReader();
+        $classAnntations = $reader->getClassAnnotations($classReflection);
+
+        array_walk($classAnntations, function (Annotation $classAnnotation) use ($classReflection, $metadata, $reader) {
+            if ($classAnnotation instanceof Entity) {
+                if ($map = $classAnnotation->getRequestMap()) {
+                    $metadata->setRequestClassMap($map);
+                }
+            }
+
+            if ($classAnnotation instanceof HasLifecycleCallbacks) {
+                $events = [
+                    PostLoad::class,
+                    PostPersist::class,
+                    PostRemove::class,
+                    PostUpdate::class,
+                    PreFlush::class,
+                    PrePersist::class,
+                    PreUpdate::class
+                ];
+
+                $reflectionMethods = $classReflection->getMethods(ReflectionMethod::IS_PUBLIC);
+
+                array_walk($reflectionMethods, function (ReflectionMethod $reflectionMethod) use (
+                    $events,
+                    $metadata,
+                    $reader
+                ) {
+                    array_walk($events, function (string $eventAnnoClass) use (
+                        $metadata,
+                        $reader,
+                        $reflectionMethod
+                    ) {
+                        if ($eventAnno = $reader->getMethodAnnotation($reflectionMethod, $eventAnnoClass)) {
+                            $metadata->addLifecycleEvent(
+                                lcfirst(basename($eventAnnoClass)),
+                                $reflectionMethod->getName()
+                            );
+                        }
+                    });
+                });
+            }
+
+            if ($classAnnotation instanceof DraftClass) {
+                $metadata->setDraft($classAnnotation->getDraft());
+            }
+
+            if ($classAnnotation instanceof Repository) {
+                $metadata->setRepository($classAnnotation->getClass());
+            }
+        });
+    }
+
+    /**
      * Loads the metadata for the specified class into the provided container.
      * @param string $className
      * @param OrignalClassMetadataInterface $metadata
@@ -45,31 +116,16 @@ class AnnotationDriver extends BasicDriver
 
         $metadata->setFieldMappings($this->loadFieldMappings($metadata));
 
-        /** @var Entity $entityAnno */
-        $entityAnno = $this->getReader()->getClassAnnotation($classReflection, Entity::class);
-
-        if ($map = $entityAnno->getRequestMap()) {
-            $metadata->setRequestClassMap($map);
-        }
-
-        /** @var DraftClass $draftClassAnno */
-        if ($draftClassAnno = $this->getReader()->getClassAnnotation($classReflection, DraftClass::class)) {
-            $metadata->setDraft($draftClassAnno->getDraft());
-        }
-
-        /** @var Repository $repoAnno */
-        if ($repoAnno = $this->getReader()->getClassAnnotation($classReflection, Repository::class)) {
-            $metadata->setRepository($repoAnno->getClass());
-        }
+        $this->loadClassAnnotations($metadata, $classReflection);
     }
 
     /**
      * Loads the mappings on the properties.
-     * @param ClassMetadataInterface $metadata
+     * @param SpecialClassMetadataInterface $metadata
      * @return array
      * @throws MappingException
      */
-    protected function loadFieldMappings(SpecialClassMetadataInterface $metadata):array
+    private function loadFieldMappings(SpecialClassMetadataInterface $metadata):array
     {
         $reader = $this->getReader();
         $reflection = $metadata->getReflectionClass();

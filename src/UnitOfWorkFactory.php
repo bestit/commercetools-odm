@@ -2,6 +2,9 @@
 
 namespace BestIt\CommercetoolsODM;
 
+use BestIt\CommercetoolsODM\Event\ListenersInvoker;
+use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
+use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use Doctrine\Common\EventManager;
 
 /**
@@ -12,28 +15,18 @@ use Doctrine\Common\EventManager;
  */
 class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
 {
-    /**
-     * The default event manager.
-     * @var EventManager
-     */
-    private $eventManager = null;
+    use EventManagerAwareTrait, ListenerInvokerAwareTrait;
 
     /**
      * UnitOfWorkFactory constructor.
      * @param EventManager $eventManager
+     * @param ListenersInvoker $listenersInvoker
      */
-    public function __construct(EventManager $eventManager)
+    public function __construct(EventManager $eventManager, ListenersInvoker $listenersInvoker)
     {
-        $this->setEventManager($eventManager);
-    }
-
-    /**
-     * Returns the default event manager.
-     * @return EventManager
-     */
-    protected function getEventManager(): EventManager
-    {
-        return $this->eventManager;
+        $this
+            ->setEventManager($eventManager)
+            ->setListenerInvoker($listenersInvoker);
     }
 
     /**
@@ -43,18 +36,6 @@ class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
      */
     public function getUnitOfWork(DocumentManagerInterface $documentManager): UnitOfWorkInterface
     {
-        return new UnitOfWork($documentManager, $this->getEventManager());
-    }
-
-    /**
-     * Sets the default event manager.
-     * @param EventManager $eventManager
-     * @return UnitOfWorkFactory
-     */
-    protected function setEventManager(EventManager $eventManager): UnitOfWorkFactory
-    {
-        $this->eventManager = $eventManager;
-
-        return $this;
+        return new UnitOfWork($documentManager, $this->getEventManager(), $this->getListenerInvoker());
     }
 }

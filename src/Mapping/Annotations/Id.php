@@ -11,7 +11,7 @@ namespace BestIt\CommercetoolsODM\Mapping\Annotations;
  * @Target("PROPERTY")
  * @version $id$
  */
-class Id
+class Id implements Annotation
 {
 
 }

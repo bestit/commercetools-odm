@@ -3,15 +3,14 @@
 namespace BestIt\CommercetoolsODM\Mapping\Annotations;
 
 /**
- * Marks the Version field.
+ * Speciel callback for preRemove.
  * @Annotation
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @subpackage Mapping\Annotations
- * @Target("PROPERTY")
- * @version $id$
+ * @Target("METHOD")
+ * @version $id%
  */
-class Version implements Annotation
+class PreRemove implements Annotation
 {
-
 }

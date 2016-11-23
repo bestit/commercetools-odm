@@ -13,7 +13,7 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Target("ANNOTATION")
  * @version $id$
  */
-class RequestMap
+class RequestMap implements Annotation
 {
     /**
      * Create-Request.

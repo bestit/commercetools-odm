@@ -13,7 +13,7 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Target("CLASS")
  * @version $id$
  */
-class DraftClass
+class DraftClass implements Annotation
 {
     /**
      * The full qualified class name for the draft class.

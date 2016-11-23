@@ -3,9 +3,11 @@
 namespace BestIt\CommercetoolsODM;
 
 use BestIt\CommercetoolsODM\Event\LifecycleEventArgs;
+use BestIt\CommercetoolsODM\Event\ListenersInvoker;
 use BestIt\CommercetoolsODM\Event\OnFlushEventArgs;
+use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
+use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
-use Commercetools\Core\Request\AbstractCreateRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -13,7 +15,7 @@ use InvalidArgumentException;
 
 class UnitOfWork implements UnitOfWorkInterface
 {
-    use ClientAwareTrait;
+    use ClientAwareTrait, EventManagerAwareTrait, ListenerInvokerAwareTrait;
 
     /**
      * Matches object ids to commercetools ids.
@@ -41,12 +43,6 @@ class UnitOfWork implements UnitOfWorkInterface
     protected $documentState = [];
 
     /**
-     * The event dispatcher.
-     * @var EventManager
-     */
-    private $eventManager = null;
-
-    /**
      * Maps documents to ids.
      * @var array
      */
@@ -68,15 +64,18 @@ class UnitOfWork implements UnitOfWorkInterface
      * UnitOfWork constructor.
      * @param DocumentManagerInterface $documentManager
      * @param EventManager $eventManager
+     * @param ListenersInvoker $listenersInvoker
      */
     public function __construct(
         DocumentManagerInterface $documentManager,
-        EventManager $eventManager
+        EventManager $eventManager,
+        ListenersInvoker $listenersInvoker
     ) {
         $this
             ->setClient($documentManager->getClient())
             ->setDocumentManager($documentManager)
-            ->setEventManager($eventManager);
+            ->setEventManager($eventManager)
+            ->setListenerInvoker($listenersInvoker);
     }
 
     /**
@@ -126,9 +125,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
         $this->registerAsManaged($targetDocument, $id, $version);
 
-        $this->getEventManager()->dispatchEvent(
+        $this->getListenerInvoker()->invoke(
+            new LifecycleEventArgs($targetDocument, $this->getDocumentManager()),
             Events::POST_LOAD,
-            new LifecycleEventArgs($targetDocument, $this->getDocumentManager())
+            $targetDocument,
+            $metadata
         );
 
         return $targetDocument;
@@ -342,15 +343,6 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
-     * Returns the event manager,
-     * @return EventManager
-     */
-    protected function getEventManager(): EventManager
-    {
-        return $this->eventManager;
-    }
-
-    /**
      * Persist new document, marking it managed and generating the id.
      *
      * This method is either called through `DocumentManager#persist()` or during `DocumentManager#flush()`,
@@ -360,6 +352,13 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     protected function persistNew($document): UnitOfWork
     {
+        $this->getListenerInvoker()->invoke(
+            new LifecycleEventArgs($document, $this->getDocumentManager()),
+            Events::PRE_PERSIST,
+            $document,
+            $this->getClassMetadata(get_class($document))
+        );
+
         $this->registerAsManaged($document);
 
         $this->getEventManager()->dispatchEvent(
@@ -422,24 +421,13 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
-     * Sets the event manager.
-     * @param EventManager $eventManager
-     * @return UnitOfWork
-     */
-    protected function setEventManager(EventManager $eventManager): UnitOfWork
-    {
-        $this->eventManager = $eventManager;
-
-        return $this;
-    }
-
-    /**
      * Tries to find an document with the given identifier in the identity map of
      * this UnitOfWork.
      *
      * @param mixed $id The document identifier to look for.
      * @return mixed Returns the document with the specified identifier if it exists in
      *               this UnitOfWork, FALSE otherwise.
+     * @todo TryByKey?
      */
     public function tryGetById($id)
     {

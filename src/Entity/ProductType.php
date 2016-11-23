@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Entity;
 
+use BestIt\CommercetoolsODM\Event\LifecycleEventArgs;
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 /**
