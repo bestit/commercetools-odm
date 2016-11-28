@@ -27,44 +27,58 @@ class TaxCategory
 
 {
 
-    /**
-     * The Id of the document.
+    /**     TODO @var!!
+     * The unique ID of the category.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Id
      * @var string
      */
     private $id = '';
     /**
-     * The Version for the type.
-     * @var string
+     * The current version of the category.
+     * @Commercetools\Field(type="int")
+     * @Commercetools\Version
+     * @var int
      */
     private $version = '';
     /**
      * The CreatedAt for the type.
-     * @var string
+     * @Commercetools\Field(type="datetime")
+     * @Commercetools\CreatedAt
+     * @var datetime
      */
     private $createdAt = '';
     /**
      * The LastModifiedAt for the type.
-     * @var string
+     * @Commercetools\Field(type="datetime")
+     * @Commercetools\LastModiefiedAt
+     * @var datetime
      */
     private $lastModifiedAt = '';
     /**
      * The Name for the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Name
      * @var string
      */
     private $name = '';
     /**
-     * The Description for the type.
+     * The Discription for the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Discription
      * @var string
      */
     private $description = '';
     /**
-     * The Rates for the type.
-     * @var string
+     * The tax rates have unique IDs in the rates list.
+     * @Commercetools\Field(type="array")
+     * @Commercetools\Rates
+     * @var array
      */
     private $rates = '';
 
     /**
-     * Returns the Id of the document.
+     * Returns the Id for the type.
      * @return string
      */
     public function getId(): string
@@ -128,7 +142,7 @@ class TaxCategory
 
 
     /**
-     * Sets the Id of the document.
+     * Sets the Id for the type.
      * @param string $id
      * @return TaxCategory
      */

@@ -3,34 +3,29 @@ namespace BestIt\CommercetoolsODM\Entity;
 
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
+/**
+ * Class SubRate
+ * @package BestIt\CommercetoolsODM\Entity
+ */
 class SubRate
 {
+    /**
+     * The Number for the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Name
+     * @var string
+     */
     private $name = '';
+    /**
+     * Number Percentage in the range of [0..1].
+     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Discount
+     * @var  TODO
+     */
     private $amount = '';
-    private $includedInPrice = '';
-    private $country = '';
-    private $state = '';
-    private $subRates = '';
 
     /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return SubRate
-     */
-    public function setName(string $name): SubRate
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
+     * Returns the Amount for the type.
      * @return string
      */
     public function getAmount(): string
@@ -39,85 +34,30 @@ class SubRate
     }
 
     /**
+     * Sets the Amount for the type.
      * @param string $amount
-     * @return SubRate
      */
-    public function setAmount(string $amount): SubRate
+    public function setAmount(string $amount)
     {
         $this->amount = $amount;
-        return $this;
     }
 
     /**
+     * Returns the Name for the type.
      * @return string
      */
-    public function getIncludedInPrice(): string
+    public function getName(): string
     {
-        return $this->includedInPrice;
+        return $this->name;
     }
 
     /**
-     * @param string $includedInPrice
-     * @return SubRate
+     * Sets the Name for the type.
+     * @param string $name
      */
-    public function setIncludedInPrice(string $includedInPrice): SubRate
+    public function setName(string $name)
     {
-        $this->includedInPrice = $includedInPrice;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCountry(): string
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param string $country
-     * @return SubRate
-     */
-    public function setCountry(string $country): SubRate
-    {
-        $this->country = $country;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getState(): string
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param string $state
-     * @return SubRate
-     */
-    public function setState(string $state): SubRate
-    {
-        $this->state = $state;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSubRates(): string
-    {
-        return $this->subRates;
-    }
-
-    /**
-     * @param string $subRates
-     * @return SubRate
-     */
-    public function setSubRates(string $subRates): SubRate
-    {
-        $this->subRates = $subRates;
-        return $this;
+        $this->name = $name;
     }
 
 }

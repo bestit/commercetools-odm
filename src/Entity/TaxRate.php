@@ -11,37 +11,59 @@ class TaxRate
 
 {
 
-    /**
+    /**     TODO @var!!
+     * The id is always set if the tax rate is part of a TaxCategory. The external tax rates in a Cart do not contain an id.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Id
      * @var string
      */
     private $id = '';
     /**
+     * The Name of the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Name
      * @var string
      */
     private $name = '';
     /**
-     * @var string
+     * Number Percentage in the range of [0..1]. The sum of the amounts of all subRates, if there are any.
+     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Amount
+     * @var
      */
     private $amount = '';
     /**
-     * @var string
+     * The IncludePrice for the type
+     * @Commercetools\Field(type="boolean")
+     * @Commercetools\IncludePrice
+     * @var boolean
      */
     private $includedInPrice = '';
     /**
+     * A two-digit country code as per ↗ ISO 3166-1 alpha-2 .
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Country
      * @var string
      */
     private $country = '';
     /**
+     * The state in the country.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\State
      * @var string
      */
     private $state = '';
     /**
-     * @var string
+     * For countries (e.g. the US) where the total tax is a combination of multiple taxes (e.g. state and local taxes).
+     * @Commercetools\Field(type="array")
+     * @Commercetools\SubRates
+     * @var array
      */
     private $subRates = '';
 
 
     /**
+     * Returns the String for the type.
      * @return string
      */
     public function getId(): string
@@ -50,6 +72,7 @@ class TaxRate
     }
 
     /**
+     * Returns the Name for the type.
      * @return string
      */
     public function getName(): string
@@ -58,6 +81,7 @@ class TaxRate
     }
 
     /**
+     * Returns the Amount for the type.
      * @return string
      */
     public function getAmount(): string
@@ -66,6 +90,7 @@ class TaxRate
     }
 
     /**
+     * Returns the IncludePrice for the type.
      * @return string
      */
     public function getIncludedInPrice(): string
@@ -74,6 +99,7 @@ class TaxRate
     }
 
     /**
+     * Return the Country for the type.
      * @return string
      */
     public function getCountry(): string
@@ -82,6 +108,7 @@ class TaxRate
     }
 
     /**
+     * Returns the State for the type.
      * @return string
      */
     public function getState(): string
@@ -90,6 +117,7 @@ class TaxRate
     }
 
     /**
+     * Returns the SubRates for the type.
      * @return string
      */
     public function getSubRates(): string
@@ -99,6 +127,7 @@ class TaxRate
 
 
     /**
+     * Sets the String for the type.
      * @param string $id
      * @return TaxRate
      */
@@ -110,6 +139,7 @@ class TaxRate
     }
 
     /**
+     *  Sets the Name for the type.
      * @param string $name
      * @return TaxRate
      */
@@ -120,7 +150,7 @@ class TaxRate
         return $this;
     }
 
-    /**
+    /**Sets the Amount for the type.
      * @param string $amount
      * @return TaxRate
      */
@@ -132,6 +162,7 @@ class TaxRate
     }
 
     /**
+     * Sets the IncludePrice for the type.
      * @param string $includedInPrice
      * @return TaxRate
      */
@@ -143,6 +174,7 @@ class TaxRate
     }
 
     /**
+     * Sets the Country for the type.
      * @param string $country
      * @return TaxRate
      */
@@ -154,6 +186,7 @@ class TaxRate
     }
 
     /**
+     * Sets the State for the type.
      * @param string $state
      * @return TaxRate
      */
@@ -165,6 +198,7 @@ class TaxRate
     }
 
     /**
+     * Sets the SubRates
      * @param string $subRates
      * @return TaxRate
      */

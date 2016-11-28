@@ -53,6 +53,7 @@ class ProductType
     /**
      * The name for the type.
      * @Commercetools\Field(type="string")
+     * @commercetools\Name
      * @var string
      */
     private $name = '';
