@@ -5,13 +5,14 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 class ScopedPrice
 {
-    /**     TODO @var!!
+    /**
      * A reference to a channel.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO Reference
      * @Commercetools\Channel
      * @var
      */
-    private $channel = '';
+    private $channel;
+
     /**
      * A two-digit country code as per ↗ ISO 3166-1 alpha-2 .
      * @Commercetools\Field(type="string")
@@ -19,34 +20,39 @@ class ScopedPrice
      * @var string
      */
     private $country = '';
+
     /**
      * The CurrentValue for the type.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO Money
      * @Commercetools\CurrentValue
      * @var
      */
-    private $currentValue = '';
+    private $currentValue;
+
     /**
      * The Custom for the type.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO CustomFields
      * @Commercetools\Custom
      * @var
      */
-    private $custom = '';
+    private $custom;
+
     /**
      * A reference to a customer group.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO Reference
      * @Commercetools\CustomerGroup
      * @var
      */
-    private $customerGroup = '';
+    private $customerGroup;
+
     /**
      * Is set if a matching ProductDiscount exists. If set, the Cart will use the discounted value for the cart price calculation.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO DiscountedPrice
      * @Commercetools\Discounted
      * @var
      */
-    private $discounted = '';
+    private $discounted;
+
     /**
      * The unique ID of this price.
      * @Commercetools\Field(type="string")
@@ -54,48 +60,44 @@ class ScopedPrice
      * @var string
      */
     private $id = '';
+
     /**
      * Date from which the price is valid.
      * @Commercetools\Field(type="datetime")
      * @Commercetools\ValidForm
-     * @var
+     * @var \DateTime
      */
-    private $validFrom = '';
+    private $validFrom;
+
     /**
      * Date until which the price is valid.
      * @Commercetools\Field(type="datetime")
      * @Commercetools\ValidUntil
-     * @var
+     * @var \DateTime
      */
-    private $validUntil = '';
+    private $validUntil;
+
     /**
      * The orifinal price value.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO Money
      * @Commercetools\Value
      * @var
      */
-    private $value = '';
+    private $value;
 
     /**
-     * Returns the Channel for the type.
-     * @return string
+     * gets Channel
+     *
+     * @return mixed
      */
-    public function getChannel(): string
+    public function getChannel()
     {
         return $this->channel;
     }
 
     /**
-     * Sets the Cannel for the type.
-     * @param string $channel
-     */
-    public function setChannel(string $channel)
-    {
-        $this->channel = $channel;
-    }
-
-    /**
-     * Returns the Country for the type.
+     * gets Country
+     *
      * @return string
      */
     public function getCountry(): string
@@ -104,88 +106,48 @@ class ScopedPrice
     }
 
     /**
-     * Setst the Country for the type.
-     * @param string $country
+     * gets CurrentValue
+     *
+     * @return mixed
      */
-    public function setCountry(string $country)
-    {
-        $this->country = $country;
-    }
-
-    /**
-     * Returns the CurrantValue for the type.
-     * @return string
-     */
-    public function getCurrentValue(): string
+    public function getCurrentValue()
     {
         return $this->currentValue;
     }
 
     /**
-     * Sets the CurrentVallue for the type.
-     * @param string $currentValue
+     * gets Custom
+     *
+     * @return mixed
      */
-    public function setCurrentValue(string $currentValue)
-    {
-        $this->currentValue = $currentValue;
-    }
-
-    /**
-     * Returns the Custom for the type.
-     * @return string
-     */
-    public function getCustom(): string
+    public function getCustom()
     {
         return $this->custom;
     }
 
     /**
-     * Sets the Custom for the type.
-     * @param string $custom
+     * gets CustomerGroup
+     *
+     * @return mixed
      */
-    public function setCustom(string $custom)
-    {
-        $this->custom = $custom;
-    }
-
-    /**
-     * Returns the CustomerGroup for the type.
-     * @return string
-     */
-    public function getCustomerGroup(): string
+    public function getCustomerGroup()
     {
         return $this->customerGroup;
     }
 
     /**
-     * Sets the CustomerGroup for the type.
-     * @param string $customerGroup
+     * gets Discounted
+     *
+     * @return mixed
      */
-    public function setCustomerGroup(string $customerGroup)
-    {
-        $this->customerGroup = $customerGroup;
-    }
-
-    /**
-     * Returns the Discounted for the type.
-     * @return string
-     */
-    public function getDiscounted(): string
+    public function getDiscounted()
     {
         return $this->discounted;
     }
 
     /**
-     * Sets the Discounted for the type.
-     * @param string $discounted
-     */
-    public function setDiscounted(string $discounted)
-    {
-        $this->discounted = $discounted;
-    }
-
-    /**
-     * Returns the Id for the type.
+     * gets Id
+     *
      * @return string
      */
     public function getId(): string
@@ -194,7 +156,98 @@ class ScopedPrice
     }
 
     /**
-     * Sets the Id for the type.
+     * gets ValidFrom
+     *
+     * @return \DateTime
+     */
+    public function getValidFrom(): \DateTime
+    {
+        return $this->validFrom;
+    }
+
+    /**
+     * gets ValidUntil
+     *
+     * @return \DateTime
+     */
+    public function getValidUntil(): \DateTime
+    {
+        return $this->validUntil;
+    }
+
+    /**
+     * gets Value
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Sets Channel
+     *
+     * @param mixed $channel
+     */
+    public function setChannel($channel)
+    {
+        $this->channel = $channel;
+    }
+
+    /**
+     * Sets Country
+     *
+     * @param string $country
+     */
+    public function setCountry(string $country)
+    {
+        $this->country = $country;
+    }
+
+    /**
+     * Sets CurrentValue
+     *
+     * @param mixed $currentValue
+     */
+    public function setCurrentValue($currentValue)
+    {
+        $this->currentValue = $currentValue;
+    }
+
+    /**
+     * Sets Custom
+     *
+     * @param mixed $custom
+     */
+    public function setCustom($custom)
+    {
+        $this->custom = $custom;
+    }
+
+    /**
+     * Sets CustomerGroup
+     *
+     * @param mixed $customerGroup
+     */
+    public function setCustomerGroup($customerGroup)
+    {
+        $this->customerGroup = $customerGroup;
+    }
+
+    /**
+     * Sets Discounted
+     *
+     * @param mixed $discounted
+     */
+    public function setDiscounted($discounted)
+    {
+        $this->discounted = $discounted;
+    }
+
+    /**
+     * Sets Id
+     *
      * @param string $id
      */
     public function setId(string $id)
@@ -203,57 +256,32 @@ class ScopedPrice
     }
 
     /**
-     * Returns the ValidForm for the type.
-     * @return string
+     * Sets ValidFrom
+     *
+     * @param \DateTime $validFrom
      */
-    public function getValidFrom(): string
-    {
-        return $this->validFrom;
-    }
-
-    /**
-     * Sets the ValidForm for the type.
-     * @param string $validFrom
-     */
-    public function setValidFrom(string $validFrom)
+    public function setValidFrom(\DateTime $validFrom)
     {
         $this->validFrom = $validFrom;
     }
 
     /**
-     * Returns the ValidUntil for the type.
-     * @return string
+     * Sets ValidUntil
+     *
+     * @param \DateTime $validUntil
      */
-    public function getValidUntil(): string
-    {
-        return $this->validUntil;
-    }
-
-    /**
-     * Sets the ValidUntil for the type.
-     * @param string $validUntil
-     */
-    public function setValidUntil(string $validUntil)
+    public function setValidUntil(\DateTime $validUntil)
     {
         $this->validUntil = $validUntil;
     }
 
     /**
-     * Returns the Value for the type.
-     * @return string
+     * Sets Value
+     *
+     * @param mixed $value
      */
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * Sets the Value for the type.
-     * @param string $value
-     */
-    public function setValue(string $value)
+    public function setValue($value)
     {
         $this->value = $value;
     }
-
 }

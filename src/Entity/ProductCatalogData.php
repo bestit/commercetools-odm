@@ -5,105 +5,115 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 class ProductCatalogData
 {
-    /** TODO @var!!!
+    /**
      * The current data of the product.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO ProductData
      * @Commercetools\Current
      * @var
      */
-    private $current = '';
+    private $current;
+
     /**
-     *Whether the staged data is different from the current data.
+     * Whether the staged data is different from the current data.
      * @Commercetools\Field(type="Boolean")
      * @Commercetools\HasStagedChanges
-     * @var
+     * @var boolean
      */
-    private $hasStagedChanges = '';
+    private $hasStagedChanges = false;
+
     /**
      * Whether the product is published.
      * @Commercetools\Field(type="Boolean")
      * @Commercetools\Published
-     * @var
+     * @var boolean
      */
-    private $published = '';
+    private $published = false;
+
     /**
      * The staged data of the product.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO ProductData
      * @Commercetools\Staged
      * @var
      */
-    private $staged = '';
+    private $staged;
 
     /**
-     * Returns the Current for the type.
-     * @return string
+     * gets Current
+     *
+     * @return mixed
      */
-    public function getCurrent(): string
+    public function getCurrent()
     {
         return $this->current;
     }
 
     /**
-     * Sets the Current for the type.
-     * @param string $current
+     * gets Staged
+     *
+     * @return mixed
      */
-    public function setCurrent(string $current)
-    {
-        $this->current = $current;
-    }
-
-    /**
-     * Returns the HasStagedChanges for the type.
-     * @return string
-     */
-    public function getHasStagedChanges(): string
-    {
-        return $this->hasStagedChanges;
-    }
-
-    /**
-     * Sets the HasStagedChanges for the type.
-     * @param string $hasStagedChanges
-     */
-    public function setHasStagedChanges(string $hasStagedChanges)
-    {
-        $this->hasStagedChanges = $hasStagedChanges;
-    }
-
-    /**
-     * Returns the Published for the type.
-     * @return string
-     */
-    public function getPublished(): string
-    {
-        return $this->published;
-    }
-
-    /**
-     * Sets the Published for the type.
-     * @param string $published
-     */
-    public function setPublished(string $published)
-    {
-        $this->published = $published;
-    }
-
-    /**
-     * Returns the Staged for the type.
-     * @return string
-     */
-    public function getStaged(): string
+    public function getStaged()
     {
         return $this->staged;
     }
 
     /**
-     * Sets the Staged for the type.
-     * @param string $staged
+     * iss HasStagedChanges
+     *
+     * @return boolean
      */
-    public function setStaged(string $staged)
+    public function isHasStagedChanges(): bool
+    {
+        return $this->hasStagedChanges;
+    }
+
+    /**
+     * iss Published
+     *
+     * @return boolean
+     */
+    public function isPublished(): bool
+    {
+        return $this->published;
+    }
+
+    /**
+     * Sets Current
+     *
+     * @param mixed $current
+     */
+    public function setCurrent($current)
+    {
+        $this->current = $current;
+    }
+
+    /**
+     * Sets HasStagedChanges
+     *
+     * @param boolean $hasStagedChanges
+     */
+    public function setHasStagedChanges(bool $hasStagedChanges)
+    {
+        $this->hasStagedChanges = $hasStagedChanges;
+    }
+
+    /**
+     * Sets Published
+     *
+     * @param boolean $published
+     */
+    public function setPublished(bool $published)
+    {
+        $this->published = $published;
+    }
+
+    /**
+     * Sets Staged
+     *
+     * @param mixed $staged
+     */
+    public function setStaged($staged)
     {
         $this->staged = $staged;
     }
-
 }

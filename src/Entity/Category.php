@@ -4,59 +4,55 @@ namespace BestIt\CommercetoolsODM\Entity;
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 /**
- * Entity for Product Types.
- * @author lange <lange@bestit-online.de>
- * @Commercetools\DraftClass("Commercetools\Core\Model\ProductType\ProductTypeDraft")
+ * Entity for Categories.
+ * @Commercetools\DraftClass("Commercetools\Core\Model\Category\CategoryDraft")
  * @Commercetools\Entity(requestMap=@Commercetools\RequestMap(
- *     create="ProductTypeCreateRequest",
- *     defaultNamespace="Commercetools\Core\Request\ProductTypes",
- *     deleteById="ProductTypeDeleteRequest",
- *     deleteByKey="ProductTypeDeleteByKeyRequest",
- *     findById="ProductTypeByIdGetRequest",
- *     findByKey="ProductTypeByKeyGetRequest",
- *     query="ProductTypeQueryRequest",
- *     updateById="ProductTypeUpdateRequest",
- *     updateByKey="ProductTypeUpdateByKeyRequest"
+ *     defaultNamespace="Commercetools\Core\Request\Categories",
+ *     findById="CategoryByIdRequest"
+ *     query="CategoryCreateRequest"
+ *     create="CategoryQueryRequest"
+ *     update="CategoryUpdateRequest"
+ *     delete="CategoryDeleteRequest"
  * ))
- * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\ProductTypeRepository")
+ * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\CategoryRepository")
  * @package BestIt\CommercetoolsODM
  * @subpackage Entity
  * @version $id$
  */
 class Category
 {
-
-
-
-
     /**
      *The Ancestors for the type.
      * @Commercetools\Field(type="array")
      * @Commercetools\Ancestors
      * @var array
      */
-    private $ancestors = '';
+    private $ancestors = [];
+
     /**
      *The CreatedAt for the type.
      * @Commercetools\Field(type="datetime")
      * @Commercetools\CreatedAt
-     * @var datetime
+     * @var \DateTime
      */
-    private $createdAt = '';
+    private $createdAt;
+
     /**
      *The Costum for the type.
-     * @Commercetools\Field(type="")TODO
+     * @Commercetools\Field(type="")TODO CustomFields
      * @Commercetools\Costum
-     * @var TODO
+     * @var
      */
     private $custom = '';
+
     /**
      *The Description for the type.
-     * @Commercetools\Field(type="")TODO
+     * @Commercetools\Field(type="")TODO LocalizedString
      * @Commercetools\Description
-     * @var TODO
+     * @var
      */
     private $description = '';
+
     /**
      *The ExternalId of this document.
      * @Commercetools\Field(type="string")
@@ -64,6 +60,7 @@ class Category
      * @var string
      */
     private $externalId = '';
+
     /**
      *The ID of this document.
      * @Commercetools\Field(type="string")
@@ -71,62 +68,68 @@ class Category
      * @var string
      */
     private $id = '';
+
     /**
      *The LastModifiedAt of this type.
      * @Commercetools\Field(type="datetime")
      * @Commercetools\LastModifiedAt
-     * @var datetime
+     * @var \DateTime
      */
-    private $lastModifiedAt = '';
+    private $lastModifiedAt;
+
     /**
      *The MetaDiscribtion of this document.
-     * @Commercetools\Field(type="array")
-     * @Commercetools\MetaDiscribtion
-     * @var array
+     * @Commercetools\Field(type="") TODO LocalizedString
+     * @Commercetools\MetaDescribition
+     * @var
      */
     private $metaDescription = '';
     /**
      *The MetaKeywords for the type.
-     * @Commercetools\Field(type="array")
+     * @Commercetools\Field(type="") TODO LocalizedString
      * @Commercetools\MetaKeywords
-     * @var array
+     * @var
      */
     private $metaKeywords = '';
     /**
      *The MetaTitle of this document.
-     * @Commercetools\Field(type="array")
+     * @Commercetools\Field(type="") TODO LocalizedString
      * @Commercetools\MetaTitle
-     * @var array
+     * @var
      */
     private $metaTitle = '';
     /**
      * The Name for the type.
-     * @Commercetools\Field(type="")TODO
+     * @Commercetools\Field(type="") TODO LocalizedString
      * @Commercetools\Name
-     * @var TODO
+     * @var
      */
     private $name = '';
+
     /**
      *The OrderHint for the type.
-     * @Commercetools\Field(type="array")
+     * @Commercetools\Field(type="string")
      * @Commercetools\OrderHint
-     * @var array
+     * @var string
      */
     private $orderHint = '';
+
     /**
-     *The Parent for the type.
-     * @Commercetools\Field(type="array")
+     * The Parent for the type.
+     * @Commercetools\Field(type="")TODO Reference
      * @Commercetools\Parent
-     * @var array
+     * @var
      */
     private $parent = '';
+
     /**
      *The Slug for the type
-     * @Commercetools\Field(type="")TODO
+     * @Commercetools\Field(type="") TODO LocalizedString
      * @Commercetools\Slug
-     * @var TODO
+     * @var
      */
     private $slug = '';
+
     /**
      *The Version of this document.
      * @Commercetools\Field(type="int")
@@ -145,18 +148,6 @@ class Category
     }
 
     /**
-     * Sets the Ancestors for the type.
-     * @param string $ancestors
-     * @return Category
-     */
-    public function setAncestors(string $ancestors): Category
-    {
-        $this->ancestors = $ancestors;
-
-        return $this;
-    }
-
-    /**
      * Returns the CreatedAt for the type.
      * @return string
      */
@@ -165,36 +156,12 @@ class Category
         return $this->createdAt;
     }
 
-    /**
-     * Sets the CreatedAt for the type.
-     * @param string $createdAt
-     * @return Category
-     */
-    public function setCreatedAt(string $createdAt): Category
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
     /** Returns the Costum of the type.
      * @return string
      */
     public function getCustom(): string
     {
         return $this->custom;
-    }
-
-    /**
-     * Set the Custum for the type.
-     * @param string $custom
-     * @return Category
-     */
-    public function setCustom(string $custom): Category
-    {
-        $this->custom = $custom;
-
-        return $this;
     }
 
     /**
@@ -207,36 +174,12 @@ class Category
     }
 
     /**
-     * Sets the Description for the type.
-     * @param string $description
-     * @return Category
-     */
-    public function setDescription(string $description): Category
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
      * Returns the ExternalId of this document.
      * @return string
      */
     public function getExternalId(): string
     {
         return $this->externalId;
-    }
-
-    /**
-     * Sete the ExternalId for the type.
-     * @param string $externalId
-     * @return Category
-     */
-    public function setExternalId(string $externalId): Category
-    {
-        $this->externalId = $externalId;
-
-        return $this;
     }
 
     /**
@@ -249,36 +192,12 @@ class Category
     }
 
     /**
-     * Sets the Id of this document.
-     * @param string $id
-     * @return Category
-     */
-    public function setId(string $id): Category
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
      * Returns the LastModifiedAt for the type.
      * @return string
      */
     public function getLastModifiedAt(): string
     {
         return $this->lastModifiedAt;
-    }
-
-    /**
-     * Sets the LastModifiedAt of this document.
-     * @param string $lastModifiedAt
-     * @return Category
-     */
-    public function setLastModifiedAt(string $lastModifiedAt): Category
-    {
-        $this->lastModifiedAt = $lastModifiedAt;
-
-        return $this;
     }
 
     /**
@@ -300,6 +219,156 @@ class Category
     }
 
     /**
+     * Returns the MetaTitle for the type.
+     * @return string
+     */
+    public function getMetaTitle(): string
+    {
+        return $this->metaTitle;
+    }
+
+    /**
+     * Returns the Name for the type.
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Returns the OrderHint for the type.
+     * @return string
+     */
+    public function getOrderHint(): string
+    {
+        return $this->orderHint;
+    }
+
+    /**
+     * Returns the Parent for the type.
+     * @return string
+     */
+    public function getParent(): string
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Returns the Slug for the type.
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * Returns the Version of this document.
+     * @return int
+     */
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
+
+    /**
+     * Sets the Ancestors for the type.
+     * @param string $ancestors
+     * @return Category
+     */
+    public function setAncestors(string $ancestors): Category
+    {
+        $this->ancestors = $ancestors;
+
+        return $this;
+    }
+
+    /**
+     * Sets the CreatedAt for the type.
+     * @param string $createdAt
+     * @return Category
+     */
+    public function setCreatedAt(string $createdAt): Category
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Set the Custum for the type.
+     * @param string $custom
+     * @return Category
+     */
+    public function setCustom(string $custom): Category
+    {
+        $this->custom = $custom;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Description for the type.
+     * @param string $description
+     * @return Category
+     */
+    public function setDescription(string $description): Category
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Sete the ExternalId for the type.
+     * @param string $externalId
+     * @return Category
+     */
+    public function setExternalId(string $externalId): Category
+    {
+        $this->externalId = $externalId;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Id of this document.
+     * @param string $id
+     * @return Category
+     */
+    public function setId(string $id): Category
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Sets the LastModifiedAt of this document.
+     * @param string $lastModifiedAt
+     * @return Category
+     */
+    public function setLastModifiedAt(string $lastModifiedAt): Category
+    {
+        $this->lastModifiedAt = $lastModifiedAt;
+
+        return $this;
+    }
+
+    /**
+     * Sets the MateDescription for the type.
+     * @param string $metaDescription
+     * @return Category
+     */
+    public function setMetaDescription(string $metaDescription): Category
+    {
+        $this->metaDescription = $metaDescription;
+
+        return $this;
+    }
+
+    /**
      * Sets the MetaKeywords for the type.
      * @param string $metaKeywords
      * @return Category
@@ -309,15 +378,6 @@ class Category
         $this->metaKeywords = $metaKeywords;
 
         return $this;
-    }
-
-    /**
-     * Returns the MetaTitle for the type.
-     * @return string
-     */
-    public function getMetaTitle(): string
-    {
-        return $this->metaTitle;
     }
 
     /**
@@ -333,15 +393,6 @@ class Category
     }
 
     /**
-     * Returns the Name for the type.
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
      * Sets the Name for the type.
      * @param string $name
      * @return Category
@@ -351,15 +402,6 @@ class Category
         $this->name = $name;
 
         return $this;
-    }
-
-    /**
-     * Returns the OrderHint for the type.
-     * @return string
-     */
-    public function getOrderHint(): string
-    {
-        return $this->orderHint;
     }
 
     /**
@@ -375,15 +417,6 @@ class Category
     }
 
     /**
-     * Returns the Parent for the type.
-     * @return string
-     */
-    public function getParent(): string
-    {
-        return $this->parent;
-    }
-
-    /**
      * Sets the Parent for the type.
      * @param string $parent
      * @return Category
@@ -393,15 +426,6 @@ class Category
         $this->parent = $parent;
 
         return $this;
-    }
-
-    /**
-     * Returns the Slug for the type.
-     * @return string
-     */
-    public function getSlug(): string
-    {
-        return $this->slug;
     }
 
     /**
@@ -417,15 +441,6 @@ class Category
     }
 
     /**
-     * Returns the Version of this document.
-     * @return string
-     */
-    public function getVersion(): int
-    {
-        return $this->version;
-    }
-
-    /**
      *Sets the Version of this document.
      * @param string $version
      * @return Category
@@ -436,17 +451,4 @@ class Category
 
         return $this;
     }
-
-    /**
-     * Sets the MateDescription for the type.
-     * @param string $metaDescription
-     * @return Category
-     */
-    public function setmMetaDescription(string $metaDescription): Category
-    {
-        $this->metaDescription = $metaDescription;
-
-        return $this;
-    }
-
 }

@@ -4,57 +4,52 @@ namespace BestIt\CommercetoolsODM\Entity;
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 /**
- * Entity for Product Types.
- * @author Paul Tenbrock <Paul_Tenbrock@outlook.com>
- * @Commercetools\DraftClass("Commercetools\Core\Model\ProductType\ProductTypeDraft")
+ * Entity for Tax Categories.
+ * @Commercetools\DraftClass("Commercetools\Core\Model\TaxCategory\TaxCategoryDraft")
  * @Commercetools\Entity(requestMap=@Commercetools\RequestMap(
- *     create="ProductTypeCreateRequest",
- *     defaultNamespace="Commercetools\Core\Request\ProductTypes",
- *     deleteById="ProductTypeDeleteRequest",
- *     deleteByKey="ProductTypeDeleteByKeyRequest",
- *     findById="ProductTypeByIdGetRequest",
- *     findByKey="ProductTypeByKeyGetRequest",
- *     query="ProductTypeQueryRequest",
- *     updateById="ProductTypeUpdateRequest",
- *     updateByKey="ProductTypeUpdateByKeyRequest"
+ *     defaultNamespace="Commercetools\Core\Request\TaxCategories",
+ *     findById="TaxCategoryByIdGetRequest",
+ *     query="TaxCategoryQueryRequest",
+ *     create="TaxCategoryCreateRequest",
+ *     updateById="TaxCategoryUpdateRequest",
+ *     deleteById="TaxCategoryDeleteRequest"
  * ))
- * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\ProductTypeRepository")
+ * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\TaxCategoryRepository")
  * @package BestIt\CommercetoolsODM
  * @subpackage Entity
  * @version $id$
  */
 class TaxCategory
-
 {
-
-    /**     TODO @var!!
-     * The unique ID of the category.
+    /**
+     * The CreatedAt for the type.
+     * @Commercetools\Field(type="datetime")
+     * @Commercetools\CreatedAt
+     * @var \DateTime
+     */
+    private $createdAt;
+    /**
+     * The description for the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Description
+     * @var string
+     */
+    private $description = '';
+    /**
+     * The unique ID.
      * @Commercetools\Field(type="string")
      * @Commercetools\Id
      * @var string
      */
     private $id = '';
     /**
-     * The current version of the category.
-     * @Commercetools\Field(type="int")
-     * @Commercetools\Version
-     * @var int
-     */
-    private $version = '';
-    /**
-     * The CreatedAt for the type.
-     * @Commercetools\Field(type="datetime")
-     * @Commercetools\CreatedAt
-     * @var datetime
-     */
-    private $createdAt = '';
-    /**
      * The LastModifiedAt for the type.
      * @Commercetools\Field(type="datetime")
      * @Commercetools\LastModiefiedAt
-     * @var datetime
+     * @var \DateTime
      */
-    private $lastModifiedAt = '';
+    private $lastModifiedAt;
+
     /**
      * The Name for the type.
      * @Commercetools\Field(type="string")
@@ -63,67 +58,33 @@ class TaxCategory
      */
     private $name = '';
     /**
-     * The Discription for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Discription
-     * @var string
-     */
-    private $description = '';
-    /**
      * The tax rates have unique IDs in the rates list.
      * @Commercetools\Field(type="array")
      * @Commercetools\Rates
      * @var array
      */
-    private $rates = '';
+    private $rates = [];
+    /**
+     * The current version.
+     * @Commercetools\Field(type="int")
+     * @Commercetools\Version
+     * @var int
+     */
+    private $version = '';
 
     /**
-     * Returns the Id for the type.
-     * @return string
+     * gets CreatedAt
+     *
+     * @return \DateTime
      */
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the Version for the type.
-     * @return string
-     */
-    public function getVersion(): string
-    {
-        return $this->version;
-    }
-
-    /**
-     * Returns the CreatedAt for the type.
-     * @return string
-     */
-    public function getCreatedAt(): string
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
     /**
-     * Returns the LastModifiedAt for the type.
-     * @return string
-     */
-    public function getLastModifiedAt(): string
-    {
-        return $this->lastModifiedAt;
-    }
-
-    /**
-     * Returns the Name for the type.
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the Description for the type.
+     * gets Description
+     *
      * @return string
      */
     public function getDescription(): string
@@ -132,97 +93,122 @@ class TaxCategory
     }
 
     /**
-     * Returns the Rates for the type.
+     * gets Id
+     *
      * @return string
      */
-    public function getRates(): string
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * gets LastModifiedAt
+     *
+     * @return \DateTime
+     */
+    public function getLastModifiedAt(): \DateTime
+    {
+        return $this->lastModifiedAt;
+    }
+
+    /**
+     * gets Name
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * gets Rates
+     *
+     * @return array
+     */
+    public function getRates(): array
     {
         return $this->rates;
     }
 
-
     /**
-     * Sets the Id for the type.
-     * @param string $id
-     * @return TaxCategory
+     * gets Version
+     *
+     * @return int
      */
-    public function setId(string $id): TaxCategory
+    public function getVersion(): int
     {
-        $this->id = $id;
-
-        return $this;
+        return $this->version;
     }
 
     /**
-     * Sets the Version for the type.
-     * @param string $version
-     * @return TaxCategory
+     * Sets CreatedAt
+     *
+     * @param \DateTime $createdAt
      */
-    public function setVersion(string $version): TaxCategory
-    {
-        $this->version = $version;
-
-        return $this;
-    }
-
-    /**
-     * Sets the CreatedAt for the type.
-     * @param string $createdAt
-     * @return TaxCategory
-     */
-    public function setCreatedAt(string $createdAt): TaxCategory
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     /**
-     * Sets the LastModifiedAt for the type.
-     * @param string $lastModifiedAt
-     * @return TaxCategory
-     */
-    public function setLastModifiedAt(string $lastModifiedAt): TaxCategory
-    {
-        $this->lastModifiedAt = $lastModifiedAt;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Name for the type.
-     * @param string $name
-     * @return TaxCategory
-     */
-    public function setName(string $name): TaxCategory
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Description for the type.
+     * Sets Description
+     *
      * @param string $description
-     * @return TaxCategory
      */
-    public function setDescription(string $description): TaxCategory
+    public function setDescription(string $description)
     {
         $this->description = $description;
-
-        return $this;
     }
 
     /**
-     * Sets the Rates for the type.
-     * @param string $rates
-     * @return TaxCategory
+     * Sets Id
+     *
+     * @param string $id
      */
-    public function setRates(string $rates): TaxCategory
+    public function setId(string $id)
     {
-        $this->rates = $rates;
-
-        return $this;
+        $this->id = $id;
     }
 
+    /**
+     * Sets LastModifiedAt
+     *
+     * @param \DateTime $lastModifiedAt
+     */
+    public function setLastModifiedAt(\DateTime $lastModifiedAt)
+    {
+        $this->lastModifiedAt = $lastModifiedAt;
+    }
+
+    /**
+     * Sets Name
+     *
+     * @param string $name
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Sets Rates
+     *
+     * @param array $rates
+     */
+    public function setRates(array $rates)
+    {
+        $this->rates = $rates;
+    }
+
+    /**
+     * Sets Version
+     *
+     * @param int $version
+     */
+    public function setVersion(int $version)
+    {
+        $this->version = $version;
+    }
 }

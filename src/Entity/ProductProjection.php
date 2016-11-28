@@ -4,21 +4,14 @@ namespace BestIt\CommercetoolsODM\Entity;
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 /**
- * Entity for Product Types.
- * @author Paul Tenbrock <Paul_Tenbrock@outlook.com>
- * @Commercetools\DraftClass("Commercetools\Core\Model\ProductType\ProductTypeDraft")
+ * Entity for Product Projection.
  * @Commercetools\Entity(requestMap=@Commercetools\RequestMap(
- *     create="ProductTypeCreateRequest",
- *     defaultNamespace="Commercetools\Core\Request\ProductTypes",
- *     deleteById="ProductTypeDeleteRequest",
- *     deleteByKey="ProductTypeDeleteByKeyRequest",
- *     findById="ProductTypeByIdGetRequest",
- *     findByKey="ProductTypeByKeyGetRequest",
- *     query="ProductTypeQueryRequest",
- *     updateById="ProductTypeUpdateRequest",
- *     updateByKey="ProductTypeUpdateByKeyRequest"
+ *     defaultNamespace="Commercetools\Core\Request\Products",
+ *     findById="ProductProjectionByIdGetRequest",
+ *     findByKey="ProductProjectionByKeyGetRequest",
+ *     query="ProductProjectionQueryRequest"
  * ))
- * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\ProductTypeRepository")
+ * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\ProductProjectionRepository")
  * @package BestIt\CommercetoolsODM
  * @subpackage Entity
  * @version $id$
@@ -26,6 +19,41 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 class ProductProjection
 
 {
+    /**
+     * The Categories for the type.
+     * @Commercetools\Field(type="array")
+     * @Commercetools\Categories
+     * @var array
+     */
+    private $categories = [];
+    /**
+     * The CategoryOrderHints for the type.
+     * @Commercetools\Field(type="") TODO CategorieOrderHints
+     * @Commercetools\CategoryOrderHints
+     * @var
+     */
+    private $categoryOrderHints;
+    /**
+     * The CreatedAt for the type.
+     * @Commercetools\Field(type="datetime")
+     * @Commercetools\CreatedAt
+     * @var \DateTime
+     */
+    private $createdAt;
+    /**
+     * The Description for the type.
+     * @Commercetools\Field(type="") TODO LocalizedString
+     * @Commercetools\Description
+     * @var
+     */
+    private $description;
+    /**
+     * The HasStagedChanges for the type.
+     * @Commercetools\Field(type="Boolean")
+     * @Commercetools\HasStagedChanges
+     * @var boolean
+     */
+    private $hasStagedChanges = false;
     /**
      * The Id for the type.
      * @Commercetools\Field(type="string")
@@ -41,148 +69,154 @@ class ProductProjection
      */
     private $key = '';
     /**
-     * The Version for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Version
-     * @var string
-     */
-    private $version = 0;
-    /**
-     * The CreatedAt for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\CreatedAt
-     * @var string
-     */
-    private $createdAt = '';
-    /**
      * The LastModifLiedAt for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\LastModifLiedAt
-     * @var string
+     * @Commercetools\Field(type="datetime")
+     * @Commercetools\LastModifiedAt
+     * @var \DateTime
      */
-    private $lastModifiedAt = '';
-    /**
-     * The ProductType for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\ProductType
-     * @var string
-     */
-    private $productType = '';
-    /**
-     * The Name for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Name
-     * @var string
-     */
-    private $name = '';
-    /**
-     * The Description for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Description
-     * @var string
-     */
-    private $description = '';
-    /**
-     * The Slug for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Slug
-     * @var string
-     */
-    private $slug = '';
-    /**
-     * The Categories for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Categories
-     * @var string
-     */
-    private $categories = '';
-    /**
-     * The CategoryOrderHints for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\CategoryOrderHints
-     * @var string
-     */
-    private $categoryOrderHints = '';
-    /**
-     * The MetaTitle for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\MetaTitle
-     * @var string
-     */
-    private $metaTitle = '';
-    /**
-     * The MetaDescription for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\MetaDescription
-     * @var string
-     */
-    private $metaDescription = '';
-    /**
-     * The MetaKeywords for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\MetaKeywords
-     * @var string
-     */
-    private $metaKeywords = '';
-    /**
-     * The SearchKeywords for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\SearchKeywords
-     * @var string
-     */
-    private $searchKeywords = '';
-    /**
-     * The HasStagedChanges for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\HasStagedChanges
-     * @var string
-     */
-    private $hasStagedChanges = '';
-    /**
-     * The Published for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Published
-     * @var string
-     */
-    private $published = '';
+    private $lastModifiedAt;
     /**
      * The MasterVariant for the type.
-     * @Commercetools\Field(type="string")
+     * @Commercetools\Field(type="") TODO ProductVariant
      * @Commercetools\MasterVariant
-     * @var string
+     * @var
      */
-    private $masterVariant = '';
+    private $masterVariant;
     /**
-     * The Variants for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Variants
-     * @var string
+     * The MetaDescription for the type.
+     * @Commercetools\Field(type="") TODO LocalizedString
+     * @Commercetools\MetaDescription
+     * @var
      */
-    private $variants = '';
+    private $metaDescription;
     /**
-     * The TaxCategory for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\TaxCategory
-     * @var string
+     * The MetaKeywords for the type.
+     * @Commercetools\Field(type="") TODO LocalizedString
+     * @Commercetools\MetaKeywords
+     * @var
      */
-    private $taxCategory = '';
+    private $metaKeywords;
     /**
-     * The State for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\State
-     * @var string
+     * The MetaTitle for the type.
+     * @Commercetools\Field(type="") TODO LocalizedString
+     * @Commercetools\MetaTitle
+     * @var
      */
-    private $state = '';
+    private $metaTitle;
+    /**
+     * The Name for the type.
+     * @Commercetools\Field(type="") TODO LocalizedString
+     * @Commercetools\Name
+     * @var
+     */
+    private $name;
+    /**
+     * The ProductType for the type.
+     * @Commercetools\Field(type="") TODO Reference
+     * @Commercetools\ProductType
+     * @var
+     */
+    private $productType;
+    /**
+     * The Published for the type.
+     * @Commercetools\Field(type="Boolean")
+     * @Commercetools\Published
+     * @var boolean
+     */
+    private $published = false;
     /**
      * The ReviewRatingStatistics for the type.
-     * @Commercetools\Field(type="string")
+     * @Commercetools\Field(type="") TODO ReviewRatingStatistics
      * @Commercetools\ReviewRatingStatistics
-     * @var string
+     * @var
      */
-    private $reviewRatingStatistics= '';
+    private $reviewRatingStatistics;
+    /**
+     * The SearchKeywords for the type.
+     * @Commercetools\Field(type="") TODO SearchKeywords
+     * @Commercetools\SearchKeywords
+     * @var
+     */
+    private $searchKeywords;
+    /**
+     * The Slug for the type.
+     * @Commercetools\Field(type="") TODO LocalizedString
+     * @Commercetools\Slug
+     * @var
+     */
+    private $slug;
+    /**
+     * The State for the type.
+     * @Commercetools\Field(type="") TODO Reference
+     * @Commercetools\State
+     * @var
+     */
+    private $state;
+    /**
+     * The TaxCategory for the type.
+     * @Commercetools\Field(type="") TODO Reference
+     * @Commercetools\TaxCategory
+     * @var
+     */
+    private $taxCategory;
+    /**
+     * The Variants for the type.
+     * @Commercetools\Field(type="array")
+     * @Commercetools\Variants
+     * @var array
+     */
+    private $variants = [];
+    /**
+     * The Version for the type.
+     * @Commercetools\Field(type="int")
+     * @Commercetools\Version
+     * @var int
+     */
+    private $version = 0;
 
     /**
-     * Returns the Id of the type.
+     * gets Categories
+     *
+     * @return array
+     */
+    public function getCategories(): array
+    {
+        return $this->categories;
+    }
+
+    /**
+     * gets CategoryOrderHints
+     *
+     * @return mixed
+     */
+    public function getCategoryOrderHints()
+    {
+        return $this->categoryOrderHints;
+    }
+
+    /**
+     * gets CreatedAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * gets Description
+     *
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * gets Id
+     *
      * @return string
      */
     public function getId(): string
@@ -191,7 +225,8 @@ class ProductProjection
     }
 
     /**
-     * Returns the Key for the type.
+     * gets Key
+     *
      * @return string
      */
     public function getKey(): string
@@ -200,448 +235,382 @@ class ProductProjection
     }
 
     /**
-     * Returns the Version for the type.
-     * @return string
+     * gets LastModifiedAt
+     *
+     * @return \DateTime
      */
-    public function getVersion(): string
-    {
-        return $this->version;
-    }
-
-    /**
-     * Returns the CreatedAt for the type.
-     * @return string
-     */
-    public function getCreatedAt(): string
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Returns the LastModifiedAt for the type.
-     * @return string
-     */
-    public function getLastModifiedAt(): string
+    public function getLastModifiedAt(): \DateTime
     {
         return $this->lastModifiedAt;
     }
 
     /**
-     * Returns the ProductType for the type.
-     * @return string
+     * gets MasterVariant
+     *
+     * @return mixed
      */
-    public function getProductType(): string
-    {
-        return $this->productType;
-    }
-
-    /**
-     * Returns the Name for the type.
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the Description for the type.
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * Returns the Slug for the type.
-     * @return string
-     */
-    public function getSlug(): string
-    {
-        return $this->slug;
-    }
-
-    /**
-     * Returns the Categories for the type.
-     * @return string
-     */
-    public function getCategories(): string
-    {
-        return $this->categories;
-    }
-
-    /**
-     * Returns the CategoryOrderHints for the type.
-     * @return string
-     */
-    public function getCategoryOrderHints(): string
-    {
-        return $this->categoryOrderHints;
-    }
-
-    /**
-     * Returns the MetaTitle for the type.
-     * @return string
-     */
-    public function getMetaTitle(): string
-    {
-        return $this->metaTitle;
-    }
-
-    /**
-     * Returns the MetaDescription for the type.
-     * @return string
-     */
-    public function getMetaDescription(): string
-    {
-        return $this->metaDescription;
-    }
-
-    /**
-     * Returns the MetaKeywords for the type.
-     * @return string
-     */
-    public function getMetaKeywords(): string
-    {
-        return $this->metaKeywords;
-    }
-
-    /**
-     * Returns the SearchKeywords for the type.
-     * @return string
-     */
-    public function getSearchKeywords(): string
-    {
-        return $this->searchKeywords;
-    }
-
-    /**
-     * Returns the HasStagedChanges for the type.
-     * @return string
-     */
-    public function getHasStagedChanges(): string
-    {
-        return $this->hasStagedChanges;
-    }
-
-    /**
-     * Returns the Published for the type.
-     * @return string
-     */
-    public function getPublished(): string
-    {
-        return $this->published;
-    }
-
-    /**
-     * Returns the MasterVariant for the type.
-     * @return string
-     */
-    public function getMasterVariant(): string
+    public function getMasterVariant()
     {
         return $this->masterVariant;
     }
 
     /**
-     * Returns the Variants for the type.
-     * @return string
+     * gets MetaDescription
+     *
+     * @return mixed
      */
-    public function getVariants(): string
+    public function getMetaDescription()
     {
-        return $this->variants;
+        return $this->metaDescription;
     }
 
     /**
-     * Returns the TaxCategory for the type.
-     * @return string
+     * gets MetaKeywords
+     *
+     * @return mixed
      */
-    public function getTaxCategory(): string
+    public function getMetaKeywords()
     {
-        return $this->taxCategory;
+        return $this->metaKeywords;
     }
 
     /**
-     * Returns the State for the type.
-     * @return string
+     * gets MetaTitle
+     *
+     * @return mixed
      */
-    public function getState(): string
+    public function getMetaTitle()
+    {
+        return $this->metaTitle;
+    }
+
+    /**
+     * gets Name
+     *
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * gets ProductType
+     *
+     * @return mixed
+     */
+    public function getProductType()
+    {
+        return $this->productType;
+    }
+
+    /**
+     * gets ReviewRatingStatistics
+     *
+     * @return mixed
+     */
+    public function getReviewRatingStatistics()
+    {
+        return $this->reviewRatingStatistics;
+    }
+
+    /**
+     * gets SearchKeywords
+     *
+     * @return mixed
+     */
+    public function getSearchKeywords()
+    {
+        return $this->searchKeywords;
+    }
+
+    /**
+     * gets Slug
+     *
+     * @return mixed
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * gets State
+     *
+     * @return mixed
+     */
+    public function getState()
     {
         return $this->state;
     }
 
     /**
-     * Returns the ReviewRatingStatistics for the type.
-     * @return string
+     * gets TaxCategory
+     *
+     * @return mixed
      */
-    public function getReviewRatingStatistics(): string
+    public function getTaxCategory()
     {
-        return $this->reviewRatingStatistics;
-    }
-
-
-    /**
-     * Sets the for the type.
-     * @param string $id
-     * @return ProductProjection
-     */
-    public function setiId(string $id): ProductProjection
-    {
-        $this->id = $id;
-
-        return $this;
+        return $this->taxCategory;
     }
 
     /**
-     * Sets the Key for the type.
-     * @param string $key
-     * @return ProductProjection
+     * gets Variants
+     *
+     * @return array
      */
-    public function setKey(string $key): ProductProjection
+    public function getVariants(): array
     {
-        $this->key = $key;
-
-        return $this;
+        return $this->variants;
     }
 
     /**
-     * Sets the Version for the type.
-     * @param string $version
-     * @return ProductProjection
+     * gets Version
+     *
+     * @return int
      */
-    public function setVersion(string $version): ProductProjection
+    public function getVersion(): int
     {
-        $this->version = $version;
-
-        return $this;
+        return $this->version;
     }
 
     /**
-     * Sets the CreatedAt for the type.
-     * @param string $createdAt
-     * @return ProductProjection
+     * iss HasStagedChanges
+     *
+     * @return boolean
      */
-    public function setCreatedAt(string $createdAt): ProductProjection
+    public function isHasStagedChanges(): bool
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
+        return $this->hasStagedChanges;
     }
 
     /**
-     * Sets the LastModifiedAt for the type.
-     * @param string $lastModifiedAt
-     * @return ProductProjection
+     * iss Published
+     *
+     * @return boolean
      */
-    public function setLastModifiedAt(string $lastModifiedAt): ProductProjection
+    public function isPublished(): bool
     {
-        $this->lastModifiedAt = $lastModifiedAt;
-
-        return $this;
+        return $this->published;
     }
 
     /**
-     * Sets the ProductType for the type.
-     * @param string $productType
-     * @return ProductProjection
+     * Sets Categories
+     *
+     * @param array $categories
      */
-    public function setProductType(string $productType): ProductProjection
-    {
-        $this->productType = $productType;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Name for the type.
-     * @param string $name
-     * @return ProductProjection
-     */
-    public function setName(string $name): ProductProjection
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Description for the type.
-     * @param string $description
-     * @return ProductProjection
-     */
-    public function setDescription(string $description): ProductProjection
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Slug for the type.
-     * @param string $slug
-     * @return ProductProjection
-     */
-    public function setSlug(string $slug): ProductProjection
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Categories for the type.
-     * @param string $categories
-     * @return ProductProjection
-     */
-    public function setCategories(string $categories): ProductProjection
+    public function setCategories(array $categories)
     {
         $this->categories = $categories;
-
-        return $this;
     }
 
     /**
-     * Sets the CategoryOOrderHints for the type.
-     * @param string $categoryOrderHints
-     * @return ProductProjection
+     * Sets CategoryOrderHints
+     *
+     * @param mixed $categoryOrderHints
      */
-    public function setCategoryOrderHints(string $categoryOrderHints): ProductProjection
+    public function setCategoryOrderHints($categoryOrderHints)
     {
         $this->categoryOrderHints = $categoryOrderHints;
-
-        return $this;
     }
 
     /**
-     * Sets the MetaTitle for the type.
-     * @param string $metaTitle
-     * @return ProductProjection
+     * Sets CreatedAt
+     *
+     * @param \DateTime $createdAt
      */
-    public function setMetaTitle(string $metaTitle): ProductProjection
+    public function setCreatedAt(\DateTime $createdAt)
     {
-        $this->metaTitle = $metaTitle;
-
-        return $this;
+        $this->createdAt = $createdAt;
     }
 
     /**
-     * Sets the for the type.
-     * @param string $metaDescription
-     * @return ProductProjection
+     * Sets Description
+     *
+     * @param mixed $description
      */
-    public function setMetaDescription(string $metaDescription): ProductProjection
+    public function setDescription($description)
     {
-        $this->metaDescription = $metaDescription;
-
-        return $this;
+        $this->description = $description;
     }
 
     /**
-     * Sets the MetaKeywords for the type.
-     * @param string $metaKeywords
-     * @return ProductProjection
+     * Sets HasStagedChanges
+     *
+     * @param boolean $hasStagedChanges
      */
-    public function setMetaKeywords(string $metaKeywords): ProductProjection
-    {
-        $this->metaKeywords = $metaKeywords;
-
-        return $this;
-    }
-
-    /**
-     * Sets the SearchKeywords for the type.
-     * @param string $searchKeywords
-     * @return ProductProjection
-     */
-    public function setSearchKeywords(string $searchKeywords): ProductProjection
-    {
-        $this->searchKeywords = $searchKeywords;
-
-        return $this;
-    }
-
-    /**
-     * Sets the HasStagedChanges for the type.
-     * @param string $hasStagedChanges
-     * @return ProductProjection
-     */
-    public function setHasStagedChanges(string $hasStagedChanges): ProductProjection
+    public function setHasStagedChanges(bool $hasStagedChanges)
     {
         $this->hasStagedChanges = $hasStagedChanges;
-
-        return $this;
     }
 
     /**
-     * Sets the Published for the type.
-     * @param string $published
-     * @return ProductProjection
+     * Sets Id
+     *
+     * @param string $id
      */
-    public function setPublished(string $published): ProductProjection
+    public function setId(string $id)
     {
-        $this->published = $published;
-
-        return $this;
+        $this->id = $id;
     }
 
     /**
-     * Sets the MasterVariant for the type.
-     * @param string $masterVariant
-     * @return ProductProjection
+     * Sets Key
+     *
+     * @param string $key
      */
-    public function setMasterVariant(string $masterVariant): ProductProjection
+    public function setKey(string $key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * Sets LastModifiedAt
+     *
+     * @param \DateTime $lastModifiedAt
+     */
+    public function setLastModifiedAt(\DateTime $lastModifiedAt)
+    {
+        $this->lastModifiedAt = $lastModifiedAt;
+    }
+
+    /**
+     * Sets MasterVariant
+     *
+     * @param mixed $masterVariant
+     */
+    public function setMasterVariant($masterVariant)
     {
         $this->masterVariant = $masterVariant;
-
-        return $this;
     }
 
     /**
-     * Sets the Variants for the type.
-     * @param string $variants
-     * @return ProductProjection
+     * Sets MetaDescription
+     *
+     * @param mixed $metaDescription
      */
-    public function setVariants(string $variants): ProductProjection
+    public function setMetaDescription($metaDescription)
     {
-        $this->variants = $variants;
-
-        return $this;
+        $this->metaDescription = $metaDescription;
     }
 
     /**
-     * Sets the TaxCategory for the type.
-     * @param string $taxCategory
-     * @return ProductProjection
+     * Sets MetaKeywords
+     *
+     * @param mixed $metaKeywords
      */
-    public function setTaxCategory(string $taxCategory): ProductProjection
+    public function setMetaKeywords($metaKeywords)
     {
-        $this->taxCategory = $taxCategory;
-
-        return $this;
+        $this->metaKeywords = $metaKeywords;
     }
 
     /**
-     * Sets the State for the type.
-     * @param string $state
-     * @return ProductProjection
+     * Sets MetaTitle
+     *
+     * @param mixed $metaTitle
      */
-    public function setState(string $state): ProductProjection
+    public function setMetaTitle($metaTitle)
     {
-        $this->state = $state;
-
-        return $this;
+        $this->metaTitle = $metaTitle;
     }
 
     /**
-     * Sets the ReviewRatingStatistics for the type.
-     * @param string $reviewRatingStatistics
-     * @return ProductProjection
+     * Sets Name
+     *
+     * @param mixed $name
      */
-    public function setReviewRatingStatistics(string $reviewRatingStatistics): ProductProjection
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Sets ProductType
+     *
+     * @param mixed $productType
+     */
+    public function setProductType($productType)
+    {
+        $this->productType = $productType;
+    }
+
+    /**
+     * Sets Published
+     *
+     * @param boolean $published
+     */
+    public function setPublished(bool $published)
+    {
+        $this->published = $published;
+    }
+
+    /**
+     * Sets ReviewRatingStatistics
+     *
+     * @param mixed $reviewRatingStatistics
+     */
+    public function setReviewRatingStatistics($reviewRatingStatistics)
     {
         $this->reviewRatingStatistics = $reviewRatingStatistics;
-
-        return $this;
     }
 
+    /**
+     * Sets SearchKeywords
+     *
+     * @param mixed $searchKeywords
+     */
+    public function setSearchKeywords($searchKeywords)
+    {
+        $this->searchKeywords = $searchKeywords;
+    }
+
+    /**
+     * Sets Slug
+     *
+     * @param mixed $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    }
+
+    /**
+     * Sets State
+     *
+     * @param mixed $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * Sets TaxCategory
+     *
+     * @param mixed $taxCategory
+     */
+    public function setTaxCategory($taxCategory)
+    {
+        $this->taxCategory = $taxCategory;
+    }
+
+    /**
+     * Sets Variants
+     *
+     * @param array $variants
+     */
+    public function setVariants(array $variants)
+    {
+        $this->variants = $variants;
+    }
+
+    /**
+     * Sets Version
+     *
+     * @param int $version
+     */
+    public function setVersion(int $version)
+    {
+        $this->version = $version;
+    }
 }

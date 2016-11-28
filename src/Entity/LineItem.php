@@ -4,12 +4,36 @@ namespace BestIt\CommercetoolsODM\Entity;
 
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
-/**         TODO @var!!
+/**
  * Class ProductType
  * @package BestIt\CommercetoolsODM\Entity
  */
-class ProductType
+class LineItem
 {
+    /**
+     * The Custom for the tape
+     * @Commercetools\Field(type="") TODO CustomFields
+     * @Commercetools\Custom
+     * @var
+     */
+    private $custom;
+
+    /**
+     * The DiscountPricePerQuantity for the type.
+     * @Commercetools\Field(type="array")
+     * @Commercetools\DiscountPricePerQuantity
+     * @var array
+     */
+    private $discountedPricePerQuantity = [];
+
+    /**
+     * The distribution channel is used to select a ProductPrice. The channel has the role ProductDistribution.
+     * @Commercetools\Field(type="") TODO Reference
+     * @Commercetools\distributeChannel
+     * @var
+     */
+    private $distributionChannel;
+
     /**
      * The unique ID of this LineItem.
      * @Commercetools\Field(type="string")
@@ -17,114 +41,171 @@ class ProductType
      * @var string
      */
     private $id = '';
+
     /**
-     * The ProduczId for the type.
+     * The product name.
+     * @Commercetools\Field(type="") TODO LocalizedString
+     * @Commercetools\Name
+     * @var
+     */
+    private $name;
+
+    /**
+     * The Price for the type.
+     * @Commercetools\Field(type="") TODO Price
+     * @Commercetools\Price
+     * @var
+     */
+    private $price;
+
+    /**
+     * The PriceMode for the type.
+     * @Commercetools\Field(type="") TODO LineItemPriceMode
+     * @Commercetools\PriceMode
+     * @var
+     */
+    private $priceMode;
+
+    /**
+     * The ProductId for the type.
      * @Commercetools\Field(type="string")
      * @Commercetools\ProductId
      * @var string
      */
     private $productId = '';
-    /**
-     * The product name.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Name
-     * @var string
-     */
-    private $name = '';
+
     /**
      * The slug of a product. Added to all line items of carts and orders automatically.
-     * @Commercetools\Field(type="string")
+     * @Commercetools\Field(type="") TODO LocalizedString
      * @Commercetools\ProductSlug
-     * @var string
-     */
-    private $productSlug = '';
-    /**
-     * The Variant for the type.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\Variant
      * @var
      */
-    private $variant = '';
-    /**
-     * The Price for the type.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\Price
-     * @var
-     */
-    private $price = '';
-    /**
-     * Set once the taxRate is set.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\TaxedPrice
-     * @var
-     */
-    private $taxedPrice = '';
-    /**
-     * The total price of this line item. If the line item is discounted, then the totalPrice is the DiscountedLineItemPriceForQuantity multiplied by quantity. Otherwise the total price is the product price multiplied by the quantity. totalPrice may or may not include the taxes: it depends on the taxRate.includedInPrice property.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\TotalPrice
-     * @var
-     */
-    private $totalPrice = '';
+    private $productSlug;
+
     /**
      * The Quantity for the type.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\TotalPrice
-     * @var
+     * @Commercetools\Field(type="int")
+     * @Commercetools\Quantity
+     * @var int
      */
-    private $quantity = '';
+    private $quantity = 0;
+
     /**
      * The State for the type.
      * @Commercetools\Field(type="array")
      * @Commercetools\State
      * @var array
      */
-    private $state = '';
+    private $state = [];
+
     /**
-     * Will be set automatically in the Platform TaxMode once the shipping address is set is set. For the External tax mode the tax rate has to be set explicitly with the ExternalTaxRateDraft.
-     * @Commercetools\Field(type="")
-     * @Commercetools\TaxRate
-     * @var
-     */
-    private $taxRate = '';
-    /**
-     * The supply channel identifies the inventory entries that should be reserved. The channel has the role InventorySupply.
-     * @Commercetools\Field(type="") TODO
+     * The supply channel identifies the inventory entries that should be reserved.
+     * The channel has the role InventorySupply.
+     * @Commercetools\Field(type="") TODO Refenrence
      * @Commercetools\SupplyChannel
      * @var
      */
-    private $supplyChannel = '';
-    /**
-     * The distribution channel is used to select a ProductPrice. The channel has the role ProductDistribution.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\distributeChannel
-     * @var
-     */
-    private $distributionChannel = '';
-    /**
-     * The DiscountPricePerQuantity for the type.
-     * @Commercetools\Field(type="array")
-     * @Commercetools\DiscountPricePerQuantity
-     * @var array
-     */
-    private $discountedPricePerQuantity= '';
-    /**
-     * The PriceMode for the type.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\PriceMode
-     * @var
-     */
-    private $priceMode = '';
-    /**
-     * The Custom for the tape
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\Custom
-     * @var
-     */
-    private $custom = '';
+    private $supplyChannel;
 
     /**
-     * Returns the Id for the type.
+     * Will be set automatically in the Platform TaxMode once the shipping address is set is set.
+     * For the External tax mode the tax rate has to be set explicitly with the ExternalTaxRateDraft.
+     * @Commercetools\Field(type="") TODO TaxRate
+     * @Commercetools\TaxRate
+     * @var
+     */
+    private $taxRate;
+
+    /**
+     * Set once the taxRate is set.
+     * @Commercetools\Field(type="") TODO TaxedItemPrice
+     * @Commercetools\TaxedPrice
+     * @var
+     */
+    private $taxedPrice;
+
+    /**
+     * The total price of this line item. If the line item is discounted,
+     * then the totalPrice is the DiscountedLineItemPriceForQuantity multiplied by quantity.
+     * Otherwise the total price is the product price multiplied by the quantity.
+     * totalPrice may or may not include the taxes: it depends on the taxRate.includedInPrice property.
+     * @Commercetools\Field(type="") TODO Money
+     * @Commercetools\TotalPrice
+     * @var
+     */
+    private $totalPrice;
+
+    /**
+     * The Variant for the type.
+     * @Commercetools\Field(type="") TODO ProductVariant
+     * @Commercetools\Variant
+     * @var
+     */
+    private $variant = '';
+
+    /**
+     * gets Custom
+     *
+     * @return mixed
+     */
+    public function getCustom()
+    {
+        return $this->custom;
+    }
+
+    /**
+     * Sets Custom
+     *
+     * @param mixed $custom
+     */
+    public function setCustom($custom)
+    {
+        $this->custom = $custom;
+    }
+
+    /**
+     * gets DiscountedPricePerQuantity
+     *
+     * @return array
+     */
+    public function getDiscountedPricePerQuantity(): array
+    {
+        return $this->discountedPricePerQuantity;
+    }
+
+    /**
+     * Sets DiscountedPricePerQuantity
+     *
+     * @param array $discountedPricePerQuantity
+     */
+    public function setDiscountedPricePerQuantity(array $discountedPricePerQuantity)
+    {
+        $this->discountedPricePerQuantity = $discountedPricePerQuantity;
+    }
+
+    /**
+     * gets DistributionChannel
+     *
+     * @return mixed
+     */
+    public function getDistributionChannel()
+    {
+        return $this->distributionChannel;
+    }
+
+    /**
+     * Sets DistributionChannel
+     *
+     * @param mixed $distributionChannel
+     */
+    public function setDistributionChannel($distributionChannel)
+    {
+        $this->distributionChannel = $distributionChannel;
+    }
+
+    /**
+     * gets Id
+     *
      * @return string
      */
     public function getId(): string
@@ -133,7 +214,8 @@ class ProductType
     }
 
     /**
-     * Sets the Id for the type.
+     * Sets Id
+     *
      * @param string $id
      */
     public function setId(string $id)
@@ -142,7 +224,68 @@ class ProductType
     }
 
     /**
-     * Returns the ProductId for the type.
+     * gets Name
+     *
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Sets Name
+     *
+     * @param mixed $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * gets Price
+     *
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * Sets Price
+     *
+     * @param mixed $price
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+    }
+
+    /**
+     * gets PriceMode
+     *
+     * @return mixed
+     */
+    public function getPriceMode()
+    {
+        return $this->priceMode;
+    }
+
+    /**
+     * Sets PriceMode
+     *
+     * @param mixed $priceMode
+     */
+    public function setPriceMode($priceMode)
+    {
+        $this->priceMode = $priceMode;
+    }
+
+    /**
+     * gets ProductId
+     *
      * @return string
      */
     public function getProductId(): string
@@ -151,7 +294,8 @@ class ProductType
     }
 
     /**
-     * Sets the ProductId for the type.
+     * Sets ProductId
+     *
      * @param string $productId
      */
     public function setProductId(string $productId)
@@ -160,256 +304,162 @@ class ProductType
     }
 
     /**
-     * Returns the Name for the type.
-     * @return string
+     * gets ProductSlug
+     *
+     * @return mixed
      */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Sets the Name for the type.
-     * @param string $name
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Returns the ProductSlug for the type.
-     * @return string
-     */
-    public function getProductSlug(): string
+    public function getProductSlug()
     {
         return $this->productSlug;
     }
 
     /**
-     * Sets the ProductSlug for the type.
-     * @param string $productSlug
+     * Sets ProductSlug
+     *
+     * @param mixed $productSlug
      */
-    public function setProductSlug(string $productSlug)
+    public function setProductSlug($productSlug)
     {
         $this->productSlug = $productSlug;
     }
 
     /**
-     * Returns the Varian for the type.
-     * @return string
+     * gets Quantity
+     *
+     * @return int
      */
-    public function getVariant(): string
-    {
-        return $this->variant;
-    }
-
-    /**
-     * Sets the Variant for the type.
-     * @param string $variant
-     */
-    public function setVariant(string $variant)
-    {
-        $this->variant = $variant;
-    }
-
-    /**
-     * Returns the Price for the type.
-     * @return string
-     */
-    public function getPrice(): string
-    {
-        return $this->price;
-    }
-
-    /**
-     * Sets the Price for the type.
-     * @param string $price
-     */
-    public function setPrice(string $price)
-    {
-        $this->price = $price;
-    }
-
-    /**
-     * Returns the TaxedPrice for the type.
-     * @return string
-     */
-    public function getTaxedPrice(): string
-    {
-        return $this->taxedPrice;
-    }
-
-    /**
-     * Sets the TaxedPrice for the type.
-     * @param string $taxedPrice
-     */
-    public function setTaxedPrice(string $taxedPrice)
-    {
-        $this->taxedPrice = $taxedPrice;
-    }
-
-    /**
-     * Returns the TotalPrice for the type.
-     * @return string
-     */
-    public function getTotalPrice(): string
-    {
-        return $this->totalPrice;
-    }
-
-    /**
-     * Sets the TotalPrice for the type.
-     * @param string $totalPrice
-     */
-    public function setTotalPrice(string $totalPrice)
-    {
-        $this->totalPrice = $totalPrice;
-    }
-
-    /**
-     * Returns the Quantity for the type.
-     * @return string
-     */
-    public function getQuantity(): string
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
 
     /**
-     * Sets the Quantity for the type.
-     * @param string $quantity
+     * Sets Quantity
+     *
+     * @param int $quantity
      */
-    public function setQuantity(string $quantity)
+    public function setQuantity(int $quantity)
     {
         $this->quantity = $quantity;
     }
 
     /**
-     * Returns the State for the type.
-     * @return string
+     * gets State
+     *
+     * @return array
      */
-    public function getState(): string
+    public function getState(): array
     {
         return $this->state;
     }
 
     /**
-     * Sets the State for the type.
-     * @param string $state
+     * Sets State
+     *
+     * @param array $state
      */
-    public function setState(string $state)
+    public function setState(array $state)
     {
         $this->state = $state;
     }
 
     /**
-     * Returns the TaxRate for the type.
-     * @return string
+     * gets SupplyChannel
+     *
+     * @return mixed
      */
-    public function getTaxRate(): string
-    {
-        return $this->taxRate;
-    }
-
-    /**
-     * Sets the TaxRate for the type.
-     * @param string $taxRate
-     */
-    public function setTaxRate(string $taxRate)
-    {
-        $this->taxRate = $taxRate;
-    }
-
-    /**
-     * Returns the SupplyChannel for the type.
-     * @return string
-     */
-    public function getSupplyChannel(): string
+    public function getSupplyChannel()
     {
         return $this->supplyChannel;
     }
 
     /**
-     * Sets the SupplyChannel for the type.
-     * @param string $supplyChannel
+     * Sets SupplyChannel
+     *
+     * @param mixed $supplyChannel
      */
-    public function setSupplyChannel(string $supplyChannel)
+    public function setSupplyChannel($supplyChannel)
     {
         $this->supplyChannel = $supplyChannel;
     }
 
     /**
-     * Returns the DistributeChannel for the type.
-     * @return string
-     */
-    public function getDistributionChannel(): string
-    {
-        return $this->distributionChannel;
-    }
-
-    /**
-     * Sets the distributeChannel for the type.
-     * @param string $distributionChannel
-     */
-    public function setDistributionChannel(string $distributionChannel)
-    {
-        $this->distributionChannel = $distributionChannel;
-    }
-
-    /**
-     * Returns the DiscountedPriceQuantity for the type.
-     * @return string
-     */
-    public function getDiscountedPricePerQuantity(): string
-    {
-        return $this->discountedPricePerQuantity;
-    }
-
-    /**
-     * Sets the DiscountedPricePerQuantity for the type.
-     * @param string $discountedPricePerQuantity
-     */
-    public function setDiscountedPricePerQuantity(string $discountedPricePerQuantity)
-    {
-        $this->discountedPricePerQuantity = $discountedPricePerQuantity;
-    }
-
-    /**
+     * gets TaxRate
      *
-     * Returns the PriceMode for the type.
-     * @return string
+     * @return mixed
      */
-    public function getPriceMode(): string
+    public function getTaxRate()
     {
-        return $this->priceMode;
+        return $this->taxRate;
     }
 
     /**
-     * Sets the PriceMode for the type.
-     * @param string $priceMode
+     * Sets TaxRate
+     *
+     * @param mixed $taxRate
      */
-    public function setPriceMode(string $priceMode)
+    public function setTaxRate($taxRate)
     {
-        $this->priceMode = $priceMode;
+        $this->taxRate = $taxRate;
     }
 
     /**
-     * Returns the Custom for the type.
-     * @return string
+     * gets TaxedPrice
+     *
+     * @return mixed
      */
-    public function getCustom(): string
+    public function getTaxedPrice()
     {
-        return $this->custom;
+        return $this->taxedPrice;
     }
 
     /**
-     * Sets the Custom for the type.
-     * @param string $custom
+     * Sets TaxedPrice
+     *
+     * @param mixed $taxedPrice
      */
-    public function setCustom(string $custom)
+    public function setTaxedPrice($taxedPrice)
     {
-        $this->custom = $custom;
+        $this->taxedPrice = $taxedPrice;
     }
 
+    /**
+     * gets TotalPrice
+     *
+     * @return mixed
+     */
+    public function getTotalPrice()
+    {
+        return $this->totalPrice;
+    }
+
+    /**
+     * Sets TotalPrice
+     *
+     * @param mixed $totalPrice
+     */
+    public function setTotalPrice($totalPrice)
+    {
+        $this->totalPrice = $totalPrice;
+    }
+
+    /**
+     * gets Variant
+     *
+     * @return mixed
+     */
+    public function getVariant()
+    {
+        return $this->variant;
+    }
+
+    /**
+     * Sets Variant
+     *
+     * @param mixed $variant
+     */
+    public function setVariant($variant)
+    {
+        $this->variant = $variant;
+    }
 }

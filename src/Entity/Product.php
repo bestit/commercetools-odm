@@ -5,13 +5,14 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 class Product
 {
-    /** TODO @var!!
+    /**
      * The CreatedAt for the type.
      * @Commercetools\Field(type="datetime")
-     * @Commercetools\CreatedAT
-     * @var
+     * @Commercetools\CreatedAt
+     * @var \DateTime
      */
-    private $createdAt = '';
+    private $createdAt;
+
     /**
      * The unique ID of the product.
      * @Commercetools\Field(type="string")
@@ -19,83 +20,81 @@ class Product
      * @var string
      */
     private $id = '';
+
     /**
-     *User-specific unique identifier for the product. Product keys are different from product variant keys.
+     * User-specific unique identifier for the product. Product keys are different from product variant keys.
      * @Commercetools\Field(type="string")
      * @Commercetools\Key
      * @var string
      */
     private $key = '';
+
     /**
      * The LastModifiedAt for the type.
      * @Commercetools\Field(type="datetime")
      * @Commercetools\LastModifiedAt
-     * @var
+     * @var \DateTime
      */
-    private $lastModifiedAt = '';
+    private $lastModifiedAt;
+
     /**
      * The product data in the master catalog.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO ProductCatalogData
      * @Commercetools\MasterData
      * @var
      */
-    private $masterData = '';
+    private $masterData;
+
     /**
-     * TODO
-     * @Commercetools\Field(type="")
+     * @Commercetools\Field(type="") TODO Refenrence
      * @Commercetools\ProductType
      * @var
      */
-    private $productType = '';
+    private $productType;
+
     /**
      * Statistics about the review ratings taken into account for this product.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO ReviewRatingStatistics
      * @Commercetools\ReviewRatingStatistics
      * @var
      */
-    private $reviewRatingStatistics = '';
+    private $reviewRatingStatistics;
+
     /**
-     * TODO
-     * @Commercetools\Field(type="")
+     * @Commercetools\Field(type="") TODO Reference
      * @Commercetools\State
      * @var
      */
-    private $state = '';
+    private $state;
+
     /**
-     * TODO
-     * @Commercetools\Field(type="")
+     * @Commercetools\Field(type="") TODO Reference
      * @Commercetools\TaxCategory
      * @var
      */
-    private $taxCategory = '';
+    private $taxCategory;
+
     /**
      * The current version of the product.
      * @Commercetools\Field(type="int")
      * @Commercetools\Version
      * @var
      */
-    private $version = '';
+    private $version = 0;
 
     /**
-     * Returns the CreatedAt for the type.
-     * @return string
+     * gets CreatedAt
+     *
+     * @return \DateTime
      */
-    public function getCreatedAt(): string
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
     /**
-     * Sets the CreatedAt for the type.
-     * @param string $createdAt
-     */
-    public function setCreatedAt(string $createdAt)
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    /**
-     * Returns the Id for the type.
+     * gets Id
+     *
      * @return string
      */
     public function getId(): string
@@ -104,16 +103,8 @@ class Product
     }
 
     /**
-     * Sets the Id for the type.
-     * @param string $id
-     */
-    public function setId(string $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * Returns the Key for the type.
+     * gets Key
+     *
      * @return string
      */
     public function getKey(): string
@@ -122,7 +113,98 @@ class Product
     }
 
     /**
-     * Sets the Key for the type.
+     * gets LastModifiedAt
+     *
+     * @return \DateTime
+     */
+    public function getLastModifiedAt(): \DateTime
+    {
+        return $this->lastModifiedAt;
+    }
+
+    /**
+     * gets MasterData
+     *
+     * @return mixed
+     */
+    public function getMasterData()
+    {
+        return $this->masterData;
+    }
+
+    /**
+     * gets ProductType
+     *
+     * @return mixed
+     */
+    public function getProductType()
+    {
+        return $this->productType;
+    }
+
+    /**
+     * gets ReviewRatingStatistics
+     *
+     * @return mixed
+     */
+    public function getReviewRatingStatistics()
+    {
+        return $this->reviewRatingStatistics;
+    }
+
+    /**
+     * gets State
+     *
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * gets TaxCategory
+     *
+     * @return mixed
+     */
+    public function getTaxCategory()
+    {
+        return $this->taxCategory;
+    }
+
+    /**
+     * gets Version
+     *
+     * @return mixed
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Sets CreatedAt
+     *
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt(\DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * Sets Id
+     *
+     * @param string $id
+     */
+    public function setId(string $id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Sets Key
+     *
      * @param string $key
      */
     public function setKey(string $key)
@@ -131,128 +213,72 @@ class Product
     }
 
     /**
-     * Returns the LastModifiedAt for the type.
-     * @return string
+     * Sets LastModifiedAt
+     *
+     * @param \DateTime $lastModifiedAt
      */
-    public function getLastModifiedAt(): string
-    {
-        return $this->lastModifiedAt;
-    }
-
-    /**
-     *  Sets the LastModifiedAt for the type.
-     * @param string $lastModifiedAt
-     */
-    public function setLastModifiedAt(string $lastModifiedAt)
+    public function setLastModifiedAt(\DateTime $lastModifiedAt)
     {
         $this->lastModifiedAt = $lastModifiedAt;
     }
 
     /**
-     * Returns the MasterData for the type.
-     * @return string
+     * Sets MasterData
+     *
+     * @param mixed $masterData
      */
-    public function getMasterData(): string
-    {
-        return $this->masterData;
-    }
-
-    /**
-     * Sets the MasterData for the type.
-     * @param string $masterData
-     */
-    public function setMasterData(string $masterData)
+    public function setMasterData($masterData)
     {
         $this->masterData = $masterData;
     }
 
     /**
-     * Returns the ProductType for the type.
-     * @return string
+     * Sets ProductType
+     *
+     * @param mixed $productType
      */
-    public function getProductType(): string
-    {
-        return $this->productType;
-    }
-
-    /**
-     * Sets the ProductType  for the type.
-     * @param string $productType
-     */
-    public function setProductType(string $productType)
+    public function setProductType($productType)
     {
         $this->productType = $productType;
     }
 
     /**
-     * Returns the ReviewRatingStatistics for the type.
-     * @return string
+     * Sets ReviewRatingStatistics
+     *
+     * @param mixed $reviewRatingStatistics
      */
-    public function getReviewRatingStatistics(): string
-    {
-        return $this->reviewRatingStatistics;
-    }
-
-    /**
-     * Sets the ReviewRatingStatistics  for the type.
-     * @param string $reviewRatingStatistics
-     */
-    public function setReviewRatingStatistics(string $reviewRatingStatistics)
+    public function setReviewRatingStatistics($reviewRatingStatistics)
     {
         $this->reviewRatingStatistics = $reviewRatingStatistics;
     }
 
     /**
-     * Returns the State for the type.
-     * @return string
+     * Sets State
+     *
+     * @param mixed $state
      */
-    public function getState(): string
-    {
-        return $this->state;
-    }
-
-    /**
-     * Sets the State for the type.
-     * @param string $state
-     */
-    public function setState(string $state)
+    public function setState($state)
     {
         $this->state = $state;
     }
 
     /**
-     * Returns the TaxCategory for the type.
-     * @return string
+     * Sets TaxCategory
+     *
+     * @param mixed $taxCategory
      */
-    public function getTaxCategory(): string
-    {
-        return $this->taxCategory;
-    }
-
-    /**
-     * Sets the TaxCategory for the type.
-     * @param string $taxCategory
-     */
-    public function setTaxCategory(string $taxCategory)
+    public function setTaxCategory($taxCategory)
     {
         $this->taxCategory = $taxCategory;
     }
 
     /**
-     * Returns the Version for the type.
-     * @return string
+     * Sets Version
+     *
+     * @param mixed $version
      */
-    public function getVersion(): string
-    {
-        return $this->version;
-    }
-
-    /**Sets the Version for the type.
-     * @param string $version
-     */
-    public function setVersion(string $version)
+    public function setVersion($version)
     {
         $this->version = $version;
     }
-
 }

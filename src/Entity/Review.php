@@ -4,60 +4,26 @@ namespace BestIt\CommercetoolsODM\Entity;
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 /**
- * Class Review
- * @package BestIt\CommercetoolsODM\Entity
- */class Review
-
+ * Entity for Product Types.
+ * @author lange <lange@bestit-online.de>
+ * @Commercetools\DraftClass("Commercetools\Core\Model\Review\ReviewDraft")
+ * @Commercetools\Entity(requestMap=@Commercetools\RequestMap(
+ *     defaultNamespace="Commercetools\Core\Request\Reviews",
+ *     findById="ReviewByIdGetRequest",
+ *     findByKey="ReviewByKeyGetRequest",
+ *     query="ReviewQueryRequest",
+ *     create="ReviewCreateRequest",
+ *     update="ReviewUpdateRequest",
+ *     deleteById="ReviewDeleteRequest",
+ *     deleteByKey="ReviewDeleteByKeyRequest"
+ * ))
+ * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\ReviewRepository")
+ * @package BestIt\CommercetoolsODM
+ * @subpackage Entity
+ * @version $id$
+ */
+class Review
 {
-    /**     TODO @var!!
-     * The unique ID of the review.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Id
-     * @var string
-     */
-    private $id = '';
-    /**
-     * The current version of the review.
-     * @Commercetools\Field(type="int")
-     * @Commercetools\Version
-     * @var int
-     */
-    private $version = '';
-    /**
-     * The CreatedAt fore the type.
-     * @Commercetools\Field(type="datetime")
-     * @Commercetools\CreatedAt
-     * @var datetime
-     */
-    private $createdAt = '';
-    /**
-     * The LastModifiedAt for the type.
-     * @Commercetools\Field(type="datetime")
-     * @Commercetools\LastModifiedAt
-     * @var datetime
-     */
-    private $lastModifiedAt = '';
-    /**
-     * The Key for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Key
-     * @var string
-     */
-    private $key = '';
-    /**
-     * User-specific unique identifier for the review.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\uniquenessValue
-     * @var
-     */
-    private $uniquenessValue = '';
-    /**
-     * The Locale for the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Locale
-     * @var string
-     */
-    private $locale = '';
     /**
      * The AuthorName for the type.
      * @Commercetools\Field(type="string")
@@ -65,13 +31,95 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
      * @var string
      */
     private $authorName = '';
+
     /**
-     * The Title for the type.
+     * The CreatedAt fore the type.
+     * @Commercetools\Field(type="datetime")
+     * @Commercetools\CreatedAt
+     * @var \DateTime
+     */
+    private $createdAt;
+
+    /**
+     * The Custom for the type.
+     * @Commercetools\Field(type="") TODO CustomFields
+     * @Commercetools\Custom
+     * @var
+     */
+    private $custom;
+
+    /**
+     * The customer who created the review.
+     * @Commercetools\Field(type="") TODO Reference
+     * @Commercetools\Customer
+     * @var
+     */
+    private $customer;
+
+    /**
+     * The unique ID of the review.
      * @Commercetools\Field(type="string")
-     * @Commercetools\Title
+     * @Commercetools\Id
      * @var string
      */
-    private $title = '';
+    private $id = '';
+
+    /**
+     * Indicates if this review is taken into account in the ratings statistics of the target.
+     * @Commercetools\Field(type="boolean")
+     * @Commercetools\IncludeInStatistics
+     * @var boolean
+     */
+    private $includedInStatistics = false;
+
+    /**
+     * The Key for the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Key
+     * @var string
+     */
+    private $key = '';
+
+    /**
+     * The LastModifiedAt for the type.
+     * @Commercetools\Field(type="datetime")
+     * @Commercetools\LastModifiedAt
+     * @var \DateTime
+     */
+    private $lastModifiedAt;
+
+    /**
+     * The Locale for the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Locale
+     * @var string
+     */
+    private $locale = '';
+
+    /**
+     * Number between -100 and 100 included.
+     * @Commercetools\Field(type="int")
+     * @Commercetools\Rating
+     * @var int
+     */
+    private $rating = 0;
+
+    /**
+     * The State for the type.
+     * @Commercetools\Field(type="") TODO Reference
+     * @Commercetools\State
+     * @var
+     */
+    private $state = '';
+
+    /**
+     * Identifies the target of the review. Can be a Product or a Channel.
+     * @Commercetools\Field(type="") TODO Reference
+     * @Commercetools\Target
+     * @var
+     */
+    private $target;
+
     /**
      * The Text for the type
      * @Commercetools\Field(type="string")
@@ -79,115 +127,34 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
      * @var string
      */
     private $text = '';
+
     /**
-     * Identifies the target of the review. Can be a Product or a Channel.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\Target
+     * The Title for the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Title
+     * @var string
+     */
+    private $title = '';
+
+    /**
+     * User-specific unique identifier for the review.
+     * @Commercetools\Field(type="")
+     * @Commercetools\UniquenessValue
      * @var
      */
-    private $target = '';
+    private $uniquenessValue = '';
+
     /**
-     * Number between -100 and 100 included.
+     * The current version of the review.
      * @Commercetools\Field(type="int")
-     * @Commercetools\Rating
+     * @Commercetools\Version
      * @var int
      */
-    private $rating = '';
+    private $version = 0;
+
     /**
-     * The State for the type.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\State
-     * @var
-     */
-    private $state = '';
-    /**
-     * Indicates if this review is taken into account in the ratings statistics of the target.
-     * @Commercetools\Field(type="boolean")
-     * @Commercetools\IncludeInStatistics
-     * @var boolean
-     */
-    private $includedInStatistics = '';
-    /**
-     * The customer who created the review.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\Customer
-     * @var
-     */
-    private $customer = '';
-    /**
+     * gets AuthorName
      *
-     * The Custom for the type.
-     * @Commercetools\Field(type="") TODO
-     * @Commercetools\Custom
-     * @var
-     */
-    private $custom = '';
-
-
-    /**
-     * Returns the Id for the type.
-     * @return string
-     */
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the Version for the type.
-     * @return string
-     */
-    public function getVersion(): string
-    {
-        return $this->version;
-    }
-
-    /**
-     * Returns the CreatedAt for the type.
-     * @return string
-     */
-    public function getCreatedAt(): string
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Returns the LastModiefiedAt for the type.
-     * @return string
-     */
-    public function getLastModifiedAt(): string
-    {
-        return $this->lastModifiedAt;
-    }
-
-    /**
-     * Returns the Key for the type.
-     * @return string
-     */
-    public function getKey(): string
-    {
-        return $this->key;
-    }
-
-    /**
-     * Returns the UniqueenessValue for the type.
-     * @return string
-     */
-    public function getUniquenessValue(): string
-    {
-        return $this->uniquenessValue;
-    }
-
-    /**
-     * Returns the Locale for the type.
-     * @return string
-     */
-    public function getLocale(): string
-    {
-        return $this->locale;
-    }
-
-    /** Returns the AuthorName for the type.
      * @return string
      */
     public function getAuthorName(): string
@@ -196,195 +163,312 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
     }
 
     /**
-     * Sets the Id for the type.
-     * @param string $id
-     * @return Review
+     * gets CreatedAt
+     *
+     * @return \DateTime
      */
-    public function setId(string $id): Review
+    public function getCreatedAt(): \DateTime
     {
-        $this->id = $id;
-
-        return $this;
+        return $this->createdAt;
     }
 
     /**
-     * Sets the Version for the type.
-     * @param string $version
-     * @return Review
+     * gets Custom
+     *
+     * @return mixed
      */
-    public function setVersion(string $version): Review
+    public function getCustom()
     {
-        $this->version = $version;
-
-        return $this;
+        return $this->custom;
     }
 
     /**
-     * Sets the CreatedAt for the type.
-     * @param string $createdAt
-     * @return Review
+     * gets Customer
+     *
+     * @return mixed
      */
-    public function setCreatedAt(string $createdAt): Review
+    public function getCustomer()
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
+        return $this->customer;
     }
 
     /**
-     * Sets the LastModifedAt for the type.
-     * @param string $lastModifiedAt
-     * @return Review
+     * gets Id
+     *
+     * @return string
      */
-    public function setLastModifiedAt(string $lastModifiedAt): Review
+    public function getId(): string
     {
-        $this->lastModifiedAt = $lastModifiedAt;
-
-        return $this;
+        return $this->id;
     }
 
     /**
-     * Sets the Key for the type.
-     * @param string $key
-     * @return Review
+     * gets Key
+     *
+     * @return string
      */
-    public function setKey(string $key): Review
+    public function getKey(): string
     {
-        $this->key = $key;
-
-        return $this;
+        return $this->key;
     }
 
     /**
-     * Sets the UniqueensValue for the type.
-     * @param string $uniquenessValue
-     * @return Review
+     * gets LastModifiedAt
+     *
+     * @return \DateTime
      */
-    public function setUniquenessValue(string $uniquenessValue): Review
+    public function getLastModifiedAt(): \DateTime
     {
-        $this->uniquenessValue = $uniquenessValue;
-
-        return $this;
+        return $this->lastModifiedAt;
     }
 
     /**
-     * Sets the Locale for the type.
-     * @param string $locale
-     * @return Review
+     * gets Locale
+     *
+     * @return string
      */
-    public function setLocale(string $locale): Review
+    public function getLocale(): string
     {
-        $this->locale = $locale;
-
-        return $this;
+        return $this->locale;
     }
 
+    /**
+     * gets Rating
+     *
+     * @return int
+     */
+    public function getRating(): int
+    {
+        return $this->rating;
+    }
 
     /**
-     * Sets the AuthorName for the type.
+     * gets State
+     *
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * gets Target
+     *
+     * @return mixed
+     */
+    public function getTarget()
+    {
+        return $this->target;
+    }
+
+    /**
+     * gets Text
+     *
+     * @return string
+     */
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
+    /**
+     * gets Title
+     *
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * gets UniquenessValue
+     *
+     * @return mixed
+     */
+    public function getUniquenessValue()
+    {
+        return $this->uniquenessValue;
+    }
+
+    /**
+     * gets Version
+     *
+     * @return int
+     */
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
+
+    /**
+     * iss IncludedInStatistics
+     *
+     * @return boolean
+     */
+    public function isIncludedInStatistics(): bool
+    {
+        return $this->includedInStatistics;
+    }
+
+    /**
+     * Sets AuthorName
+     *
      * @param string $authorName
-     * @return Review
      */
-    public function setAuthorName(string $authorName): Review
+    public function setAuthorName(string $authorName)
     {
         $this->authorName = $authorName;
-
-        return $this;
     }
 
     /**
-     * Sets the Title for the type.
-     * @param string $title
-     * @return Review
+     * Sets CreatedAt
+     *
+     * @param \DateTime $createdAt
      */
-    public function setTitle(string $title): Review
+    public function setCreatedAt(\DateTime $createdAt)
     {
-        $this->title = $title;
-
-        return $this;
+        $this->createdAt = $createdAt;
     }
 
     /**
-     * Sets the Text for the type.
-     * @param string $text
-     * @return Review
+     * Sets Custom
+     *
+     * @param mixed $custom
      */
-    public function setText(string $text): Review
-    {
-        $this->text = $text;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Target for the type.
-     * @param string $target
-     * @return Review
-     */
-    public function setTarget(string $target): Review
-    {
-        $this->target = $target;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Rating for the type.
-     * @param string $rating
-     * @return Review
-     */
-    public function setRating(string $rating): Review
-    {
-        $this->rating = $rating;
-
-        return $this;
-    }
-
-    /**
-     * Sets the State for the type.
-     * @param string $state
-     * @return Review
-     */
-    public function setState(string $state): Review
-    {
-        $this->state = $state;
-
-        return $this;
-    }
-
-    /**
-     * Sets the IncludeInStatistics for the type.
-     * @param string $includedInStatistics
-     * @return Review
-     */
-    public function setIncludedInStatistics(string $includedInStatistics): Review
-    {
-        $this->includedInStatistics = $includedInStatistics;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Customer for the type.
-     * @param string $customer
-     * @return Review
-     */
-    public function setCustomer(string $customer): Review
-    {
-        $this->customer = $customer;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Custom for the type.
-     * @param string $custom
-     * @return Review
-     */
-    public function setCustom(string $custom): Review
+    public function setCustom($custom)
     {
         $this->custom = $custom;
+    }
 
-        return $this;
+    /**
+     * Sets Customer
+     *
+     * @param mixed $customer
+     */
+    public function setCustomer($customer)
+    {
+        $this->customer = $customer;
+    }
+
+    /**
+     * Sets Id
+     *
+     * @param string $id
+     */
+    public function setId(string $id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Sets IncludedInStatistics
+     *
+     * @param boolean $includedInStatistics
+     */
+    public function setIncludedInStatistics(bool $includedInStatistics)
+    {
+        $this->includedInStatistics = $includedInStatistics;
+    }
+
+    /**
+     * Sets Key
+     *
+     * @param string $key
+     */
+    public function setKey(string $key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * Sets LastModifiedAt
+     *
+     * @param \DateTime $lastModifiedAt
+     */
+    public function setLastModifiedAt(\DateTime $lastModifiedAt)
+    {
+        $this->lastModifiedAt = $lastModifiedAt;
+    }
+
+    /**
+     * Sets Locale
+     *
+     * @param string $locale
+     */
+    public function setLocale(string $locale)
+    {
+        $this->locale = $locale;
+    }
+
+    /**
+     * Sets Rating
+     *
+     * @param int $rating
+     */
+    public function setRating(int $rating)
+    {
+        $this->rating = $rating;
+    }
+
+    /**
+     * Sets State
+     *
+     * @param mixed $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * Sets Target
+     *
+     * @param mixed $target
+     */
+    public function setTarget($target)
+    {
+        $this->target = $target;
+    }
+
+    /**
+     * Sets Text
+     *
+     * @param string $text
+     */
+    public function setText(string $text)
+    {
+        $this->text = $text;
+    }
+
+    /**
+     * Sets Title
+     *
+     * @param string $title
+     */
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * Sets UniquenessValue
+     *
+     * @param mixed $uniquenessValue
+     */
+    public function setUniquenessValue($uniquenessValue)
+    {
+        $this->uniquenessValue = $uniquenessValue;
+    }
+
+    /**
+     * Sets Version
+     *
+     * @param int $version
+     */
+    public function setVersion(int $version)
+    {
+        $this->version = $version;
     }
 }

@@ -8,37 +8,15 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
  * @package BestIt\CommercetoolsODM\Entity
  */
 class TaxRate
-
 {
-
-    /**     TODO @var!!
-     * The id is always set if the tax rate is part of a TaxCategory. The external tax rates in a Cart do not contain an id.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Id
-     * @var string
-     */
-    private $id = '';
-    /**
-     * The Name of the type.
-     * @Commercetools\Field(type="string")
-     * @Commercetools\Name
-     * @var string
-     */
-    private $name = '';
     /**
      * Number Percentage in the range of [0..1]. The sum of the amounts of all subRates, if there are any.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="int")
      * @Commercetools\Amount
-     * @var
+     * @var int
      */
-    private $amount = '';
-    /**
-     * The IncludePrice for the type
-     * @Commercetools\Field(type="boolean")
-     * @Commercetools\IncludePrice
-     * @var boolean
-     */
-    private $includedInPrice = '';
+    private $amount = 0;
+
     /**
      * A two-digit country code as per ↗ ISO 3166-1 alpha-2 .
      * @Commercetools\Field(type="string")
@@ -46,6 +24,32 @@ class TaxRate
      * @var string
      */
     private $country = '';
+
+    /**
+     * The id is always set if the tax rate is part of a TaxCategory.
+     * The external tax rates in a Cart do not contain an id.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Id
+     * @var string
+     */
+    private $id = '';
+
+    /**
+     * The IncludePrice for the type
+     * @Commercetools\Field(type="boolean")
+     * @Commercetools\IncludePrice
+     * @var boolean
+     */
+    private $includedInPrice = false;
+
+    /**
+     * The Name of the type.
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Name
+     * @var string
+     */
+    private $name = '';
+
     /**
      * The state in the country.
      * @Commercetools\Field(type="string")
@@ -53,53 +57,28 @@ class TaxRate
      * @var string
      */
     private $state = '';
+
     /**
      * For countries (e.g. the US) where the total tax is a combination of multiple taxes (e.g. state and local taxes).
      * @Commercetools\Field(type="array")
      * @Commercetools\SubRates
      * @var array
      */
-    private $subRates = '';
-
-
-    /**
-     * Returns the String for the type.
-     * @return string
-     */
-    public function getId(): string
-    {
-        return $this->id;
-    }
+    private $subRates = [];
 
     /**
-     * Returns the Name for the type.
-     * @return string
+     * gets Amount
+     *
+     * @return int
      */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the Amount for the type.
-     * @return string
-     */
-    public function getAmount(): string
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
     /**
-     * Returns the IncludePrice for the type.
-     * @return string
-     */
-    public function getIncludedInPrice(): string
-    {
-        return $this->includedInPrice;
-    }
-
-    /**
-     * Return the Country for the type.
+     * gets Country
+     *
      * @return string
      */
     public function getCountry(): string
@@ -108,7 +87,28 @@ class TaxRate
     }
 
     /**
-     * Returns the State for the type.
+     * gets Id
+     *
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * gets Name
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * gets State
+     *
      * @return string
      */
     public function getState(): string
@@ -117,98 +117,92 @@ class TaxRate
     }
 
     /**
-     * Returns the SubRates for the type.
-     * @return string
+     * gets SubRates
+     *
+     * @return array
      */
-    public function getSubRates(): string
+    public function getSubRates(): array
     {
         return $this->subRates;
     }
 
-
     /**
-     * Sets the String for the type.
-     * @param string $id
-     * @return TaxRate
+     * iss IncludedInPrice
+     *
+     * @return boolean
      */
-    public function setId(string $id): TaxRate
+    public function isIncludedInPrice(): bool
     {
-        $this->id = $id;
-
-        return $this;
+        return $this->includedInPrice;
     }
 
     /**
-     *  Sets the Name for the type.
-     * @param string $name
-     * @return TaxRate
+     * Sets Amount
+     *
+     * @param int $amount
      */
-    public function setName(string $name): TaxRate
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**Sets the Amount for the type.
-     * @param string $amount
-     * @return TaxRate
-     */
-    public function setAmount(string $amount): TaxRate
+    public function setAmount(int $amount)
     {
         $this->amount = $amount;
-
-        return $this;
     }
 
     /**
-     * Sets the IncludePrice for the type.
-     * @param string $includedInPrice
-     * @return TaxRate
-     */
-    public function setIncludedInPrice(string $includedInPrice): TaxRate
-    {
-        $this->includedInPrice = $includedInPrice;
-
-        return $this;
-    }
-
-    /**
-     * Sets the Country for the type.
+     * Sets Country
+     *
      * @param string $country
-     * @return TaxRate
      */
-    public function setCountry(string $country): TaxRate
+    public function setCountry(string $country)
     {
         $this->country = $country;
-
-        return $this;
     }
 
     /**
-     * Sets the State for the type.
-     * @param string $state
-     * @return TaxRate
+     * Sets Id
+     *
+     * @param string $id
      */
-    public function setState(string $state): TaxRate
+    public function setId(string $id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Sets IncludedInPrice
+     *
+     * @param boolean $includedInPrice
+     */
+    public function setIncludedInPrice(bool $includedInPrice)
+    {
+        $this->includedInPrice = $includedInPrice;
+    }
+
+    /**
+     * Sets Name
+     *
+     * @param string $name
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Sets State
+     *
+     * @param string $state
+     */
+    public function setState(string $state)
     {
         $this->state = $state;
-
-        return $this;
     }
 
     /**
-     * Sets the SubRates
-     * @param string $subRates
-     * @return TaxRate
+     * Sets SubRates
+     *
+     * @param array $subRates
      */
-    public function setSubRates(string $subRates): TaxRate
+    public function setSubRates(array $subRates)
     {
         $this->subRates = $subRates;
-
-        return $this;
     }
-
-
-
 }

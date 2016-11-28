@@ -5,108 +5,119 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 class ProductVariantAvailability
 {
-    /**        TODO @var!!
+    /**
      * The number of items of this product variant that are currently available in stock.
      * @Commercetools\Field(type="int")
      * @Commercetools\AvailableQuantity
-     * @var
+     * @var int
      */
-    private $availableQuantity = '';
+    private $availableQuantity = 0;
+
     /**
      * Map of ProductVariantAvailability per Channel id - Optional
-    For each Inventory Entries with a supply channel, an entry is added into channels:
-    the key is the Channel id
-    the value is an object containing the data isOnStock, restockableInDays and availableQuantity for the Inventory Entry with the supply channel for this variant.
-     * @Commercetools\Field(type="") TODO
+     * For each Inventory Entries with a supply channel, an entry is added into channels:
+     * the key is the Channel id
+     * the value is an object containing the data isOnStock, restockableInDays and availableQuantity
+     * for the Inventory Entry with the supply channel for this variant.
+     * @Commercetools\Field(type="") TODO Map of ProductVariantAvailability per Channel
      * @Commercetools\Channels
      * @var
      */
-    private $channels = '';
+    private $channels;
+
     /**
      * The IsOnStcok for the type.
      * @Commercetools\Field(type="boolean")
      * @Commercetools\IsOnStock
-     * @var
+     * @var boolean
      */
-    private $isOnStock = '';
+    private $isOnStock = false;
+
     /**
      * The number of days it takes to restock a product once it is out of stock.
      * @Commercetools\Field(type="int")
      * @Commercetools\RestockableInDays
-     * @var
+     * @var int
      */
-    private $restockableInDays = '';
+    private $restockableInDays = 0;
 
     /**
-     * Returns the AvailableQuantity from the type.
-     * @return string
+     * gets AvailableQuantity
+     *
+     * @return int
      */
-    public function getAvailableQuantity(): string
+    public function getAvailableQuantity(): int
     {
         return $this->availableQuantity;
     }
 
     /**
-     * Sets the AvailableQuantity for the type.
-     * @param string $availableQuantity
+     * gets Channels
+     *
+     * @return mixed
      */
-    public function setAvailableQuantity(string $availableQuantity)
-    {
-        $this->availableQuantity = $availableQuantity;
-    }
-
-    /**
-     * Returns the Channels for the type.
-     * @return string
-     */
-    public function getChannels(): string
+    public function getChannels()
     {
         return $this->channels;
     }
 
     /**
-     * Sets the Channels for the type.
-     * @param string $channels
+     * gets RestockableInDays
+     *
+     * @return int
      */
-    public function setChannels(string $channels)
-    {
-        $this->channels = $channels;
-    }
-
-    /**
-     * Returns the IsOnStock for the type.
-     * @return string
-     */
-    public function getIsOnStock(): string
-    {
-        return $this->isOnStock;
-    }
-
-    /**
-     * Sets the IsOnStock for the type.
-     * @param string $isOnStock
-     */
-    public function setIsOnStock(string $isOnStock)
-    {
-        $this->isOnStock = $isOnStock;
-    }
-
-    /**
-     * Returns the RestockableInDay for the type.
-     * @return string
-     */
-    public function getRestockableInDays(): string
+    public function getRestockableInDays(): int
     {
         return $this->restockableInDays;
     }
 
     /**
-     * Sets the RestockableInDays for the type.
-     * @param string $restockableInDays
+     * iss IsOnStock
+     *
+     * @return boolean
      */
-    public function setRestockableInDays(string $restockableInDays)
+    public function isIsOnStock(): bool
+    {
+        return $this->isOnStock;
+    }
+
+    /**
+     * Sets AvailableQuantity
+     *
+     * @param int $availableQuantity
+     */
+    public function setAvailableQuantity(int $availableQuantity)
+    {
+        $this->availableQuantity = $availableQuantity;
+    }
+
+    /**
+     * Sets Channels
+     *
+     * @param mixed $channels
+     */
+    public function setChannels($channels)
+    {
+        $this->channels = $channels;
+    }
+
+    /**
+     * Sets IsOnStock
+     *
+     * @param boolean $isOnStock
+     */
+    public function setIsOnStock(bool $isOnStock)
+    {
+        $this->isOnStock = $isOnStock;
+    }
+
+    /**
+     * Sets RestockableInDays
+     *
+     * @param int $restockableInDays
+     */
+    public function setRestockableInDays(int $restockableInDays)
     {
         $this->restockableInDays = $restockableInDays;
     }
-
 }

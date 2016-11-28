@@ -5,55 +5,59 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 class DiscountPrice
 {
-    /**     TODO @var!!
+    /**
      * The Discount for the type.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO Reference
      * @Commercetools\Discount
      * @var
      */
-    private $discount = '';
+    private $discount;
+
     /**
      * The Value for the type.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO Money
      * @Commercetools\Value
      * @var
      */
-    private $value = '';
+    private $value;
 
     /**
-     * Returns the Discount for the type.
-     * @return string
+     * gets Discount
+     *
+     * @return mixed
      */
-    public function getDiscount(): string
+    public function getDiscount()
     {
         return $this->discount;
     }
 
     /**
-     * Sets the Discount for the type.
-     * @param string $discount
+     * gets Value
+     *
+     * @return mixed
      */
-    public function setDiscount(string $discount)
-    {
-        $this->discount = $discount;
-    }
-
-    /**
-     * Returns the Value for the type.
-     * @return string
-     */
-    public function getValue(): string
+    public function getValue()
     {
         return $this->value;
     }
 
     /**
-     * Sets the Value for the type.
-     * @param string $value
+     * Sets Discount
+     *
+     * @param mixed $discount
      */
-    public function setValue(string $value)
+    public function setDiscount($discount)
+    {
+        $this->discount = $discount;
+    }
+
+    /**
+     * Sets Value
+     *
+     * @param mixed $value
+     */
+    public function setValue($value)
     {
         $this->value = $value;
     }
-
 }

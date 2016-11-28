@@ -1,37 +1,58 @@
 <?php
 namespace BestIt\CommercetoolsODM\Entity;
+
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
+/**
+ * Entity for Inventories.
+ * @Commercetools\DraftClass("Commercetools\Core\Model\Inventory\InventoryDraft")
+ * @Commercetools\Entity(requestMap=@Commercetools\RequestMap(
+ *     defaultNamespace="Commercetools\Core\Request\Inventories",
+ *     findById="InventoryByIdGetRequest",
+ *     query="InventoryQueryRequest",
+ *     create="InventoryCreateRequest",
+ *     update="InventoryUpdateRequest",
+ *     delete="InventoryDeleteRequest",
+ * ))
+ * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\InventoryRepository")
+ * @package BestIt\CommercetoolsODM
+ * @subpackage Entity
+ * @version $id$
+ */
 class InventoryEntry
 {
-    /**  TODO @var!!
+    /**
      * Available amount of stock. (available means: quantityOnStock - reserved quantity)
      * @Commercetools\Field(type="string")
      * @Commercetools\AvailibleQuantity
      * @var string
      */
-    private $availableQuantity = '';
+    private $availableQuantity = 0;
+
     /**
      * The CreatedAt for the type.
      * @Commercetools\Field(type="datetime")
      * @Commercetools\CreatedAt
-     * @var datetime
+     * @var \DateTime
      */
-    private $createdAt = '';
+    private $createdAt;
+
     /**
      * The Custom for the type.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO CustomFields
      * @Commercetools\Custom
      * @var
      */
     private $custom = '';
+
     /**
      * The date and time of the next restock.
      * @Commercetools\Field(type="datetime")
      * @Commercetools\ExpectedDelivery
-     * @var datetime
+     * @var \DateTime
      */
-    private $expectedDelivery = '';
+    private $expectedDelivery;
+
     /**   
      * The unique ID of the inventory entry.
      * @Commercetools\Field(type="string")
@@ -39,27 +60,30 @@ class InventoryEntry
      * @var string
      */
     private $id = '';
+
     /**
      * The LastModifiedAt for the type
      * @Commercetools\Field(type="datetime")
      * @Commercetools\LastModifiedAt
-     * @var datetime
+     * @var \DateTime
      */
-    private $lastModifiedAt = '';
+    private $lastModifiedAt;
+
     /**
      * Overall amount of stock. (available + reserved)
      * @Commercetools\Field(type="int")
      * @Commercetools\QuantityOnStock
      * @var int
      */
-    private $quantityOnStock = '';
+    private $quantityOnStock = 0;
     /**
      * The time period in days, that tells how often this inventory entry is restocked.
      * @Commercetools\Field(type="int")
      * @Commercetools\RestockableInDays
      * @var int
      */
-    private $restockableInDays = '';
+    private $restockableInDays = 0;
+
     /**
      * The Sku for the type.
      * @Commercetools\Field(type="string")
@@ -67,23 +91,26 @@ class InventoryEntry
      * @var string
      */
     private $sku = '';
+
     /**
      * Optional connection to particular supplier.
-     * @Commercetools\Field(type="") TODO
+     * @Commercetools\Field(type="") TODO Reference
      * @Commercetools\SupplyChannel
      * @var
      */
-    private $supplyChannel = '';
+    private $supplyChannel;
+
     /**
      * The Version for this type.
      * @Commercetools\Field(type="int")
      * @Commercetools\Version
      * @var int
      */
-    private $version = '';
+    private $version = 0;
 
     /**
-     * Returns the AvailableQuantity for the type.
+     * gets AvailableQuantity
+     *
      * @return string
      */
     public function getAvailableQuantity(): string
@@ -92,82 +119,78 @@ class InventoryEntry
     }
 
     /**
-     * Sets the AvailableQuantity for the type.
+     * Sets AvailableQuantity
+     *
      * @param string $availableQuantity
-     * @return InventoryEntry
      */
-    public function setAvailableQuantity(string $availableQuantity): InventoryEntry
+    public function setAvailableQuantity(string $availableQuantity)
     {
         $this->availableQuantity = $availableQuantity;
-
-        return $this;
     }
 
     /**
-     * Returns the CreatedAt for the type.
-     * @return string
+     * gets CreatedAt
+     *
+     * @return \DateTime
      */
-    public function getCreatedAt(): string
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
     /**
-     * Sets the CreatedAt for the type.
-     * @param string $createdAt
-     * @return InventoryEntry
+     * Sets CreatedAt
+     *
+     * @param \DateTime $createdAt
      */
-    public function setCreatedAt(string $createdAt): InventoryEntry
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     /**
-     * Return the Custom for the type.
-     * @return string
+     * gets Custom
+     *
+     * @return mixed
      */
-    public function getCustom(): string
+    public function getCustom()
     {
         return $this->custom;
     }
 
     /**
-     * Sets the Custom for the type.
-     * @param string $custom
-     * @return InventoryEntry
+     * Sets Custom
+     *
+     * @param mixed $custom
      */
-    public function setCustom(string $custom): InventoryEntry
+    public function setCustom($custom)
     {
         $this->custom = $custom;
-
-        return $this;
     }
 
     /**
-     * Returns the ExpectedDelivery
-     * @return string
+     * gets ExpectedDelivery
+     *
+     * @return \DateTime
      */
-    public function getExpectedDelivery(): string
+    public function getExpectedDelivery(): \DateTime
     {
         return $this->expectedDelivery;
     }
 
     /**
-     * Sets the ExpectedDelivery for the type.
-     * @param string $expectedDelivery
-     * @return InventoryEntry
+     * Sets ExpectedDelivery
+     *
+     * @param \DateTime $expectedDelivery
      */
-    public function setExpectedDelivery(string $expectedDelivery): InventoryEntry
+    public function setExpectedDelivery(\DateTime $expectedDelivery)
     {
         $this->expectedDelivery = $expectedDelivery;
-
-        return $this;
     }
 
     /**
-     * Returns the Id for the type.
+     * gets Id
+     *
      * @return string
      */
     public function getId(): string
@@ -176,82 +199,78 @@ class InventoryEntry
     }
 
     /**
-     * Sets the Id for the type.
+     * Sets Id
+     *
      * @param string $id
-     * @return InventoryEntry
      */
-    public function setId(string $id): InventoryEntry
+    public function setId(string $id)
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
-     * Returns the LastModifiedAt for the type.
-     * @return string
+     * gets LastModifiedAt
+     *
+     * @return \DateTime
      */
-    public function getLastModifiedAt(): string
+    public function getLastModifiedAt(): \DateTime
     {
         return $this->lastModifiedAt;
     }
 
     /**
-     * Sets the Last ModifiedAt for the type.
-     * @param string $lastModifiedAt
-     * @return InventoryEntry
+     * Sets LastModifiedAt
+     *
+     * @param \DateTime $lastModifiedAt
      */
-    public function setLastModifiedAt(string $lastModifiedAt): InventoryEntry
+    public function setLastModifiedAt(\DateTime $lastModifiedAt)
     {
         $this->lastModifiedAt = $lastModifiedAt;
-
-        return $this;
     }
 
     /**
-     * Returns the QuantityOnStock
-     * @return string
+     * gets QuantityOnStock
+     *
+     * @return int
      */
-    public function getQuantityOnStock(): string
+    public function getQuantityOnStock(): int
     {
         return $this->quantityOnStock;
     }
 
     /**
-     * Sets the QuantityOnStock for the type.
-     * @param string $quantityOnStock
-     * @return InventoryEntry
+     * Sets QuantityOnStock
+     *
+     * @param int $quantityOnStock
      */
-    public function setQuantityOnStock(string $quantityOnStock): InventoryEntry
+    public function setQuantityOnStock(int $quantityOnStock)
     {
         $this->quantityOnStock = $quantityOnStock;
-
-        return $this;
     }
 
     /**
-     * Returns the RestockableInDays for the type.
-     * @return string
+     * gets RestockableInDays
+     *
+     * @return int
      */
-    public function getRestockableInDays(): string
+    public function getRestockableInDays(): int
     {
         return $this->restockableInDays;
     }
 
     /**
-     * Sets the RestockableInDays for the type.
-     * @param string $restockableInDays
-     * @return InventoryEntry
+     * Sets RestockableInDays
+     *
+     * @param int $restockableInDays
      */
-    public function setRestockableInDays(string $restockableInDays): InventoryEntry
+    public function setRestockableInDays(int $restockableInDays)
     {
         $this->restockableInDays = $restockableInDays;
-
-        return $this;
     }
 
     /**
-     * Returns the Sku for the type.
+     * gets Sku
+     *
      * @return string
      */
     public function getSku(): string
@@ -260,57 +279,52 @@ class InventoryEntry
     }
 
     /**
-     * Sets the Sku for the type.
+     * Sets Sku
+     *
      * @param string $sku
-     * @return InventoryEntry
      */
-    public function setSku(string $sku): InventoryEntry
+    public function setSku(string $sku)
     {
         $this->sku = $sku;
-
-        return $this;
     }
 
     /**
-     * Returns the SupplyChannel for the type.
-     * @return string
+     * gets SupplyChannel
+     *
+     * @return mixed
      */
-    public function getSupplyChannel(): string
+    public function getSupplyChannel()
     {
         return $this->supplyChannel;
     }
 
     /**
-     * Sets the SupplyChannel for the type.
-     * @param string $supplyChannel
-     * @return InventoryEntry
+     * Sets SupplyChannel
+     *
+     * @param mixed $supplyChannel
      */
-    public function setSupplyChannel(string $supplyChannel): InventoryEntry
+    public function setSupplyChannel($supplyChannel)
     {
         $this->supplyChannel = $supplyChannel;
-
-        return $this;
     }
 
     /**
-     * Returns the Verison for the type.
-     * @return string
+     * gets Version
+     *
+     * @return int
      */
-    public function getVersion(): string
+    public function getVersion(): int
     {
         return $this->version;
     }
 
     /**
-     * Sets the Version for the type.for the type.
-     * @param string $version
-     * @return InventoryEntry
+     * Sets Version
+     *
+     * @param int $version
      */
-    public function setVersion(string $version): InventoryEntry
+    public function setVersion(int $version)
     {
         $this->version = $version;
-
-        return $this;
     }
-
 }
