@@ -61,7 +61,7 @@ final class Events
     /**
      * Events constructor.
      *
-     * Disallow the constuction of this class.
+     * Disallow the construction of this class.
      */
     private function __construct()
     {

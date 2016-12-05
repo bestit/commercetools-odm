@@ -12,6 +12,12 @@ use InvalidArgumentException;
 class ClassMetadataFactory extends AbstractClassMetadataFactory
 {
     /**
+     * Refactor everything with this!
+     * @var array
+     */
+    protected $sourceMetadata = [];
+
+    /**
      * Caches symfony bundle names and their matching namespaces.
      * @var array
      * @todo Document or Entity? Rename it.
@@ -31,6 +37,8 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
     public function __construct(MappingDriver $driver)
     {
         $this->setDriver($driver);
+
+        $this->sourceMetadata = require __DIR__ . DIRECTORY_SEPARATOR . '/../Resources/config/metadata.php';
     }
 
     /**
@@ -157,7 +165,13 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
             throw new InvalidArgumentException('Wrong metadata instance given.');
         }
 
-        $this->getDriver()->loadMetadataForClass($class->getName(), $class);
+        $this->getDriver()->loadMetadataForClass($className = $class->getName(), $class);
+
+        if (array_key_exists($className, $this->sourceMetadata)) {
+            foreach ($this->sourceMetadata[$className] as $key => $value) {
+                $class->{'set' . ucfirst($key)}($value);
+            }
+        }
     }
 
     /**

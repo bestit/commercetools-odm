@@ -73,6 +73,13 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
     public function hasLifecycleEvents(string $eventName): bool;
 
     /**
+     * Is this persistent class a commercetools standard model?
+     * @param bool $status The new status.
+     * @return bool The old status.
+     */
+    public function isCTStandardModel(bool $status = true): bool;
+
+    /**
      * Returns true if the given field name is used for the commercetools version.
      * @param string $fieldName
      * @return bool

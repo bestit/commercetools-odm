@@ -4,6 +4,7 @@ namespace BestIt\CommercetoolsODM\Mapping;
 
 use BadMethodCallException;
 use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
+use Commercetools\Core\Model\Common\Resource;
 use ReflectionClass;
 
 /**
@@ -32,6 +33,12 @@ class ClassMetadata implements ClassMetadataInterface
      * @var string
      */
     private $identifier = '';
+
+    /**
+     * Is this a standard commercetools model?
+     * @var bool
+     */
+    private $isCTStandardModel = true;
 
     /**
      * The field name for the user-defined identifier.
@@ -81,9 +88,15 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function __construct(string $name)
     {
-        $this->setName($name);
+        $this
+            ->setName($name)
+            ->isCTStandardModel(is_a($name, Resource::class, true));
     }
 
+    public function addUpdateCallback(string $field = '', string $method = '')
+    {
+        // TODO
+    }
 
     /**
      * Adds a lifecycle event callback for the persistent class.
@@ -130,7 +143,9 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getFieldNames()
     {
-        return array_keys($this->getFieldMappings());
+        return array_keys(
+            $this->isCTStandardModel() ? $this->getNewInstance()->fieldDefinitions() : $this->getFieldMappings()
+        );
     }
 
     /**
@@ -252,7 +267,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function hasLifecycleEvents(string $eventName): bool
     {
-        return (bool) @ $this->lifecycleEvents[$eventName];
+        return (bool)@ $this->lifecycleEvents[$eventName];
     }
 
     /**
@@ -431,6 +446,22 @@ class ClassMetadata implements ClassMetadataInterface
     public function isCollectionValuedAssociation($fieldName)
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
+    }
+
+    /**
+     * Is this persistent class a commercetools standard model?
+     * @param bool $status The new status.
+     * @return bool The old status.
+     */
+    public function isCTStandardModel(bool $status = true): bool
+    {
+        $oldStatus = $this->isCTStandardModel;
+
+        if (func_num_args()) {
+            $this->isCTStandardModel = $status;
+        }
+
+        return $oldStatus;
     }
 
     /**

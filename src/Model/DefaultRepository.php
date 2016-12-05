@@ -12,6 +12,7 @@ use Commercetools\Core\Model\Common\Collection;
 use Commercetools\Core\Request\AbstractQueryRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
 use Commercetools\Core\Response\ApiResponseInterface;
+use Commercetools\Core\Response\ErrorResponse;
 use Doctrine\Common\Persistence\ObjectRepository;
 use UnexpectedValueException;
 
@@ -133,8 +134,8 @@ class DefaultRepository implements ObjectRepository
         $request = $documentManager->createRequest($this->getClassName(), DocumentManagerInterface::REQUEST_TYPE_QUERY);
 
         if ($criteria) {
-            array_walk($criteria, function ($value, string $field) use ($request) {
-                $request->where(sprintf('%s="%s"', $field, $value));
+            array_walk($criteria, function ($value, $field) use ($request) {
+                $request->where(is_numeric($field) ? $value : sprintf('%s="%s"', $field, $value));
             });
         }
 
@@ -152,7 +153,12 @@ class DefaultRepository implements ObjectRepository
             });
         }
 
-        list($rawDocuments) = $this->processQuery($request);
+        // TODO Error Message
+        list($rawDocuments, $response, $request) = $this->processQuery($request);
+
+        if ($response instanceof ErrorResponse) {
+            var_dump($response->getMessage());
+        }
 
         foreach ($rawDocuments as $rawDocument) {
             $documents[$rawDocument->getId()] = $uow->createDocument($this->getClassName(), $rawDocument, []);
@@ -168,7 +174,9 @@ class DefaultRepository implements ObjectRepository
      */
     public function findOneBy(array $criteria)
     {
-        return $this->findBy($criteria, [], 1);
+        $found = $this->findBy($criteria, [], 1);
+
+        return $found ? array_values($found)[0] : null;
     }
 
     /**

@@ -79,6 +79,7 @@ class DocumentManager implements DocumentManagerInterface
         }
 
         $map = $metadata->getRequestClassMap();
+
         $requestReflection = new ReflectionClass($map->{'get' . $requestType}());
 
         return $requestReflection->newInstanceArgs($args);

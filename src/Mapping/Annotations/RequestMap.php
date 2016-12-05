@@ -74,6 +74,8 @@ class RequestMap implements Annotation
      */
     public $updateByKey = '';
 
+    //region Getters
+
     /**
      * Returns the name of the create class.
      * @return string
@@ -155,5 +157,114 @@ class RequestMap implements Annotation
     public function getUpdateByKey(): string
     {
         return $this->getDefaultNamespace() . $this->updateByKey;
+    }
+    //endregion
+
+    /**
+     * Sets the Create-Request.
+     * @param string $create
+     * @return RequestMap
+     */
+    public function setCreate(string $create): RequestMap
+    {
+        $this->create = $create;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Namespace for the request classes.
+     * @param string $defaultNamespace
+     * @return RequestMap
+     */
+    public function setDefaultNamespace(string $defaultNamespace): RequestMap
+    {
+        $this->defaultNamespace = $defaultNamespace;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Delete-Request using the id. The request is used by default.
+     * @param string $deleteById
+     * @return RequestMap
+     */
+    public function setDeleteById(string $deleteById): RequestMap
+    {
+        $this->deleteById = $deleteById;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Delete-Request using the user defined key.
+     * @param string $deleteByKey
+     * @return RequestMap
+     */
+    public function setDeleteByKey(string $deleteByKey): RequestMap
+    {
+        $this->deleteByKey = $deleteByKey;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Get-Request using the id. The request is used by default.
+     * @param string $findById
+     * @return RequestMap
+     */
+    public function setFindById(string $findById): RequestMap
+    {
+        $this->findById = $findById;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Get-Request using the user defined key.
+     * @param string $findByKey
+     * @return RequestMap
+     */
+    public function setFindByKey(string $findByKey): RequestMap
+    {
+        $this->findByKey = $findByKey;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Class to request every entity.
+     * @param string $query
+     * @return RequestMap
+     */
+    public function setQuery(string $query): RequestMap
+    {
+        $this->query = $query;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Update-Request using the id. The request is used by default.
+     * @param string $updateById
+     * @return RequestMap
+     */
+    public function setUpdateById(string $updateById): RequestMap
+    {
+        $this->updateById = $updateById;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Update-Request using the user defined key.
+     * @param string $updateByKey
+     * @return RequestMap
+     */
+    public function setUpdateByKey(string $updateByKey): RequestMap
+    {
+        $this->updateByKey = $updateByKey;
+
+        return $this;
     }
 }

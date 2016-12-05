@@ -44,9 +44,12 @@ class AnnotationDriver extends BasicDriver
      * Loads the class annotations for this metadata
      * @param SpecialClassMetadataInterface $metadata
      * @param ReflectionClass $classReflection
+     * @return AnnotationDriver
      */
-    private function loadClassAnnotations(SpecialClassMetadataInterface $metadata, ReflectionClass $classReflection)
-    {
+    private function loadClassAnnotations(
+        SpecialClassMetadataInterface $metadata,
+        ReflectionClass $classReflection
+    ): AnnotationDriver {
         $reader = $this->getReader();
         $classAnntations = $reader->getClassAnnotations($classReflection);
 
@@ -98,6 +101,8 @@ class AnnotationDriver extends BasicDriver
                 $metadata->setRepository($classAnnotation->getClass());
             }
         });
+
+        return $this;
     }
 
     /**
@@ -114,18 +119,18 @@ class AnnotationDriver extends BasicDriver
 
         $classReflection = $metadata->getReflectionClass();
 
-        $metadata->setFieldMappings($this->loadFieldMappings($metadata));
-
-        $this->loadClassAnnotations($metadata, $classReflection);
+        $this
+            ->loadClassAnnotations($metadata, $classReflection)
+            ->loadFieldMappings($metadata);
     }
 
     /**
      * Loads the mappings on the properties.
      * @param SpecialClassMetadataInterface $metadata
-     * @return array
+     * @return AnnotationDriver
      * @throws MappingException
      */
-    private function loadFieldMappings(SpecialClassMetadataInterface $metadata):array
+    private function loadFieldMappings(SpecialClassMetadataInterface $metadata):AnnotationDriver
     {
         $reader = $this->getReader();
         $reflection = $metadata->getReflectionClass();
@@ -151,6 +156,8 @@ class AnnotationDriver extends BasicDriver
             }
         }
 
-        return $fields;
+        $metadata->setFieldMappings($fields);
+
+        return $this;
     }
 }

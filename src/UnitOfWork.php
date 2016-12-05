@@ -8,7 +8,10 @@ use BestIt\CommercetoolsODM\Event\OnFlushEventArgs;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\Common\Resource;
+use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Request\ClientRequestInterface;
+use Commercetools\Core\Response\ErrorResponse;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use InvalidArgumentException;
@@ -55,6 +58,19 @@ class UnitOfWork implements UnitOfWorkInterface
     protected $newDocuments = [];
 
     /**
+     * Map of the original entity data of managed entities.
+     * Keys are object ids (spl_object_hash). This is used for calculating changesets
+     * at commit time.
+     *
+     * Internal note: Note that PHPs "copy-on-write" behavior helps a lot with memory usage.
+     *                A value will only really be copied if the value in the entity is modified
+     *                by the user.
+     * @todo Add API.
+     * @var array
+     */
+    private $originalEntityData = [];
+
+    /**
      * Which objects should be removed?
      * @var array
      */
@@ -92,6 +108,20 @@ class UnitOfWork implements UnitOfWorkInterface
         return $this;
     }
 
+    private function computeChangeSet(ClassMetadataInterface $metadata, $document)
+    {
+        $changedData = [];
+        $newData = $this->extractData($document, $metadata);
+        $oldData = $this->getOriginalData($document);
+
+        $changedData = array_filter($newData, function ($value, string $key) use (&$changedData, $oldData) {
+            return serialize($value) !== serialize(@$oldData[$key]);
+        }, ARRAY_FILTER_USE_BOTH);
+
+
+        return $changedData ? $this->createUpdateRequest($changedData, $document) : null;
+    }
+
     /**
      * Creates a document and registers it as managed.
      * @param string $className
@@ -102,23 +132,14 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     public function createDocument(string $className, $responseObject, array $hints = [], $sourceDocument = null)
     {
-        /** @var ClassMetadataInterface $metadata */
         $metadata = $this->getClassMetadata($className);
-        $targetDocument = $sourceDocument ?? $metadata->getNewInstance();
-        $version = null;
 
-        // TODO Check if $targetDocument is an instance of $className
-
-        array_map(function ($field) use ($responseObject, $targetDocument) {
-            $targetDocument->{'set' . ucfirst($field)}($responseObject->{'get' . ucfirst($field)}());
-        }, $metadata->getFieldNames());
-
-        if ($versionField = $metadata->getVersion()) {
-            $targetDocument->{'set' . ucfirst($versionField)}($version = $responseObject->getVersion());
-        }
-
-        if ($idField = $metadata->getIdentifier()) {
-            $targetDocument->{'set' . ucfirst($idField)}($id = $responseObject->getId());
+        if ($responseObject instanceof $className) {
+            $targetDocument = clone $responseObject;
+            $id = $responseObject->getId();
+            $version = $responseObject->getVersion();
+        } else {
+            exit('wrong instance');
         }
 
         // TODO Find in new objects.
@@ -147,6 +168,15 @@ class UnitOfWork implements UnitOfWorkInterface
             return !$metadata->isVersion($field) && !$metadata->isIdentifier($field);
         });
 
+        if ($metadata->isCTStandardModel()) {
+            unset(
+                $fields[array_search('createdAt', $fields)],
+                $fields[array_search('id', $fields)],
+                $fields[array_search('lastModifiedAt', $fields)],
+                $fields[array_search('version', $fields)]
+            );
+        }
+
         $values = [];
 
         foreach ($fields as $field) {
@@ -163,6 +193,16 @@ class UnitOfWork implements UnitOfWorkInterface
         );
     }
 
+    private function createUpdateRequest(
+        array $changedData,
+        $document,
+        ClassMetadataInterface $metadata = null
+    ): ClientRequestInterface {
+
+
+        exit(var_dump($changedData, $document, $metadata));
+    }
+
     private function detectChangedDocuments()
     {
         $client = $this->getClient();
@@ -170,9 +210,11 @@ class UnitOfWork implements UnitOfWorkInterface
         foreach ($this->identityMap as $id => $document) {
             $state = $this->getDocumentState($document);
             if ($state == self::STATE_MANAGED) {
-                $client->addBatchRequest(
-                    $this->computeChangeSet($this->getClassMetadata(get_class($document)), $document)
-                );
+                $updateRequest = $this->computeChangeSet($this->getClassMetadata(get_class($document)), $document);
+
+                if ($updateRequest) {
+                    $client->addBatchRequest($updateRequest);
+                }
             }
         }
 
@@ -220,6 +262,32 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
+     * Uses the getter of the sourceTarget to fetch the field names of the metadata.
+     * @param $sourceTarget
+     * @param ClassMetadataInterface $metadata
+     * @return array
+     */
+    private function extractData($sourceTarget, ClassMetadataInterface $metadata = null)
+    {
+        $return = [];
+
+        if (!$metadata) {
+            $metadata = $this->getClassMetadata(get_class($sourceTarget));
+        }
+
+        array_map(
+            function ($field) use (&$return, $sourceTarget) {
+                $return[$field] = $sourceTarget->{'get' . ucfirst($field)}();
+            },
+            $sourceTarget instanceof Resource
+                ? array_keys($sourceTarget->fieldDefinitions())
+                : $metadata->getFieldNames()
+        );
+
+        return $return;
+    }
+
+    /**
      * Commits every change to commercetools.
      * @return void
      */
@@ -227,7 +295,6 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         $this->detectChangedDocuments();
 
-        $dm = $this->getDocumentManager();
         $eventManager = $this->getEventManager();
 
         $eventManager->dispatchEvent(Events::ON_FLUSH, new OnFlushEventArgs($this));
@@ -247,19 +314,31 @@ class UnitOfWork implements UnitOfWorkInterface
                 $metadata = $this->getClassMetadata(get_class($sourceDocument));
                 $version = null;
 
-                if ($versionField = $metadata->getVersion()) {
-                    $sourceDocument->{'set' . ucfirst($versionField)}($version = $mappedResponse->getVersion());
-                }
+                if ($metadata->isCTStandardModel()) {
+                    $sourceDocument
+                        ->setId($mappedResponse->getId())
+                        ->setversion($mappedResponse->getVersion());
+                } else {
+                    if ($versionField = $metadata->getVersion()) {
+                        $sourceDocument->{'set' . ucfirst($versionField)}($version = $mappedResponse->getVersion());
+                    }
 
-                if ($idField = $metadata->getIdentifier()) {
-                    $sourceDocument->{'set' . ucfirst($idField)}($id = $mappedResponse->getId());
+                    if ($idField = $metadata->getIdentifier()) {
+                        $sourceDocument->{'set' . ucfirst($idField)}($id = $mappedResponse->getId());
+                    }
                 }
 
                 unset($this->newDocuments[$key]);
 
                 $this->registerAsManaged($sourceDocument, $id, $version);
+            } else {
+                /** @var ErrorResponse $response */
+                exit(var_dump($response->getMessage(), $response->getErrors(), $response->getRequest()->httpRequest()
+                    ->getBody()->getContents()));
             }
         }
+
+        $this->newDocuments = []; // TODO
 
         /*foreach ($this->scheduledRemovals AS $oid => $document) {
             $eventManager->dispatchEvent(Events::POST_REMOVE, new LifecycleEventArgs($document, $dm));
@@ -274,8 +353,6 @@ class UnitOfWork implements UnitOfWorkInterface
         $this->scheduledUpdates =
         $this->scheduledRemovals =
         $this->visitedCollections = array();*/
-
-        exit('xdvgdgf345');
     }
 
     /**
@@ -307,9 +384,10 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         /** @var ClassMetadataInterface $class */
         $class = $this->getClassMetadata($className = get_class($document));
+        $isStandard = $document instanceof Resource;
         $oid = spl_object_hash($document);
         $state = @$this->documentState[$oid];
-        $id = $document->{'get' . ucfirst($class->getIdentifier())}();
+        $id = $isStandard ? $document->getId() : $document->{'get' . ucfirst($class->getIdentifier())}();
 
         // Check with the id.
         if (!$state && $id) {
@@ -340,6 +418,16 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         return $state ?? self::STATE_NEW;
+    }
+
+    /**
+     * Returns the cached original data for the given document.
+     * @param mixed $document
+     * @return array
+     */
+    private function getOriginalData($document): array
+    {
+        return $this->originalEntityData[spl_object_hash($document)] ?? [];
     }
 
     /**
@@ -387,6 +475,8 @@ class UnitOfWork implements UnitOfWorkInterface
         if ($identifier) {
             $this->documentIdentifiers[$oid] = (string)$identifier;
             $this->identityMap[$identifier] = $document;
+
+            $this->setOriginalData($document);
         } else {
             $this->newDocuments[$oid] = $document;
         }
@@ -416,6 +506,31 @@ class UnitOfWork implements UnitOfWorkInterface
     protected function setDocumentManager(DocumentManagerInterface $documentManager): UnitOfWork
     {
         $this->documentManager = $documentManager;
+
+        return $this;
+    }
+
+    /**
+     * Caches the original data for the given dataobject based in the field mapping of the metadata.
+     * @param mixed $dataObject
+     * @param ClassMetadataInterface|void $metadata
+     * @param bool $force
+     * @return UnitOfWork
+     */
+    private function setOriginalData(
+        $dataObject,
+        ClassMetadataInterface $metadata = null,
+        bool $force = false
+    ): UnitOfWork {
+        $objectId = spl_object_hash($dataObject);
+
+        if (!array_key_exists($objectId, $this->originalEntityData)) {
+            $force = true;
+        }
+
+        if ($force) {
+            $this->originalEntityData[$objectId] = $this->extractData($dataObject, $metadata);
+        }
 
         return $this;
     }
