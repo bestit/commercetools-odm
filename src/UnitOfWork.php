@@ -132,6 +132,7 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     public function createDocument(string $className, $responseObject, array $hints = [], $sourceDocument = null)
     {
+        /** @var ClassMetadataInterface $metadata */
         $metadata = $this->getClassMetadata($className);
 
         if ($responseObject instanceof $className) {
@@ -139,7 +140,15 @@ class UnitOfWork implements UnitOfWorkInterface
             $id = $responseObject->getId();
             $version = $responseObject->getVersion();
         } else {
-            exit('wrong instance');
+            $targetDocument = $metadata->getNewInstance();
+
+            if ($metadata->getIdentifier()) {
+                $id = $responseObject->getId();
+            }
+
+            if ($metadata->getVersion()) {
+                $version = $responseObject->getVersion();
+            }
         }
 
         // TODO Find in new objects.

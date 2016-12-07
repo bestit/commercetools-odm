@@ -5,6 +5,7 @@ namespace BestIt\CommercetoolsODM\Mapping\Driver;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Annotation;
 use BestIt\CommercetoolsODM\Mapping\Annotations\DraftClass;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Entity;
+use BestIt\CommercetoolsODM\Mapping\Annotations\Field;
 use BestIt\CommercetoolsODM\Mapping\Annotations\HasLifecycleCallbacks;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Id;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Key;
@@ -139,7 +140,6 @@ class AnnotationDriver extends BasicDriver
         foreach ($reflection->getProperties() as $property) {
             $name = $property->getName();
             $propAnnotations = $reader->getPropertyAnnotations($property);
-            $fields[$name] = [];
 
             foreach ($propAnnotations as $annotation) {
                 if ($annotation instanceof Id) {
@@ -152,6 +152,10 @@ class AnnotationDriver extends BasicDriver
 
                 if ($annotation instanceof Version) {
                     $metadata->setVersion($name);
+                }
+
+                if ($annotation instanceof Field) {
+                    $fields[$name] = [];
                 }
             }
         }
