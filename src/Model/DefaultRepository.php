@@ -122,6 +122,7 @@ class DefaultRepository implements ObjectRepository
      * @param int|null $offset
      * @return array The objects.
      * @throws UnexpectedValueException
+     * @todo Add staged as general on the test webs
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
@@ -132,6 +133,11 @@ class DefaultRepository implements ObjectRepository
 
         /** @var AbstractQueryRequest $request */
         $request = $documentManager->createRequest($this->getClassName(), DocumentManagerInterface::REQUEST_TYPE_QUERY);
+
+        if ((method_exists($request, 'staged')) && ($criteria) && isset($criteria['staged'])) {
+            $request->staged($criteria['staged']);
+            unset($criteria['staged']);
+        }
 
         if ($criteria) {
             array_walk($criteria, function ($value, $field) use ($request) {

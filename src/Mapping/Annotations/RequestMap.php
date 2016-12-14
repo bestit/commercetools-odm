@@ -17,7 +17,6 @@ class RequestMap implements Annotation
 {
     /**
      * Create-Request.
-     * @Required
      * @var string
      */
     public $create = '';
@@ -30,7 +29,6 @@ class RequestMap implements Annotation
 
     /**
      * Delete-Request using the id. The request is used by default.
-     * @Required
      * @var string
      */
     public $deleteById = '';
@@ -63,7 +61,6 @@ class RequestMap implements Annotation
 
     /**
      * Update-Request using the id. The request is used by default.
-     * @Required
      * @var string
      */
     public $updateById = '';

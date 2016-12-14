@@ -15,6 +15,13 @@ return [
             ->setUpdateById(\Commercetools\Core\Request\Products\ProductUpdateRequest::class)
             ->setUpdateByKey(\Commercetools\Core\Request\Products\ProductUpdateByKeyRequest::class),
     ],
+    Commercetools\Core\Model\Product\ProductProjection::class => [
+        'repository' => \BestIt\CommercetoolsODM\Model\ProductProjectionRepository::class,
+        'requestClassMap' => (new RequestMap())
+            ->setFindById(\Commercetools\Core\Request\Products\ProductProjectionByIdGetRequest::class)
+            ->setFindByKey(\Commercetools\Core\Request\Products\ProductProjectionByKeyGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Products\ProductProjectionQueryRequest::class)
+    ],
     Commercetools\Core\Model\ProductType\ProductType::class => [
         'draft' => \Commercetools\Core\Model\ProductType\ProductTypeDraft::class,
         'repository' => \BestIt\CommercetoolsODM\Model\ProductTypeRepository::class,
