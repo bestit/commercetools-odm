@@ -207,7 +207,10 @@ class UnitOfWork implements UnitOfWorkInterface
         $document,
         ClassMetadataInterface $metadata = null
     ): ClientRequestInterface {
-
+        if (!$metadata) {
+            /** @var ClassMetadataInterface $metadata */
+            $metadata = $this->getClassMetadata(get_class($document));
+        }
 
         exit(var_dump($changedData, $document, $metadata));
     }
