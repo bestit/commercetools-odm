@@ -80,6 +80,14 @@ class DocumentManager implements DocumentManagerInterface
 
         $map = $metadata->getRequestClassMap();
 
+        if (!$map) {
+            throw new InvalidArgumentException(sprintf(
+                'There is no request map for %s / %s.',
+                $className,
+                $requestType
+            ));
+        }
+
         $requestReflection = new ReflectionClass($map->{'get' . $requestType}());
 
         return $requestReflection->newInstanceArgs($args);
@@ -139,6 +147,7 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function find($className, $id)
     {
+        return $this->getRepositoryFactory()->getRepository($this, $className)->find($id);
     }
 
     /**
