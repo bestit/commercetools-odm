@@ -18,6 +18,13 @@ use Commercetools\Core\Response\ApiResponseInterface;
 trait ByKeySearchRepositoryTrait
 {
     /**
+     * Adds the expanded fields to the request.
+     * @param ClientRequestInterface $request
+     * @return void
+     */
+    abstract protected function addExpandsToRequest(ClientRequestInterface $request);
+
+    /**
      * Finds an object by its user defined key.
      * @param string $key
      * @return mixed|void
@@ -37,6 +44,8 @@ trait ByKeySearchRepositoryTrait
                 DocumentManagerInterface::REQUEST_TYPE_FIND_BY_KEY,
                 $key
             );
+
+            $this->addExpandsToRequest($request);
 
             /** @var ApiResponseInterface $rawResponse */
             list ($response, $rawResponse) = $this->processQuery($request);
