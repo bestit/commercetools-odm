@@ -17,6 +17,7 @@ class RequestMap implements Annotation
 {
     /**
      * Create-Request.
+     * @Required
      * @var string
      */
     public $create = '';
@@ -28,7 +29,14 @@ class RequestMap implements Annotation
     public $defaultNamespace = '';
 
     /**
+     * Delete request by the user defined key and container.
+     * @var string
+     */
+    public $deleteByContainerAndKey = '';
+
+    /**
      * Delete-Request using the id. The request is used by default.
+     * @Required
      * @var string
      */
     public $deleteById = '';
@@ -38,6 +46,12 @@ class RequestMap implements Annotation
      * @var string
      */
     public $deleteByKey = '';
+
+    /**
+     * Get Request using a user defined key and container.
+     * @var string
+     */
+    public $findByContainerAndKey = '';
 
     /**
      * Get-Request using the id. The request is used by default.
@@ -61,6 +75,7 @@ class RequestMap implements Annotation
 
     /**
      * Update-Request using the id. The request is used by default.
+     * @Required
      * @var string
      */
     public $updateById = '';
@@ -94,6 +109,15 @@ class RequestMap implements Annotation
     }
 
     /**
+     * Returns the Delete request by the user defined key and container.
+     * @return string
+     */
+    public function getDeleteByContainerAndKey(): string
+    {
+        return $this->deleteByContainerAndKey;
+    }
+
+    /**
      * Returns the Delete-Request using the id. The request is used by default.
      * @return string
      */
@@ -109,6 +133,15 @@ class RequestMap implements Annotation
     public function getDeleteByKey(): string
     {
         return $this->getDefaultNamespace() . $this->deleteByKey;
+    }
+
+    /**
+     * Returns the Get Request using a user defined key and container.
+     * @return string
+     */
+    public function getFindByContainerAndKey(): string
+    {
+        return $this->findByContainerAndKey;
     }
 
     /**
@@ -157,6 +190,7 @@ class RequestMap implements Annotation
     }
     //endregion
 
+    //region Setter
     /**
      * Sets the Create-Request.
      * @param string $create
@@ -182,6 +216,18 @@ class RequestMap implements Annotation
     }
 
     /**
+     * Sets the delete request by the user defined key and container.
+     * @param string $deleteByContainerAndKey
+     * @return RequestMap
+     */
+    public function setDeleteByContainerAndKey(string $deleteByContainerAndKey): RequestMap
+    {
+        $this->deleteByContainerAndKey = $deleteByContainerAndKey;
+
+        return $this;
+    }
+
+    /**
      * Sets the Delete-Request using the id. The request is used by default.
      * @param string $deleteById
      * @return RequestMap
@@ -201,6 +247,18 @@ class RequestMap implements Annotation
     public function setDeleteByKey(string $deleteByKey): RequestMap
     {
         $this->deleteByKey = $deleteByKey;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Get Request using a user defined key and container.
+     * @param string $findByContainerAndKey
+     * @return RequestMap
+     */
+    public function setFindByContainerAndKey(string $findByContainerAndKey): RequestMap
+    {
+        $this->findByContainerAndKey = $findByContainerAndKey;
 
         return $this;
     }
@@ -264,4 +322,5 @@ class RequestMap implements Annotation
 
         return $this;
     }
+    //endregion
 }

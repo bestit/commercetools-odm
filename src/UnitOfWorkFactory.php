@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM;
 
+use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderProcessorInterface;
 use BestIt\CommercetoolsODM\Event\ListenersInvoker;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
@@ -15,16 +16,21 @@ use Doctrine\Common\EventManager;
  */
 class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
 {
-    use EventManagerAwareTrait, ListenerInvokerAwareTrait;
+    use ActionBuilderProcessorAwareTrait, EventManagerAwareTrait, ListenerInvokerAwareTrait;
 
     /**
      * UnitOfWorkFactory constructor.
+     * @param ActionBuilderProcessorInterface $actionBuilderProcessor
      * @param EventManager $eventManager
      * @param ListenersInvoker $listenersInvoker
      */
-    public function __construct(EventManager $eventManager, ListenersInvoker $listenersInvoker)
-    {
+    public function __construct(
+        ActionBuilderProcessorInterface $actionBuilderProcessor,
+        EventManager $eventManager,
+        ListenersInvoker $listenersInvoker
+    ) {
         $this
+            ->setActionBuilderProcessor($actionBuilderProcessor)
             ->setEventManager($eventManager)
             ->setListenerInvoker($listenersInvoker);
     }
@@ -36,6 +42,11 @@ class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
      */
     public function getUnitOfWork(DocumentManagerInterface $documentManager): UnitOfWorkInterface
     {
-        return new UnitOfWork($documentManager, $this->getEventManager(), $this->getListenerInvoker());
+        return new UnitOfWork(
+            $this->getActionBuilderProcessor(),
+            $documentManager,
+            $this->getEventManager(),
+            $this->getListenerInvoker()
+        );
     }
 }

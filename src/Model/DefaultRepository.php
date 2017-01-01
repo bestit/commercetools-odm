@@ -7,14 +7,13 @@ use BestIt\CommercetoolsODM\Exception\APIException;
 use BestIt\CommercetoolsODM\Helper\DocumentManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
-use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Model\Common\Collection;
 use Commercetools\Core\Request\AbstractQueryRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
-use Commercetools\Core\Request\ExpandTrait;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
+use Doctrine\Common\Persistence\ObjectRepository;
 use UnexpectedValueException;
 
 /**
@@ -27,18 +26,6 @@ use UnexpectedValueException;
 class DefaultRepository implements ObjectRepository
 {
     use DocumentManagerAwareTrait, QueryHelperAwareTrait;
-
-    /**
-     * Should the expand cache be cleared after the query.
-     * @var bool
-     */
-    private $clearExpandAfterQuery = false;
-
-    /**
-     * Saves the elements which should be expanded.
-     * @var array
-     */
-    private $expands = [];
 
     /**
      * The metadata for the used class.
@@ -64,37 +51,6 @@ class DefaultRepository implements ObjectRepository
     }
 
     /**
-     * Adds the expanded fields to the request.
-     * @param ClientRequestInterface $request
-     * @return void
-     */
-    protected function addExpandsToRequest(ClientRequestInterface $request)
-    {
-        /** @var ExpandTrait $request */
-        if (method_exists($request, 'expand')) {
-            array_map(function (string $expand) use ($request) {
-                $request->expand($expand);
-            }, $this->getExpands());
-        }
-    }
-
-    /**
-     * Should the expand cache be cleared after the query.
-     * @param bool $newStatus The new status.
-     * @return bool The old status.
-     */
-    public function clearExpandAfterQuery($newStatus = false): bool
-    {
-        $oldStatus = $this->clearExpandAfterQuery;
-
-        if (func_num_args()) {
-            $this->clearExpandAfterQuery = $newStatus;
-        }
-
-        return $oldStatus;
-    }
-
-    /**
      * Finds an object by its primary key / identifier.
      * @param mixed $id The identifier.
      * @return object The object.
@@ -114,8 +70,6 @@ class DefaultRepository implements ObjectRepository
                 DocumentManagerInterface::REQUEST_TYPE_FIND_BY_ID,
                 $id
             );
-
-            $this->addExpandsToRequest($request);
 
             /** @var ApiResponseInterface $rawResponse */
             list ($response, $rawResponse) = $this->processQuery($request);
@@ -146,8 +100,6 @@ class DefaultRepository implements ObjectRepository
 
         $request = $documentManager->createRequest($this->getClassName(), DocumentManagerInterface::REQUEST_TYPE_QUERY);
 
-        $this->addExpandsToRequest($request);
-
         /** @var Collection|array $rawDocuments */
         $rawDocuments = $this->getQueryHelper()->getAll($documentManager->getClient(), $request);
 
@@ -170,7 +122,6 @@ class DefaultRepository implements ObjectRepository
      * @param int|null $offset
      * @return array The objects.
      * @throws UnexpectedValueException
-     * @todo Add staged as general on the test webs
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
@@ -181,13 +132,6 @@ class DefaultRepository implements ObjectRepository
 
         /** @var AbstractQueryRequest $request */
         $request = $documentManager->createRequest($this->getClassName(), DocumentManagerInterface::REQUEST_TYPE_QUERY);
-
-        $this->addExpandsToRequest($request);
-
-        if ((method_exists($request, 'staged')) && ($criteria) && isset($criteria['staged'])) {
-            $request->staged($criteria['staged']);
-            unset($criteria['staged']);
-        }
 
         if ($criteria) {
             array_walk($criteria, function ($value, $field) use ($request) {
@@ -245,15 +189,6 @@ class DefaultRepository implements ObjectRepository
     }
 
     /**
-     * Returns the elements which should be expanded.
-     * @return array
-     */
-    public function getExpands(): array
-    {
-        return $this->expands;
-    }
-
-    /**
      * Returns the metadata for the used class.
      * @return ClassMetadataInterface
      */
@@ -272,26 +207,7 @@ class DefaultRepository implements ObjectRepository
     {
         $response = $this->getDocumentManager()->getClient()->execute($request);
 
-        if ($this->clearExpandAfterQuery()) {
-            $this->setExpands([]);
-        }
-
         return [$request->mapResponse($response), $response, $request];
-    }
-
-    /**
-     * Set the elements which should be expanded.
-     * @param array $expands
-     * @param bool $clearAfterwards Should the expand cache be cleared after the query.
-     * @return ObjectRepository
-     */
-    public function setExpands(array $expands, $clearAfterwards = false): ObjectRepository
-    {
-        $this->expands = $expands;
-
-        $this->clearExpandAfterQuery($clearAfterwards);
-
-        return $this;
     }
 
     /**

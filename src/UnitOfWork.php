@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM;
 
+use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderProcessorInterface;
 use BestIt\CommercetoolsODM\Event\LifecycleEventArgs;
 use BestIt\CommercetoolsODM\Event\ListenersInvoker;
 use BestIt\CommercetoolsODM\Event\OnFlushEventArgs;
@@ -9,7 +10,6 @@ use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Resource;
-use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Request\ClientRequestInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use Doctrine\Common\EventManager;
@@ -18,7 +18,13 @@ use InvalidArgumentException;
 
 class UnitOfWork implements UnitOfWorkInterface
 {
-    use ClientAwareTrait, EventManagerAwareTrait, ListenerInvokerAwareTrait;
+    use ActionBuilderProcessorAwareTrait, ClientAwareTrait, EventManagerAwareTrait, ListenerInvokerAwareTrait;
+
+    /**
+     * Maps containers and keys to ids.
+     * @var array
+     */
+    protected $containerKeyMap = [];
 
     /**
      * Matches object ids to commercetools ids.
@@ -52,6 +58,12 @@ class UnitOfWork implements UnitOfWorkInterface
     protected $identityMap = [];
 
     /**
+     * Maps keys to ids.
+     * @var array
+     */
+    protected $keyMap = [];
+
+    /**
      * Saves the completely new documents.
      * @var array
      */
@@ -78,20 +90,34 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * UnitOfWork constructor.
+     * @param ActionBuilderProcessorInterface $actionBuilderProcessor
      * @param DocumentManagerInterface $documentManager
      * @param EventManager $eventManager
      * @param ListenersInvoker $listenersInvoker
      */
     public function __construct(
+        ActionBuilderProcessorInterface $actionBuilderProcessor,
         DocumentManagerInterface $documentManager,
         EventManager $eventManager,
         ListenersInvoker $listenersInvoker
     ) {
         $this
+            ->setActionBuilderProcessor($actionBuilderProcessor)
             ->setClient($documentManager->getClient())
             ->setDocumentManager($documentManager)
             ->setEventManager($eventManager)
             ->setListenerInvoker($listenersInvoker);
+    }
+
+    /**
+     * Cascades a detach operation to associated documents.
+     *
+     * @param object $document
+     * @param array $visited
+     */
+    private function cascadeDetach($document, array &$visited)
+    {
+
     }
 
     /**
@@ -118,8 +144,7 @@ class UnitOfWork implements UnitOfWorkInterface
             return serialize($value) !== serialize(@$oldData[$key]);
         }, ARRAY_FILTER_USE_BOTH);
 
-
-        return $changedData ? $this->createUpdateRequest($changedData, $document) : null;
+        return $changedData ? $this->createUpdateRequest($changedData, $oldData, $document) : null;
     }
 
     /**
@@ -204,6 +229,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     private function createUpdateRequest(
         array $changedData,
+        array $oldData,
         $document,
         ClassMetadataInterface $metadata = null
     ): ClientRequestInterface {
@@ -212,7 +238,19 @@ class UnitOfWork implements UnitOfWorkInterface
             $metadata = $this->getClassMetadata(get_class($document));
         }
 
-        exit(var_dump($changedData, $document, $metadata));
+        $request = $this->getDocumentManager()->createRequest(
+            get_class($document),
+            DocumentManager::REQUEST_TYPE_UPDATE_BY_ID,
+            $document->getId(),
+            $document->getVersion()
+        );
+
+        return $request->setActions($this->getActionBuilderProcessor()->createUpdateActions(
+            $metadata,
+            $changedData,
+            $oldData,
+            $document
+        ));
     }
 
     private function detectChangedDocuments()
@@ -221,11 +259,12 @@ class UnitOfWork implements UnitOfWorkInterface
 
         foreach ($this->identityMap as $id => $document) {
             $state = $this->getDocumentState($document);
+
             if ($state == self::STATE_MANAGED) {
                 $updateRequest = $this->computeChangeSet($this->getClassMetadata(get_class($document)), $document);
 
                 if ($updateRequest) {
-                    $client->addBatchRequest($updateRequest);
+                    $client->addBatchRequest($updateRequest->setIdentifier($id));
                 }
             }
         }
@@ -235,6 +274,48 @@ class UnitOfWork implements UnitOfWorkInterface
 
             $client->addBatchRequest($request->setIdentifier($id));
         }
+    }
+
+    /**
+     * Detaches a document from the persistence management.
+     * It's persistence will no longer be managed by Doctrine.
+     * @param object $document The document to detach.
+     */
+    public function detach($document)
+    {
+        $visited = array();
+        $this->doDetach($document, $visited);
+    }
+
+    /**
+     * Executes a detach operation on the given entity.
+     * @param object $document
+     * @param array $visited
+     */
+    private function doDetach($document, array &$visited)
+    {
+        $oid = spl_object_hash($document);
+        if (isset($visited[$oid])) {
+            return; // Prevent infinite recursion
+        }
+
+        $visited[$oid] = $document; // mark visited
+
+        switch ($this->getDocumentState($document)) {
+            case self::STATE_MANAGED:
+                if (isset($this->identityMap[$this->documentIdentifiers[$oid]])) {
+                    $this->removeFromIdentityMap($document);
+                }
+                unset($this->scheduledRemovals[$oid],
+                    $this->originalEntityData[$oid], $this->documentRevisions[$oid],
+                    $this->documentIdentifiers[$oid], $this->documentState[$oid]);
+                break;
+            case self::STATE_NEW:
+            case self::STATE_DETACHED:
+                return;
+        }
+
+        $this->cascadeDetach($document, $visited);
     }
 
     /**
@@ -287,14 +368,20 @@ class UnitOfWork implements UnitOfWorkInterface
             $metadata = $this->getClassMetadata(get_class($sourceTarget));
         }
 
-        array_map(
-            function ($field) use (&$return, $sourceTarget) {
-                $return[$field] = $sourceTarget->{'get' . ucfirst($field)}();
-            },
-            $sourceTarget instanceof Resource
-                ? array_keys($sourceTarget->fieldDefinitions())
-                : $metadata->getFieldNames()
-        );
+        if (method_exists($sourceTarget, 'toArray')) {
+            $return = $sourceTarget->toArray();
+        } else {
+            array_map(
+                function ($field) use (&$return, $sourceTarget) {
+                    $fieldValue = $sourceTarget->{'get' . ucfirst($field)}();
+
+                    $return[$field] = is_object($fieldValue) ? clone $fieldValue : $fieldValue;
+                },
+                $sourceTarget instanceof Resource
+                    ? array_keys($sourceTarget->fieldDefinitions())
+                    : $metadata->getFieldNames()
+            );
+        }
 
         return $return;
     }
@@ -343,10 +430,15 @@ class UnitOfWork implements UnitOfWorkInterface
                 unset($this->newDocuments[$key]);
 
                 $this->registerAsManaged($sourceDocument, $id, $version);
+            } elseif ($statusCode === 200) {
+                $document = $this->identityMap[$key];
+
+                // TODO Everything has a version?
+                $this->registerAsManaged($document, $document->getId(), $document->getVersion());
             } else {
                 /** @var ErrorResponse $response */
                 exit(var_dump($response->getMessage(), $response->getErrors(), $response->getRequest()->httpRequest()
-                    ->getBody()->getContents()));
+                ->getBody()->getContents()));
             }
         }
 
@@ -470,12 +562,37 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
+     * INTERNAL:
+     * Removes an document from the identity map. This effectively detaches the
+     * document from the persistence management of Doctrine.
+     *
+     * @ignore
+     * @param object $document
+     * @return boolean
+     */
+    private function removeFromIdentityMap($document)
+    {
+        $oid = spl_object_hash($document);
+
+        if (isset($this->identityMap[$this->documentIdentifiers[$oid]])) {
+            unset($this->identityMap[$this->documentIdentifiers[$oid]],
+                $this->documentIdentifiers[$oid],
+                $this->documentRevisions[$oid],
+                $this->documentState[$oid]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Registers the given document as managed.
      * @param mixed $document
      * @param string|int $identifier
      * @param mixed|void $revision
      * @return UnitOfWorkInterface
-     * @todo Add after insert.
+     * @todo Add after insert; Add to Maps.
      */
     public function registerAsManaged($document, $identifier = '', $revision = null): UnitOfWorkInterface
     {
@@ -548,13 +665,29 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
-     * Tries to find an document with the given identifier in the identity map of
-     * this UnitOfWork.
+     * Tries to find a managed object by its key and container.
+     * @param string $container
+     * @param string $key
+     * @return mixed|void
+     */
+    public function tryGetByContainerAndKey(string $container, string $key)
+    {
+        $key = $container . '|' . $key;
+        $return = null;
+
+        if (array_key_exists($key, $this->containerKeyMap)) {
+            $return = $this->tryGetById($this->containerKeyMap[$key]);
+        }
+
+        return $return;
+    }
+
+    /**
+     * Tries to find an document with the given identifier in the identity map of this UnitOfWork.
      *
      * @param mixed $id The document identifier to look for.
      * @return mixed Returns the document with the specified identifier if it exists in
-     *               this UnitOfWork, FALSE otherwise.
-     * @todo TryByKey?
+     *               this UnitOfWork, void otherwise.
      */
     public function tryGetById($id)
     {
@@ -565,10 +698,16 @@ class UnitOfWork implements UnitOfWorkInterface
      * Tries to find an document with the given identifier in the identity map of this UnitOfWork.
      * @param string $key The document key to look for.
      * @return mixed Returns the document with the specified identifier if it exists in
-     *               this UnitOfWork, FALSE otherwise.
+     *               this UnitOfWork, void otherwise.
      */
     public function tryGetByKey(string $key)
     {
-        // TODO
+        $return = null;
+
+        if (array_key_exists($key, $this->keyMap)) {
+            $return = $this->tryGetById($this->keyMap[$key]);
+        }
+
+        return $return;
     }
 }

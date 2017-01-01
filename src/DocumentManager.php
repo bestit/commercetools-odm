@@ -94,6 +94,22 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
+     * Detaches an object from the ObjectManager, causing a managed object to
+     * become detached. Unflushed changes made to the object if any
+     * (including removal of the object), will not be synchronized to the database.
+     * Objects which previously referenced the detached object will continue to
+     * reference it.
+     *
+     * @param object $object The object to detach.
+     *
+     * @return void
+     */
+    public function detach($object)
+    {
+        $this->getUnitOfWork()->detach($object);
+    }
+
+    /**
      * Returns the ClassMetadata descriptor for a class.
      *
      * The class name must be the fully-qualified class name without a leading backslash
@@ -223,21 +239,6 @@ class DocumentManager implements DocumentManagerInterface
      * @return void
      */
     public function clear($objectName = null)
-    {
-    }
-
-    /**
-     * Detaches an object from the ObjectManager, causing a managed object to
-     * become detached. Unflushed changes made to the object if any
-     * (including removal of the object), will not be synchronized to the database.
-     * Objects which previously referenced the detached object will continue to
-     * reference it.
-     *
-     * @param object $object The object to detach.
-     *
-     * @return void
-     */
-    public function detach($object)
     {
     }
 

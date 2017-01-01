@@ -5,7 +5,6 @@ namespace BestIt\CommercetoolsODM;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client;
 use Commercetools\Core\Request\AbstractApiRequest;
-use Commercetools\Core\Request\AbstractByIdGetRequest;
 use Commercetools\Core\Request\AbstractCreateRequest;
 use Commercetools\Core\Request\AbstractDeleteRequest;
 use Commercetools\Core\Request\AbstractUpdateRequest;
@@ -26,36 +25,53 @@ interface DocumentManagerInterface extends ObjectManager
     const REQUEST_TYPE_CREATE = 'Create';
 
     /**
+     * Key to request the request-class for deleting by container and key.
+     * @var string
+     */
+    const REQUEST_TYPE_DELETE_BY_CONTAINER_AND_KEY = 'DeleteByContainerAndKey';
+
+    /**
      * Key to request the request-class for deleting by id.
      * @var string
      */
     const REQUEST_TYPE_DELETE_BY_ID = 'DeleteById';
-    #
+
     /**
      * Key to request the request-class for deleting by key.
      * @var string
      */
     const REQUEST_TYPE_DELETE_BY_KEY = 'DeleteByKey';
+
+    /**
+     * Key to request the request-class for finding by container and key.
+     * @var string
+     */
+    const REQUEST_TYPE_FIND_BY_CONTAINER_AND_KEY = 'FindByContainerAndKey';
+
     /**
      * Key to request the request-class for finding by id.
      * @var string
      */
     const REQUEST_TYPE_FIND_BY_ID = 'FindById';
+
     /**
      * Key to request the request-class for finding by key.
      * @var string
      */
     const REQUEST_TYPE_FIND_BY_KEY = 'FindByKey';
+
     /**
      * Key to request the request-class for simple querying.
      * @var string
      */
     const REQUEST_TYPE_QUERY = 'Query';
+
     /**
      * Key to request the request-class for updating by id.
      * @var string
      */
     const REQUEST_TYPE_UPDATE_BY_ID = 'UpdateById';
+
     /**
      * Key to request the request-class for updating by key.
      * @var string
