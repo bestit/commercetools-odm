@@ -3,6 +3,16 @@
 use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
 
 return [
+    \Commercetools\Core\Model\Category\Category::class => [
+        'draft' => \Commercetools\Core\Model\Category\CategoryDraft::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Categories\CategoryCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Categories\CategoryDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Categories\CategoryByIdGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Categories\CategoryQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Categories\CategoryUpdateRequest::class)
+    ],
+
     Commercetools\Core\Model\CustomObject\CustomObject::class => [
         'draft' => \Commercetools\Core\Model\CustomObject\CustomObjectDraft::class,
         'repository' => \BestIt\CommercetoolsODM\Repository\CustomObjectRepository::class,
