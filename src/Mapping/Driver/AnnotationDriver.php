@@ -2,7 +2,9 @@
 
 namespace BestIt\CommercetoolsODM\Mapping\Driver;
 
+use BestIt\CommercetoolsODM\Mapping\Annotations\ActionsFrom;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Annotation;
+use BestIt\CommercetoolsODM\Mapping\Annotations\CustomTypeField;
 use BestIt\CommercetoolsODM\Mapping\Annotations\DraftClass;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Entity;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Field;
@@ -101,6 +103,10 @@ class AnnotationDriver extends BasicDriver
             if ($classAnnotation instanceof Repository) {
                 $metadata->setRepository($classAnnotation->getClass());
             }
+
+            if ($classAnnotation instanceof ActionsFrom) {
+                $metadata->setActionsFrom($classAnnotation->getModelClass());
+            }
         });
 
         return $this;
@@ -133,6 +139,7 @@ class AnnotationDriver extends BasicDriver
      */
     private function loadFieldMappings(SpecialClassMetadataInterface $metadata):AnnotationDriver
     {
+        $customTypeFields = [];
         $reader = $this->getReader();
         $reflection = $metadata->getReflectionClass();
         $fields = [];
@@ -155,12 +162,18 @@ class AnnotationDriver extends BasicDriver
                 }
 
                 if ($annotation instanceof Field) {
-                    $fields[$name] = [];
+                    $fields[$name] = $annotation;
+                }
+
+                if ($annotation instanceof CustomTypeField) {
+                    $customTypeFields[$name] = $annotation->getType();
                 }
             }
         }
 
-        $metadata->setFieldMappings($fields);
+        $metadata
+            ->setCustomTypeFields($customTypeFields)
+            ->setFieldMappings($fields);
 
         return $this;
     }

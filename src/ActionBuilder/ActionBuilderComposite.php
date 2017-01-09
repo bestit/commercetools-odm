@@ -49,11 +49,24 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
             $changedData,
             function ($value, $fieldName) use (&$actions, $metadata, $changedData, $oldData, $sourceObject) {
                 $action = null;
+                $subFieldName = '';
+
+                if ($metadata->isCustomTypeField($fieldName)) {
+                    $subFieldName = $fieldName;
+                    $fieldName = 'custom';
+                }
 
                 $builders = $this->getActionBuilderFactory()->getActionBuilders($metadata, $fieldName, $sourceObject);
 
                 foreach ($builders as $builder) {
-                    $action = $builder->createUpdateAction($value, $metadata, $changedData, $oldData, $sourceObject);
+                    $action = $builder->createUpdateAction(
+                        $value,
+                        $metadata,
+                        $changedData,
+                        $oldData,
+                        $sourceObject,
+                        $subFieldName
+                    );
 
                     if ($action) {
                         $actions[] = $action;

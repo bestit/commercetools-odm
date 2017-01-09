@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\Mapping;
 
 use BadMethodCallException;
+use BestIt\CommercetoolsODM\Mapping\Annotations\Field;
 use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
 use Commercetools\Core\Model\Common\Resource;
 use ReflectionClass;
@@ -16,6 +17,18 @@ use ReflectionClass;
  */
 class ClassMetadata implements ClassMetadataInterface
 {
+    /**
+     * The model class from which the actions are used.
+     * @var string
+     */
+    private $actionsFrom = '';
+
+    /**
+     * Matches the custom type fields to their type.
+     * @var array
+     */
+    private $customTypeFields = [];
+
     /**
      * The draft class for inserting the row.
      * @var string
@@ -115,6 +128,34 @@ class ClassMetadata implements ClassMetadataInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Returns the model class from which the actions are used.
+     * @return string
+     */
+    public function getActionsFrom(): string
+    {
+        return $this->actionsFrom ? $this->actionsFrom : $this->getName();
+    }
+
+    /**
+     * Returns the custom type key for the given field or an empty string, if there is no type declared.
+     * @param string $fieldName
+     * @return string
+     */
+    public function getCustomType(string $fieldName): string
+    {
+        return (string) @ $this->getCustomTypeFields()[$fieldName];
+    }
+
+    /**
+     * Returns the Matching of the custom type fields to their type.
+     * @return array
+     */
+    public function getCustomTypeFields(): array
+    {
+        return $this->customTypeFields;
     }
 
     /**
@@ -226,6 +267,27 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
+     * Returns a type name of this field.
+     *
+     * This type names can be implementation specific but should at least include the php types:
+     * integer, string, boolean, float/double, datetime.
+     * @param string $fieldName
+     * @return string
+     * @todo Exception
+     */
+    public function getTypeOfField($fieldName): string
+    {
+        $fieldMappings = $this->getFieldMappings();
+        $type = 'string';
+
+        if (array_key_exists($fieldName, $fieldMappings)) {
+            $type = $fieldMappings[$fieldName]->getType();
+        }
+
+        return $type;
+    }
+
+    /**
      * Returns the name of the version field.
      * @return string
      */
@@ -271,6 +333,16 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
+     * Returns if the given field name is a custom type field of the persistent class for this metadata.
+     * @param string $fieldName
+     * @return bool
+     */
+    public function isCustomTypeField(string $fieldName): bool
+    {
+        return array_key_exists($fieldName, $this->getCustomTypeFields());
+    }
+
+    /**
      * Checks if the given field name is a mapped identifier for this class.
      * @param string $fieldName
      * @return bool
@@ -291,6 +363,29 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
+     * Sets the model class from which the actions are used.
+     * @param string $actionsFrom
+     * @return ClassMetadataInterface
+     */
+    public function setActionsFrom(string $actionsFrom): ClassMetadataInterface
+    {
+        $this->actionsFrom = $actionsFrom;
+        return $this;
+    }
+
+    /**
+     * Sets the matching of the custom type fields to their type.
+     * @param array $customTypeFields
+     * @return ClassMetadataInterface
+     */
+    public function setCustomTypeFields(array $customTypeFields): ClassMetadataInterface
+    {
+        $this->customTypeFields = $customTypeFields;
+
+        return $this;
+    }
+
+    /**
      * Sets the draft class for inserting the row.
      * @param string $draft
      * @return ClassMetadataInterface
@@ -303,10 +398,11 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
-     * @param mixed $fieldMappings
-     * @return ClassMetadata
+     * Sets the field mappings for persistent class of this object.
+     * @param Field[] $fieldMappings
+     * @return ClassMetadataInterface
      */
-    public function setFieldMappings(array $fieldMappings): ClassMetadata
+    public function setFieldMappings(array $fieldMappings): ClassMetadataInterface
     {
         $this->fieldMappings = $fieldMappings;
 
@@ -482,28 +578,6 @@ class ClassMetadata implements ClassMetadataInterface
     public function getAssociationNames()
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Returns a type name of this field.
-     *
-     * This type names can be implementation specific but should at least include the php types:
-     * integer, string, boolean, float/double, datetime.
-     * @param string $fieldName
-     * @return string
-     */
-    public function getTypeOfField($fieldName): string
-    {
-        $reflection = $this->getReflectionClass();
-        $type = 'string';
-
-        if (($reflection->hasProperty($fieldName)) &&
-            preg_match('/^\s*\* ?@var (.*)' . '$/m', $reflection->getProperty($fieldName)->getDocComment(), $matches)
-        ) {
-            $type = $matches[1];
-        }
-
-        return $type;
     }
 
     /**

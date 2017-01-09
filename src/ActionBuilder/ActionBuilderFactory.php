@@ -54,12 +54,12 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
      * Gets the action builders for the given object and its field name.
      * @param ClassMetadataInterface $classMetadata
      * @param string $fieldName
-     * @param $sourceObject
+     * @param mixed $sourceObject
      * @return ActionBuilderInterface[]
      */
     public function getActionBuilders(ClassMetadataInterface $classMetadata, string $fieldName, $sourceObject): array
     {
-        $sourceClass = get_class($sourceObject);
+        $sourceClass = $classMetadata->getActionsFrom();
 
         $allBuilders = array_map(function (string &$builderClass): ActionBuilderInterface {
             return new $builderClass;
@@ -100,6 +100,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
     /**
      * Loads the action builders from cache or directly out of the file system.
      * @return array
+     * @todo Create an array sorted by class.
      */
     private function loadActionBuilders():array
     {

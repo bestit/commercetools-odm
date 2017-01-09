@@ -23,6 +23,25 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
     public function addLifecycleEvent(string $eventName, string $callbackName): ClassMetadataInterface;
 
     /**
+     * Returns the model class from which the actions are used.
+     * @return string
+     */
+    public function getActionsFrom(): string;
+
+    /**
+     * Returns the custom type key for the given field or an empty string, if there is no type declared.
+     * @param string $fieldName
+     * @return string
+     */
+    public function getCustomType(string $fieldName): string;
+
+    /**
+     * Returns the Matching of the custom type fields to their type.
+     * @return array
+     */
+    public function getCustomTypeFields(): array;
+
+    /**
      * Returns the draft class for inserting the row.
      * @return string
      */
@@ -80,11 +99,32 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
     public function isCTStandardModel(bool $status = true): bool;
 
     /**
+     * Returns if the given field name is a custom type field of the persistent class for this metadata.
+     * @param string $fieldName
+     * @return bool
+     */
+    public function isCustomTypeField(string $fieldName): bool;
+
+    /**
      * Returns true if the given field name is used for the commercetools version.
      * @param string $fieldName
      * @return bool
      */
     public function isVersion(string $fieldName): bool;
+
+    /**
+     * Sets the model class from which the actions are used.
+     * @param string $actionsFrom
+     * @return ClassMetadataInterface
+     */
+    public function setActionsFrom(string $actionsFrom): ClassMetadataInterface;
+
+    /**
+     * Sets the matching of the custom type fields to their type.
+     * @param array $customTypeFields
+     * @return ClassMetadataInterface
+     */
+    public function setCustomTypeFields(array $customTypeFields): ClassMetadataInterface;
 
     /**
      * Sets the draft class for inserting the row.
@@ -94,11 +134,11 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
     public function setDraft(string $draft): ClassMetadataInterface;
 
     /**
-     * Sets the name of the field for the user-defined identifier.
-     * @param string $fieldName
+     * Sets the field mappings for persistent class of this object.
+     * @param mixed $fieldMappings
      * @return ClassMetadataInterface
      */
-    public function setKey(string $fieldName): ClassMetadataInterface;
+    public function setFieldMappings(array $fieldMappings): ClassMetadataInterface;
 
     /**
      * Sets the mapped identifier field of this class.
@@ -106,6 +146,13 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
      * @return ClassMetadataInterface
      */
     public function setIdentifier(string $identifier): ClassMetadataInterface;
+
+    /**
+     * Sets the name of the field for the user-defined identifier.
+     * @param string $fieldName
+     * @return ClassMetadataInterface
+     */
+    public function setKey(string $fieldName): ClassMetadataInterface;
 
     /**
      * Sets the lifecycle events of the persistent class.

@@ -17,7 +17,7 @@ class Field implements Annotation
 {
     /**
      * The type for this field in the commercetools platform.
-     * @Enum({"int","string"})
+     * @Enum({"boolean","dateTime","int","string","set"})
      * @Required
      * @var string
      */

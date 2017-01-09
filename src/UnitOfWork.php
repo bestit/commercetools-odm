@@ -9,9 +9,14 @@ use BestIt\CommercetoolsODM\Event\OnFlushEventArgs;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\Common\DateTimeDecorator;
 use Commercetools\Core\Model\Common\Resource;
+use Commercetools\Core\Model\CustomField\CustomFieldObject;
+use Commercetools\Core\Model\CustomField\FieldContainer;
+use Commercetools\Core\Model\Type\TypeReference;
 use Commercetools\Core\Request\ClientRequestInterface;
 use Commercetools\Core\Response\ErrorResponse;
+use DateTime;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use InvalidArgumentException;
@@ -165,7 +170,9 @@ class UnitOfWork implements UnitOfWorkInterface
             $id = $responseObject->getId();
             $version = $responseObject->getVersion();
         } else {
+            /** @var CustomFieldObject $customObject */
             $targetDocument = $metadata->getNewInstance();
+            $customObject = $metadata->getCustomTypeFields() ? $responseObject->getCustom() : new CustomFieldObject();
 
             if ($metadata->getIdentifier()) {
                 $id = $responseObject->getId();
@@ -173,6 +180,17 @@ class UnitOfWork implements UnitOfWorkInterface
 
             if ($metadata->getVersion()) {
                 $version = $responseObject->getVersion();
+            }
+
+            // Make it more nice.
+            foreach ($metadata->getFieldNames() as $fieldName) {
+                $foundValue = $metadata->isCustomTypeField($fieldName)
+                    ? $customObject->getFields()->get($fieldName)
+                    : $responseObject->$fieldName;
+
+                $parsedValue = $this->parseFoundFieldValue($fieldName, $metadata, $foundValue);
+
+                $targetDocument->{'set' . ucfirst($fieldName)}($parsedValue);
             }
         }
 
@@ -193,10 +211,10 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * Returns the create query for the given document.
      * @param ClassMetadataInterface $metadata
-     * @param mixed $document
+     * @param mixed $object
      * @return ClientRequestInterface
      */
-    private function createNewRequest(ClassMetadataInterface $metadata, $document): ClientRequestInterface
+    private function createNewRequest(ClassMetadataInterface $metadata, $object): ClientRequestInterface
     {
         $fields = array_filter($metadata->getFieldNames(), function (string $field) use ($metadata) {
             return !$metadata->isVersion($field) && !$metadata->isIdentifier($field);
@@ -211,10 +229,26 @@ class UnitOfWork implements UnitOfWorkInterface
             );
         }
 
+        $customValues = [];
         $values = [];
 
         foreach ($fields as $field) {
-            $values[$field] = $document->{'get' . ucfirst($field)}();
+            $usedValue = $object->{'get' . ucfirst($field)}();
+
+            if ($metadata->isCustomTypeField($field)) {
+                if (!@$values['custom']) {
+                    $values['custom'] = (new CustomFieldObject())
+                        ->setType(TypeReference::ofKey($metadata->getCustomType($field)));
+                }
+
+                $customValues[$field] = $usedValue;
+            } else {
+                $values[$field] = $usedValue;
+            }
+        }
+
+        if ($customValues) {
+            $values['custom']->setFields(FieldContainer::fromArray($customValues));
         }
 
         $draftClass = $metadata->getDraft();
@@ -532,6 +566,39 @@ class UnitOfWork implements UnitOfWorkInterface
     private function getOriginalData($document): array
     {
         return $this->originalEntityData[spl_object_hash($document)] ?? [];
+    }
+
+    /**
+     * Parses the found value with the data from the field declaration.
+     * @param string $field
+     * @param ClassMetadataInterface $metadata
+     * @param mixed $value
+     * @return bool|DateTime|int|string
+     */
+    private function parseFoundFieldValue(string $field, ClassMetadataInterface $metadata, $value)
+    {
+        switch ($metadata->getTypeOfField($field)) {
+            case 'boolean':
+                $returnValue = (bool) $value;
+                break;
+
+            case 'dateTime':
+                $returnValue = (new DateTimeDecorator($value))->getDateTime();
+                break;
+
+            case 'int':
+                $returnValue = (int) $value;
+                break;
+
+            case 'string':
+                $returnValue = (string) $value;
+                break;
+
+            default:
+                $returnValue = $value;
+        }
+
+        return $returnValue;
     }
 
     /**

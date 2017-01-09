@@ -109,6 +109,7 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
      */
     public function supports(string $fieldName, string $referenceClass): bool
     {
-        return $this->getModelClass() === $referenceClass && $this->getFieldName() === $fieldName;
+        return ($this->getModelClass() === $referenceClass) &&
+            preg_match('/' . preg_quote($fieldName, '/') . '(\/?\*|$)/', $this->getFieldName()) !== false;
     }
 }
