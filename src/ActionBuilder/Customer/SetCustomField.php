@@ -32,28 +32,28 @@ class SetCustomField extends ActionBuilderAbstract
     protected $modelClass = Customer::class;
 
     /**
-     * Creates the update action for the given class and data.
+     * Creates the update actions for the given class and data.
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Customer $sourceObject
      * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
-     * @return AbstractAction|void
+     * @return AbstractAction[]
      */
-    public function createUpdateAction(
+    public function createUpdateActions(
         $changedValue,
         ClassMetadataInterface $metadata,
         array $changedData,
         array $oldData,
         $sourceObject,
         string $subFieldName = ''
-    ) {
+    ): array {
 
         if ($changedValue instanceof DateTime) {
             $changedValue = new DateTimeDecorator($changedValue);
         }
 
-        return SetCustomFieldAction::ofName($subFieldName)->setValue($changedValue);
+        return [SetCustomFieldAction::ofName($subFieldName)->setValue($changedValue)];
     }
 }

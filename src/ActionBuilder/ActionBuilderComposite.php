@@ -59,7 +59,7 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
                 $builders = $this->getActionBuilderFactory()->getActionBuilders($metadata, $fieldName, $sourceObject);
 
                 foreach ($builders as $builder) {
-                    $action = $builder->createUpdateAction(
+                    $nextActions = $builder->createUpdateActions(
                         $value,
                         $metadata,
                         $changedData,
@@ -68,8 +68,8 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
                         $subFieldName
                     );
 
-                    if ($action) {
-                        $actions[] = $action;
+                    if ($nextActions) {
+                        $actions = array_merge($actions, $nextActions);
 
                         if (!$builder->isStackable()) {
                             break;

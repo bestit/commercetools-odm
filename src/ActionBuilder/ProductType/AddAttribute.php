@@ -21,7 +21,7 @@ class AddAttribute extends ActionBuilderAbstract
      * The field name.
      * @var string
      */
-    protected $fieldName = 'attributes/*';
+    protected $fieldName = 'attributes';
 
     /**
      * For which class is this description used?
@@ -37,17 +37,19 @@ class AddAttribute extends ActionBuilderAbstract
      * @param array $oldData
      * @param ProductType $sourceObject
      * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
-     * @return AbstractAction|void
+     * @return AbstractAction[]
      * @todo Can more then one attribute be added?
      */
-    public function createUpdateAction(
+    public function createUpdateActions(
         $changedValue,
         ClassMetadataInterface $metadata,
         array $changedData,
         array $oldData,
         $sourceObject,
         string $subFieldName = ''
-    ) {
+    ): array {
+        $attrActions = [];
+
         /** @var AttributeDefinition $attribute */
         foreach ($sourceObject->getAttributes() as $attribute) {
             $searchName = $attribute->getName();
@@ -57,8 +59,10 @@ class AddAttribute extends ActionBuilderAbstract
             });
 
             if (!$foundAttr) {
-                return ProductTypeAddAttributeDefinitionAction::ofAttribute($attribute);
+                $attrActions[] = ProductTypeAddAttributeDefinitionAction::ofAttribute($attribute);
             }
         }
+
+        return $attrActions;
     }
 }
