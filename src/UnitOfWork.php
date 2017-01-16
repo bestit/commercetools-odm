@@ -465,7 +465,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
                 $this->registerAsManaged($sourceDocument, $id, $version);
             } elseif ($statusCode === 200) {
-                $document = $this->identityMap[$key];
+                $document = $this->identityMap[$key] ?? $response->toObject();
 
                 // TODO Everything has a version?
                 $this->registerAsManaged($document, $document->getId(), $document->getVersion());
