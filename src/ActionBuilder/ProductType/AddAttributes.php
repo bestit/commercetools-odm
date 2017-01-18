@@ -9,7 +9,7 @@ use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\ProductTypes\Command\ProductTypeAddAttributeDefinitionAction;
 
 /**
- * Builds the action to add attributes to a product type.
+ * Builds the action to add an attribute to a product type.
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @subpackage ActionBuilder\ProductType

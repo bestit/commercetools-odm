@@ -7,13 +7,6 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Request\ProductTypes\Command\ProductTypeRemoveAttributeDefinitionAction;
 
-/**
- * Builds the action to remove attributes from a product type.
- * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\ProductType
- * @version $id$
- */
 class RemoveAttributes extends ActionBuilderAbstract
 {
     /**
