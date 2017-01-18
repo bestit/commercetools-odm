@@ -37,6 +37,7 @@ return [
 
     \Commercetools\Core\Model\Product\Product::class => [
         'draft' => \Commercetools\Core\Model\Product\ProductDraft::class,
+        'repository' => \BestIt\CommercetoolsODM\Repository\ProductRepository::class,
         'requestClassMap' => (new RequestMap())
             ->setCreate(\Commercetools\Core\Request\Products\ProductCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\Products\ProductDeleteRequest::class)

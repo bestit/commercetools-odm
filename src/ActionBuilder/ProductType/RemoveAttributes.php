@@ -5,17 +5,16 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\ProductType;
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\ProductType\ProductType;
-use Commercetools\Core\Request\AbstractAction;
-use Commercetools\Core\Request\ProductTypes\Command\ProductTypeAddAttributeDefinitionAction;
+use Commercetools\Core\Request\ProductTypes\Command\ProductTypeRemoveAttributeDefinitionAction;
 
 /**
- * Builds the action to add an attribute to a product type.
+ * Builds the action to remove attributes from a product type.
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @subpackage ActionBuilder\ProductType
  * @version $id$
  */
-class AddAttribute extends ActionBuilderAbstract
+class RemoveAttributes extends ActionBuilderAbstract
 {
     /**
      * The field name.
@@ -38,7 +37,6 @@ class AddAttribute extends ActionBuilderAbstract
      * @param ProductType $sourceObject
      * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
      * @return AbstractAction[]
-     * @todo Can more then one attribute be added?
      */
     public function createUpdateActions(
         $changedValue,
@@ -51,15 +49,18 @@ class AddAttribute extends ActionBuilderAbstract
         $attrActions = [];
 
         /** @var AttributeDefinition $attribute */
-        foreach ($sourceObject->getAttributes() as $attribute) {
-            $searchName = $attribute->getName();
+        foreach ($oldData['attributes'] as $oldAttr) {
+            $searchName = $oldAttr['name'];
 
-            $foundAttr = array_filter($oldData['attributes'] ?? [], function (array $oldAttr) use ($searchName) {
-                return @$oldAttr['name'] === $searchName;
-            });
+            $foundAttr = array_filter(
+                $sourceObject->getAttributes()->toArray(),
+                function (array $newAttr) use ($searchName) {
+                    return @$newAttr['name'] === $searchName;
+                }
+            );
 
             if (!$foundAttr) {
-                $attrActions[] = ProductTypeAddAttributeDefinitionAction::ofAttribute($attribute);
+                $attrActions[] = ProductTypeRemoveAttributeDefinitionAction::ofName($searchName);
             }
         }
 
