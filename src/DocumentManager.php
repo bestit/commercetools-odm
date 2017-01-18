@@ -110,6 +110,16 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
+     * Detaches the given object after flush.
+     * @param object $object
+     * @return void
+     */
+    public function detachDeferred($object)
+    {
+        $this->getUnitOfWork()->detachDeferred($object);
+    }
+
+    /**
      * Returns the ClassMetadata descriptor for a class.
      *
      * The class name must be the fully-qualified class name without a leading backslash

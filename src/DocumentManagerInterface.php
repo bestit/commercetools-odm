@@ -89,6 +89,13 @@ interface DocumentManagerInterface extends ObjectManager
     public function createRequest(string $className, $requestType = self::REQUEST_TYPE_QUERY, ...$args);
 
     /**
+     * Detaches the given object after flush.
+     * @param object $object
+     * @return void
+     */
+    public function detachDeferred($object);
+
+    /**
      * Returns the used commercetools client.
      * @return Client
      */

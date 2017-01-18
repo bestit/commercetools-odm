@@ -9,10 +9,19 @@ use BestIt\CommercetoolsODM\Event\OnFlushEventArgs;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\Common\AssetDraft;
+use Commercetools\Core\Model\Common\AssetDraftCollection;
 use Commercetools\Core\Model\Common\DateTimeDecorator;
+use Commercetools\Core\Model\Common\JsonObject;
+use Commercetools\Core\Model\Common\PriceDraft;
+use Commercetools\Core\Model\Common\PriceDraftCollection;
 use Commercetools\Core\Model\Common\Resource;
 use Commercetools\Core\Model\CustomField\CustomFieldObject;
 use Commercetools\Core\Model\CustomField\FieldContainer;
+use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductDraft;
+use Commercetools\Core\Model\Product\ProductVariant;
+use Commercetools\Core\Model\Product\ProductVariantDraft;
 use Commercetools\Core\Model\Type\TypeReference;
 use Commercetools\Core\Request\ClientRequestInterface;
 use Commercetools\Core\Response\ErrorResponse;
@@ -20,6 +29,7 @@ use DateTime;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use InvalidArgumentException;
+use SplObjectStorage;
 
 class UnitOfWork implements UnitOfWorkInterface
 {
@@ -30,6 +40,12 @@ class UnitOfWork implements UnitOfWorkInterface
      * @var array
      */
     protected $containerKeyMap = [];
+
+    /**
+     * Which objects should be detached after flush.
+     * @var SplObjectStorage
+     */
+    private $detachQueue = null;
 
     /**
      * Matches object ids to commercetools ids.
@@ -109,6 +125,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $this
             ->setActionBuilderProcessor($actionBuilderProcessor)
             ->setClient($documentManager->getClient())
+            ->setDetachQueue(new SplObjectStorage())
             ->setDocumentManager($documentManager)
             ->setEventManager($eventManager)
             ->setListenerInvoker($listenersInvoker);
@@ -209,6 +226,27 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
+     * Creates the draft for a new request.
+     * @param ClassMetadataInterface $metadata
+     * @param object $object The source object.
+     * @param array $fields
+     * @return JsonObject
+     */
+    private function createDraftObjectForNewRequest(
+        ClassMetadataInterface $metadata,
+        $object,
+        array $fields
+    ): JsonObject {
+        $draftClass = $metadata->getDraft();
+
+        $values = $draftClass === ProductDraft::class
+            ? $this->parseValuesForProductDraft($metadata, $object, $fields)
+            : $this->parseValuesForSimpleDraft($metadata, $object, $fields);
+
+        return new $draftClass($values);
+    }
+
+    /**
      * Returns the create query for the given document.
      * @param ClassMetadataInterface $metadata
      * @param mixed $object
@@ -229,30 +267,7 @@ class UnitOfWork implements UnitOfWorkInterface
             );
         }
 
-        $customValues = [];
-        $values = [];
-
-        foreach ($fields as $field) {
-            $usedValue = $object->{'get' . ucfirst($field)}();
-
-            if ($metadata->isCustomTypeField($field)) {
-                if (!@$values['custom']) {
-                    $values['custom'] = (new CustomFieldObject())
-                        ->setType(TypeReference::ofKey($metadata->getCustomType($field)));
-                }
-
-                $customValues[$field] = $usedValue;
-            } else {
-                $values[$field] = $usedValue;
-            }
-        }
-
-        if ($customValues) {
-            $values['custom']->setFields(FieldContainer::fromArray($customValues));
-        }
-
-        $draftClass = $metadata->getDraft();
-        $draftObject = new $draftClass($values);
+        $draftObject = $this->createDraftObjectForNewRequest($metadata, $object, $fields);
 
         return $this->getDocumentManager()->createRequest(
             $metadata->getName(),
@@ -317,8 +332,18 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     public function detach($document)
     {
-        $visited = array();
+        $visited = [];
         $this->doDetach($document, $visited);
+    }
+
+    /**
+     * Detaches the given object after flush.
+     * @param object $object
+     * @return void
+     */
+    public function detachDeferred($object)
+    {
+        $this->getDetachQueue()->attach($object);
     }
 
     /**
@@ -334,10 +359,11 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         $visited[$oid] = $document; // mark visited
+        $this->getDetachQueue()->detach($document);
 
         switch ($this->getDocumentState($document)) {
             case self::STATE_MANAGED:
-                if (isset($this->identityMap[$this->documentIdentifiers[$oid]])) {
+                if (isset($this->identityMap[@$this->documentIdentifiers[$oid]])) {
                     $this->removeFromIdentityMap($document);
                 }
                 unset($this->scheduledRemovals[$oid],
@@ -464,15 +490,17 @@ class UnitOfWork implements UnitOfWorkInterface
                 unset($this->newDocuments[$key]);
 
                 $this->registerAsManaged($sourceDocument, $id, $version);
+                $this->processDeferredDetach($sourceDocument);
             } elseif ($statusCode === 200) {
                 $document = @$this->identityMap[$key] ?? $response->toObject();
 
                 // TODO Everything has a version?
                 $this->registerAsManaged($document, $document->getId(), $document->getVersion());
+                $this->processDeferredDetach($document);
             } else {
                 /** @var ErrorResponse $response */
                 exit(var_dump($response->getMessage(), $response->getErrors(), $response->getRequest()->httpRequest()
-                ->getBody()->getContents()));
+                    ->getBody()->getContents()));
             }
         }
 
@@ -501,6 +529,15 @@ class UnitOfWork implements UnitOfWorkInterface
     protected function getClassMetadata(string $class): ClassMetadata
     {
         return $this->getDocumentManager()->getClassMetadata($class);
+    }
+
+    /**
+     * Returns the queue for detaching after flush.
+     * @return SplObjectStorage
+     */
+    private function getDetachQueue(): SplObjectStorage
+    {
+        return $this->detachQueue;
     }
 
     /**
@@ -579,7 +616,7 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         switch ($metadata->getTypeOfField($field)) {
             case 'boolean':
-                $returnValue = (bool) $value;
+                $returnValue = (bool)$value;
                 break;
 
             case 'dateTime':
@@ -587,11 +624,11 @@ class UnitOfWork implements UnitOfWorkInterface
                 break;
 
             case 'int':
-                $returnValue = (int) $value;
+                $returnValue = (int)$value;
                 break;
 
             case 'string':
-                $returnValue = (string) $value;
+                $returnValue = (string)$value;
                 break;
 
             default:
@@ -599,6 +636,139 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         return $returnValue;
+    }
+
+    /**
+     * Parses the data of the given object to create a value array for the draft of the object.
+     * @param ClassMetadataInterface $metadata
+     * @param Product $product The source object.
+     * @param array $fields
+     * @return array
+     * @todo To hard coupled with the standard object.
+     * @todo Not completely tested.
+     */
+    private function parseValuesForProductDraft(
+        ClassMetadataInterface $metadata,
+        Product $product,
+        array $fields
+    ): array {
+        $values = [
+            'key' => (string) $product->getKey(),
+            'productType' => $product->getProductType(),
+            'state' => $product->getState(),
+            'variants' => null,
+        ];
+
+        if ($productData = $product->getMasterData()) {
+            $values += [
+                'publish' => (bool)$productData->getPublished()
+            ];
+
+            $projection = $productData->getStaged();
+            $valueNames = [
+                'categoryOrderHints',
+                'categories',
+                'name',
+                'metaKeywords',
+                'metaDescription',
+                'metaTitle',
+                'searchKeywords',
+                'slug',
+            ];
+
+            foreach ($valueNames as $name) {
+                $values[$name] = @$projection->get($name);
+            }
+
+            // getAllVariants() did not work as expected and Collection::toArray() changes to mush.
+            $variants = [$projection->getMasterVariant()];
+            foreach ($projection->getVariants() ?? [] as $variant) {
+                $variants[] = $variant;
+            }
+
+            /** @var ProductVariant $variant */
+            foreach ($variants as $index => $variant) {
+                $variantDraft = ProductVariantDraft::fromArray(
+                    array_filter(
+                        [
+                            'attributes' => $variant->getAttributes(),
+                            'images' => $variant->getImages(),
+                            'key' => $variant->getKey(),
+                            'sku' => (string) $variant->getSku()
+                        ]
+                    )
+                );
+
+                if (($prices = $variant->getPrices()) && (count($prices))) {
+                    $variantDraft->setPrices(new PriceDraftCollection());
+
+                    foreach ($prices as $price) {
+                        $variantDraft->getPrices()->add(PriceDraft::fromArray($price->toArray()));
+                    }
+                }
+
+                if (($assets = $variant->getAssets()) && (count($assets))) {
+                    $variantDraft->setAssets(new AssetDraftCollection());
+
+                    foreach ($assets as $asset) {
+                        $variantDraft->getAssets()->add(AssetDraft::fromArray($asset->toArray()));
+                    }
+                }
+
+                if (!$index) {
+                    $values['masterVariant'] = $variantDraft;
+                } else {
+                    $values['variants'][] = $variantDraft;
+                }
+            }
+        }
+
+        return array_filter($values);
+    }
+
+    /**
+     * Parses the data of the given object to create a value array for the draft of the object.
+     * @param ClassMetadataInterface $metadata
+     * @param object $object The source object.
+     * @param array $fields
+     * @return array
+     */
+    private function parseValuesForSimpleDraft(ClassMetadataInterface $metadata, $object, array $fields): array
+    {
+        $customValues = [];
+        $values = [];
+
+        foreach ($fields as $field) {
+            $usedValue = $object->{'get' . ucfirst($field)}();
+
+            if ($metadata->isCustomTypeField($field)) {
+                if (!@$values['custom']) {
+                    $values['custom'] = (new CustomFieldObject())
+                        ->setType(TypeReference::ofKey($metadata->getCustomType($field)));
+                }
+
+                $customValues[$field] = $usedValue;
+            } else {
+                $values[$field] = $usedValue;
+            }
+        }
+
+        if ($customValues) {
+            $values['custom']->setFields(FieldContainer::fromArray($customValues));
+        }
+
+        return $values;
+    }
+
+    /**
+     * Processed the deferred detach for the given object.
+     * @param $object
+     */
+    private function processDeferredDetach($object)
+    {
+        if ($this->getDetachQueue()->contains($object)) {
+            $this->detach($object);
+        }
     }
 
     /**
@@ -687,9 +857,21 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     public function scheduleSave($entity): UnitOfWorkInterface
     {
-        $visited = array();
+        $visited = [];
 
         $this->doScheduleSave($entity, $visited);
+
+        return $this;
+    }
+
+    /**
+     * Sets the queue for the objects which should be detached after flush.
+     * @param SplObjectStorage $detachQueue
+     * @return UnitOfWork
+     */
+    private function setDetachQueue(SplObjectStorage $detachQueue): UnitOfWork
+    {
+        $this->detachQueue = $detachQueue;
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Repository;
 
+use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use Doctrine\Common\Persistence\ObjectRepository as BasicInterface;
 
 /**
@@ -19,6 +20,12 @@ interface ObjectRepository extends BasicInterface
      * @return bool The old status.
      */
     public function clearExpandAfterQuery($newStatus = false) : bool;
+
+    /**
+     * Returns the used document manager.
+     * @return DocumentManagerInterface
+     */
+    public function getDocumentManager(): DocumentManagerInterface;
 
     /**
      * Returns the elements which should be expanded.

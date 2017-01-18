@@ -44,6 +44,13 @@ interface UnitOfWorkInterface
     public function createDocument(string $className, $responseObject, array $hints = []);
 
     /**
+     * Detaches the given object after flush.
+     * @param object $object
+     * @return void
+     */
+    public function detachDeferred($object);
+
+    /**
      * Commits every change to commercetools.
      * @return void
      */
