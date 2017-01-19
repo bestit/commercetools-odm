@@ -50,6 +50,7 @@ return [
     ],
 
     \Commercetools\Core\Model\Product\ProductProjection::class => [
+        'draft' => \Commercetools\Core\Model\Product\ProductDraft::class,
         'repository' => \BestIt\CommercetoolsODM\Model\ProductProjectionRepository::class,
         'requestClassMap' => (new RequestMap())
             ->setFindById(\Commercetools\Core\Request\Products\ProductProjectionByIdGetRequest::class)
