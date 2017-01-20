@@ -25,6 +25,19 @@ trait ByKeySearchRepositoryTrait
     abstract protected function addExpandsToRequest(ClientRequestInterface $request);
 
     /**
+     * Returns a simple query.
+     * @param string $objectClass
+     * @param string $queryType
+     * @param array ...$parameters
+     * @return ClientRequestInterface
+     */
+    abstract protected function createSimpleQuery(
+        string $objectClass,
+        string $queryType,
+        ...$parameters
+    ): ClientRequestInterface;
+
+    /**
      * Finds an object by its user defined key.
      * @param string $key
      * @return mixed|void
@@ -63,9 +76,56 @@ trait ByKeySearchRepositoryTrait
     }
 
     /**
+     * Finds an object by its user defined key.
+     * @param string $key
+     * @return mixed|void
+     * @param callable|void $onResolve Callback on the successful response.
+     * @param callable|void $onReject Callback for an error.
+     * @return void
+     * @todo Not tested.
+     */
+    public function findByKeyAsync(string $key, callable $onResolve = null, callable $onReject = null)
+    {
+        $document = $this->getDocumentManager()->getUnitOfWork()->tryGetByKey($key);
+
+        if ($document) {
+            $onResolve($document);
+        } else {
+            $request = $this->createSimpleQuery(
+                $this->getClassName(),
+                DocumentManagerInterface::REQUEST_TYPE_FIND_BY_KEY,
+                $this->getExpands(),
+                $key
+            );
+
+            $this->processQueryAsync($request, $onResolve, $onReject);
+        }
+    }
+
+    /**
+     * Returns the used document manager.
+     * @return DocumentManagerInterface
+     */
+    abstract public function getDocumentManager(): DocumentManagerInterface;
+
+    /**
      * Processes the given query.
      * @param ClientRequestInterface $request
-     * @return array The mapped response, the raw response, the request
+     * @return array<mixed|ApiResponseInterface|ClientRequestInterface> The mapped response, the raw response, the
+     *         request.
      */
     abstract protected function processQuery(ClientRequestInterface $request): array;
+
+    /**
+     * Processes the given query async.
+     * @param ClientRequestInterface $request
+     * @param callable|void $onResolve Callback on the successful response.
+     * @param callable|void $onReject Callback for an error.
+     * @return void
+     */
+    abstract protected function processQueryAsync(
+        ClientRequestInterface $request,
+        callable $onResolve = null,
+        callable $onReject = null
+    );
 }

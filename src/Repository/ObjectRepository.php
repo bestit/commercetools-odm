@@ -4,6 +4,7 @@ namespace BestIt\CommercetoolsODM\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use Doctrine\Common\Persistence\ObjectRepository as BasicInterface;
+use Exception;
 
 /**
  * The API for the object repos.
@@ -19,7 +20,51 @@ interface ObjectRepository extends BasicInterface
      * @param bool $newStatus The new status.
      * @return bool The old status.
      */
-    public function clearExpandAfterQuery($newStatus = false) : bool;
+    public function clearExpandAfterQuery($newStatus = false): bool;
+
+    /**
+     * Finds an object by its primary key / identifier.
+     * @param mixed $id The identifier.
+     * @param callable|void $onResolve Callback on the successful response.
+     * @param callable|void $onReject Callback for an error.
+     * @return void
+     * @throws Exception If there is something wrong.
+     */
+    public function findAsync($id, callable $onResolve = null, callable $onReject = null);
+
+    /**
+     * Finds objects by a set of criteria.
+     *
+     * Optionally sorting and limiting details can be passed. An implementation may throw
+     * an UnexpectedValueException if certain values of the sorting or limiting details are
+     * not supported.
+     * @param array $criteria
+     * @param array $orderBy
+     * @param int $limit
+     * @param int $offset
+     * @param callable|void $onResolve Callback on the successful response.
+     * @param callable|void $onReject Callback for an error.
+     * @return void
+     * @throws Exception If there is something wrong.
+     */
+    public function findByAsync(
+        array $criteria,
+        array $orderBy = [],
+        int $limit = 0,
+        int $offset = 0,
+        callable $onResolve = null,
+        callable $onReject = null
+    );
+
+    /**
+     * Finds a single object by a set of criteria.
+     * @param array $criteria The criteria.
+     * @param callable|void $onResolve Callback on the successful response.
+     * @param callable|void $onReject Callback for an error.
+     * @return void
+     * @throws Exception If there is something wrong.
+     */
+    public function findOneByAsync(array $criteria, callable $onResolve = null, callable $onReject = null);
 
     /**
      * Returns the used document manager.
@@ -31,7 +76,7 @@ interface ObjectRepository extends BasicInterface
      * Returns the elements which should be expanded.
      * @return array
      */
-    public function getExpands() : array;
+    public function getExpands(): array;
 
     /**
      * Set the elements which should be expanded.
@@ -39,5 +84,5 @@ interface ObjectRepository extends BasicInterface
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
      * @return ObjectRepository
      */
-    public function setExpands(array $expands, $clearAfterwards = false) : ObjectRepository;
+    public function setExpands(array $expands, $clearAfterwards = false): ObjectRepository;
 }
