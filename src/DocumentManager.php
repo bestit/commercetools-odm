@@ -73,7 +73,6 @@ class DocumentManager implements DocumentManagerInterface
     public function createRequest(string $className, $requestType = self::REQUEST_TYPE_QUERY, ...$args)
     {
         $metadata = $this->getClassMetadata($className);
-
         if (!($metadata instanceof ClassMetadataInterface)) {
             throw new InvalidArgumentException('The given metadata class was of the wrong type.');
         }

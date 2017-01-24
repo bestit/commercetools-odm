@@ -61,6 +61,12 @@ interface DocumentManagerInterface extends ObjectManager
     const REQUEST_TYPE_FIND_BY_KEY = 'FindByKey';
 
     /**
+     * Key to request the request-class for finding by customer id.
+     * @var string
+     */
+    const REQUEST_TYPE_FIND_BY_CUSTOMER_ID = 'FindByCustomerId';
+
+    /**
      * Key to request the request-class for simple querying.
      * @var string
      */

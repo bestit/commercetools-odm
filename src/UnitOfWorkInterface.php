@@ -83,6 +83,14 @@ interface UnitOfWorkInterface extends Countable
     public function tryGetByContainerAndKey(string $container, string $key);
 
     /**
+     * Tries to find an document with the given customer identifier in the identity map of this UnitOfWork.
+     * @param mixed $id The document identifier to look for.
+     * @return mixed Returns the document with the specified identifier if it exists in
+     *               this UnitOfWork, void otherwise.
+     */
+    public function tryGetByCustomerId(string $id);
+
+    /**
      * Tries to find an document with the given identifier in the identity map of this UnitOfWork.
      * @param mixed $id The document identifier to look for.
      * @return mixed Returns the document with the specified identifier if it exists in
