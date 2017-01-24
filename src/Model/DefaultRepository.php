@@ -190,7 +190,6 @@ class DefaultRepository implements ObjectRepository
             $request = $this->createSimpleQuery(
                 $this->getClassName(),
                 DocumentManagerInterface::REQUEST_TYPE_FIND_BY_ID,
-                null,
                 $id
             );
 

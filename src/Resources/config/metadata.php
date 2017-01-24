@@ -3,6 +3,17 @@
 use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
 
 return [
+    \Commercetools\Core\Model\Cart\Cart::class => [
+        'draft' => \Commercetools\Core\Model\Cart\CartDraft::class,
+        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Carts\CartCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Carts\CartDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Carts\CartByIdGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Carts\CartQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Carts\CartUpdateRequest::class)
+    ],
+
     \Commercetools\Core\Model\Category\Category::class => [
         'draft' => \Commercetools\Core\Model\Category\CategoryDraft::class,
         'requestClassMap' => (new RequestMap())
