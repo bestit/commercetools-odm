@@ -4,26 +4,29 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "136e4fb389ea1a52c23ad639d8311396",
-    "content-hash": "acbe3c4a51170f9c2819b5880749f6d8",
+    "hash": "0ef5b7536a0ef3cc71380db82a811207",
+    "content-hash": "9d4c67a65196c6ac1f71d7c890a45e7f",
     "packages": [
         {
             "name": "bestit/commercetools-async-pool",
-            "version": "0.3.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bestit/commercetools-async-pool.git",
-                "reference": "b14ca3b79d1f5861568922c098dfcf8325704d16"
+                "reference": "49ac60377a4faf389ca57d3f17f847ec400ea228"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bestit/commercetools-async-pool/zipball/b14ca3b79d1f5861568922c098dfcf8325704d16",
-                "reference": "b14ca3b79d1f5861568922c098dfcf8325704d16",
+                "url": "https://api.github.com/repos/bestit/commercetools-async-pool/zipball/49ac60377a4faf389ca57d3f17f847ec400ea228",
+                "reference": "49ac60377a4faf389ca57d3f17f847ec400ea228",
                 "shasum": ""
             },
             "require": {
                 "commercetools/php-sdk": "^1.4",
                 "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7"
             },
             "type": "library",
             "autoload": {
@@ -42,7 +45,7 @@
                 }
             ],
             "description": "Batch-Processing of a pool asynchronous commercetools requests.",
-            "time": "2017-01-19 21:29:43"
+            "time": "2017-01-25 07:14:16"
         },
         {
             "name": "commercetools/commons",

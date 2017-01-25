@@ -13,7 +13,7 @@
         "commercetools/php-sdk": "^1.4",
         "ext-intl": "^1.1",
         "doctrine/common": "^2.6",
-        "bestit/commercetools-async-pool": "^0.3.0"
+        "bestit/commercetools-async-pool": "^1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.6",
