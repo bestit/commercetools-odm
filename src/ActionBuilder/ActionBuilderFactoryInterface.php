@@ -16,9 +16,9 @@ interface ActionBuilderFactoryInterface
     /**
      * Gets the action builders for the given object and its field name.
      * @param ClassMetadataInterface $classMetadata
-     * @param string $fieldName
-     * @param $sourceObject
+     * @param string $fieldPath The hierarchical path of the fields.
+     * @param object $sourceObject
      * @return ActionBuilderInterface[]
      */
-    public function getActionBuilders(ClassMetadataInterface $classMetadata, string $fieldName, $sourceObject): array;
+    public function getActionBuilders(ClassMetadataInterface $classMetadata, string $fieldPath, $sourceObject): array;
 }

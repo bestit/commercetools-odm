@@ -12,16 +12,16 @@ namespace BestIt\CommercetoolsODM\ActionBuilder;
 abstract class ActionBuilderAbstract implements ActionBuilderInterface
 {
     /**
+     * A PCRE to match the hierarchical field path without delimiter.
+     * @var string
+     */
+    protected $complexFieldFilter = '';
+
+    /**
      * The field name.
      * @var string
      */
     protected $fieldName = '';
-
-    /**
-     * For which class is this description used?
-     * @var string
-     */
-    protected $modelClass = '';
 
     /**
      * Allows this action other actions?
@@ -30,18 +30,50 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
     protected $isStackable = true;
 
     /**
+     * Caches the last support match.
+     * @var array
+     */
+    private $lastFoundMatch = [];
+
+    /**
+     * For which class is this description used?
+     * @var string
+     */
+    protected $modelClass = '';
+
+    /**
      * At which order should this builder be executed? Highest happens first.
      * @var int
      */
     protected $priority = 0;
 
     /**
+     * Returns the complex field filter with slash delimiters if there is one.
+     * @return string
+     */
+    protected function getComplexFieldFilter(): string
+    {
+        return $this->complexFieldFilter
+            ? sprintf('%s%s%s', self::FILTER_DELIMITER, $this->complexFieldFilter, self::FILTER_DELIMITER)
+            : '';
+    }
+
+    /**
      * Returns the name of the field.
      * @return string
      */
-    public function getFieldName(): string
+    protected function getFieldName(): string
     {
         return $this->fieldName;
+    }
+
+    /**
+     * Returns the last support()-match.
+     * @return array
+     */
+    protected function getLastFoundMatch(): array
+    {
+        return $this->lastFoundMatch;
     }
 
     /**
@@ -79,6 +111,18 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
     }
 
     /**
+     * Sets the PCRE to match the hierarchical field path.
+     * @param string $complexFieldFilter
+     * @return ActionBuilderAbstract
+     */
+    protected function setComplexFieldFilter(string $complexFieldFilter): ActionBuilderAbstract
+    {
+        $this->complexFieldFilter = $complexFieldFilter;
+
+        return $this;
+    }
+
+    /**
      * Sets the field name.
      * @param string $fieldName
      * @return ActionBuilderAbstract
@@ -89,6 +133,18 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
         return $this;
     }
 
+    /**
+     * Caches the last support match.
+     * @param array $lastFoundMatch
+     * @return ActionBuilderAbstract
+     */
+    protected function setLastFoundMatch(array $lastFoundMatch): ActionBuilderAbstract
+    {
+        $this->lastFoundMatch = $lastFoundMatch;
+
+        return $this;
+    }
+    
     /**
      * For which class is this description used?
      * @param string $modelClass
@@ -103,13 +159,31 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * Returns true if the given class name matches the model class for this description.
-     * @param string $fieldName
+     * @param string $fieldPath The hierarchical path of the fields.
      * @param string $referenceClass
-     * @return bool
+     * @return bool|array If there is a complex match, the matched values are returned.
      */
-    public function supports(string $fieldName, string $referenceClass): bool
+    public function supports(string $fieldPath, string $referenceClass)
     {
-        return ($this->getModelClass() === $referenceClass) &&
-            preg_match('/' . preg_quote($fieldName, '/') . '(\/?\*|$)/', $this->getFieldName()) !== false;
+        $supports = false;
+
+        if ($this->getModelClass() === $referenceClass) {
+            if (!$filter = $this->getComplexFieldFilter()) {
+                $filter = sprintf(
+                    '%s%s(\/?\*|$)%s',
+                    self::FILTER_DELIMITER,
+                    preg_quote($this->getFieldName(), self::FILTER_DELIMITER),
+                    self::FILTER_DELIMITER
+                );
+            }
+
+            $supports = preg_match($filter, $fieldPath, $matches) === 1;
+
+            if ($supports) {
+                $this->setLastFoundMatch($matches);
+            }
+        }
+
+        return $supports;
     }
 }

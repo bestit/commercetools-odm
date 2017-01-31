@@ -158,15 +158,21 @@ class UnitOfWork implements UnitOfWorkInterface
 
     private function computeChangeSet(ClassMetadataInterface $metadata, $document)
     {
-        $changedData = [];
-        $newData = $this->extractData($document, $metadata);
-        $oldData = $this->getOriginalData($document);
-
-        $changedData = array_filter($newData, function ($value, string $key) use (&$changedData, $oldData) {
-            return serialize($value) !== serialize(@$oldData[$key]);
-        }, ARRAY_FILTER_USE_BOTH);
+        $changedData = $this->extractChanges(
+            $newData = $this->extractData($document, $metadata),
+            $oldData = $this->getOriginalData($document)
+        );
 
         return $changedData ? $this->createUpdateRequest($changedData, $oldData, $document) : null;
+    }
+
+    /**
+     * Returns the count of manafwment
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->newDocuments) + count($this->identityMap);
     }
 
     /**
@@ -415,8 +421,36 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
+     * Extracts the changes of the two arrays.
+     * @param array $newData
+     * @param array $oldData
+     * @return array
+     * @todo Deletes (missing in new, but filled in old) are not extracted correctly.
+     */
+    private function extractChanges(array $newData, array $oldData): array
+    {
+        $changedData = [];
+
+        foreach ($newData as $key => $value) {
+            if (is_array($value)) {
+                $changedSubData = $this->extractChanges($value, $oldData[$key] ?? []);
+
+                if ($changedSubData) {
+                    $changedData[$key] = $changedSubData;
+                }
+            } else {
+                if ($value !== @$oldData[$key]) {
+                    $changedData[$key] = $newData[$key] ?? null;
+                }
+            }
+        }
+
+        return $changedData;
+    }
+
+    /**
      * Uses the getter of the sourceTarget to fetch the field names of the metadata.
-     * @param $sourceTarget
+     * @param object $sourceTarget
      * @param ClassMetadataInterface $metadata
      * @return array
      */
@@ -429,6 +463,7 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         if (method_exists($sourceTarget, 'toArray')) {
+            /** @var JsonObject $sourceTarget */
             $return = $sourceTarget->toArray();
         } else {
             array_map(

@@ -43,41 +43,70 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
         $sourceObject
     ): array
     {
+        return $this->createUpdateActionsRecursively($metadata, $changedData, $oldData, $sourceObject, '');
+    }
+
+    /**
+     * Iterates recursively through the field hierarchy and delivers their actions.
+     * @param ClassMetadataInterface $metadata
+     * @param array $changedData
+     * @param array $oldData
+     * @param object $sourceObject
+     * @param string $parentPath
+     * @return array
+     */
+    private function createUpdateActionsRecursively(
+        ClassMetadataInterface $metadata,
+        array $changedData,
+        array $oldData,
+        $sourceObject,
+        string $parentPath = ''
+    )
+    {
         $actions = [];
 
-        array_walk(
-            $changedData,
-            function ($value, $fieldName) use (&$actions, $metadata, $changedData, $oldData, $sourceObject) {
-                $action = null;
-                $subFieldName = '';
+        foreach ($changedData as $pathPart => $value) {
+            if ($parentPath) {
+                $parentPath = rtrim($parentPath, '/') . '/';
+            }
 
-                if ($metadata->isCustomTypeField($fieldName)) {
-                    $subFieldName = $fieldName;
-                    $fieldName = 'custom';
-                }
+            $path = $parentPath . $pathPart;
 
-                $builders = $this->getActionBuilderFactory()->getActionBuilders($metadata, $fieldName, $sourceObject);
+            // Todo Check on customer
+            if ($metadata->isCustomTypeField($path)) {
+                $path = 'custom/' . $path;
+            }
 
-                foreach ($builders as $builder) {
-                    $nextActions = $builder->createUpdateActions(
-                        $value,
-                        $metadata,
-                        $changedData,
-                        $oldData,
-                        $sourceObject,
-                        $subFieldName
-                    );
+            $builders = $this->getActionBuilderFactory()->getActionBuilders($metadata, $path, $sourceObject);
 
-                    if ($nextActions) {
-                        $actions = array_merge($actions, $nextActions);
+            foreach ($builders as $builder) {
+                $nextActions = $builder->createUpdateActions(
+                    $value,
+                    $metadata,
+                    $changedData,
+                    $oldData,
+                    $sourceObject
+                );
 
-                        if (!$builder->isStackable()) {
-                            break;
-                        }
-                    }
+                if ($nextActions) {
+                    $actions = array_merge($actions, $nextActions);
                 }
             }
-        );
+
+            if (is_array($value)) {
+                $subActions = $this->createUpdateActionsRecursively(
+                    $metadata,
+                    $value,
+                    $oldData,
+                    $sourceObject,
+                    $path
+                );
+
+                if ($subActions) {
+                    $actions = array_merge($actions, $subActions);
+                }
+            }
+        }
 
         return $actions;
     }

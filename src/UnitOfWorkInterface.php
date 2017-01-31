@@ -2,13 +2,15 @@
 
 namespace BestIt\CommercetoolsODM;
 
+use Countable;
+
 /**
  * The basic interface for the commercetools unit of work.
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @version $id$
  */
-interface UnitOfWorkInterface
+interface UnitOfWorkInterface extends Countable
 {
     /**
      * This state marks an entity as new.

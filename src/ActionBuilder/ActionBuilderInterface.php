@@ -15,6 +15,12 @@ use Commercetools\Core\Request\AbstractAction;
 interface ActionBuilderInterface
 {
     /**
+     * The delimiter for the pcres.
+     * @var string
+     */
+    const FILTER_DELIMITER = '~';
+
+    /**
      * Creates the update actions for the given class and data.
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
@@ -34,29 +40,23 @@ interface ActionBuilderInterface
     ): array;
 
     /**
-     * Returns the name of the field.
-     * @return string
-     */
-    public function getFieldName() : string;
-
-    /**
      * At which order should this builder be executed? Highest happens first.
      * @return int
      */
-    public function getPriority() : int;
+    public function getPriority(): int;
 
     /**
      * Allows this action other actions?
      * @param bool $newStatus The new status.
      * @return bool The old status.
      */
-    public function isStackable(bool $newStatus = false) : bool;
+    public function isStackable(bool $newStatus = false): bool;
 
     /**
      * Returns true if the given class name matches the model class for this description.
-     * @param string $fieldName
+     * @param string $fieldPath The hierarchical path of the fields.
      * @param string $referenceClass
-     * @return bool
+     * @return bool|array If there is a complex match, the matched values are returned.
      */
-    public function supports(string $fieldName, string $referenceClass) : bool;
+    public function supports(string $fieldPath, string $referenceClass);
 }

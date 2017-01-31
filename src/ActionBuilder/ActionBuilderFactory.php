@@ -15,6 +15,7 @@ use ReflectionException;
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @subpackage ActionBuilder
+ * @todo Add caching for field/class; Add Events!
  * @version $id$
  */
 class ActionBuilderFactory implements ActionBuilderFactoryInterface
@@ -53,23 +54,23 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
     /**
      * Gets the action builders for the given object and its field name.
      * @param ClassMetadataInterface $classMetadata
-     * @param string $fieldName
-     * @param mixed $sourceObject
+     * @param string $fieldPath The hierarchical path of the fields.
+     * @param object $sourceObject
      * @return ActionBuilderInterface[]
      */
-    public function getActionBuilders(ClassMetadataInterface $classMetadata, string $fieldName, $sourceObject): array
+    public function getActionBuilders(ClassMetadataInterface $classMetadata, string $fieldPath, $sourceObject): array
     {
         $sourceClass = $classMetadata->getActionsFrom();
 
-        $allBuilders = array_map(function (string &$builderClass): ActionBuilderInterface {
+        $allBuilders = array_map(function (string $builderClass): ActionBuilderInterface {
             return new $builderClass;
         }, $this->loadActionBuilders());
 
         $foundBuilders = array_filter($allBuilders, function (ActionBuilderInterface $builder) use (
-            $fieldName,
+            $fieldPath,
             $sourceClass
         ) {
-            return $builder->supports($fieldName, $sourceClass);
+            return $builder->supports($fieldPath, $sourceClass);
         });
 
         // TODO Test
@@ -77,7 +78,11 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
             return $builder1->getPriority() <=> $builder2->getPriority();
         });
 
-        return $foundBuilders;
+        $nonStackableBuilders = array_filter($foundBuilders, function(ActionBuilderInterface $builder) {
+            return !$builder->isStackable();
+        });
+
+        return $nonStackableBuilders ? [reset($nonStackableBuilders)] : $foundBuilders;
     }
 
     /**
@@ -100,7 +105,6 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
     /**
      * Loads the action builders from cache or directly out of the file system.
      * @return array
-     * @todo Create an array sorted by class.
      */
     private function loadActionBuilders():array
     {
