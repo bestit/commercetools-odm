@@ -67,6 +67,12 @@ class RequestMap implements Annotation
     public $findByKey = '';
 
     /**
+     * Get-Request using the customer id.
+     * @var string
+     */
+    public $findByCustomerId = '';
+
+    /**
      * Class to request every entity.
      * @Required
      * @var string
@@ -142,6 +148,15 @@ class RequestMap implements Annotation
     public function getFindByContainerAndKey(): string
     {
         return $this->findByContainerAndKey;
+    }
+
+    /**
+     * Returns the Get-Request using the customer id.
+     * @return string
+     */
+    public function getFindByCustomerId(): string
+    {
+        return $this->getDefaultNamespace() . $this->findByCustomerId;
     }
 
     /**
@@ -259,6 +274,18 @@ class RequestMap implements Annotation
     public function setFindByContainerAndKey(string $findByContainerAndKey): RequestMap
     {
         $this->findByContainerAndKey = $findByContainerAndKey;
+
+        return $this;
+    }
+
+    /**
+     * Sets the Get-Request using the customer id.
+     * @param string $findByCustomerId
+     * @return RequestMap
+     */
+    public function setFindByCustomerId(string $findByCustomerId): RequestMap
+    {
+        $this->findByCustomerId = $findByCustomerId;
 
         return $this;
     }

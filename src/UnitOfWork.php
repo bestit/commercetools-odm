@@ -9,6 +9,7 @@ use BestIt\CommercetoolsODM\Event\OnFlushEventArgs;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\Cart\CartDraft;
 use Commercetools\Core\Model\Common\AssetDraft;
 use Commercetools\Core\Model\Common\AssetDraftCollection;
 use Commercetools\Core\Model\Common\DateTimeDecorator;
@@ -83,6 +84,12 @@ class UnitOfWork implements UnitOfWorkInterface
      * @var array
      */
     protected $keyMap = [];
+
+    /**
+     * Maps customer ids.
+     * @var array
+     */
+    protected $customerIdMap = [];
 
     /**
      * Saves the completely new documents.
@@ -245,9 +252,13 @@ class UnitOfWork implements UnitOfWorkInterface
     ): JsonObject {
         $draftClass = $metadata->getDraft();
 
-        $values = $draftClass === ProductDraft::class
-            ? $this->parseValuesForProductDraft($metadata, $object, $fields)
-            : $this->parseValuesForSimpleDraft($metadata, $object, $fields);
+        if ($draftClass === ProductDraft::class) {
+            $values = $this->parseValuesForProductDraft($metadata, $object, $fields);
+        } elseif ($draftClass === CartDraft::class) {
+            $values = $this->parseValuesForCartDraft($metadata, $object, $fields);
+        } else {
+            $values = $this->parseValuesForSimpleDraft($metadata, $object, $fields);
+        }
 
         return new $draftClass($values);
     }
@@ -510,8 +521,8 @@ class UnitOfWork implements UnitOfWorkInterface
 
                 if ($metadata->isCTStandardModel()) {
                     $sourceDocument
-                        ->setId($mappedResponse->getId())
-                        ->setversion($mappedResponse->getVersion());
+                        ->setId($id = $mappedResponse->getId())
+                        ->setversion($version = $mappedResponse->getVersion());
                 } else {
                     if ($versionField = $metadata->getVersion()) {
                         $sourceDocument->{'set' . ucfirst($versionField)}($version = $mappedResponse->getVersion());
@@ -776,6 +787,10 @@ class UnitOfWork implements UnitOfWorkInterface
         foreach ($fields as $field) {
             $usedValue = $object->{'get' . ucfirst($field)}();
 
+            if ($usedValue === null) {
+                continue;
+            }
+
             if ($metadata->isCustomTypeField($field)) {
                 if (!@$values['custom']) {
                     $values['custom'] = (new CustomFieldObject())
@@ -791,6 +806,21 @@ class UnitOfWork implements UnitOfWorkInterface
         if ($customValues) {
             $values['custom']->setFields(FieldContainer::fromArray($customValues));
         }
+
+        return $values;
+    }
+
+    /**
+     * Parses the data of the given object to create a cart draft
+     * @param ClassMetadataInterface $metadata
+     * @param object $object The source object.
+     * @param array $fields
+     * @return array
+     */
+    private function parseValuesForCartDraft(ClassMetadataInterface $metadata, $object, array $fields): array
+    {
+        $values = $this->parseValuesForSimpleDraft($metadata, $object, $fields);
+        $values['currency'] = $object->toArray()['currency'];
 
         return $values;
     }
@@ -961,6 +991,23 @@ class UnitOfWork implements UnitOfWorkInterface
 
         if (array_key_exists($key, $this->containerKeyMap)) {
             $return = $this->tryGetById($this->containerKeyMap[$key]);
+        }
+
+        return $return;
+    }
+
+    /**
+     * Tries to find an document with the given customer identifier in the identity map of this UnitOfWork.
+     * @param string $id The document customer id to look for.
+     * @return mixed Returns the document with the specified identifier if it exists in
+     *               this UnitOfWork, void otherwise.
+     */
+    public function tryGetByCustomerId(string $id)
+    {
+        $return = null;
+
+        if (array_key_exists($id, $this->customerIdMap)) {
+            $return = $this->tryGetById($this->customerIdMap[$id]);
         }
 
         return $return;

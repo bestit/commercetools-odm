@@ -5,11 +5,12 @@ use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
 return [
     \Commercetools\Core\Model\Cart\Cart::class => [
         'draft' => \Commercetools\Core\Model\Cart\CartDraft::class,
-        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'repository' => \BestIt\CommercetoolsODM\Repository\CartRepository::class,
         'requestClassMap' => (new RequestMap())
             ->setCreate(\Commercetools\Core\Request\Carts\CartCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\Carts\CartDeleteRequest::class)
             ->setFindById(\Commercetools\Core\Request\Carts\CartByIdGetRequest::class)
+            ->setFindByCustomerId(\Commercetools\Core\Request\Carts\CartByCustomerIdGetRequest::class)
             ->setQuery(\Commercetools\Core\Request\Carts\CartQueryRequest::class)
             ->setUpdateById(\Commercetools\Core\Request\Carts\CartUpdateRequest::class)
     ],
