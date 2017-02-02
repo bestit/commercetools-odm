@@ -21,7 +21,7 @@ class RemoveLineItem extends ActionBuilderAbstract
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
      */
-    protected $complexFieldFilter = 'lineItems/[^/]+';
+    protected $complexFieldFilter = 'lineItems/([^/]+)';
 
     /**
      * For which class is this description used?
@@ -54,7 +54,7 @@ class RemoveLineItem extends ActionBuilderAbstract
             return $actions;
         }
 
-        $offset = key($changedData);
+        $offset = $this->getLastFoundMatch()[1];
         $lineItemId = $sourceObject->getLineItems()->getAt($offset)->getId();
         $actions[] = CartRemoveLineItemAction::ofLineItemId($lineItemId);
 

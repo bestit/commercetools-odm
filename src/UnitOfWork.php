@@ -787,10 +787,6 @@ class UnitOfWork implements UnitOfWorkInterface
         foreach ($fields as $field) {
             $usedValue = $object->{'get' . ucfirst($field)}();
 
-            if ($usedValue === null) {
-                continue;
-            }
-
             if ($metadata->isCustomTypeField($field)) {
                 if (!@$values['custom']) {
                     $values['custom'] = (new CustomFieldObject())

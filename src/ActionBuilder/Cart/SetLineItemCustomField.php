@@ -23,7 +23,7 @@ class SetLineItemCustomField extends ActionBuilderAbstract
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
      */
-    protected $complexFieldFilter = 'lineItems/[^/]+';
+    protected $complexFieldFilter = 'lineItems/([^/]+)';
 
     /**
      * For which class is this description used?
@@ -56,7 +56,7 @@ class SetLineItemCustomField extends ActionBuilderAbstract
             return $actions;
         }
 
-        $offset = key($changedData);
+        $offset = $this->getLastFoundMatch()[1];
         $lineItemId = $sourceObject->getLineItems()->getAt($offset)->getId();
 
         // Do not process on added items
