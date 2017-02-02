@@ -5,7 +5,7 @@ namespace BestIt\CommercetoolsODM\Mapping\Annotations;
 use Doctrine\Common\Annotations\Annotation\Required;
 
 /**
- * Provides the class name to insert data to the database.
+ * Maps a normal property to a custom type field for commercetools.
  * @Annotation
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM

@@ -20,10 +20,10 @@ use DateTime;
 class SetCustomField extends ActionBuilderAbstract
 {
     /**
-     * The field name.
+     * A PCRE to match the hierarchical field path without delimiter.
      * @var string
      */
-    protected $fieldName = 'custom/*';
+    protected $complexFieldFilter = 'custom/fields/([^/]*)$';
 
     /**
      * For which class is this description used?
@@ -38,7 +38,6 @@ class SetCustomField extends ActionBuilderAbstract
      * @param array $changedData
      * @param array $oldData
      * @param Customer $sourceObject
-     * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
      * @return AbstractAction[]
      */
     public function createUpdateActions(
@@ -46,14 +45,14 @@ class SetCustomField extends ActionBuilderAbstract
         ClassMetadataInterface $metadata,
         array $changedData,
         array $oldData,
-        $sourceObject,
-        string $subFieldName = ''
+        $sourceObject
     ): array {
+        list(, $field) = $this->getLastFoundMatch();
 
         if ($changedValue instanceof DateTime) {
             $changedValue = new DateTimeDecorator($changedValue);
         }
 
-        return [SetCustomFieldAction::ofName($subFieldName)->setValue($changedValue)];
+        return [SetCustomFieldAction::ofName($field)->setValue($changedValue)];
     }
 }

@@ -72,9 +72,9 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
 
             $path = $parentPath . $pathPart;
 
-            // Todo Check on customer
+            // Simulate the native structure out of a custom type declared as a normal property
             if ($metadata->isCustomTypeField($path)) {
-                $path = 'custom/' . $path;
+                $path = 'custom/fields/' . $path;
             }
 
             $builders = $this->getActionBuilderFactory()->getActionBuilders($metadata, $path, $sourceObject);

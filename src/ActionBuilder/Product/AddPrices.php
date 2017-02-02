@@ -24,7 +24,6 @@ class AddPrices extends PriceActionBuilder
      * @param array $changedData
      * @param array $oldData
      * @param Product $sourceObject
-     * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
      * @return AbstractAction[]
      * @todo Add Variants.
      */
@@ -33,8 +32,7 @@ class AddPrices extends PriceActionBuilder
         ClassMetadataInterface $metadata,
         array $changedData,
         array $oldData,
-        $sourceObject,
-        string $subFieldName = ''
+        $sourceObject
     ): array {
         list(, $dataId, $variantId) = $this->getLastFoundMatch();
 

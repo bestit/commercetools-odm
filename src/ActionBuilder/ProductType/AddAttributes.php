@@ -36,7 +36,6 @@ class AddAttributes extends ActionBuilderAbstract
      * @param array $changedData
      * @param array $oldData
      * @param ProductType $sourceObject
-     * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
      * @return AbstractAction[]
      */
     public function createUpdateActions(
@@ -44,8 +43,7 @@ class AddAttributes extends ActionBuilderAbstract
         ClassMetadataInterface $metadata,
         array $changedData,
         array $oldData,
-        $sourceObject,
-        string $subFieldName = ''
+        $sourceObject
     ): array {
         $attrActions = [];
 
