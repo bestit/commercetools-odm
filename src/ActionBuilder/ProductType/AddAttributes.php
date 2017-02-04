@@ -4,6 +4,7 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\ProductType;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\ProductType\AttributeDefinition;
 use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\ProductTypes\Command\ProductTypeAddAttributeDefinitionAction;
@@ -48,15 +49,17 @@ class AddAttributes extends ActionBuilderAbstract
         $attrActions = [];
 
         /** @var AttributeDefinition $attribute */
-        foreach ($sourceObject->getAttributes() as $attribute) {
-            $searchName = $attribute->getName();
+        if ($actualAttr = $sourceObject->getAttributes()) {
+            foreach ($actualAttr as $attribute) {
+                $searchName = $attribute->getName();
 
-            $foundAttr = array_filter($oldData['attributes'] ?? [], function (array $oldAttr) use ($searchName) {
-                return @$oldAttr['name'] === $searchName;
-            });
+                $foundAttr = array_filter($oldData['attributes'] ?? [], function (array $oldAttr) use ($searchName) {
+                    return @$oldAttr['name'] === $searchName;
+                });
 
-            if (!$foundAttr) {
-                $attrActions[] = ProductTypeAddAttributeDefinitionAction::ofAttribute($attribute);
+                if (!$foundAttr) {
+                    $attrActions[] = ProductTypeAddAttributeDefinitionAction::ofAttribute($attribute);
+                }
             }
         }
 
