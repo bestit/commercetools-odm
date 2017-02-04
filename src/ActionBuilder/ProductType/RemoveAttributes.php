@@ -40,11 +40,11 @@ class RemoveAttributes extends ActionBuilderAbstract
         $attrActions = [];
 
         /** @var AttributeDefinition $attribute */
-        foreach ($oldData['attributes'] as $oldAttr) {
+        foreach ($oldData['attributes'] ?? [] as $oldAttr) {
             $searchName = $oldAttr['name'];
 
             $foundAttr = array_filter(
-                $sourceObject->getAttributes()->toArray(),
+                ($attrs = $sourceObject->getAttributes()) ? $attrs->toArray() : [],
                 function (array $newAttr) use ($searchName) {
                     return @$newAttr['name'] === $searchName;
                 }
