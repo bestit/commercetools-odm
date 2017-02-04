@@ -71,7 +71,7 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
      * Returns the last support()-match.
      * @return array
      */
-    protected function getLastFoundMatch(): array
+    public function getLastFoundMatch(): array
     {
         return $this->lastFoundMatch;
     }
@@ -138,7 +138,7 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
      * @param array $lastFoundMatch
      * @return ActionBuilderAbstract
      */
-    protected function setLastFoundMatch(array $lastFoundMatch): ActionBuilderAbstract
+    public function setLastFoundMatch(array $lastFoundMatch): ActionBuilderAbstract
     {
         $this->lastFoundMatch = $lastFoundMatch;
 

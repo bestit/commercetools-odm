@@ -38,6 +38,12 @@ interface ActionBuilderInterface
     ): array;
 
     /**
+     * Returns the last support()-match.
+     * @return array
+     */
+    public function getLastFoundMatch(): array;
+
+    /**
      * At which order should this builder be executed? Highest happens first.
      * @return int
      */

@@ -33,6 +33,23 @@ class ActionBuilderAbstractTest extends TestCase
     }
 
     /**
+     * Checks the setter and getters for the last found match.
+     * @return void
+     */
+    public function testGetAndSetLastFoundMatch()
+    {
+        static::assertSame([], $this->fixture->getLastFoundMatch(), 'Default return was wrong.');
+
+        static::assertSame(
+            $this->fixture,
+            $this->fixture->setLastFoundMatch($mock = [uniqid()]),
+            'Fluent interface failed.'
+        );
+
+        static::assertSame($mock, $this->fixture->getLastFoundMatch(), 'Set value was not returned.');
+    }
+
+    /**
      * Checks the priority getter.
      * @covers ActionBuilderAbstract::getPriority()
      * @return void
