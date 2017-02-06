@@ -34,19 +34,24 @@ class AddPrices extends PriceActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        list(, $dataId, $variantId) = $this->getLastFoundMatch();
-
-        /** @var ProductVariant $variant */
         $actions = [];
-        $variant = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}()->getMasterVariant();
-        $variantPrices = $variant->getPrices();
 
-        foreach ($changedValue as $index => $priceArray) {
-            if (!$variantPrices->getAt($index)->getId()) {
-                $actions[] = ProductAddPriceAction::ofVariantIdAndPrice(
-                    $variant->getId(),
-                    PriceDraft::fromArray($priceArray)
-                )->setStaged($dataId === 'staged');
+        if ($match = $this->getLastFoundMatch()) {
+            list(, $dataId, $variantId) = $match;
+
+            if ($changedValue) {
+                /** @var ProductVariant $variant */
+                $variant = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}()->getMasterVariant();
+                $variantPrices = $variant->getPrices();
+
+                foreach ($changedValue as $index => $priceArray) {
+                    if (!$variantPrices->getAt($index)->getId()) {
+                        $actions[] = ProductAddPriceAction::ofVariantIdAndPrice(
+                            $variant->getId(),
+                            PriceDraft::fromArray($priceArray)
+                        )->setStaged($dataId === 'staged');
+                    }
+                }
             }
         }
 
