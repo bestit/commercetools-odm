@@ -41,8 +41,8 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
         array $changedData,
         array $oldData,
         $sourceObject
-    ): array
-    {
+    ): array {
+    
         return $this->createUpdateActionsRecursively($metadata, $changedData, $oldData, $sourceObject, '');
     }
 
@@ -61,8 +61,8 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
         array $oldData,
         $sourceObject,
         string $parentPath = ''
-    )
-    {
+    ): array {
+    
         $actions = [];
 
         foreach ($changedData as $pathPart => $value) {
@@ -125,9 +125,9 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
      * @param ActionBuilderFactoryInterface $actionBuilderFactory
      * @return ActionBuilderProcessorInterface
      */
-    private function setActionBuilderFactory(ActionBuilderFactoryInterface $actionBuilderFactory):
-    ActionBuilderProcessorInterface
-    {
+    private function setActionBuilderFactory(
+        ActionBuilderFactoryInterface $actionBuilderFactory
+    ): ActionBuilderProcessorInterface {
         $this->actionBuilderFactory = $actionBuilderFactory;
 
         return $this;

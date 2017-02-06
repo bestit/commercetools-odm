@@ -146,7 +146,6 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function cascadeDetach($document, array &$visited)
     {
-
     }
 
     /**
@@ -383,9 +382,13 @@ class UnitOfWork implements UnitOfWorkInterface
                 if (isset($this->identityMap[@$this->documentIdentifiers[$oid]])) {
                     $this->removeFromIdentityMap($document);
                 }
-                unset($this->scheduledRemovals[$oid],
-                    $this->originalEntityData[$oid], $this->documentRevisions[$oid],
-                    $this->documentIdentifiers[$oid], $this->documentState[$oid]);
+                unset(
+                    $this->scheduledRemovals[$oid],
+                    $this->originalEntityData[$oid],
+                    $this->documentRevisions[$oid],
+                    $this->documentIdentifiers[$oid],
+                    $this->documentState[$oid]
+                );
                 break;
             case self::STATE_NEW:
             case self::STATE_DETACHED:
@@ -873,10 +876,12 @@ class UnitOfWork implements UnitOfWorkInterface
         $oid = spl_object_hash($document);
 
         if (isset($this->identityMap[$this->documentIdentifiers[$oid]])) {
-            unset($this->identityMap[$this->documentIdentifiers[$oid]],
+            unset(
+                $this->identityMap[$this->documentIdentifiers[$oid]],
                 $this->documentIdentifiers[$oid],
                 $this->documentRevisions[$oid],
-                $this->documentState[$oid]);
+                $this->documentState[$oid]
+            );
 
             return true;
         }

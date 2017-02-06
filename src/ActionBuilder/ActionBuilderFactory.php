@@ -78,7 +78,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
             return $builder1->getPriority() <=> $builder2->getPriority();
         });
 
-        $nonStackableBuilders = array_filter($foundBuilders, function(ActionBuilderInterface $builder) {
+        $nonStackableBuilders = array_filter($foundBuilders, function (ActionBuilderInterface $builder) {
             return !$builder->isStackable();
         });
 
@@ -129,10 +129,10 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
 
                         foreach ($iterator as $name) {
                             $className = $namespace . str_replace(
-                                    [$path, DIRECTORY_SEPARATOR, '.php'],
-                                    ['', '\\', ''],
-                                    $name
-                                );
+                                [$path, DIRECTORY_SEPARATOR, '.php'],
+                                ['', '\\', ''],
+                                $name
+                            );
 
                             try {
                                 $reflection = new ReflectionClass($className);
@@ -140,7 +140,6 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
                                 if (!$reflection->isAbstract() && !$reflection->isInterface() &&
                                     $reflection->implementsInterface(ActionBuilderInterface::class)
                                 ) {
-
                                     $allBuilders[] = $className;
                                 }
                             } catch (ReflectionException $exc) {
