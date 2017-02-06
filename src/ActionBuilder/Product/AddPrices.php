@@ -43,7 +43,6 @@ class AddPrices extends PriceActionBuilder
 
         foreach ($changedValue as $index => $priceArray) {
             if (!$variantPrices->getAt($index)->getId()) {
-                var_dump('add', $variant->getSku());
                 $actions[] = ProductAddPriceAction::ofVariantIdAndPrice(
                     $variant->getId(),
                     PriceDraft::fromArray($priceArray)
