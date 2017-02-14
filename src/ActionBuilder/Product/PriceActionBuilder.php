@@ -2,9 +2,6 @@
 
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
-use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
-use Commercetools\Core\Model\Product\Product;
-
 /**
  * Builder for price actions of a product.
  * @author blange <lange@bestit-online.de>
@@ -12,17 +9,11 @@ use Commercetools\Core\Model\Product\Product;
  * @subpackage ActionBuilder\Product
  * @version $id$
  */
-abstract class PriceActionBuilder extends ActionBuilderAbstract
+abstract class PriceActionBuilder extends ProductActionBuilder
 {
     /**
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
      */
-    protected $complexFieldFilter = '^masterData/(current|staging)/(masterVariant)/prices$';
-
-    /**
-     * For which class is this description used?
-     * @var string
-     */
-    protected $modelClass = Product::class;
+    protected $complexFieldFilter = '^masterData/(current|staged)/(masterVariant)/prices$';
 }

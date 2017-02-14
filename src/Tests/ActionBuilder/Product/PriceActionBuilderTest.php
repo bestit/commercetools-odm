@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\ActionBuilder\Product\PriceActionBuilder;
+use BestIt\CommercetoolsODM\ActionBuilder\Product\ProductActionBuilder;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +39,7 @@ class PriceActionBuilderTest extends TestCase
     {
         return [
             ['masterData/current/masterVariant/prices', Product::class, true],
-            ['masterData/staging/masterVariant/prices', Product::class, true],
+            ['masterData/staged/masterVariant/prices', Product::class, true],
             ['masterData/current/masterVariant/prices/0', Product::class],
             ['masterData/staging/masterVariant/prices/0', Product::class],
         ];
@@ -59,6 +60,15 @@ class PriceActionBuilderTest extends TestCase
      */
     public function testConstants()
     {
-        static::assertSAme('~', PriceActionBuilder::FILTER_DELIMITER);
+        static::assertSame('~', PriceActionBuilder::FILTER_DELIMITER);
+    }
+
+    /**
+     * Checks the instance of the builder.
+     * @return void
+     */
+    public function testInstance()
+    {
+        static::assertInstanceOf(ProductActionBuilder::class, $this->fixture);
     }
 }
