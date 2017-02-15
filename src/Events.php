@@ -50,7 +50,7 @@ final class Events
      * Event after the update.
      * @var string
      */
-    const POST_UPDATE = 'postUpdate';
+    const POST_PERSIST = 'postPersist';
 
     /**
      * Event after the load.

@@ -68,6 +68,13 @@ interface UnitOfWorkInterface extends Countable
     public function registerAsManaged($document, $identifier, $revision): UnitOfWorkInterface;
 
     /**
+     * Removes the object from the commercetools database.
+     * @param mixed $object
+     * @return UnitOfWorkInterface
+     */
+    public function scheduleRemove($object): UnitOfWorkInterface;
+
+    /**
      * Puts the given object in the save queue.
      * @param mixed $entity
      * @return UnitOfWorkInterface

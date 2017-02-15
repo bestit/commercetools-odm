@@ -32,6 +32,12 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use InvalidArgumentException;
 use SplObjectStorage;
 
+/**
+ * The unit of work inspired by the couch db odm structure.
+ * @author blange <lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM
+ * @version $id$
+ */
 class UnitOfWork implements UnitOfWorkInterface
 {
     use ActionBuilderProcessorAwareTrait, ClientAwareTrait, EventManagerAwareTrait, ListenerInvokerAwareTrait;
@@ -339,6 +345,17 @@ class UnitOfWork implements UnitOfWorkInterface
 
             $client->addBatchRequest($request->setIdentifier($id));
         }
+
+        foreach ($this->scheduledRemovals as $id => $document) {
+            $request = $this->getDocumentManager()->createRequest(
+                $this->getClassMetadata(get_class($document))->getName(),
+                DocumentManager::REQUEST_TYPE_DELETE_BY_ID,
+                $document->getId(),
+                $document->getVersion()
+            );
+
+            $client->addBatchRequest($request->setIdentifier($id));
+        }
     }
 
     /**
@@ -379,6 +396,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
         switch ($this->getDocumentState($document)) {
             case self::STATE_MANAGED:
+            case self::STATE_REMOVED:
                 if (isset($this->identityMap[@$this->documentIdentifiers[$oid]])) {
                     $this->removeFromIdentityMap($document);
                 }
@@ -390,6 +408,7 @@ class UnitOfWork implements UnitOfWorkInterface
                     $this->documentState[$oid]
                 );
                 break;
+
             case self::STATE_NEW:
             case self::STATE_DETACHED:
                 return;
@@ -398,6 +417,35 @@ class UnitOfWork implements UnitOfWorkInterface
         $this->cascadeDetach($document, $visited);
     }
 
+    /**
+     * Schedules the removal of the given object.
+     * @param mixed $object
+     * @param array $visited
+     */
+    private function doScheduleRemove($object, array &$visited)
+    {
+        $oid = spl_object_hash($object);
+
+        if (isset($visited[$oid])) {
+            return;
+        }
+
+        $em = $this->getEventManager();
+        $visited[$oid] = true;
+
+        $this->scheduledRemovals[$oid] = $object;
+        $this->documentState[$oid] = self::STATE_REMOVED;
+
+        $this->detachDeferred($object);
+
+        $this->getListenerInvoker()->invoke(
+            new LifecycleEventArgs($object, $this->getDocumentManager()),
+            Events::PRE_REMOVE,
+            $object,
+            $this->getClassMetadata(get_class($object))
+        );
+    }    
+    
     /**
      * Queues the entity for saving or throws an exception if there is something wrong.
      * @param mixed $entity
@@ -503,48 +551,49 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         $this->detectChangedDocuments();
 
+        $documentManager = $this->getDocumentManager();
         $eventManager = $this->getEventManager();
 
         $eventManager->dispatchEvent(Events::ON_FLUSH, new OnFlushEventArgs($this));
 
-        $responses = $this->getClient()->executeBatch();
-
-        foreach ($responses as $key => $response) {
+        foreach ($this->getClient()->executeBatch() as $key => $response) {
             $statusCode = $response->getStatusCode();
 
-            // Handle the new rows.
-            if ($statusCode === 201) {
-                $id = '';
-                $request = $response->getRequest();
-                $sourceDocument = $this->newDocuments[$key];
-                $mappedResponse = $request->mapResponse($response);
-                /** @var ClassMetadataInterface $metadata */
-                $metadata = $this->getClassMetadata(get_class($sourceDocument));
-                $version = null;
+            if ($statusCode >= 200 && $statusCode < 300) {
+                if ($statusCode === 200) {
+                    $document = @$this->identityMap[$key] ?? $response->toObject();
+                } elseif ($statusCode === 201) {
+                    // Handle the new rows.
+                    $document = $this->newDocuments[$key];
+                    $mappedResponse = $response->toObject();
+                    /** @var ClassMetadataInterface $metadata */
+                    $metadata = $this->getClassMetadata(get_class($document));
 
-                if ($metadata->isCTStandardModel()) {
-                    $sourceDocument
-                        ->setId($id = $mappedResponse->getId())
-                        ->setversion($version = $mappedResponse->getVersion());
-                } else {
-                    if ($versionField = $metadata->getVersion()) {
-                        $sourceDocument->{'set' . ucfirst($versionField)}($version = $mappedResponse->getVersion());
+                    if ($metadata->isCTStandardModel()) {
+                        $document
+                            ->setId($mappedResponse->getId())
+                            ->setversion($mappedResponse->getVersion());
+                    } else {
+                        if ($versionField = $metadata->getVersion()) {
+                            $document->{'set' . ucfirst($versionField)}($mappedResponse->getVersion());
+                        }
+
+                        if ($idField = $metadata->getIdentifier()) {
+                            $document->{'set' . ucfirst($idField)}($mappedResponse->getId());
+                        }
                     }
 
-                    if ($idField = $metadata->getIdentifier()) {
-                        $sourceDocument->{'set' . ucfirst($idField)}($id = $mappedResponse->getId());
-                    }
+                    unset($this->newDocuments[$key]);
                 }
 
-                unset($this->newDocuments[$key]);
+                if ($this->getDocumentState($document) !== self::STATE_REMOVED) {
+                    // TODO Everything has a version?
+                    $eventManager->dispatchEvent(Events::POST_PERSIST, new LifecycleEventArgs($document, $documentManager));
+                    $this->registerAsManaged($document, $document->getId(), $document->getVersion());
+                } else {
+                    $eventManager->dispatchEvent(Events::POST_REMOVE, new LifecycleEventArgs($document, $documentManager));
+                }
 
-                $this->registerAsManaged($sourceDocument, $id, $version);
-                $this->processDeferredDetach($sourceDocument);
-            } elseif ($statusCode === 200) {
-                $document = @$this->identityMap[$key] ?? $response->toObject();
-
-                // TODO Everything has a version?
-                $this->registerAsManaged($document, $document->getId(), $document->getVersion());
                 $this->processDeferredDetach($document);
             } else {
                 /** @var ErrorResponse $response */
@@ -562,7 +611,7 @@ class UnitOfWork implements UnitOfWorkInterface
         foreach ($this->scheduledUpdates AS $oid => $document) {
             $eventManager->dispatchEvent(Events::PRE_UPDATE, new LifecycleEventArgs($document, $dm));
 
-            $eventManager->dispatchEvent(Events::POST_UPDATE, new LifecycleEventArgs($document, $dm));
+            $eventManager->dispatchEvent(Events::POST_PERSIST, new LifecycleEventArgs($document, $dm));
         }
 
         $this->scheduledUpdates =
@@ -608,7 +657,7 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         /** @var ClassMetadataInterface $class */
         $class = $this->getClassMetadata($className = get_class($document));
-        $isStandard = $document instanceof Resource;
+        $isStandard = $document instanceof JsonObject;
         $oid = spl_object_hash($document);
         $state = @$this->documentState[$oid];
         $id = $isStandard ? $document->getId() : $document->{'get' . ucfirst($class->getIdentifier())}();
@@ -721,9 +770,12 @@ class UnitOfWork implements UnitOfWorkInterface
                 'metaKeywords',
                 'metaDescription',
                 'metaTitle',
-                'searchKeywords',
                 'slug',
             ];
+
+            if (count($projection->getSearchKeywords())) {
+                $valueNames[] = 'searchKeywords';
+            }
 
             foreach ($valueNames as $name) {
                 $values[$name] = @$projection->get($name);
@@ -770,6 +822,10 @@ class UnitOfWork implements UnitOfWorkInterface
                     $values['variants'][] = $variantDraft;
                 }
             }
+        }
+
+        if (!@$values['searchKeywords']) {
+            unset($values['searchKeywords']);
         }
 
         return array_filter($values);
@@ -912,6 +968,20 @@ class UnitOfWork implements UnitOfWorkInterface
         } else {
             $this->newDocuments[$oid] = $document;
         }
+
+        return $this;
+    }
+
+    /**
+     * Removes the object from the commercetools database.
+     * @param mixed $object
+     * @return UnitOfWorkInterface
+     */
+    public function scheduleRemove($object): UnitOfWorkInterface
+    {
+        $visited = [];
+
+        $this->doScheduleRemove($object, $visited);
 
         return $this;
     }
