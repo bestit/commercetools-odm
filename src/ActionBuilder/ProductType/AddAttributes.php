@@ -2,7 +2,6 @@
 
 namespace BestIt\CommercetoolsODM\ActionBuilder\ProductType;
 
-use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\ProductType\AttributeDefinition;
 use Commercetools\Core\Model\ProductType\ProductType;
@@ -16,19 +15,13 @@ use Commercetools\Core\Request\ProductTypes\Command\ProductTypeAddAttributeDefin
  * @subpackage ActionBuilder\ProductType
  * @version $id$
  */
-class AddAttributes extends ActionBuilderAbstract
+class AddAttributes extends ProductTypeActionBuilder
 {
     /**
      * The field name.
      * @var string
      */
     protected $fieldName = 'attributes';
-
-    /**
-     * For which class is this description used?
-     * @var string
-     */
-    protected $modelClass = ProductType::class;
 
     /**
      * Creates the update action for the given class and data.
