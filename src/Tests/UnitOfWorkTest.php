@@ -106,6 +106,35 @@ class UnitOfWorkTest extends TestCase
         static::assertInstanceOf(Address::class, $address = $addresses[0], 'Wrong address instance.');
         static::assertSame($addressId, $address->getId(), 'Wrong address id.');
     }
+    /**
+     * Checks if an array for a custom entity is parsed correctly even if its null.
+     * @covers UnitOfWork::createDocument()
+     * @return void
+     */
+    public function testCreateDocumentParseCustomEntitiesArrayPropertyParseNull()
+    {
+        $this->documentManager
+            ->expects($this->once())
+            ->method('getClassMetadata')
+            ->with(TestCustomEntity::class)
+            ->will($this->returnValue($metadata = new ClassMetadata(TestCustomEntity::class)));
+
+        $metadata
+            ->setFieldMappings(['addresses' => $field = new Field()])
+            ->setReflectionClass(new ReflectionClass(TestCustomEntity::class));
+
+        $field->collection = AddressCollection::class;
+        $field->type = 'array';
+
+        /** @var TestCustomEntity $createdDoc */
+        $createdDoc = $this->fixture->createDocument(
+            TestCustomEntity::class,
+            Customer::fromArray([])
+        );
+
+        /** @var $address Address */
+        static::assertCount(0, $addresses = $createdDoc->getAddresses());
+    }
 
     /**
      * Checks the correct class instance.

@@ -725,6 +725,11 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         switch ($metadata->getTypeOfField($field)) {
             case 'array':
+                // Force parse to array.
+                if (!$value) {
+                    $value = [];
+                }
+
                 if (!is_array($returnValue = $value)) {
                     $returnValue = $value instanceof Traversable ? iterator_to_array($value) : (array)$value;
                 }
