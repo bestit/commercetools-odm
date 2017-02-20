@@ -10,6 +10,7 @@ use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Cart\CartDraft;
+use Commercetools\Core\Model\Common\AbstractJsonDeserializeObject;
 use Commercetools\Core\Model\Common\AssetDraft;
 use Commercetools\Core\Model\Common\AssetDraftCollection;
 use Commercetools\Core\Model\Common\DateTimeDecorator;
@@ -31,6 +32,7 @@ use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use InvalidArgumentException;
 use SplObjectStorage;
+use Traversable;
 
 /**
  * The unit of work inspired by the couch db odm structure.
@@ -231,7 +233,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
         // TODO Find in new objects.
 
-        $this->registerAsManaged($targetDocument, $id, $version);
+        if (@$id) {
+            $this->registerAsManaged($targetDocument, $id, @$version);
+        }
 
         $this->getListenerInvoker()->invoke(
             new LifecycleEventArgs($targetDocument, $this->getDocumentManager()),
@@ -444,8 +448,8 @@ class UnitOfWork implements UnitOfWorkInterface
             $object,
             $this->getClassMetadata(get_class($object))
         );
-    }    
-    
+    }
+
     /**
      * Queues the entity for saving or throws an exception if there is something wrong.
      * @param mixed $entity
@@ -588,10 +592,17 @@ class UnitOfWork implements UnitOfWorkInterface
 
                 if ($this->getDocumentState($document) !== self::STATE_REMOVED) {
                     // TODO Everything has a version?
-                    $eventManager->dispatchEvent(Events::POST_PERSIST, new LifecycleEventArgs($document, $documentManager));
+                    $eventManager->dispatchEvent(
+                        Events::POST_PERSIST,
+                        new LifecycleEventArgs($document, $documentManager)
+                    );
+
                     $this->registerAsManaged($document, $document->getId(), $document->getVersion());
                 } else {
-                    $eventManager->dispatchEvent(Events::POST_REMOVE, new LifecycleEventArgs($document, $documentManager));
+                    $eventManager->dispatchEvent(
+                        Events::POST_REMOVE,
+                        new LifecycleEventArgs($document, $documentManager)
+                    );
                 }
 
                 $this->processDeferredDetach($document);
@@ -713,6 +724,20 @@ class UnitOfWork implements UnitOfWorkInterface
     private function parseFoundFieldValue(string $field, ClassMetadataInterface $metadata, $value)
     {
         switch ($metadata->getTypeOfField($field)) {
+            case 'array':
+                if (!is_array($returnValue = $value)) {
+                    $returnValue = $value instanceof Traversable ? iterator_to_array($value) : (array)$value;
+                }
+
+                // clean up.
+                array_walk($returnValue, function ($value) {
+                    if ($value instanceof AbstractJsonDeserializeObject) {
+                        $value->parentSet(null)->rootSet(null);
+                    }
+                });
+
+                break;
+
             case 'boolean':
                 $returnValue = (bool)$value;
                 break;
