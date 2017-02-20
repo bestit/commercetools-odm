@@ -16,12 +16,27 @@ use Doctrine\Common\Annotations\Annotation\Required;
 class Field implements Annotation
 {
     /**
+     * The collection class.
+     * @var string
+     */
+    public $collection = '';
+
+    /**
      * The type for this field in the commercetools platform.
-     * @Enum({"boolean","dateTime","int","string","set"})
+     * @Enum({"array","boolean","dateTime","int","string","set"})
      * @Required
      * @var string
      */
     public $type = 'string';
+
+    /**
+     * Returns the name of the collection class.
+     * @return string
+     */
+    public function getCollection()
+    {
+        return $this->collection;
+    }
 
     /**
      * Returns the type for this field.
