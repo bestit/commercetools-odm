@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType;
 
+use BestIt\CommercetoolsODM\ActionBuilder\ProductType\ProductTypeActionBuilder;
 use BestIt\CommercetoolsODM\ActionBuilder\ProductType\RemoveAttributes;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
@@ -112,5 +113,14 @@ class RemoveAttributesTest extends TestCase
         static::assertSame(1, count($actions));
         static::assertInstanceOf(ProductTypeRemoveAttributeDefinitionAction::class, $actions[0]);
         static::assertSame('attr1', $actions[0]->getName());
+    }
+
+    /**
+     * Checks the instance type for the action builder.
+     * @return void
+     */
+    public function testType()
+    {
+        static::assertInstanceOf(ProductTypeActionBuilder::class, $this->fixture);
     }
 }

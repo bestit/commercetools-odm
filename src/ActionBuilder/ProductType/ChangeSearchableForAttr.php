@@ -20,7 +20,7 @@ class ChangeSearchableForAttr extends ProductTypeActionBuilder
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
      */
-    protected $complexFieldFilter = 'attributes/(\d)/isSearchable*';
+    protected $complexFieldFilter = 'attributes/(\d)+/isSearchable$';
 
     /**
      * Creates the update actions for the given class and data.
@@ -43,7 +43,7 @@ class ChangeSearchableForAttr extends ProductTypeActionBuilder
         list(, $attrIndex) = $this->getLastFoundMatch();
 
         // If there is an old entry, then there should be just the update change.
-        if ($oldData['attributes'][$attrIndex]['name']) {
+        if (@$oldData['attributes'][$attrIndex]['name']) {
             $actions[] = ProductTypeChangeIsSearchableAction::ofAttributeNameAndIsSearchable(
                 $oldData['attributes'][$attrIndex]['name'],
                 $changedValue

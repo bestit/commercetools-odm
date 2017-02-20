@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ProductType\AddAttributes;
+use BestIt\CommercetoolsODM\ActionBuilder\ProductType\ProductTypeActionBuilder;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
@@ -111,5 +112,14 @@ class AddAttributesTest extends TestCase
         static::assertSame(1, count($actions));
         static::assertInstanceOf(ProductTypeAddAttributeDefinitionAction::class, $actions[0]);
         static::assertSame('attr3', $actions[0]->getAttribute()->getName());
+    }
+
+    /**
+     * Checks the instance type for the action builder.
+     * @return void
+     */
+    public function testType()
+    {
+        static::assertInstanceOf(ProductTypeActionBuilder::class, $this->fixture);
     }
 }
