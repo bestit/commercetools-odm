@@ -4,6 +4,11 @@
             "BestIt\\CommercetoolsODM\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "BestIt\\CommercetoolsODM\\Tests\\": "tests/"
+        }
+    },
     "name": "bestit/commercetools-odm",
     "description": "Makes the commercetools database accessible with the doctrine commons api.",
     "type": "lib",
