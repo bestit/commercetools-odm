@@ -170,7 +170,7 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
         if ($this->getModelClass() === $referenceClass) {
             if (!$filter = $this->getComplexFieldFilter()) {
                 $filter = sprintf(
-                    '%s%s(\/?\*|$)%s',
+                    '%s^%s(\/?\*|$)%s',
                     self::FILTER_DELIMITER,
                     preg_quote($this->getFieldName(), self::FILTER_DELIMITER),
                     self::FILTER_DELIMITER
