@@ -82,5 +82,14 @@ return [
             ->setQuery(\Commercetools\Core\Request\ProductTypes\ProductTypeQueryRequest::class)
             ->setUpdateById(\Commercetools\Core\Request\ProductTypes\ProductTypeUpdateRequest::class)
             ->setUpdateByKey(\Commercetools\Core\Request\ProductTypes\ProductTypeUpdateByKeyRequest::class),
+    ],
+    \Commercetools\Core\Model\ShippingMethod\ShippingMethod::class => [
+        'draft' => \Commercetools\Core\Model\ShippingMethod\ShippingMethodDraft::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\ShippingMethods\ShippingMethodCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\ShippingMethods\ShippingMethodDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\ShippingMethods\ShippingMethodByIdGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\ShippingMethods\ShippingMethodQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\ShippingMethods\ShippingMethodUpdateRequest::class),
     ]
 ];
