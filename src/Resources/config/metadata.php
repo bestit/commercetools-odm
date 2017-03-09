@@ -47,6 +47,15 @@ return [
             ->setQuery(\Commercetools\Core\Request\CustomObjects\CustomObjectQueryRequest::class)
     ],
 
+    \Commercetools\Core\Model\Customer\Customer::class => [
+        'draft' => \Commercetools\Core\Model\Customer\CustomerDraft::class,
+        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Customers\CustomerCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Customers\CustomerDeleteRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Customers\CustomerQueryRequest::class)
+    ],
+
     \Commercetools\Core\Model\Product\Product::class => [
         'draft' => \Commercetools\Core\Model\Product\ProductDraft::class,
         'repository' => \BestIt\CommercetoolsODM\Repository\ProductRepository::class,
