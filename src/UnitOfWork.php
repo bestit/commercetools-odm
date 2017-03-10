@@ -905,7 +905,13 @@ class UnitOfWork implements UnitOfWorkInterface
     private function parseValuesForCartDraft(ClassMetadataInterface $metadata, $object, array $fields): array
     {
         $values = $this->parseValuesForSimpleDraft($metadata, $object, $fields);
-        $values['currency'] = $object->toArray()['currency'];
+        $objectArray = $object->toArray();
+
+        $values['currency'] = $objectArray['currency'];
+
+        if (isset($objectArray['shippingInfo']['shippingMethod'])) {
+            $values['shippingMethod'] = $objectArray['shippingInfo']['shippingMethod'];
+        }
 
         return $values;
     }
