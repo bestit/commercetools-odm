@@ -18,6 +18,8 @@ use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Common\PriceDraft;
 use Commercetools\Core\Model\Common\PriceDraftCollection;
 use Commercetools\Core\Model\Common\Resource;
+use Commercetools\Core\Model\Customer\Customer;
+use Commercetools\Core\Model\Customer\CustomerSigninResult;
 use Commercetools\Core\Model\CustomField\CustomFieldObject;
 use Commercetools\Core\Model\CustomField\FieldContainer;
 use Commercetools\Core\Model\Product\Product;
@@ -505,7 +507,7 @@ class UnitOfWork implements UnitOfWorkInterface
                     $changedData[$key] = $changedSubData;
                 }
             } else {
-                if ($value !== @$oldData[$key]) {
+                if (!array_key_exists($key, $oldData) || $value !== $oldData[$key]) {
                     $changedData[$key] = $newData[$key] ?? null;
                 }
             }
@@ -559,19 +561,47 @@ class UnitOfWork implements UnitOfWorkInterface
         $eventManager = $this->getEventManager();
 
         $eventManager->dispatchEvent(Events::ON_FLUSH, new OnFlushEventArgs($this));
-
+        
         foreach ($this->getClient()->executeBatch() as $key => $response) {
             $statusCode = $response->getStatusCode();
 
             if ($statusCode >= 200 && $statusCode < 300) {
                 if ($statusCode === 200) {
                     $document = @$this->identityMap[$key] ?? $response->toObject();
+                    $mappedResponse = $response->toObject();
+                    /** @var ClassMetadataInterface $metadata */
+                    $metadata = $this->getClassMetadata(get_class($document));
+
+                    if ($document instanceof Customer) {
+                        $document->setAddresses($mappedResponse->getAddresses());
+                    }
+
+                    if ($metadata->isCTStandardModel()) {
+                        $document
+                            ->setId($mappedResponse->getId())
+                            ->setversion($mappedResponse->getVersion());
+                    } else {
+                        if ($versionField = $metadata->getVersion()) {
+                            $document->{'set' . ucfirst($versionField)}($mappedResponse->getVersion());
+                        }
+
+                        if ($idField = $metadata->getIdentifier()) {
+                            $document->{'set' . ucfirst($idField)}($mappedResponse->getId());
+                        }
+                    }
                 } elseif ($statusCode === 201) {
                     // Handle the new rows.
                     $document = $this->newDocuments[$key];
                     $mappedResponse = $response->toObject();
                     /** @var ClassMetadataInterface $metadata */
                     $metadata = $this->getClassMetadata(get_class($document));
+
+                    if ($mappedResponse instanceof CustomerSigninResult) {
+                        $mappedResponse = $mappedResponse->getCustomer();
+
+                        // TODO
+                        $document->setAddresses($mappedResponse->getAddresses());
+                    }
 
                     if ($metadata->isCTStandardModel()) {
                         $document
@@ -591,21 +621,21 @@ class UnitOfWork implements UnitOfWorkInterface
                 }
 
                 if ($this->getDocumentState($document) !== self::STATE_REMOVED) {
+                    // We need to do these things immediately.
+                    $this->registerAsManaged($document, $document->getId(), $document->getVersion());
+                    $this->processDeferredDetach($document);
+
                     // TODO Everything has a version?
                     $eventManager->dispatchEvent(
                         Events::POST_PERSIST,
                         new LifecycleEventArgs($document, $documentManager)
                     );
-
-                    $this->registerAsManaged($document, $document->getId(), $document->getVersion());
                 } else {
                     $eventManager->dispatchEvent(
                         Events::POST_REMOVE,
                         new LifecycleEventArgs($document, $documentManager)
                     );
                 }
-
-                $this->processDeferredDetach($document);
             } else {
                 /** @var ErrorResponse $response */
                 exit(var_dump($response->getMessage(), $response->getErrors(), $response->getRequest()->httpRequest()
@@ -670,7 +700,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $class = $this->getClassMetadata($className = get_class($document));
         $isStandard = $document instanceof JsonObject;
         $oid = spl_object_hash($document);
-        $state = @$this->documentState[$oid];
+        $state = $this->documentState[$oid] ?? null;
         $id = $isStandard ? $document->getId() : $document->{'get' . ucfirst($class->getIdentifier())}();
 
         // Check with the id.

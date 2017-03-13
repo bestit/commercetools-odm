@@ -3,32 +3,29 @@
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType;
 
 use BestIt\CommercetoolsODM\ActionBuilder\Customer\CustomerActionBuilder;
-use BestIt\CommercetoolsODM\ActionBuilder\Customer\SetCustomField;
+use BestIt\CommercetoolsODM\ActionBuilder\Customer\AddAddress;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
-use Commercetools\Core\Model\Common\DateTimeDecorator;
 use Commercetools\Core\Model\Customer\Customer;
-use Commercetools\Core\Model\Product\Product;
-use Commercetools\Core\Request\CustomField\Command\SetCustomFieldAction;
-use DateTime;
+use Commercetools\Core\Request\Customers\Command\CustomerAddAddressAction;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
- * Tests SetCustomField.
+ * Tests AddAddress.
  * @author lange <lange@bestit-online.de>
  * @category Tests
  * @package BestIt\CommercetoolsODM
  * @subpackage ActionBuilder\ProductType
  * @version $id$
  */
-class SetCustomFieldTest extends TestCase
+class AddAddressTest extends TestCase
 {
     use SupportTestTrait;
 
     /**
      * The test class.
-     * @var SetCustomField|PHPUnit_Framework_MockObject_MockObject
+     * @var AddAddress|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
 
@@ -42,9 +39,10 @@ class SetCustomFieldTest extends TestCase
     public function getSupportAssertions(): array
     {
         return [
-            ['custom/fields/bob', Customer::class, true],
-            ['custom/bob/', Customer::class],
-            ['custom/fields/bob', Product::class],
+            ['addresses/1', Customer::class, true],
+            ['addresses/1/', Customer::class],
+            ['addresses/1/bob', Customer::class],
+            ['addresses/z', Customer::class],
         ];
     }
 
@@ -54,57 +52,59 @@ class SetCustomFieldTest extends TestCase
      */
     public function setUp()
     {
-        $this->fixture = new SetCustomField();
+        $this->fixture = new AddAddress();
     }
 
     /**
-     * Checks if a simple action is created.
-     * @covers SetCustomField::createUpdateActions()
+     * Checks if the old address is ignored.
+     * @covers AddAddress::createUpdateActions()
      * @return void
      */
-    public function testCreateUpdateActionsDatetime()
+    public function testCreateUpdateActionsIgnoreOldAddress()
     {
         $customer = new Customer();
 
         $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
 
         $actions = $this->fixture->createUpdateActions(
-            $value = new DateTime(),
+            [
+                'id' => uniqid(),
+                'company' => uniqid()
+            ],
             static::createMock(ClassMetadataInterface::class),
             [],
             [],
             $customer
         );
 
-        static::assertCount(1, $actions);
-        static::assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
-        static::assertSame($field, $actions[0]->getName());
-        static::assertInstanceOf(DateTimeDecorator::class, $actions[0]->getValue());
+        static::assertCount(0, $actions);
     }
 
     /**
-     * Checks if a simple action is created.
-     * @covers SetCustomField::createUpdateActions()
+     * Checks if the address is added.
+     * @covers AddAddress::createUpdateActions()
      * @return void
      */
-    public function testCreateUpdateActionsScalar()
+    public function testCreateUpdateActionsWithNewAddress()
     {
         $customer = new Customer();
 
         $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
 
         $actions = $this->fixture->createUpdateActions(
-            $value = uniqid(),
+            $addressMock = [
+                'company' => uniqid()
+            ],
             static::createMock(ClassMetadataInterface::class),
             [],
             [],
             $customer
         );
 
+        /** @var CustomerAddAddressAction $action */
         static::assertCount(1, $actions);
-        static::assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
-        static::assertSame($field, $actions[0]->getName());
-        static::assertSame($value, $actions[0]->getValue());
+        static::assertInstanceOf(CustomerAddAddressAction::class, $action = $actions[0]);
+        static::assertSame($addressMock, $action->getAddress()->toArray());
     }
 
     /**

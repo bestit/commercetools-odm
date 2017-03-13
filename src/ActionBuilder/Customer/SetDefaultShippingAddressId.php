@@ -3,26 +3,24 @@
 namespace BestIt\CommercetoolsODM\ActionBuilder\Customer;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
-use Commercetools\Core\Model\Common\DateTimeDecorator;
-use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Request\AbstractAction;
-use Commercetools\Core\Request\CustomField\Command\SetCustomFieldAction;
-use DateTime;
+use Commercetools\Core\Request\Customers\Command\CustomerSetDefaultBillingAddressAction;
+use Commercetools\Core\Request\Customers\Command\CustomerSetDefaultShippingAddressAction;
 
 /**
- * Builds the action to add an attribute to a product type.
+ * Sets the default shipping address id.
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\ProductType
+ * @subpackage ActionBuilder\Customer
  * @version $id$
  */
-class SetCustomField extends CustomerActionBuilder
+class SetDefaultShippingAddressId extends CustomerActionBuilder
 {
     /**
-     * A PCRE to match the hierarchical field path without delimiter.
+     * The field for the customer.
      * @var string
      */
-    protected $complexFieldFilter = 'custom/fields/([^/]*)$';
+    protected $fieldName = 'defaultShippingAddressId';
 
     /**
      * Creates the update actions for the given class and data.
@@ -30,7 +28,7 @@ class SetCustomField extends CustomerActionBuilder
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
-     * @param Customer $sourceObject
+     * @param mixed $sourceObject
      * @return AbstractAction[]
      */
     public function createUpdateActions(
@@ -40,12 +38,8 @@ class SetCustomField extends CustomerActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        list(, $field) = $this->getLastFoundMatch();
-
-        if ($changedValue instanceof DateTime) {
-            $changedValue = new DateTimeDecorator($changedValue);
-        }
-
-        return [SetCustomFieldAction::ofName($field)->setValue($changedValue)];
+        return [
+            (new CustomerSetDefaultShippingAddressAction())->setAddressId($changedValue)
+        ];
     }
 }

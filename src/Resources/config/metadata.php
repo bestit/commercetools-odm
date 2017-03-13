@@ -54,6 +54,7 @@ return [
             ->setCreate(\Commercetools\Core\Request\Customers\CustomerCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\Customers\CustomerDeleteRequest::class)
             ->setQuery(\Commercetools\Core\Request\Customers\CustomerQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Customers\CustomerUpdateRequest::class)
     ],
 
     \Commercetools\Core\Model\Product\Product::class => [

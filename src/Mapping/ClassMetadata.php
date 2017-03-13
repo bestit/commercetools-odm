@@ -329,7 +329,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function hasLifecycleEvents(string $eventName): bool
     {
-        return (bool)@ $this->lifecycleEvents[$eventName];
+        return array_key_exists($eventName, $this->lifecycleEvents);
     }
 
     /**

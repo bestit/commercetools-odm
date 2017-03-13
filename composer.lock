@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0ef5b7536a0ef3cc71380db82a811207",
     "content-hash": "9d4c67a65196c6ac1f71d7c890a45e7f",
     "packages": [
         {
@@ -45,7 +44,7 @@
                 }
             ],
             "description": "Batch-Processing of a pool asynchronous commercetools requests.",
-            "time": "2017-01-25 07:14:16"
+            "time": "2017-01-25T07:14:16+00:00"
         },
         {
             "name": "commercetools/commons",
@@ -84,20 +83,20 @@
                 }
             ],
             "homepage": "https://github.com/sphereio/commercetools-php-commons",
-            "time": "2016-05-03 12:57:58"
+            "time": "2016-05-03T12:57:58+00:00"
         },
         {
             "name": "commercetools/php-sdk",
-            "version": "dev-develop",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/commercetools/commercetools-php-sdk.git",
-                "reference": "61eca3e7ebe13aaafc86dd0e3432a54aa1e4db61"
+                "reference": "620952726157456f99a8c18e065e4e16ee1224b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/commercetools/commercetools-php-sdk/zipball/61eca3e7ebe13aaafc86dd0e3432a54aa1e4db61",
-                "reference": "61eca3e7ebe13aaafc86dd0e3432a54aa1e4db61",
+                "url": "https://api.github.com/repos/commercetools/commercetools-php-sdk/zipball/620952726157456f99a8c18e065e4e16ee1224b7",
+                "reference": "620952726157456f99a8c18e065e4e16ee1224b7",
                 "shasum": ""
             },
             "require": {
@@ -132,7 +131,7 @@
             "type": "project",
             "extra": {
                 "branch-alias": {
-                    "dev-develop": "1.6-dev"
+                    "dev-develop": "1.7-dev"
                 },
                 "incenteev-parameters": [
                     {
@@ -157,7 +156,8 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Commercetools\\Core\\": "src/"
+                    "Commercetools\\Core\\": "src/",
+                    "Commercetools\\Commons\\": "commons/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -166,7 +166,7 @@
             ],
             "description": "The commercetools PHP SDK  The official PHP Interface to the commercetools eCommerce API",
             "homepage": "https://github.com/commercetools/commercetools-php-sdk",
-            "time": "2016-11-18 16:29:50"
+            "time": "2017-03-02T15:02:55+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -676,7 +676,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-11-18 17:47:58"
+            "time": "2016-11-18T17:47:58+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -1028,7 +1028,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2016-10-31 17:19:45"
+            "time": "2016-10-31T17:19:45+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -1077,7 +1077,7 @@
                     "email": "mike.vanriel@naenius.com"
                 }
             ],
-            "time": "2015-02-03 12:10:50"
+            "time": "2015-02-03T12:10:50+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -1137,7 +1137,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-08-13 10:07:40"
+            "time": "2015-08-13T10:07:40+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1288,7 +1288,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21 13:50:34"
+            "time": "2015-06-21T13:50:34+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -1332,7 +1332,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2016-05-12 18:03:57"
+            "time": "2016-05-12T18:03:57+00:00"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -1522,7 +1522,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2016-11-19 09:07:46"
+            "time": "2016-11-19T09:07:46+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1851,7 +1851,7 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2015-10-12 03:26:01"
+            "time": "2015-10-12T03:26:01+00:00"
         },
         {
             "name": "sebastian/object-enumerator",
