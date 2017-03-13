@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Cart;
 
+use BestIt\CommercetoolsODM\ActionBuilder\Cart\CartActionBuilder;
 use BestIt\CommercetoolsODM\ActionBuilder\Cart\SetCustomType;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
@@ -42,6 +43,33 @@ class SetCustomTypeTest extends TestCase
             ['custom', Cart::class, true],
             ['lineItems/custom/fields/bob', Cart::class]
         ];
+    }
+
+    /**
+     * Create cart with custom type and run / assert test
+     * @param array $changedData
+     */
+    private function runAction(array $changedData)
+    {
+        $cart = new Cart();
+        $customField = new CustomFieldObject();
+        $customField->setType(TypeReference::ofKey($changedData['type']['key']));
+        $customField->setFields(FieldContainer::fromArray($changedData['fields']));
+        $cart->setCustom($customField);
+
+        /** @var SetCustomTypeAction[] $actions */
+        $actions = $this->fixture->createUpdateActions(
+            $changedData,
+            static::createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            $cart
+        );
+
+        static::assertCount(1, $actions);
+        static::assertInstanceOf(SetCustomTypeAction::class, $actions[0]);
+        static::assertSame($changedData['type'], $actions[0]->getType()->toArray());
+        static::assertSame($changedData['fields'], $actions[0]->getFields()->toArray());
     }
 
     /**
@@ -154,29 +182,11 @@ class SetCustomTypeTest extends TestCase
     }
 
     /**
-     * Create cart with custom type and run / assert test
-     * @param array $changedData
+     * Checks the instance.
+     * @return void
      */
-    private function runAction(array $changedData)
+    public function testInstance()
     {
-        $cart = new Cart();
-        $customField = new CustomFieldObject();
-        $customField->setType(TypeReference::ofKey($changedData['type']['key']));
-        $customField->setFields(FieldContainer::fromArray($changedData['fields']));
-        $cart->setCustom($customField);
-
-        /** @var SetCustomTypeAction[] $actions */
-        $actions = $this->fixture->createUpdateActions(
-            $changedData,
-            static::createMock(ClassMetadataInterface::class),
-            [],
-            [],
-            $cart
-        );
-
-        static::assertCount(1, $actions);
-        static::assertInstanceOf(SetCustomTypeAction::class, $actions[0]);
-        static::assertSame($changedData['type'], $actions[0]->getType()->toArray());
-        static::assertSame($changedData['fields'], $actions[0]->getFields()->toArray());
+        static::assertInstanceOf(CartActionBuilder::class, $this->fixture);
     }
 }

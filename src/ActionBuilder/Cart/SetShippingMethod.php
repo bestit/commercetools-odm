@@ -4,10 +4,9 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Cart;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Cart\Cart;
-use Commercetools\Core\Model\CustomField\FieldContainer;
-use Commercetools\Core\Model\Type\TypeReference;
+use Commercetools\Core\Model\ShippingMethod\ShippingMethodReference;
 use Commercetools\Core\Request\AbstractAction;
-use Commercetools\Core\Request\CustomField\Command\SetCustomTypeAction;
+use Commercetools\Core\Request\Carts\Command\CartSetShippingMethodAction;
 
 /**
  * Builds the action to change cart custom type and fields
@@ -16,13 +15,13 @@ use Commercetools\Core\Request\CustomField\Command\SetCustomTypeAction;
  * @subpackage ActionBuilder\Cart
  * @version $id$
  */
-class SetCustomType extends CartActionBuilder
+class SetShippingMethod extends CartActionBuilder
 {
     /**
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
      */
-    protected $fieldName = 'custom';
+    protected $complexFieldFilter = 'shippingInfo/shippingMethod/(.*)';
 
     /**
      * Creates the update action for the given class and data.
@@ -44,18 +43,10 @@ class SetCustomType extends CartActionBuilder
     ): array {
         $actions = [];
 
-        // Only process if we have fields and type key
-        if (isset($changedValue['fields'], $changedValue['type']['key'])) {
-            $action = new SetCustomTypeAction();
-            $action->setType(TypeReference::ofKey($changedValue['type']['key']));
-            $container = new FieldContainer();
-
-            foreach ($changedValue['fields'] as $name => $value) {
-                $container->set($name, $value);
-            }
-
-            $action->setFields($container);
-
+        // Only process if we have the shipping method id
+        if ($changedValue && is_string($changedValue)) {
+            $action = new CartSetShippingMethodAction();
+            $action->setShippingMethod(ShippingMethodReference::ofId($changedValue));
             $actions[] = $action;
         }
 
