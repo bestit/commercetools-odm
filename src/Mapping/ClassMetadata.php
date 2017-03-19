@@ -343,6 +343,23 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
+     * Is the given field read only?
+     * @param string $fieldName
+     * @return bool
+     */
+    public function isFieldReadOnly(string $fieldName): bool
+    {
+        $mappings = $this->getFieldMappings();
+        $return = false;
+
+        if (array_key_exists($fieldName, $mappings)) {
+            $return = $mappings[$fieldName]->isReadOnly();
+        }
+
+        return $return;
+    }
+
+    /**
      * Checks if the given field name is a mapped identifier for this class.
      * @param string $fieldName
      * @return bool

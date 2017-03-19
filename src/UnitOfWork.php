@@ -223,9 +223,13 @@ class UnitOfWork implements UnitOfWorkInterface
 
             // Make it more nice.
             foreach ($metadata->getFieldNames() as $fieldName) {
-                $foundValue = $metadata->isCustomTypeField($fieldName)
-                    ? $customObject->getFields()->get($fieldName)
-                    : $responseObject->$fieldName;
+                if ($metadata->isCustomTypeField($fieldName)) {
+                    $foundValue = $customObject->getFields()->get($fieldName);
+                } else {
+                    $foundValue = method_exists($responseObject, $getter = 'get' . ucfirst($fieldName))
+                        ? $responseObject->$getter()
+                        : $responseObject->$fieldName;
+                }
 
                 $parsedValue = $this->parseFoundFieldValue($fieldName, $metadata, $foundValue);
 
@@ -283,7 +287,8 @@ class UnitOfWork implements UnitOfWorkInterface
     private function createNewRequest(ClassMetadataInterface $metadata, $object): ClientRequestInterface
     {
         $fields = array_filter($metadata->getFieldNames(), function (string $field) use ($metadata) {
-            return !$metadata->isVersion($field) && !$metadata->isIdentifier($field);
+            return !$metadata->isVersion($field) && !$metadata->isIdentifier($field) &&
+                !$metadata->isFieldReadOnly($field);
         });
 
         if ($metadata->isCTStandardModel()) {

@@ -62,6 +62,17 @@ class FieldTest extends TestCase
         static::assertSame($mock, $this->fixture->getCollection(), 'Collection was not saved correctly.');
     }
 
+    public function testReadOnly()
+    {
+        static::assertFalse($this->fixture->readOnly, 'The property default is wrong.');
+        static::assertFalse($this->fixture->isReadOnly(), 'The method default is wrong.');
+
+        $this->fixture->readOnly = true;
+
+        static::assertTrue($this->fixture->readOnly, 'The property was not saved.');
+        static::assertTrue($this->fixture->isReadOnly(), 'The method returns the wrong value.');
+    }
+
     /**
      * Checks the type declaration and usage.
      * @return void
@@ -71,7 +82,7 @@ class FieldTest extends TestCase
         static::assertPropertyHasAnnotation(
             Field::class,
             'type',
-            'Enum({"array","boolean","dateTime","int","string","set"})',
+            'Enum({"array","boolean","dateTime","int","resource","string","set"})',
             'Enum is missing.'
         );
         static::assertPropertyHasAnnotation(

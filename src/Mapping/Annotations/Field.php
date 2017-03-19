@@ -22,8 +22,14 @@ class Field implements Annotation
     public $collection = '';
 
     /**
+     * Should this field only be red?
+     * @var bool
+     */
+    public $readOnly = false;
+
+    /**
      * The type for this field in the commercetools platform.
-     * @Enum({"array","boolean","dateTime","int","string","set"})
+     * @Enum({"array","boolean","dateTime","int","resource","string","set"})
      * @Required
      * @var string
      */
@@ -33,9 +39,18 @@ class Field implements Annotation
      * Returns the name of the collection class.
      * @return string
      */
-    public function getCollection()
+    public function getCollection(): string
     {
         return $this->collection;
+    }
+
+    /**
+     * Is the field only read?
+     * @return bool
+     */
+    public function isReadOnly(): bool
+    {
+        return $this->readOnly;
     }
 
     /**
