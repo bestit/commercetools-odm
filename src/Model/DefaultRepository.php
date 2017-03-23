@@ -18,6 +18,7 @@ use Commercetools\Core\Request\ClientRequestInterface;
 use Commercetools\Core\Request\ExpandTrait;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
+use Commercetools\Core\Response\ResourceResponse;
 use UnexpectedValueException;
 
 /**
@@ -237,27 +238,32 @@ class DefaultRepository implements ObjectRepository
 
     /**
      * Finds an object by its primary key / identifier.
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @param mixed $id The identifier.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
+     * @return ApiResponseInterface
      * @todo Not tested.
      */
-    public function findAsync($id, callable $onResolve = null, callable $onReject = null)
+    public function findAsync($id, callable $onResolve = null, callable $onReject = null): ApiResponseInterface
     {
-        $document = $this->getDocumentManager()->getUnitOfWork()->tryGetById($id);
+        $return = null;
 
-        if (!$document) {
+        if (!$document = $this->getDocumentManager()->getUnitOfWork()->tryGetById($id)) {
             $request = $this->createSimpleQuery(
                 $this->getClassName(),
                 DocumentManagerInterface::REQUEST_TYPE_FIND_BY_ID,
                 $id
             );
 
-            $this->processQueryAsync($request, $onResolve, $onReject);
+            $return = $this->processQueryAsync($request, $onResolve, $onReject);
         } else {
-            $onResolve($document);
+            $return = (new ResourceResponse()).then(function() use ($document) {
+                return $document;
+            }).then($onResolve);
         }
+
+        return $return;
     }
 
     /**
@@ -294,12 +300,14 @@ class DefaultRepository implements ObjectRepository
      * Optionally sorting and limiting details can be passed. An implementation may throw
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @param array $criteria
      * @param array $orderBy
      * @param int $limit
      * @param int $offset
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
+     * @return ApiResponseInterface
      */
     public function findByAsync(
         array $criteria,
@@ -308,10 +316,10 @@ class DefaultRepository implements ObjectRepository
         int $offset = 0,
         callable $onResolve = null,
         callable $onReject = null
-    ) {
+    ): ApiResponseInterface {
         $request = $this->createFindByQuery($criteria, $orderBy, $limit, $offset);
 
-        $this->processQueryAsync($request, $onResolve, $onReject);
+        return $this->processQueryAsync($request, $onResolve, $onReject);
     }
 
     /**
@@ -328,14 +336,18 @@ class DefaultRepository implements ObjectRepository
 
     /**
      * Finds a single object by a set of criteria.
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @param array $criteria The criteria.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
      * @return ApiResponseInterface
      */
-    public function findOneByAsync(array $criteria, callable $onResolve = null, callable $onReject = null)
-    {
-        $this->findByAsync($criteria, 1, 0, $onResolve, $onReject);
+    public function findOneByAsync(
+        array $criteria,
+        callable $onResolve = null,
+        callable $onReject = null
+    ): ApiResponseInterface {
+        return $this->findByAsync($criteria, 1, 0, $onResolve, $onReject);
     }
 
     /**
@@ -406,8 +418,7 @@ class DefaultRepository implements ObjectRepository
      * @param ClientRequestInterface $request
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return array<mixed|ApiResponseInterface|ClientRequestInterface> The mapped response, the raw response, the
-     *         request.
+     * @return ApiResponseInterface
      * @throws BadMethodCallException
      */
     protected function processQueryAsync(
@@ -419,7 +430,7 @@ class DefaultRepository implements ObjectRepository
             throw new BadMethodCallException('Missing async request pool');
         }
 
-        $pool->addPromise($request, $onResolve, $onReject);
+        return $pool->addPromise($request).then($onResolve, $onReject);
     }
 
     /**
