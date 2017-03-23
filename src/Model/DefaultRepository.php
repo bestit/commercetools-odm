@@ -258,9 +258,9 @@ class DefaultRepository implements ObjectRepository
 
             $return = $this->processQueryAsync($request, $onResolve, $onReject);
         } else {
-            $return = (new ResourceResponse()).then(function() use ($document) {
+            $return = (new ResourceResponse())->then(function() use ($document) {
                 return $document;
-            }).then($onResolve);
+            })->then($onResolve);
         }
 
         return $return;
@@ -430,7 +430,7 @@ class DefaultRepository implements ObjectRepository
             throw new BadMethodCallException('Missing async request pool');
         }
 
-        return $pool->addPromise($request).then($onResolve, $onReject);
+        return $pool->addPromise($request)->then($onResolve, $onReject);
     }
 
     /**
