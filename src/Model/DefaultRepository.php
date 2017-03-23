@@ -12,6 +12,7 @@ use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use BestIt\CTAsyncPool\PoolAwareTrait;
 use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
+use Commercetools\Core\Client\Adapter\Guzzle6Promise;
 use Commercetools\Core\Model\Common\Collection;
 use Commercetools\Core\Request\AbstractQueryRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
@@ -19,6 +20,7 @@ use Commercetools\Core\Request\ExpandTrait;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use Commercetools\Core\Response\ResourceResponse;
+use GuzzleHttp\Promise\FulfilledPromise;
 use UnexpectedValueException;
 
 /**
@@ -249,18 +251,23 @@ class DefaultRepository implements ObjectRepository
     {
         $return = null;
 
-        if (!$document = $this->getDocumentManager()->getUnitOfWork()->tryGetById($id)) {
-            $request = $this->createSimpleQuery(
-                $this->getClassName(),
-                DocumentManagerInterface::REQUEST_TYPE_FIND_BY_ID,
-                $id
-            );
+        $request = $this->createSimpleQuery(
+            $this->getClassName(),
+            DocumentManagerInterface::REQUEST_TYPE_FIND_BY_ID,
+            $id
+        );
 
-            $return = $this->processQueryAsync($request, $onResolve, $onReject);
-        } else {
-            $return = (new ResourceResponse())->then(function() use ($document) {
+        if (!$document = $this->getDocumentManager()->getUnitOfWork()->tryGetById($id)) {
+            $return = $this->processQueryAsync($request, $onResolve, $onReject)->then(function($document) {
+                $this->getDocumentManager()->getUnitOfWork()->createDocument(get_class($document), $document, []);
+
                 return $document;
-            })->then($onResolve);
+            })->then($onResolve, $onReject);
+        } else {
+            // TODO: Bad Faking of a native promise on top of the api response interface from commercetools.
+            $return = (new ResourceResponse(new Guzzle6Promise(new FulfilledPromise($document)), $request))->then(
+                $onResolve
+            );
         }
 
         return $return;
