@@ -46,6 +46,14 @@ interface UnitOfWorkInterface extends Countable
     public function createDocument(string $className, $responseObject, array $hints = []);
 
     /**
+     * Detaches a document from the persistence management.
+     *
+     * It's persistence will no longer be managed by Doctrine.
+     * @param object $document The document to detach.
+     */
+    public function detach($document);
+
+    /**
      * Detaches the given object after flush.
      * @param object $object
      * @return void

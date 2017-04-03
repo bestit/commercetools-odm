@@ -40,6 +40,12 @@ class DocumentManager implements DocumentManagerInterface
     private $unitOfWork = null;
 
     /**
+     * The factory for the unit of work.
+     * @var UnitOfWorkFactoryInterface
+     */
+    private $unitOfWorkFactory = null;
+
+    /**
      * DocumentManager constructor.
      * @param ClassMetadataFactory $metadataFactory
      * @param Client $client
@@ -59,7 +65,7 @@ class DocumentManager implements DocumentManagerInterface
             ->setMetadataFactory($metadataFactory)
             ->setQueryHelper($queryHelper)
             ->setRepositoryFactory($repositoryFactory)
-            ->setUnitOfWork($unitOfWorkFactory->getUnitOfWork($this));
+            ->setUnitOfWorkFactory($unitOfWorkFactory);
     }
 
     /**
@@ -158,7 +164,20 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function getUnitOfWork(): UnitOfWorkInterface
     {
+        if (!$this->unitOfWork) {
+            $this->setUnitOfWork($this->getUnitOfWorkFactory()->getUnitOfWork($this));
+        }
+
         return $this->unitOfWork;
+    }
+
+    /**
+     * Returns the unit of work factory.
+     * @return UnitOfWorkFactoryInterface
+     */
+    private function getUnitOfWorkFactory(): UnitOfWorkFactoryInterface
+    {
+        return $this->unitOfWorkFactory;
     }
 
     /**
@@ -229,6 +248,18 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
+     * Sets the unit of work interface.s
+     * @param UnitOfWorkFactoryInterface $unitOfWorkFactory
+     * @return DocumentManager
+     */
+    private function setUnitOfWorkFactory(UnitOfWorkFactoryInterface $unitOfWorkFactory): DocumentManager
+    {
+        $this->unitOfWorkFactory = $unitOfWorkFactory;
+
+        return $this;
+    }
+
+    /**
      * Merges the state of a detached object into the persistence context
      * of this ObjectManager and returns the managed copy of the object.
      * The object passed to merge will not become associated/managed with this ObjectManager.
@@ -273,7 +304,7 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function flush()
     {
-        $this->unitOfWork->flush();
+        $this->getUnitOfWork()->flush();
     }
 
     /**

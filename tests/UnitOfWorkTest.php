@@ -3,8 +3,12 @@
 namespace BestIt\CommercetoolsODM\Tests;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderProcessorInterface;
+use BestIt\CommercetoolsODM\ActionBuilderProcessorAwareTrait;
+use BestIt\CommercetoolsODM\ClientAwareTrait;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Event\ListenersInvoker;
+use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
+use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Field;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadata;
 use BestIt\CommercetoolsODM\Tests\UnitOfWork\TestCustomEntity;
@@ -37,6 +41,20 @@ class UnitOfWorkTest extends TestCase
      * @var UnitOfWork
      */
     private $fixture = null;
+
+    /**
+     * Returns the used traits.
+     * @return array
+     */
+    public static function getUsedTraits(): array
+    {
+        return [
+            [ActionBuilderProcessorAwareTrait::class],
+            [ClientAwareTrait::class],
+            [EventManagerAwareTrait::class],
+            [ListenerInvokerAwareTrait::class]
+        ];
+    }
 
     /**
      * Sets up the test.
@@ -106,6 +124,7 @@ class UnitOfWorkTest extends TestCase
         static::assertInstanceOf(Address::class, $address = $addresses[0], 'Wrong address instance.');
         static::assertSame($addressId, $address->getId(), 'Wrong address id.');
     }
+
     /**
      * Checks if an array for a custom entity is parsed correctly even if its null.
      * @covers UnitOfWork::createDocument()
@@ -144,4 +163,16 @@ class UnitOfWorkTest extends TestCase
     {
         static::assertInstanceOf(UnitOfWorkInterface::class, $this->fixture);
     }
+
+    /**
+     * Checks if the trait is implemented.
+     * @dataProvider getUsedTraits
+     * @param string $trait
+     */
+    public function testTraits(string $trait)
+    {
+        static::assertContains($trait, class_uses($this->fixture));
+    }
+
+
 }
