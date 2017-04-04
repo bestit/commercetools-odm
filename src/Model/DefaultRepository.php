@@ -258,7 +258,7 @@ class DefaultRepository implements ObjectRepository
         );
 
         if (!$document = $this->getDocumentManager()->getUnitOfWork()->tryGetById($id)) {
-            $return = $this->processQueryAsync($request, $onResolve, $onReject)->then(function($document) {
+            $return = $this->processQueryAsync($request, $onResolve, $onReject)->then(function ($document) {
                 $this->getDocumentManager()->getUnitOfWork()->createDocument(get_class($document), $document, []);
 
                 return $document;

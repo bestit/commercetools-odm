@@ -35,7 +35,6 @@ class RemoveShippingAddressIds extends CustomerActionBuilder
         $fieldName = $this->getFieldName();
 
         if ($oldData && array_key_exists($fieldName, $oldData) && is_array($oldData[$fieldName])) {
-
             foreach ($oldData[$fieldName] as $id) {
                 if ((!is_array($changedValue)) || (array_search($id, $changedValue) === false)) {
                     $actions[] = (new CustomerRemoveShippingAddressAction())->setAddressId($id);
