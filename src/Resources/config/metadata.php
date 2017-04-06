@@ -57,6 +57,15 @@ return [
             ->setUpdateById(\Commercetools\Core\Request\Customers\CustomerUpdateRequest::class)
     ],
 
+    \Commercetools\Core\Model\Order\Order::class => [
+        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'requestClassMap' => (new RequestMap())
+            ->setDeleteById(\Commercetools\Core\Request\Orders\OrderDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Orders\OrderByIdGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Orders\OrderQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Orders\OrderUpdateRequest::class)
+    ],
+
     \Commercetools\Core\Model\Product\Product::class => [
         'draft' => \Commercetools\Core\Model\Product\ProductDraft::class,
         'repository' => \BestIt\CommercetoolsODM\Repository\ProductRepository::class,
@@ -93,6 +102,7 @@ return [
             ->setUpdateById(\Commercetools\Core\Request\ProductTypes\ProductTypeUpdateRequest::class)
             ->setUpdateByKey(\Commercetools\Core\Request\ProductTypes\ProductTypeUpdateByKeyRequest::class),
     ],
+
     \Commercetools\Core\Model\ShippingMethod\ShippingMethod::class => [
         'draft' => \Commercetools\Core\Model\ShippingMethod\ShippingMethodDraft::class,
         'requestClassMap' => (new RequestMap())
