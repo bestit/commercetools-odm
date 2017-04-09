@@ -58,7 +58,7 @@ return [
     ],
 
     \Commercetools\Core\Model\Order\Order::class => [
-        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'repository' => \BestIt\CommercetoolsODM\Repository\OrderRepository::class,
         'requestClassMap' => (new RequestMap())
             ->setDeleteById(\Commercetools\Core\Request\Orders\OrderDeleteRequest::class)
             ->setFindById(\Commercetools\Core\Request\Orders\OrderByIdGetRequest::class)

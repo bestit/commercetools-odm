@@ -84,19 +84,21 @@ class DocumentManager implements DocumentManagerInterface
             throw new InvalidArgumentException('The given metadata class was of the wrong type.');
         }
 
-        $map = $metadata->getRequestClassMap();
+        if (!class_exists($requestType)) {
+            $map = $metadata->getRequestClassMap();
 
-        if (!$map) {
-            throw new InvalidArgumentException(sprintf(
-                'There is no request map for %s / %s.',
-                $className,
-                $requestType
-            ));
+            if (!$map) {
+                throw new InvalidArgumentException(sprintf(
+                    'There is no request map for %s / %s.',
+                    $className,
+                    $requestType
+                ));
+            }
+
+            $requestType = $map->{'get' . $requestType}();
         }
 
-        $requestReflection = new ReflectionClass($map->{'get' . $requestType}());
-
-        return $requestReflection->newInstanceArgs($args);
+        return (new ReflectionClass($requestType))->newInstanceArgs($args);
     }
 
     /**
