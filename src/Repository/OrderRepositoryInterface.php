@@ -20,4 +20,11 @@ interface OrderRepositoryInterface extends ObjectRepository
      * @return Order
      */
     public function createFromCart(Cart $cart): Order;
+
+    /**
+     * Saves the given order.
+     * @param Order $order
+     * @param bool $direct Should the order be saved directly?
+     */
+    public function save(Order $order, bool $direct = true);
 }
