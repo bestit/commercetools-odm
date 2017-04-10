@@ -183,12 +183,30 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
-     * Returns the count of manafwment
+     * Returns the count of managed entities.
      * @return int
      */
-    public function count()
+    public function count(): int
     {
-        return count($this->newDocuments) + count($this->identityMap);
+        return $this->countManagedObjects() + $this->countNewObjects();
+    }
+
+    /**
+     * Returns the count of managed objects.
+     * @return int
+     */
+    public function countManagedObjects(): int
+    {
+        return count($this->documentIdentifiers);
+    }
+
+    /**
+     * Returns the count for new objects.
+     * @return int
+     */
+    public function countNewObjects(): int
+    {
+        return count($this->newDocuments);
     }
 
     /**
@@ -327,12 +345,14 @@ class UnitOfWork implements UnitOfWorkInterface
             $document->getVersion()
         );
 
-        return $request->setActions($this->getActionBuilderProcessor()->createUpdateActions(
+        $actions = $this->getActionBuilderProcessor()->createUpdateActions(
             $metadata,
             $changedData,
             $oldData,
             $document
-        ));
+        );
+
+        return $request->setActions($actions);
     }
 
     private function detectChangedDocuments()
@@ -498,7 +518,6 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param array $newData
      * @param array $oldData
      * @return array
-     * @todo Deletes (missing in new, but filled in old) are not extracted correctly.
      */
     private function extractChanges(array $newData, array $oldData): array
     {
@@ -512,9 +531,21 @@ class UnitOfWork implements UnitOfWorkInterface
                     $changedData[$key] = $changedSubData;
                 }
             } else {
-                if (!array_key_exists($key, $oldData) || $value !== $oldData[$key]) {
-                    $changedData[$key] = $newData[$key] ?? null;
+                if ((!array_key_exists($key, $oldData)) || ($value !== $oldData[$key])) {
+                    $changedData[$key] = $value;
                 }
+            }
+
+            // Remove the value from the old data to get a correct clean up.
+            if (array_key_exists($key, $changedData)) {
+                unset($oldData[$key]);
+            }
+        }
+
+        // Mark everything as removed, which is in the old, but not in the new data.
+        foreach (array_keys($oldData) as $key) {
+            if (!array_key_exists($key, $newData)) {
+                $changedData[$key] = null;
             }
         }
 
@@ -1018,13 +1049,12 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Registers the given document as managed.
-     * @param mixed $document
+     * @param object $document
      * @param string|int $identifier
-     * @param mixed|void $revision
+     * @param mixed|null $revision
      * @return UnitOfWorkInterface
-     * @todo Add after insert; Add to Maps.
      */
-    public function registerAsManaged($document, $identifier = '', $revision = null): UnitOfWorkInterface
+    public function registerAsManaged($document, string $identifier = '', $revision = null): UnitOfWorkInterface
     {
         $oid = spl_object_hash($document);
 

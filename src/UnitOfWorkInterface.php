@@ -37,6 +37,18 @@ interface UnitOfWorkInterface extends Countable
     const STATE_DETACHED = 4;
 
     /**
+     * Returns the count of managed objects.
+     * @return int
+     */
+    public function countManagedObjects(): int;
+
+    /**
+     * Returns the count for new objects.
+     * @return int
+     */
+    public function countNewObjects(): int;
+
+    /**
      * Creates a document and registers it as managed.
      * @param string $className
      * @param mixed $responseObject The mapped Response from commercetools.
@@ -68,12 +80,12 @@ interface UnitOfWorkInterface extends Countable
 
     /**
      * Registers the given document as managed.
-     * @param mixed $document
+     * @param object $document
      * @param string|int $identifier
-     * @param mixed|void $revision
+     * @param mixed|null $revision
      * @return UnitOfWorkInterface
      */
-    public function registerAsManaged($document, $identifier, $revision): UnitOfWorkInterface;
+    public function registerAsManaged($document, string $identifier = '', $revision = null): UnitOfWorkInterface;
 
     /**
      * Removes the object from the commercetools database.
