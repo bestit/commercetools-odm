@@ -22,7 +22,8 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.6",
-        "phpunit/phpunit": "^5.5"
+        "phpunit/phpunit": "^5.5",
+        "funct/funct": "^1.0@dev"
     },
     "license": "MIT",
     "authors": [

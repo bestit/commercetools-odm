@@ -49,6 +49,12 @@ interface UnitOfWorkInterface extends Countable
     public function countNewObjects(): int;
 
     /**
+     * Returns the count of scheduled removals.
+     * @return int
+     */
+    public function countRemovals(): int;
+
+    /**
      * Creates a document and registers it as managed.
      * @param string $className
      * @param mixed $responseObject The mapped Response from commercetools.
@@ -77,6 +83,12 @@ interface UnitOfWorkInterface extends Countable
      * @return void
      */
     public function flush();
+
+    /**
+     * Refresh the given object by querying commercetools to get the current state.
+     * @param object $object
+     */
+    public function refresh($object);
 
     /**
      * Registers the given document as managed.

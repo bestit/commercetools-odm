@@ -2,11 +2,16 @@
 
 namespace BestIt\CommercetoolsODM\Tests;
 
+use ArrayObject;
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderProcessorInterface;
 use BestIt\CommercetoolsODM\ActionBuilderProcessorAwareTrait;
 use BestIt\CommercetoolsODM\ClientAwareTrait;
+use BestIt\CommercetoolsODM\DocumentManager;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Event\LifecycleEventArgs;
 use BestIt\CommercetoolsODM\Event\ListenersInvoker;
+use BestIt\CommercetoolsODM\Events;
+use BestIt\CommercetoolsODM\Exception\NotFoundException;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Field;
@@ -15,12 +20,25 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\UnitOfWork\TestCustomEntity;
 use BestIt\CommercetoolsODM\UnitOfWork;
 use BestIt\CommercetoolsODM\UnitOfWorkInterface;
+use Commercetools\Core\Client;
+use Commercetools\Core\Client\OAuth\Manager;
+use Commercetools\Core\Client\OAuth\Token;
 use Commercetools\Core\Model\Cart\LineItem;
 use Commercetools\Core\Model\Common\Address;
 use Commercetools\Core\Model\Common\AddressCollection;
+use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\Order\Order;
+use Commercetools\Core\Model\ProductType\ProductType;
+use Commercetools\Core\Model\ProductType\ProductTypeDraft;
+use Commercetools\Core\Request\Orders\OrderDeleteRequest;
+use Commercetools\Core\Request\ProductTypes\ProductTypeCreateRequest;
+use DateTime;
 use Doctrine\Common\EventManager;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 use ReflectionClass;
@@ -53,6 +71,104 @@ class UnitOfWorkTest extends TestCase
     private $fixture = null;
 
     /**
+     * The used document manager.
+     * @var ListenersInvoker|PHPUnit_Framework_MockObject_MockObject
+     */
+    private $listenerInvoker = null;
+
+    /**
+     * The cache for the client request history.
+     * @var ArrayObject|null
+     */
+    private $requestCache = null;
+
+    /**
+     * Returns a client with mocked responses.
+     * @param array ...$responses
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getClientWithResponses(...$responses)
+    {
+        foreach ($responses as &$response) {
+            if (is_callable($response)) {
+                $response = $response();
+            }
+        }
+
+        $client = $this->getTestClient($responses);
+
+        return $client;
+    }
+
+    /**
+     * Adds a mocked call for metadata for the given model.
+     * @param string $model
+     * @param bool $once Is the metadata only reguested once.
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getOneMockedMetadata(string $model, bool $once = true): PHPUnit_Framework_MockObject_MockObject
+    {
+        $this->documentManager
+            ->expects($once ? static::once() : static::any())
+            ->method('getClassMetadata')
+            ->with($model)
+            ->willReturn($classMetadata = static::createMock(ClassMetadataInterface::class));
+
+        $classMetadata
+            ->method('getName')
+            ->willReturn($model);
+
+        $classMetadata
+            ->method('isCTStandardModel')
+            ->willReturn(is_a($model, JsonObject::class, true));
+
+        return $classMetadata;
+    }
+
+    /**
+     * Returns tTe cache for the client request history.
+     * @return ArrayObject
+     */
+    public function getRequestCache(): ArrayObject
+    {
+        if (!$this->requestCache) {
+            $this->setRequestCache(new ArrayObject());
+        }
+
+        return $this->requestCache;
+    }
+
+    /**
+     * Ceates a test client with the given responses.
+     * @param array $responses
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getTestClient(array $responses)
+    {
+        $authMock = $this->createPartialMock(Manager::class, ['getToken']);
+        $authMock
+            ->method('getToken')
+            ->will($this->returnValue(new Token(uniqid())));
+
+        $client = $this->createPartialMock(Client::class, ['getOauthManager']);
+        $client
+            ->method('getOauthManager')
+            ->will($this->returnValue($authMock));
+
+        $mock = new MockHandler($responses);
+
+        $handlerStack = HandlerStack::create($mock);
+
+        $requestCache = $this->getRequestCache();
+        $handlerStack->push(Middleware::history($requestCache));
+
+        $client->getHttpClient(['handler' => $handlerStack]);
+        $client->getOauthManager()->getHttpClient(['handler' => $handlerStack]);
+
+        return $client;
+    }
+
+    /**
      * Returns the used traits.
      * @return array
      */
@@ -67,6 +183,95 @@ class UnitOfWorkTest extends TestCase
     }
 
     /**
+     * Mocks an listener invoker call for the given object.
+     * @param object $order
+     * @param string $lifeCycleEventName
+     * @param ClassMetadataInterface $orderMetadata
+     * @return UnitOfWorkTest
+     */
+    private function mockAndCheckInvokerCall(
+        $order,
+        string $lifeCycleEventName,
+        ClassMetadataInterface $orderMetadata,
+        $expected = 'any'
+    ): UnitOfWorkTest {
+        $this->listenerInvoker
+            ->expects(is_string($expected) ? static::$expected() : static::at($expected))
+            ->method('invoke')
+            ->with(
+                static::callback(function (LifecycleEventArgs $eventArgs) use ($order) {
+                    static::assertSame($order, $eventArgs->getDocument(), 'Wrong object in event.');
+
+                    static::assertSame(
+                        $this->documentManager,
+                        $eventArgs->getDocumentManager(),
+                        'Wrong object manager in event.'
+                    );
+
+                    return true;
+                }),
+                $lifeCycleEventName,
+                $order,
+                $orderMetadata
+            );
+
+        return $this;
+    }
+
+    /**
+     * Prepares the removal of an order.
+     * @param bool $success
+     * @return Order
+     */
+    private function prepareRemovalOfOneOrder(bool $success = true, Order $order = null): Order
+    {
+        if (!$order) {
+            $order = new Order();
+        }
+
+        $orderMetadata = $this->getOneMockedMetadata($className = get_class($order), false);
+
+        $this->mockAndCheckInvokerCall($order, Events::PRE_REMOVE, $orderMetadata, 0);
+
+        if ($success) {
+            $this->mockAndCheckInvokerCall($order, Events::POST_REMOVE, $orderMetadata, 1);
+        }
+
+        $order
+            ->setId($orderId = uniqid())
+            ->setVersion($orderVersion = mt_rand(1, 1000));
+
+        $orderMetadata
+            ->method('getName')
+            ->willReturn($className);
+
+        $this->documentManager
+            ->expects(static::once())
+            ->method('createRequest')
+            ->with(
+                $className,
+                DocumentManager::REQUEST_TYPE_DELETE_BY_ID,
+                $orderId,
+                $orderVersion
+            )
+            ->willReturn(new OrderDeleteRequest($orderId, $orderVersion));
+
+        static::assertSame(
+            $this->fixture,
+            $this->fixture->scheduleRemove($order),
+            'Fluent interface broken.'
+        );
+
+        static::assertSame(
+            1,
+            $this->fixture->countRemovals(),
+            'The object should be marked for removal.'
+        );
+
+        return $order;
+    }
+
+    /**
      * Sets up the test.
      * @return void
      */
@@ -76,8 +281,21 @@ class UnitOfWorkTest extends TestCase
             $this->actionBuilderProcessor = static::createMock(ActionBuilderProcessorInterface::class),
             $this->documentManager = static::createMock(DocumentManagerInterface::class),
             static::createMock(EventManager::class),
-            static::createMock(ListenersInvoker::class)
+            $this->listenerInvoker = static::createMock(ListenersInvoker::class)
         );
+
+        $this->setRequestCache(new ArrayObject());
+    }
+
+    /**
+     * Sets the cache for the client request history.
+     * @param ArrayObject $requestCache
+     * @return UnitOfWorkTest
+     */
+    public function setRequestCache(ArrayObject $requestCache): UnitOfWorkTest
+    {
+        $this->requestCache = $requestCache;
+        return $this;
     }
 
     /**
@@ -96,6 +314,15 @@ class UnitOfWorkTest extends TestCase
     public function testCountManagedObjectsDefault()
     {
         static::assertSame(0, $this->fixture->countManagedObjects());
+    }
+
+    /**
+     * Checks the default return for the count method.
+     * @return void
+     */
+    public function testCountRemovalsDefault()
+    {
+        static::assertSame(0, $this->fixture->countRemovals());
     }
 
     /**
@@ -184,6 +411,19 @@ class UnitOfWorkTest extends TestCase
     }
 
     /**
+     * Checks that the "empty" detach does not trigger any error.
+     * @return void
+     */
+    public function testDetachEmpty()
+    {
+        static::assertCount(0, $this->fixture, 'There should be no entity.');
+
+        $this->fixture->detach(new Order());
+
+        static::assertCount(0, $this->fixture, 'There should be no entity. (control value)');
+    }
+
+    /**
      * Checks if the changes are extracted correctly.
      * @covers UnitOfWork::extractChanges()
      * @return void
@@ -209,7 +449,6 @@ class UnitOfWorkTest extends TestCase
             uniqid(),
             5
         );
-
 
         $order
             ->setId($newOrderId = uniqid())
@@ -255,9 +494,9 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if a managed object is registered correctly.
-     * @return void
+     * @return Order The registered order.
      */
-    public function testRegisterAsManaged()
+    public function testRegisterAsManaged(): Order
     {
         $this->getOneMockedMetadata(Order::class);
 
@@ -265,7 +504,7 @@ class UnitOfWorkTest extends TestCase
 
         static::assertSame(
             $this->fixture,
-            $this->fixture->registerAsManaged($order = new Order(), uniqid(), 5),
+            $this->fixture->registerAsManaged($order = new Order(), $orderId = uniqid(), 5),
             'Fluent interface failed.'
         );
 
@@ -292,6 +531,10 @@ class UnitOfWorkTest extends TestCase
             $this->fixture->countManagedObjects(),
             'The object should be saved as managed only once.'
         );
+
+        static::assertSame($order, $this->fixture->tryGetById($orderId));
+
+        return $order;
     }
 
     /**
@@ -334,6 +577,291 @@ class UnitOfWorkTest extends TestCase
     }
 
     /**
+     * Checks that an registered object is returned.
+     * @depends testRegisterAsManaged
+     * @param Order $order
+     * @return void
+     */
+    public function testDetach(Order $order)
+    {
+        $this->fixture->detach($order);
+
+        static::assertCount(0, $this->fixture, 'There should be no entity.');
+    }
+
+    /**
+     * Checks if the remove is handled correctly.
+     */
+    public function testScheduleRemove()
+    {
+        $this->prepareRemovalOfOneOrder();
+
+        $this->fixture->setClient($this->getClientWithResponses(
+            function (): Response {
+                return new Response(
+                    200,
+                    [
+                        'x-served-config' => 'sphere-projects-ws-1.0',
+                        'server' => 'nginx',
+                        'content-type' => 'application/json; charset=utf-8',
+                        'content-encoding' => 'gzip',
+                        'date' => 'Mon, 10 Apr 2017 20:21:03 GMT',
+                        'access-control-max-age' => '299',
+                        'x-served-by' => 'api-pt-reverent-engelbart.sphere.prod.commercetools.de',
+                        'x-correlation-id' => 'projects-bob-058c-4c13-a372-3fa2a4ddbe23',
+                        'transfer-encoding' => 'chunked',
+                        'access-control-allow-origin' => '*',
+                        'connection' => 'close',
+                        'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
+                        'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    ],
+                    file_get_contents(
+                        __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_success_response.json'
+                    )
+                );
+            }
+        ));
+
+        $this->fixture->flush();
+
+        static::assertSame(
+            0,
+            $this->fixture->countRemovals(),
+            'The object should be removed.'
+        );
+    }
+
+
+    /**
+     * Checks if the remove is handled correctly, even if the order is registered before.
+     * @depends testRegisterAsManaged
+     * @param Order $order
+     */
+    public function testScheduleRemovePrevManaged(Order $order)
+    {
+        $this->prepareRemovalOfOneOrder(true, $order);
+
+        $this->fixture->setClient($this->getClientWithResponses(
+            function (): Response {
+                return new Response(
+                    200,
+                    [
+                        'x-served-config' => 'sphere-projects-ws-1.0',
+                        'server' => 'nginx',
+                        'content-type' => 'application/json; charset=utf-8',
+                        'content-encoding' => 'gzip',
+                        'date' => 'Mon, 10 Apr 2017 20:21:03 GMT',
+                        'access-control-max-age' => '299',
+                        'x-served-by' => 'api-pt-reverent-engelbart.sphere.prod.commercetools.de',
+                        'x-correlation-id' => 'projects-bob-058c-4c13-a372-3fa2a4ddbe23',
+                        'transfer-encoding' => 'chunked',
+                        'access-control-allow-origin' => '*',
+                        'connection' => 'close',
+                        'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
+                        'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    ],
+                    file_get_contents(
+                        __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_success_response.json'
+                    )
+                );
+            }
+        ));
+
+        $this->fixture->flush();
+
+        static::assertSame(
+            0,
+            $this->fixture->countRemovals(),
+            'The object should be removed.'
+        );
+
+        static::assertSame(
+            0,
+            $this->fixture->countManagedObjects(),
+            'The should be removed as managed.'
+        );
+
+        static::assertCount(0, $this->fixture, 'There should be no countable entity.');
+    }
+
+    /**
+     * Checks if the not-found remove is handled correctly.
+     */
+    public function testScheduleRemoveFailNotFound()
+    {
+        static::expectException(NotFoundException::class);
+
+        $this->prepareRemovalOfOneOrder(false);
+
+        $this->fixture->setClient($this->getClientWithResponses(
+            function (): Response {
+                return new Response(
+                    404,
+                    [
+                        'x-served-config' => 'sphere-projects-ws-1.0',
+                        'server' => 'nginx',
+                        'content-type' => 'application/json; charset=utf-8',
+                        'content-encoding' => 'gzip',
+                        'date' => 'Mon, 10 Apr 2017 20:21:03 GMT',
+                        'access-control-max-age' => '299',
+                        'x-served-by' => 'api-pt-reverent-engelbart.sphere.prod.commercetools.de',
+                        'x-correlation-id' => 'projects-bob-058c-4c13-a372-3fa2a4ddbe23',
+                        'transfer-encoding' => 'chunked',
+                        'access-control-allow-origin' => '*',
+                        'connection' => 'close',
+                        'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
+                        'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    ],
+                    file_get_contents(
+                        __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_notfound_response.json'
+                    )
+                );
+            }
+        ));
+
+        $this->fixture->flush();
+
+        static::assertSame(
+            0,
+            $this->fixture->countRemovals(),
+            'The object should be removed.'
+        );
+    }
+
+    /**
+     * Checks if the new object is saved.
+     * @return void
+     */
+    public function testScheduleSaveNew($withDetach = false)
+    {
+        $type = new ProductType([
+            'createdAt' => new DateTime(),
+            'lastModifiedAt' => new DateTime(),
+            'name' => $typeName = uniqid(),
+            'version' => uniqid()
+        ]);
+
+        $typeMetadata = $this->getOneMockedMetadata($className = get_class($type), false);
+
+        $typeMetadata
+            ->method('getDraft')
+            ->willReturn($draftClassName = ProductTypeDraft::class);
+
+        $typeMetadata
+            ->method('getFieldNames')
+            ->willReturn(array_keys($type->fieldDefinitions()));
+
+        $this->documentManager
+            ->expects(static::once())
+            ->method('createRequest')
+            ->with(
+                $className,
+                DocumentManager::REQUEST_TYPE_CREATE,
+                static::callback(function (ProductTypeDraft $draftObject) use ($draftClassName, $typeName) {
+                    static::assertInstanceOf($draftClassName, $draftObject, 'Wrong draft instance.');
+
+                    // Are the standard fields removed?
+                    static::assertSame(
+                        ['name' => $typeName],
+                        $draftObject->toArray(),
+                        'The default data was not removed.'
+                    );
+
+                    return true;
+                })
+            )
+            ->willReturn(new ProductTypeCreateRequest(new ProductTypeDraft(['name' => $typeName])));
+
+        $this
+            ->mockAndCheckInvokerCall($type, Events::PRE_PERSIST, $typeMetadata, 0)
+            ->mockAndCheckInvokerCall($type, Events::POST_PERSIST, $typeMetadata, 1);
+
+        $this->fixture->scheduleSave($type);
+
+        if ($withDetach) {
+            $this->fixture->detachDeferred($type);
+        }
+
+        static::assertSame(
+            0,
+            $this->fixture->countManagedObjects(),
+            'There should be a new managed object.'
+        );
+
+        static::assertSame(
+            1,
+            $this->fixture->countNewObjects(),
+            'There should be a new object.'
+        );
+
+        $this->fixture->setClient($this->getClientWithResponses(
+            function (): Response {
+                return new Response(
+                    201,
+                    [
+                        'x-served-config' => 'sphere-projects-ws-1.0',
+                        'server' => 'nginx',
+                        'content-type' => 'application/json; charset=utf-8',
+                        'content-encoding' => 'gzip',
+                        'date' => 'Mon, 10 Apr 2017 20:21:03 GMT',
+                        'access-control-max-age' => '299',
+                        'x-served-by' => 'api-pt-reverent-engelbart.sphere.prod.commercetools.de',
+                        'x-correlation-id' => 'projects-bob-058c-4c13-a372-3fa2a4ddbe23',
+                        'transfer-encoding' => 'chunked',
+                        'access-control-allow-origin' => '*',
+                        'connection' => 'close',
+                        'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
+                        'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    ],
+                    file_get_contents(
+                        __DIR__ . DIRECTORY_SEPARATOR .
+                        'Resources/stubs/product-type_create_success_response.json'
+                    )
+                );
+            }
+        ));
+
+        $this->fixture->flush();
+
+        if (!$withDetach) {
+            static::assertSame(
+                1,
+                $this->fixture->countManagedObjects(),
+                'There should be a managed object.'
+            );
+        } else {
+            static::assertSame(
+                0,
+                $this->fixture->countManagedObjects(),
+                'There should be no managed object cause of detaching.'
+            );
+        }
+
+        static::assertSame(
+            0,
+            $this->fixture->countNewObjects(),
+            'There should be no new object.'
+        );
+
+        if (!$withDetach) {
+            static::assertInstanceOf(
+                ProductType::class,
+                $this->fixture->tryGetById('a58213d7-c5c6-4fd0-9b9e-635785fa8d4f'),
+                'The object was not registered correctly.'
+            );
+        }
+    }
+
+    /**
+     * Checks if the new object is saved but detached afterwards.
+     * @return void
+     */
+    public function testScheduleSaveNewWithDetach()
+    {
+        $this->testScheduleSaveNew(true);
+    }
+
+    /**
      * Checks if the trait is implemented.
      * @dataProvider getUsedTraits
      * @param string $trait
@@ -341,22 +869,5 @@ class UnitOfWorkTest extends TestCase
     public function testTraits(string $trait)
     {
         static::assertContains($trait, class_uses($this->fixture));
-    }
-
-    /**
-     * Adds a mocked call for metadata for the given model.
-     * @param string $model
-     * @param bool $once Is the metadata only reguested once.
-     * @return PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getOneMockedMetadata(string $model, bool $once = true): PHPUnit_Framework_MockObject_MockObject
-    {
-        $this->documentManager
-            ->expects($once ? static::once() : static::any())
-            ->method('getClassMetadata')
-            ->with($model)
-            ->willReturn($classMetadata = static::createMock(ClassMetadataInterface::class));
-
-        return $classMetadata;
     }
 }

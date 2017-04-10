@@ -42,6 +42,12 @@ class ClassMetadata implements ClassMetadataInterface
     private $fieldMappings = [];
 
     /**
+     * The field names of this object.
+     * @var array
+     */
+    private $fieldNames = [];
+
+    /**
      * The field name of the document identifier.
      * @var string
      */
@@ -146,7 +152,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getCustomType(string $fieldName): string
     {
-        return (string) @ $this->getCustomTypeFields()[$fieldName];
+        return (string)@ $this->getCustomTypeFields()[$fieldName];
     }
 
     /**
@@ -182,11 +188,13 @@ class ClassMetadata implements ClassMetadataInterface
      * This array includes identifier fields if present on this class.
      * @return array
      */
-    public function getFieldNames()
+    public function getFieldNames(): array
     {
-        return array_keys(
-            $this->isCTStandardModel() ? $this->getNewInstance()->fieldDefinitions() : $this->getFieldMappings()
-        );
+        if (!$this->fieldNames) {
+            $this->loadFieldNames();
+        }
+
+        return $this->fieldNames;
     }
 
     /**
@@ -245,6 +253,10 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getReflectionClass(): ReflectionClass
     {
+        if (!$this->reflectionClass) {
+            $this->reflectionClass = new ReflectionClass($this->getName());
+        }
+
         return $this->reflectionClass;
     }
 
@@ -380,6 +392,17 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
+     * Loads the field names for this object.
+     * @return void
+     */
+    private function loadFieldNames()
+    {
+        $this->setFieldNames(array_keys(
+            $this->isCTStandardModel() ? $this->getNewInstance()->fieldDefinitions() : $this->getFieldMappings()
+        ));
+    }
+
+    /**
      * Sets the model class from which the actions are used.
      * @param string $actionsFrom
      * @return ClassMetadataInterface
@@ -422,6 +445,18 @@ class ClassMetadata implements ClassMetadataInterface
     public function setFieldMappings(array $fieldMappings): ClassMetadataInterface
     {
         $this->fieldMappings = $fieldMappings;
+
+        return $this;
+    }
+
+    /**
+     * Sets the field names.
+     * @param array $fieldNames
+     * @return ClassMetadata
+     */
+    private function setFieldNames(array $fieldNames): ClassMetadata
+    {
+        $this->fieldNames = $fieldNames;
 
         return $this;
     }

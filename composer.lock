@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b757f141ed4c767512d7a064dc924d9",
+    "content-hash": "1042d8c360ee019053b313065b24d094",
     "packages": [
         {
             "name": "bestit/commercetools-async-pool",
@@ -988,6 +988,54 @@
                 "instantiate"
             ],
             "time": "2016-03-31 10:24:22"
+        },
+        {
+            "name": "funct/funct",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpfunct/funct.git",
+                "reference": "0c8a8bdc4c1c203295a4d8525b35df715c511ddb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpfunct/funct/zipball/0c8a8bdc4c1c203295a4d8525b35df715c511ddb",
+                "reference": "0c8a8bdc4c1c203295a4d8525b35df715c511ddb",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Funct\\": "src"
+                },
+                "files": [
+                    "src/Collection.php",
+                    "src/General.php",
+                    "src/Invoke.php",
+                    "src/Object.php",
+                    "src/Strings.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aurimas Niekis",
+                    "email": "aurimas@niekis.lt"
+                }
+            ],
+            "description": "A PHP library with commonly used code blocks",
+            "time": "2016-07-22T12:05:22+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2174,7 +2222,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "funct/funct": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

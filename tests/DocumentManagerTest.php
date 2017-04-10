@@ -14,6 +14,8 @@ use BestIt\CommercetoolsODM\UnitOfWorkInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client;
 use Commercetools\Core\Model\Product\Product;
+use function Funct\Strings\toUpper;
+use function Funct\Strings\underscore;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
@@ -50,6 +52,7 @@ class DocumentManagerTest extends TestCase
             ['detachDeferred', 'detachDeferred'],
             ['flush', '', false],
             ['persist', 'scheduleSave'],
+            ['refresh', 'refresh'],
             ['remove', 'scheduleRemove']
         ];
     }
@@ -80,6 +83,36 @@ class DocumentManagerTest extends TestCase
             static::createMock(RepositoryFactoryInterface::class),
             $this->unitOfWorkFactory = static::CreateMock(UnitOfWorkFactoryInterface::class)
         );
+    }
+
+    /**
+     * Checks the constants of the doc manager.
+     * @return void
+     */
+    public function testConstants()
+    {
+        $map = [
+            'Create',
+            'DeleteByContainerAndKey',
+            'DeleteById',
+            'DeleteByKey',
+            'FindByContainerAndKey',
+            'FindById',
+            'FindByKey',
+            'FindByCustomerId',
+            'Query',
+            'UpdateById',
+            'UpdateByKey',
+        ];
+
+        array_walk($map, function (string $constValue) {
+            $constName = toUpper(underscore($constValue));
+
+            static::assertSame(
+                $constValue,
+                constant(sprintf('%s::REQUEST_TYPE_%s', DocumentManager::class, $constName))
+            );
+        });
     }
 
     /**

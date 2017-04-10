@@ -1,0 +1,197 @@
+{
+  "type": "Order",
+  "id": "734a6def-985d-4662-b0cc-af7db688f4b5",
+  "version": 1,
+  "customerId": "18e19dd1-44b9-4a7e-b1c0-df3aaf1dc4ee",
+  "createdAt": "2017-04-10T15:44:54.404Z",
+  "lastModifiedAt": "2017-04-10T15:44:54.404Z",
+  "totalPrice": {
+    "currencyCode": "EUR",
+    "centAmount": 4690
+  },
+  "taxedPrice": {
+    "totalNet": {
+      "currencyCode": "EUR",
+      "centAmount": 4690
+    },
+    "totalGross": {
+      "currencyCode": "EUR",
+      "centAmount": 5581
+    },
+    "taxPortions": [
+      {
+        "rate": 0.19,
+        "amount": {
+          "currencyCode": "EUR",
+          "centAmount": 891
+        },
+        "name": "Volle Dt. MwSt"
+      }
+    ]
+  },
+  "orderState": "Open",
+  "syncInfo": [],
+  "returnInfo": [],
+  "shippingInfo": {
+    "shippingMethodName": "Versand",
+    "price": {
+      "currencyCode": "EUR",
+      "centAmount": 490
+    },
+    "shippingRate": {
+      "price": {
+        "currencyCode": "EUR",
+        "centAmount": 490
+      },
+      "freeAbove": {
+        "currencyCode": "EUR",
+        "centAmount": 25000
+      }
+    },
+    "taxRate": {
+      "name": "Volle Dt. MwSt",
+      "amount": 0.19,
+      "includedInPrice": false,
+      "country": "DE",
+      "id": "gWgZFpjL",
+      "subRates": []
+    },
+    "taxCategory": {
+      "typeId": "tax-category",
+      "id": "d6aa1017-21af-4f5e-8211-922cb3033afb"
+    },
+    "deliveries": [],
+    "shippingMethod": {
+      "typeId": "shipping-method",
+      "id": "58cd0bf2-bec3-45d9-b01b-5acf5532197c"
+    },
+    "taxedPrice": {
+      "totalNet": {
+        "currencyCode": "EUR",
+        "centAmount": 490
+      },
+      "totalGross": {
+        "currencyCode": "EUR",
+        "centAmount": 583
+      }
+    }
+  },
+  "taxMode": "Platform",
+  "inventoryMode": "None",
+  "taxRoundingMode": "HalfEven",
+  "lineItems": [
+    {
+      "id": "62e3af60-c336-437a-afb4-cf95a2c977be",
+      "productId": "45f195a6-e175-4a1a-a0fb-b69b79dd36e2",
+      "name": {
+        "de": "Behat Mock"
+      },
+      "productType": {
+        "typeId": "product-type",
+        "id": "245e4ea5-d1db-4d1d-836a-c710185ecce4",
+        "version": 1
+      },
+      "variant": {
+        "id": 1,
+        "sku": "58eba86ebf292-Behat",
+        "prices": [
+          {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 4200
+            },
+            "id": "8c83026a-159c-4fcc-b467-9435692b97f5"
+          }
+        ],
+        "images": [],
+        "attributes": [
+          {
+            "name": "relations",
+            "value": [
+              "58eba86ebf292-Behat"
+            ]
+          }
+        ],
+        "assets": []
+      },
+      "price": {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 4200
+        },
+        "id": "8c83026a-159c-4fcc-b467-9435692b97f5"
+      },
+      "quantity": 1,
+      "discountedPricePerQuantity": [],
+      "taxRate": {
+        "name": "Volle Dt. MwSt",
+        "amount": 0.19,
+        "includedInPrice": false,
+        "country": "DE",
+        "id": "gWgZFpjL",
+        "subRates": []
+      },
+      "state": [
+        {
+          "quantity": 1,
+          "state": {
+            "typeId": "state",
+            "id": "66dbf248-9af0-446d-94d7-58df00c44f1e"
+          }
+        }
+      ],
+      "priceMode": "Platform",
+      "totalPrice": {
+        "currencyCode": "EUR",
+        "centAmount": 4200
+      },
+      "taxedPrice": {
+        "totalNet": {
+          "currencyCode": "EUR",
+          "centAmount": 4200
+        },
+        "totalGross": {
+          "currencyCode": "EUR",
+          "centAmount": 4998
+        }
+      }
+    }
+  ],
+  "shippingAddress": {
+    "id": "foobar",
+    "firstName": "Max",
+    "lastName": "Mustermann",
+    "streetName": "Musterstraße",
+    "streetNumber": "44",
+    "postalCode": "12345",
+    "city": "Velen",
+    "country": "DE"
+  },
+  "billingAddress": {
+    "id": "foobar",
+    "firstName": "Max",
+    "lastName": "Mustermann",
+    "streetName": "Musterstraße",
+    "streetNumber": "44",
+    "postalCode": "12345",
+    "city": "Velen",
+    "country": "DE"
+  },
+  "customLineItems": [],
+  "transactionFee": true,
+  "discountCodes": [],
+  "lastMessageSequenceNumber": 1,
+  "cart": {
+    "typeId": "cart",
+    "id": "548964aa-fb06-4c0a-8528-cb2993aac0c9"
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "id": "cff8c96e-78dc-4647-8f7e-a736f26687a1"
+    },
+    "fields": {
+      "paymentType": "invoice"
+    }
+  }
+}

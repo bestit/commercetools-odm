@@ -213,12 +213,21 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
+     * Refreshes the persistent state of an object from the database overriding any local changes that have not yet
+     * been persisted.
+     * @param object $object The object to refresh.
+     * @return void
+     */
+    public function refresh($object)
+    {
+        $this->getUnitOfWork()->refresh($object);
+    }
+
+    /**
      * Removes an object instance.
      *
      * A removed object will be removed from the database as a result of the flush operation.
-     *
      * @param object $object The object instance to remove.
-     *
      * @return void
      */
     public function remove($object)
@@ -283,18 +292,6 @@ class DocumentManager implements DocumentManagerInterface
      * @return void
      */
     public function clear($objectName = null)
-    {
-    }
-
-    /**
-     * Refreshes the persistent state of an object from the database,
-     * overriding any local changes that have not yet been persisted.
-     *
-     * @param object $object The object to refresh.
-     *
-     * @return void
-     */
-    public function refresh($object)
     {
     }
 

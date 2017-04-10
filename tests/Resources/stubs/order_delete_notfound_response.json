@@ -1,0 +1,67 @@
+{
+  "http": {
+    "request": {
+      "method": "DELETE",
+      "httpVersion": "1.1",
+      "uri": {
+        "protocol": "https:",
+        "slashes": true,
+        "auth": null,
+        "host": "api.sphere.io",
+        "port": 443,
+        "hostname": "api.sphere.io",
+        "hash": null,
+        "search": "?version=1",
+        "query": "version=1",
+        "pathname": "/broemmelhauptcom-live/orders/734a6def-985d-4662-b0cc-af7db688f4b5",
+        "path": "/broemmelhauptcom-live/orders/734a6def-985d-4662-b0cc-af7db688f4b5?version=1",
+        "href": "https://api.sphere.io/broemmelhauptcom-live/orders/734a6def-985d-4662-b0cc-af7db688f4b5?version=1"
+      },
+      "header": "DELETE /broemmelhauptcom-live/orders/734a6def-985d-4662-b0cc-af7db688f4b5?version=1 HTTP/1.1\r\nUser-Agent: express-impex - 3.3.0\r\nAuthorization: Bearer dp02bgv1metILf7zQG4EUyXZSXwcBkl_\r\nhost: api.sphere.io\r\naccept-encoding: gzip\r\naccept: application/json\r\ncontent-length: 0\r\nConnection: close\r\n\r\n",
+      "headers": {
+        "User-Agent": "express-impex - 3.3.0",
+        "Authorization": "Bearer dp02bgv1metILf7zQG4EUyXZSXwcBkl_",
+        "accept-encoding": "gzip",
+        "accept": "application/json",
+        "content-length": 0
+      }
+    },
+    "response": {
+      "headers": {
+        "x-served-config": "sphere-projects-ws-1.0",
+        "server": "nginx",
+        "content-type": "application/json; charset=utf-8",
+        "content-encoding": "gzip",
+        "date": "Thu, 13 Apr 2017 19:45:07 GMT",
+        "access-control-max-age": "299",
+        "x-served-by": "api-goofy-booth.sphere.prod.commercetools.de",
+        "x-correlation-id": "projects-508bbacc-a8dd-4cd4-993c-ee2ee6644d69",
+        "transfer-encoding": "chunked",
+        "access-control-allow-origin": "*",
+        "connection": "close",
+        "access-control-allow-headers": "Accept, Authorization, Content-Type, Origin, User-Agent",
+        "access-control-allow-methods": "GET, POST, DELETE, OPTIONS"
+      }
+    }
+  },
+  "statusCode": 404,
+  "message": "Endpoint '/broemmelhauptcom-live/orders/734a6def-985d-4662-b0cc-af7db688f4b5?version=1' not found.",
+  "originalRequest": {
+    "endpoint": "/orders/734a6def-985d-4662-b0cc-af7db688f4b5?version=1",
+    "options": {
+      "config": {
+        "project_key": "broemmelhauptcom-live"
+      },
+      "host": "api.sphere.io",
+      "protocol": "https",
+      "timeout": 20000,
+      "rejectUnauthorized": true,
+      "headers": {
+        "User-Agent": "express-impex - 3.3.0",
+        "Authorization": "Bearer dp02bgv1metILf7zQG4EUyXZSXwcBkl_"
+      },
+      "uri": "https://api.sphere.io/broemmelhauptcom-live",
+      "gzipEnable": true
+    }
+  }
+}
