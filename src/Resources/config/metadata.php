@@ -91,7 +91,7 @@ return [
 
     \Commercetools\Core\Model\ProductType\ProductType::class => [
         'draft' => \Commercetools\Core\Model\ProductType\ProductTypeDraft::class,
-        'repository' => \BestIt\CommercetoolsODM\Model\ProductTypeRepository::class,
+        'repository' => \BestIt\CommercetoolsODM\Repository\ProductTypeRepository::class,
         'requestClassMap' => (new RequestMap())
             ->setCreate(\Commercetools\Core\Request\ProductTypes\ProductTypeCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\ProductTypes\ProductTypeDeleteRequest::class)
