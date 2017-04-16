@@ -102,9 +102,9 @@ class ChangeNameTest extends TestCase
             new Product()
         );
 
-        /** @var $action ProductChangeNameAction */
         static::assertCount(1, $actions, 'Wrong action count.');
 
+        /** @var $action ProductChangeNameAction */
         static::assertInstanceOf(
             ProductChangeNameAction::class,
             $action = $actions[0],

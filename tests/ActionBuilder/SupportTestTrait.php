@@ -40,6 +40,10 @@ trait SupportTestTrait
      */
     public function testSupportsMatch(string $fieldPath, string $referenceClass, bool $returnValue = false)
     {
-        static::assertSame($returnValue, $this->fixture->supports($fieldPath, $referenceClass));
+        static::assertSame(
+            $returnValue,
+            $this->fixture->supports($fieldPath, $referenceClass),
+            sprintf('%s for %s was not correctly supported.', $fieldPath, $referenceClass)
+        );
     }
 }
