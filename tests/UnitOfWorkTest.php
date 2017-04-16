@@ -24,11 +24,15 @@ use Commercetools\Core\Client;
 use Commercetools\Core\Client\OAuth\Manager;
 use Commercetools\Core\Client\OAuth\Token;
 use Commercetools\Core\Model\Cart\LineItem;
+use Commercetools\Core\Model\Category\CategoryReference;
 use Commercetools\Core\Model\Common\Address;
 use Commercetools\Core\Model\Common\AddressCollection;
 use Commercetools\Core\Model\Common\JsonObject;
+use Commercetools\Core\Model\Common\LocalizedString;
+use Commercetools\Core\Model\Common\Money;
 use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\Order\Order;
+use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Model\ProductType\ProductTypeDraft;
 use Commercetools\Core\Request\Orders\OrderDeleteRequest;
@@ -428,7 +432,145 @@ class UnitOfWorkTest extends TestCase
      * @covers UnitOfWork::extractChanges()
      * @return void
      */
-    public function testExtractChangesFull()
+    public function testExtractChangesFullWithProduct()
+    {
+        static::expectException(RuntimeException::class);
+
+        $metadata = $this->getOneMockedMetadata($className = Product::class, false);
+
+        /** @var Product $product */
+        $this->fixture->registerAsManaged(
+            $product = $className::fromArray($oldData = [
+                'id' => $oldId = uniqid(),
+                'masterData' => [
+                    'current' => [
+                        'categories' => [
+                            [
+                                'typeId' => 'category',
+                                'id' => $category1Id = uniqid()
+                            ],
+                            [
+                                'typeId' => 'category',
+                                'id' => $category2Id = uniqid()
+                            ],
+                        ],
+                        'masterVariant' => [
+                            'id' => 1,
+                            'attributes' => [
+                                [
+                                    'name' => 'manufacturer',
+                                    'value' => uniqid()
+                                ],
+                                [
+                                    'name' => 'price',
+                                    'value' => [
+                                        'currencyCode' => 'EUR',
+                                        'centAmount' => 10010
+                                    ]
+                                ]
+                            ]
+                        ],
+                        'name' => ['de' => $oldGermanName = uniqid(), 'fr' => uniqid()],
+                        'variants' => [
+                            [
+                                'id' => 2,
+                                'attributes' => [
+                                    [
+                                        'name' => 'manufacturer',
+                                        'value' => uniqid()
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'taxCategory' => [
+                    'typeId' => 'tax-category',
+                    'id' => uniqid()
+                ]
+            ]),
+            uniqid(),
+            5
+        );
+
+        $productCatalogData = $product->setId($newId = uniqid())->getMasterData()->getCurrent();
+        $categories = $productCatalogData->getCategories();
+
+        $productCatalogData
+            ->setName(LocalizedString::fromArray(['de' => $oldGermanName, 'en' => $newEnglishName = uniqid()]));
+
+        unset($categories[1]);
+        $categories->add(CategoryReference::ofId($category3Id = uniqid()));
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('price')
+            ->setValue(Money::fromArray(['currencyCode' => 'EUR', 'centAmount' => $newAmount = 5050]));
+
+        $productCatalogData
+            ->getVariants()
+            ->getById(2)
+            ->getAttributes()
+            ->getByName('manufacturer')
+            ->setValue($newManId = uniqid());
+
+        $this->actionBuilderProcessor
+            ->expects(static::once())
+            ->method('createUpdateActions')
+            ->with(
+                static::isInstanceOf(ClassMetadataInterface::class),
+                [
+                    'id' => $newId,
+                    'masterData' => [
+                        'current' => [
+                            'categories' => [
+                                1 => null,
+                                2 => [
+                                    'typeId' => 'category',
+                                    'id' => $category3Id
+                                ]
+                            ],
+                            'masterVariant' => [
+                                'attributes' => [
+                                    1 => [
+                                        'value' => [
+                                            'centAmount' => $newAmount
+                                        ]
+                                    ]
+                                ]
+                            ],
+                            'name' => [
+                                'en' => $newEnglishName,
+                                'fr' => null
+                            ],
+                            'variants' => [
+                                [
+                                    'attributes' => [
+                                        [
+                                            'value' => $newManId
+                                        ]
+                                    ]
+                                ],
+                            ]
+                        ]
+                    ]
+                ],
+                $oldData,
+                $product
+            )
+            ->willThrowException(new RuntimeException('Controlled stop.'));
+
+        $this->fixture->scheduleSave($product);
+        $this->fixture->flush();
+    }
+
+    /**
+     * Checks if the changes are extracted correctly.
+     * @covers UnitOfWork::extractChanges()
+     * @return void
+     */
+    public function testExtractChangesFullWithOrder()
     {
         static::expectException(RuntimeException::class);
 

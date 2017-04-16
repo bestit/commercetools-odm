@@ -74,8 +74,11 @@ class SetSKUTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks if the action is rendered correctly.
-     * @dataProvider getCreateAssertions
      * @covers       SetSKU::createUpdateActions()
+     * @dataProvider getCreateAssertions
+     * @param string $path
+     * @param bool $staged
+     * @param int $variantId
      * @return void
      */
     public function testCreateUpdateActions(string $path, bool $staged = true, int $variantId = 1)
