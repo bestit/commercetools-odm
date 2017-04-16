@@ -20,7 +20,7 @@ class ChangeSearchableForAttr extends ProductTypeActionBuilder
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
      */
-    protected $complexFieldFilter = 'attributes/(\d)+/isSearchable$';
+    protected $complexFieldFilter = 'attributes/(\d+)/isSearchable$';
 
     /**
      * Creates the update actions for the given class and data.
