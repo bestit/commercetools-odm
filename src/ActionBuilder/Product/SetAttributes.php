@@ -53,8 +53,10 @@ class SetAttributes extends ProductActionBuilder
                 $variantId = $oldProductCatalogData[$variantContainer][$variantIndex]['id'];
             }
 
-            $action = ProductSetAttributeAction::ofVariantIdAndName($variantId, $oldAttrs[$attrIndex]['name'])
-                ->setStaged($productCatalogContainer === 'staged');
+            $action = ProductSetAttributeAction::ofVariantIdAndName(
+                $variantId,
+                $attr['name'] ?? $oldAttrs[$attrIndex]['name']
+            )->setStaged($productCatalogContainer === 'staged');
 
             if ($attr && isset($attr['value'])) {
                 $action->setValue($attr['value']);

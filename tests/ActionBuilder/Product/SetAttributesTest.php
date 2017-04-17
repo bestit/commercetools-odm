@@ -125,6 +125,72 @@ class SetAttributesTest extends TestCase
     }
 
     /**
+     * Checks an attribute can be added to the master variant attributes.
+     * @dataProvider getCatalogs
+     * @param string $container
+     * @param bool $staged
+     */
+    public function testCreateUpdateActionsForMasterVariantAddAttr(string $container, bool $staged = false)
+    {
+        $this->fixture->supports("masterData/{$container}/masterVariant/attributes", Product::class);
+
+        $actions = $this->fixture->createUpdateActions(
+            [
+                [
+                    'value' => $mockedValue1 = uniqid()
+                ],
+                [
+                    'name' => $attrName2 = uniqid(),
+                    'value' => $mockedValue2 = uniqid()
+                ]
+            ],
+            static::createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'masterData' => [
+                    $container => [
+                        'masterVariant' => [
+                            'attributes' => [
+                                [
+                                    'name' => $attrName1 = 'manufacturer',
+                                    'value' => uniqid()
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            new Product()
+        );
+
+        static::assertCount(2, $actions, 'Wrong action count.');
+
+        /** @var $action ProductSetAttributeAction */
+        static::assertInstanceOf(
+            ProductSetAttributeAction::class,
+            $action = $actions[0],
+            'Wrong instance.'
+        );
+
+        static::assertSame(1, $action->getVariantId(), 'Wrong variant id.');
+        static::assertSame($attrName1, $action->getName(), 'Wrong name.');
+        static::assertSame($mockedValue1, $action->getValue(), 'Wrong value');
+        static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
+
+        /** @var $action ProductSetAttributeAction */
+        static::assertInstanceOf(
+            ProductSetAttributeAction::class,
+            $action = $actions[1],
+            'Wrong instance.'
+        );
+
+        static::assertSame(1, $action->getVariantId(), 'Wrong variant id.');
+        static::assertSame($attrName2, $action->getName(), 'Wrong name.');
+        static::assertSame($mockedValue2, $action->getValue(), 'Wrong value');
+        static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
+    }
+
+    /**
      * Checks if variant attributes can be changed.
      * @dataProvider getCatalogs
      * @param string $container
