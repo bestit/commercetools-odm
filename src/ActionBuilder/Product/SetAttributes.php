@@ -62,7 +62,7 @@ class SetAttributes extends ProductActionBuilder
                 $attrValue = $attr['value'];
 
                 // TODO: Refactor this and enable more levels.
-                if ((is_array($attrValue)) && (is_array($oldAttrs[$attrIndex]['value']))) {
+                if ((is_array($attrValue)) && (is_array(@$oldAttrs[$attrIndex]['value']))) {
                     foreach ($attrValue as $index => &$attrSubValue) {
                         if (@$oldAttrs[$attrIndex]['value'][$index]['name'] &&
                             @$oldAttrs[$attrIndex]['value'][$index]['value'] && !@$attrSubValue['name']
