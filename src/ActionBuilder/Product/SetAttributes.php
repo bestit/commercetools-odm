@@ -29,7 +29,7 @@ class SetAttributes extends ProductActionBuilder
      * @param array $oldData
      * @param mixed $sourceObject
      * @return AbstractAction[]
-     * @todo Refactory the variant access.
+     * @todo Check if the name of the attr matches the oldattr if you just use the attrindex.
      */
     public function createUpdateActions(
         $changedValue,
@@ -59,7 +59,20 @@ class SetAttributes extends ProductActionBuilder
             )->setStaged($productCatalogContainer === 'staged');
 
             if ($attr && isset($attr['value'])) {
-                $action->setValue($attr['value']);
+                $attrValue = $attr['value'];
+
+                // TODO: Refactor this and enable more levels.
+                if ((is_array($attrValue)) && (is_array($oldAttrs[$attrIndex]['value']))) {
+                    foreach ($attrValue as $index => &$attrSubValue) {
+                        if (@$oldAttrs[$attrIndex]['value'][$index]['name'] &&
+                            @$oldAttrs[$attrIndex]['value'][$index]['value'] && !@$attrSubValue['name']
+                        ) {
+                            $attrSubValue['name'] = $oldAttrs[$attrIndex]['value'][$index]['name'];
+                        }
+                    }
+                }
+
+                $action->setValue($attrValue);
             }
 
             $actions[] = $action;
