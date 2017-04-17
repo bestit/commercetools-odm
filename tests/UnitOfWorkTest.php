@@ -27,6 +27,7 @@ use Commercetools\Core\Model\Cart\LineItem;
 use Commercetools\Core\Model\Category\CategoryReference;
 use Commercetools\Core\Model\Common\Address;
 use Commercetools\Core\Model\Common\AddressCollection;
+use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Common\LocalizedString;
 use Commercetools\Core\Model\Common\Money;
@@ -509,6 +510,11 @@ class UnitOfWorkTest extends TestCase
             ->setValue(Money::fromArray(['currencyCode' => 'EUR', 'centAmount' => $newAmount = 5050]));
 
         $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->add(Attribute::fromArray(['name' => $newAttrName = uniqid(), 'value' => $newAttrValue = []]));
+
+        $productCatalogData
             ->getVariants()
             ->getById(2)
             ->getAttributes()
@@ -537,6 +543,10 @@ class UnitOfWorkTest extends TestCase
                                         'value' => [
                                             'centAmount' => $newAmount
                                         ]
+                                    ],
+                                    [
+                                        'name' => $newAttrName,
+                                        'value' => $newAttrValue
                                     ]
                                 ]
                             ],

@@ -539,7 +539,8 @@ class UnitOfWork implements UnitOfWorkInterface
             if (is_array($value)) {
                 $changedSubData = $this->extractChanges($value, $oldData[$key] ?? []);
 
-                if ($changedSubData) {
+                // We think that an empty value can be ignored, except if we want to _add_ a new value.
+                if ($changedSubData || !array_key_exists($key, $oldData)) {
                     $changedData[$key] = $changedSubData;
                 }
             } else {
@@ -600,6 +601,7 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * Commits every change to commercetools.
      * @return void
+     * @todo Add the detach queue for ignored objects
      */
     public function flush()
     {
