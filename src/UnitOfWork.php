@@ -824,6 +824,7 @@ class UnitOfWork implements UnitOfWorkInterface
             'key' => (string)$product->getKey(),
             'productType' => $product->getProductType(),
             'state' => $product->getState(),
+            'taxCategory' => $product->getTaxCategory(),
             'variants' => null,
         ];
 
@@ -897,6 +898,12 @@ class UnitOfWork implements UnitOfWorkInterface
         if (!@$values['searchKeywords']) {
             unset($values['searchKeywords']);
         }
+
+        array_walk($values, function (&$value, $key) {
+            if ((is_object($value)) && (method_exists($value, 'toArray'))) {
+                $value = $value->toArray();
+            }
+        });
 
         return array_filter($values);
     }

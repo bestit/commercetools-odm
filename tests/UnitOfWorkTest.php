@@ -34,8 +34,14 @@ use Commercetools\Core\Model\Common\Money;
 use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\Order\Order;
 use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductCatalogData;
+use Commercetools\Core\Model\Product\ProductData;
+use Commercetools\Core\Model\Product\ProductDraft;
+use Commercetools\Core\Model\Product\ProductVariant;
 use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Model\ProductType\ProductTypeDraft;
+use Commercetools\Core\Model\ProductType\ProductTypeReference;
+use Commercetools\Core\Model\TaxCategory\TaxCategoryReference;
 use Commercetools\Core\Request\Orders\OrderDeleteRequest;
 use Commercetools\Core\Request\ProductTypes\ProductTypeCreateRequest;
 use DateTime;
@@ -664,6 +670,72 @@ class UnitOfWorkTest extends TestCase
             ->willThrowException(new RuntimeException('Controlled stop.'));
 
         $this->fixture->scheduleSave($order);
+        $this->fixture->flush();
+    }
+
+    /**
+     * Checks that a product draft is created correctly.
+     * @covers UnitOfWork::createDraftObjectForNewRequest()
+     * @covers UnitOfWork::parseValuesForProductDraft()
+     * @return void
+     * @todo Check more values.
+     */
+    public function testCreateNewRequestForProduct()
+    {
+        static::expectException(RuntimeException::class);
+        static::expectExceptionCode($excCode = mt_rand(1, 100000));
+
+        $product = new Product();
+
+        $product
+            ->setKey($key = uniqid())
+            ->setProductType(ProductTypeReference::ofId($typeId = uniqid()))
+            ->setTaxCategory(TaxCategoryReference::ofId($taxCatId = uniqid()))
+            ->setMasterData(new ProductCatalogData())
+            ->getMasterData()
+            ->setCurrent(new ProductData())
+            ->setStaged(new ProductData())
+            ->getStaged()
+            ->setName(LocalizedString::fromArray($name = ['de' => uniqid()]));
+
+        $product
+            ->getMasterData()->getStaged()->setMasterVariant(new ProductVariant());
+
+        $metadataMock = $this->getOneMockedMetadata($className = get_class($product), false);
+
+        $metadataMock
+            ->method('getDraft')
+            ->willReturn(ProductDraft::class);
+
+        $metadataMock
+            ->method('getFieldNames')
+            ->willReturn(array_keys($product->fieldDefinitions()));
+
+        $metadataMock
+            ->method('isCTStandardModel')
+            ->willReturn(true);
+
+        $this->documentManager
+            ->expects(static::once())
+            ->method('createRequest')
+            ->with(
+                $className,
+                DocumentManagerInterface::REQUEST_TYPE_CREATE,
+                static::callback(function (ProductDraft $draftObject) use ($key, $name, $taxCatId, $typeId) {
+                    static::assertSame($key, $draftObject->getKey(), 'Wrong Key');
+                    static::assertSame($typeId, $draftObject->getProductType()->getId(), 'Wrong type id.');
+                    static::assertSame($taxCatId, $draftObject->getTaxCategory()->getId(), 'Wrong tax id.');
+                    static::assertSame($name, $draftObject->getName()->toArray(), 'Wrong name.');
+
+                    return true;
+                })
+            )->willThrowException(new RuntimeException('Controlled stop.', $excCode));
+
+        static::assertCount(0, $this->fixture, 'Start count failed.');
+        static::assertSame(0, $this->fixture->countNewObjects(), 'Start count of new objects failed.');
+
+        $this->fixture->scheduleSave($product);
+
         $this->fixture->flush();
     }
 
