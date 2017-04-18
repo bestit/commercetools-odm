@@ -837,6 +837,7 @@ class UnitOfWork implements UnitOfWorkInterface
             $valueNames = [
                 'categoryOrderHints',
                 'categories',
+                'description',
                 'name',
                 'metaKeywords',
                 'metaDescription',

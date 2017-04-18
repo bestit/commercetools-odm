@@ -696,6 +696,7 @@ class UnitOfWorkTest extends TestCase
             ->setCurrent(new ProductData())
             ->setStaged(new ProductData())
             ->getStaged()
+            ->setDescription(LocalizedString::fromArray($desc = ['de' => uniqid()]))
             ->setName(LocalizedString::fromArray($name = ['de' => uniqid()]));
 
         $product
@@ -721,8 +722,9 @@ class UnitOfWorkTest extends TestCase
             ->with(
                 $className,
                 DocumentManagerInterface::REQUEST_TYPE_CREATE,
-                static::callback(function (ProductDraft $draftObject) use ($key, $name, $taxCatId, $typeId) {
-                    static::assertSame($key, $draftObject->getKey(), 'Wrong Key');
+                static::callback(function (ProductDraft $draftObject) use ($desc, $key, $name, $taxCatId, $typeId) {
+                    static::assertSame($desc, $draftObject->getDescription()->toArray(), 'Wrong Desc.');
+                    static::assertSame($key, $draftObject->getKey(), 'Wrong Key.');
                     static::assertSame($typeId, $draftObject->getProductType()->getId(), 'Wrong type id.');
                     static::assertSame($taxCatId, $draftObject->getTaxCategory()->getId(), 'Wrong tax id.');
                     static::assertSame($name, $draftObject->getName()->toArray(), 'Wrong name.');
