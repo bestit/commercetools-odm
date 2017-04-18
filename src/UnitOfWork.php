@@ -208,14 +208,53 @@ class UnitOfWork implements UnitOfWorkInterface
         $this->scheduledRemovals = [];
     }
 
-    private function computeChangeSet(ClassMetadataInterface $metadata, $document)
+    /**
+     * Creates the update action for the given object if there is a change in the data.
+     * @param ClassMetadataInterface $metadata
+     * @param object $object
+     * @return ClientRequestInterface|null
+     */
+    private function computeChangedObject(ClassMetadataInterface $metadata, $object)
     {
         $changedData = $this->extractChanges(
-            $newData = $this->extractData($document, $metadata),
-            $oldData = $this->getOriginalData($document)
+            $newData = $this->extractData($object, $metadata),
+            $oldData = $this->getOriginalData($object)
         );
 
-        return $changedData ? $this->createUpdateRequest($changedData, $oldData, $document) : null;
+        return $changedData ? $this->createUpdateRequest($changedData, $oldData, $object) : null;
+    }
+
+    /**
+     * Iterates through the entities and creates their update / creation actions if needed.
+     * @return void
+     */
+    private function computeChangedObjects()
+    {
+        $client = $this->getClient();
+
+        // TODO: Refactor to method.
+        foreach ($this->identityMap as $id => $object) {
+            $state = $this->getDocumentState($object);
+
+            if ($state == self::STATE_MANAGED) {
+                $updateRequest = $this->computeChangedObject($this->getClassMetadata($object), $object);
+
+                if ($updateRequest) {
+                    $client->addBatchRequest($updateRequest->setIdentifier($id));
+                } else {
+                    $this->processDeferredDetach($object);
+                }
+            }
+        }
+
+        // TODO Refactor to method.
+        foreach ($this->newDocuments as $id => $object) {
+            $request = $this->createNewRequest($this->getClassMetadata($object), $object);
+
+            $client->addBatchRequest($request->setIdentifier($id));
+        }
+
+        $this->addRemovalsToRequestBatch();
     }
 
     /**
@@ -400,31 +439,6 @@ class UnitOfWork implements UnitOfWorkInterface
         return $request->setActions($actions);
     }
 
-    private function detectChangedDocuments()
-    {
-        $client = $this->getClient();
-
-        foreach ($this->identityMap as $id => $document) {
-            $state = $this->getDocumentState($document);
-
-            if ($state == self::STATE_MANAGED) {
-                $updateRequest = $this->computeChangeSet($this->getClassMetadata($document), $document);
-
-                if ($updateRequest) {
-                    $client->addBatchRequest($updateRequest->setIdentifier($id));
-                }
-            }
-        }
-
-        foreach ($this->newDocuments as $id => $document) {
-            $request = $this->createNewRequest($this->getClassMetadata($document), $document);
-
-            $client->addBatchRequest($request->setIdentifier($id));
-        }
-
-        $this->addRemovalsToRequestBatch();
-    }
-
     /**
      * Detaches a document from the persistence management.
      * It's persistence will no longer be managed by Doctrine.
@@ -605,7 +619,7 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     public function flush()
     {
-        $this->detectChangedDocuments();
+        $this->computeChangedObjects();
 
         $this->getEventManager()->dispatchEvent(Events::ON_FLUSH, new OnFlushEventArgs($this));
 
@@ -1067,11 +1081,6 @@ class UnitOfWork implements UnitOfWorkInterface
         );
 
         $this->registerAsManaged($document);
-
-        $this->getEventManager()->dispatchEvent(
-            Events::PRE_PERSIST,
-            new LifecycleEventArgs($document, $this->getDocumentManager())
-        );
 
         return $this;
     }

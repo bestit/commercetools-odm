@@ -416,6 +416,38 @@ class UnitOfWorkTest extends TestCase
     }
 
     /**
+     * The deferred detach should remove the entity on flush, even if there is no change.
+     * @return void
+     */
+    public function testDetachDeferredNoChange()
+    {
+        $this->getOneMockedMetadata(Order::class, false);
+
+        static::assertCount(0, $this->fixture, 'Start count failed.');
+
+        $order = new Order([
+            'customerId' => uniqid(),
+            'customerEmail' => 'test@example.com',
+            'id' => uniqid(),
+            'version' => 5
+        ]);
+
+        static::assertSame(
+            $this->fixture,
+            $this->fixture->registerAsManaged($order, $order->getId(), $order->getVersion()),
+            'Fluent interface failed.'
+        );
+
+        static::assertCount(1, $this->fixture, 'There should be a managed entity.');
+
+        $this->fixture->scheduleSave($order);
+        $this->fixture->detachDeferred($order);
+        $this->fixture->flush();
+
+        static::assertCount(0, $this->fixture, 'The entity should be detached.');
+    }
+
+    /**
      * Checks that the "empty" detach does not trigger any error.
      * @return void
      */
