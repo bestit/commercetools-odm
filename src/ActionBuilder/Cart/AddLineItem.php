@@ -5,6 +5,7 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Cart;
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Cart\Cart;
+use Commercetools\Core\Model\Channel\ChannelReference;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Carts\Command\CartAddLineItemAction;
 
@@ -47,19 +48,21 @@ class AddLineItem extends ActionBuilderAbstract
         $sourceObject,
         string $subFieldName = ''
     ): array {
-        $actions = [];
-
         // Process only on new items
         if (!isset($changedValue['productId']) || !$changedValue['productId']) {
-            return $actions;
+            return [];
         }
 
-        $actions[] = CartAddLineItemAction::fromArray([
+        $action = CartAddLineItemAction::fromArray([
             'productId' => $changedValue['productId'],
             'variantId' => $changedValue['variant']['id'],
             'quantity' => $changedValue['quantity']
         ]);
 
-        return $actions;
+        if (isset($changedValue['distributionChannel']['id'])) {
+            $action->setDistributionChannel(ChannelReference::ofId($changedValue['distributionChannel']['id']));
+        }
+
+        return [$action];
     }
 }
