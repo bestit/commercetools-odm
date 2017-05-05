@@ -766,6 +766,8 @@ class UnitOfWorkTest extends TestCase
             'Fluent interface failed.'
         );
 
+        static::assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
+
         static::assertCount(1, $this->fixture, 'The object should be saved.');
 
         static::assertSame(
@@ -809,6 +811,8 @@ class UnitOfWorkTest extends TestCase
             'Fluent interface failed.'
         );
 
+        static::assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
+
         static::assertCount(1, $this->fixture, 'The object should be saved.');
 
         static::assertSame(
@@ -836,14 +840,17 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks that an registered object is returned.
-     * @depends testRegisterAsManaged
-     * @param Order $order
      * @return void
      */
-    public function testDetach(Order $order)
+    public function testDetach()
     {
+        $order = $this->testRegisterAsManaged();
+
+        static::assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
+
         $this->fixture->detach($order);
 
+        static::assertFalse($this->fixture->contains($order), 'Object should not be contained in the uow.');
         static::assertCount(0, $this->fixture, 'There should be no entity.');
     }
 

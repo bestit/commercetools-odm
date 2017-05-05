@@ -19,9 +19,9 @@ class ResponseException extends Exception
     /**
      * Constructs and returns an exception from the given response.
      * @param ErrorResponse $response
-     * @return APIException
+     * @return ResponseException
      */
-    public static function fromResponse(ErrorResponse $response)
+    public static function fromResponse(ErrorResponse $response): ResponseException
     {
         $exception = new static($response->getMessage(), $response->getStatusCode());
 

@@ -2,9 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Entity;
 
-use BestIt\CommercetoolsODM\Event\LifecycleEventArgs;
 use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
-use Commercetools\Core\Request\ClientRequestInterface;
 
 /**
  * Entity for Product Types.

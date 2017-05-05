@@ -13,17 +13,20 @@ use Countable;
 interface UnitOfWorkInterface extends Countable
 {
     /**
-     * This state marks an entity as new.
+     * This state marks an entity as detached.
      * @var int
      */
-    const STATE_NEW = 1;
-
+    const STATE_DETACHED = 4;
     /**
      * This state marks an entity as managed.
      * @var int
      */
     const STATE_MANAGED = 2;
-
+    /**
+     * This state marks an entity as new.
+     * @var int
+     */
+    const STATE_NEW = 1;
     /**
      * This state marks an entity as removed.
      * @var int
@@ -31,10 +34,11 @@ interface UnitOfWorkInterface extends Countable
     const STATE_REMOVED = 3;
 
     /**
-     * This state marks an entity as detached.
-     * @var int
+     * Returns true if the unit of work contains the given document.
+     * @param  object $document
+     * @return bool
      */
-    const STATE_DETACHED = 4;
+    public function contains($document): bool;
 
     /**
      * Returns the count of managed objects.

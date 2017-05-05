@@ -2,9 +2,9 @@
 
 namespace BestIt\CommercetoolsODM\Model;
 
-use BestIt\CommercetoolsODM\DocumentManager;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\APIException;
+use BestIt\CommercetoolsODM\Exception\ResponseException;
 use Commercetools\Core\Request\ClientRequestInterface;
 use Commercetools\Core\Response\ApiResponseInterface;
 
@@ -41,7 +41,7 @@ trait ByKeySearchRepositoryTrait
      * Finds an object by its user defined key.
      * @param string $key
      * @return mixed|void
-     * @throws APIException If there is something wrong.
+     * @throws ResponseException
      */
     public function findByKey(string $key)
     {

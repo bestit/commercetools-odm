@@ -48,6 +48,7 @@ class DocumentManagerTest extends TestCase
     {
         return [
             // DocumentManager-Method, UnitOfWork-Method
+            ['contains'],
             ['detach'],
             ['detachDeferred', 'detachDeferred'],
             ['flush', '', false],

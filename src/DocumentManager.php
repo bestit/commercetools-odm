@@ -320,13 +320,12 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
-     * Checks if the object is part of the current UnitOfWork and therefore managed.
-     *
-     * @param object $object
-     *
+     * Checks if the $document is part of the current UnitOfWork and therefore managed.
+     * @param object $document
      * @return bool
      */
-    public function contains($object)
+    public function contains($document): bool
     {
+        return $this->getUnitOfWork()->contains($document);
     }
 }

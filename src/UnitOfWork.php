@@ -32,7 +32,6 @@ use Commercetools\Core\Model\Product\ProductVariantDraft;
 use Commercetools\Core\Model\Type\TypeReference;
 use Commercetools\Core\Request\AbstractDeleteRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
-use Commercetools\Core\Response\AbstractApiResponse;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use DateTime;
@@ -258,6 +257,18 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         $this->addRemovalsToRequestBatch();
+    }
+
+    /**
+     * Returns true if the unit of work contains the given document.
+     * @param  object $document
+     * @return bool
+     */
+    public function contains($document): bool
+    {
+        $objectKey = $this->getKeyForObject($document);
+
+        return isset($this->documentIdentifiers[$objectKey]) || isset($this->newDocuments[$objectKey]);
     }
 
     /**

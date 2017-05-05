@@ -57,7 +57,7 @@ class DefaultRepository implements ObjectRepository
      * @param ClassMetadataInterface $metadata
      * @param DocumentManagerInterface $documentManager
      * @param QueryHelper $queryHelper
-     * @param PoolInterface|void $Pool
+     * @param PoolInterface|null $pool
      */
     public function __construct(
         ClassMetadataInterface $metadata,
@@ -405,7 +405,6 @@ class DefaultRepository implements ObjectRepository
     /**
      * Processes the given query.
      * @param ClientRequestInterface $request
-     * @param bool $isAsync Should this request be handled asynchronous?
      * @return array<mixed|ApiResponseInterface|ClientRequestInterface> The mapped response, the raw response, the
      *         request.
      */

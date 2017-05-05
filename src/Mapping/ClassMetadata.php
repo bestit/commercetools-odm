@@ -510,7 +510,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the reflection class.
-     * @param null|ReflectionClass $reflectionClass
+     * @param ReflectionClass $reflectionClass
      * @return ClassMetadata
      */
     public function setReflectionClass(ReflectionClass $reflectionClass): ClassMetadata
