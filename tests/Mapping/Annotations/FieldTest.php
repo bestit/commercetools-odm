@@ -37,7 +37,7 @@ class FieldTest extends TestCase
      */
     public function testAnnotationDeclaration()
     {
-        static::assertClassHasAnnotation(Field::class, 'Annotation');
+        $this->assertClassHasAnnotation(Field::class, 'Annotation');
     }
 
     /**
@@ -46,7 +46,7 @@ class FieldTest extends TestCase
      */
     public function testTargetAnnotation()
     {
-        static::assertClassHasAnnotation(Field::class, 'Target({"PROPERTY","ANNOTATION"})');
+        $this->assertClassHasAnnotation(Field::class, 'Target({"PROPERTY","ANNOTATION"})');
     }
 
     /**
@@ -55,22 +55,38 @@ class FieldTest extends TestCase
      */
     public function testCollection()
     {
-        static::assertSame('', $this->fixture->collection, 'Collection property is wrong. ');
-        static::assertSame('', $this->fixture->getCollection(), 'Collection getter is wrong.');
+        $this->assertSame('', $this->fixture->collection, 'Collection property is wrong. ');
+        $this->assertSame('', $this->fixture->getCollection(), 'Collection getter is wrong.');
 
         $this->fixture->collection = $mock = uniqid();
-        static::assertSame($mock, $this->fixture->getCollection(), 'Collection was not saved correctly.');
+        $this->assertSame($mock, $this->fixture->getCollection(), 'Collection was not saved correctly.');
     }
 
+    /**
+     * Checks if ignoreOnEmpty is correctly checked.
+     */
+    public function testIgnoreOnEmpty()
+    {
+        $this->assertFalse($this->fixture->ignoreOnEmpty, 'The property default is wrong.');
+        $this->assertFalse($this->fixture->ignoreOnEmpty(), 'The method default is wrong.');
+
+        $this->fixture->ignoreOnEmpty = true;
+
+        $this->assertTrue($this->fixture->ignoreOnEmpty, 'The property was not saved.');
+        $this->assertTrue($this->fixture->ignoreOnEmpty(), 'The method returns the wrong value.');
+    }
+    /**
+     * Checks if read only is correctly checked.
+     */
     public function testReadOnly()
     {
-        static::assertFalse($this->fixture->readOnly, 'The property default is wrong.');
-        static::assertFalse($this->fixture->isReadOnly(), 'The method default is wrong.');
+        $this->assertFalse($this->fixture->readOnly, 'The property default is wrong.');
+        $this->assertFalse($this->fixture->isReadOnly(), 'The method default is wrong.');
 
         $this->fixture->readOnly = true;
 
-        static::assertTrue($this->fixture->readOnly, 'The property was not saved.');
-        static::assertTrue($this->fixture->isReadOnly(), 'The method returns the wrong value.');
+        $this->assertTrue($this->fixture->readOnly, 'The property was not saved.');
+        $this->assertTrue($this->fixture->isReadOnly(), 'The method returns the wrong value.');
     }
 
     /**
@@ -79,23 +95,23 @@ class FieldTest extends TestCase
      */
     public function testType()
     {
-        static::assertPropertyHasAnnotation(
+        $this->assertPropertyHasAnnotation(
             Field::class,
             'type',
             'Enum({"array","boolean","dateTime","int","resource","string","set"})',
             'Enum is missing.'
         );
-        static::assertPropertyHasAnnotation(
+        $this->assertPropertyHasAnnotation(
             Field::class,
             'type',
             'Required',
             'Required is missing.'
         );
 
-        static::assertSame('string', $this->fixture->type, 'Type property is wrong. ');
-        static::assertSame('string', $this->fixture->getType(), 'Type getter is wrong.');
+        $this->assertSame('string', $this->fixture->type, 'Type property is wrong. ');
+        $this->assertSame('string', $this->fixture->getType(), 'Type getter is wrong.');
 
         $this->fixture->type = $mock = uniqid();
-        static::assertSame($mock, $this->fixture->getType(), 'Type was not saved correctly.');
+        $this->assertSame($mock, $this->fixture->getType(), 'Type was not saved correctly.');
     }
 }

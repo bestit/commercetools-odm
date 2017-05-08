@@ -70,16 +70,41 @@ class SetCustomFieldTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             $value = new DateTime(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $customer
         );
 
-        static::assertCount(1, $actions);
-        static::assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
-        static::assertSame($field, $actions[0]->getName());
-        static::assertInstanceOf(DateTimeDecorator::class, $actions[0]->getValue());
+        $this->assertCount(1, $actions);
+        $this->assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
+        $this->assertSame($field, $actions[0]->getName());
+        $this->assertInstanceOf(DateTimeDecorator::class, $actions[0]->getValue());
+    }
+
+    /**
+     * Checks if a simple action is created.
+     * @covers SetCustomField::createUpdateActions()
+     * @return void
+     */
+    public function testCreateUpdateActionsNull()
+    {
+        $customer = new Customer();
+
+        $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
+
+        $actions = $this->fixture->createUpdateActions(
+            null,
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            $customer
+        );
+
+        $this->assertCount(1, $actions);
+        $this->assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
+        $this->assertSame($field, $actions[0]->getName());
+        $this->assertNull($actions[0]->getValue());
     }
 
     /**
@@ -95,16 +120,16 @@ class SetCustomFieldTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             $value = uniqid(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $customer
         );
 
-        static::assertCount(1, $actions);
-        static::assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
-        static::assertSame($field, $actions[0]->getName());
-        static::assertSame($value, $actions[0]->getValue());
+        $this->assertCount(1, $actions);
+        $this->assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
+        $this->assertSame($field, $actions[0]->getName());
+        $this->assertSame($value, $actions[0]->getValue());
     }
 
     /**
@@ -113,6 +138,6 @@ class SetCustomFieldTest extends TestCase
      */
     public function testInstance()
     {
-        static::assertInstanceOf(CustomerActionBuilder::class, $this->fixture);
+        $this->assertInstanceOf(CustomerActionBuilder::class, $this->fixture);
     }
 }

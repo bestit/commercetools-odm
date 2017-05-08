@@ -112,11 +112,6 @@ class ClassMetadata implements ClassMetadataInterface
             ->isCTStandardModel(is_a($name, Resource::class, true));
     }
 
-    public function addUpdateCallback(string $field = '', string $method = '')
-    {
-        // TODO
-    }
-
     /**
      * Adds a lifecycle event callback for the persistent class.
      * @param string $eventName
@@ -136,6 +131,11 @@ class ClassMetadata implements ClassMetadataInterface
         return $this;
     }
 
+    public function addUpdateCallback(string $field = '', string $method = '')
+    {
+        // TODO
+    }
+
     /**
      * Returns the model class from which the actions are used.
      * @return string
@@ -143,6 +143,37 @@ class ClassMetadata implements ClassMetadataInterface
     public function getActionsFrom(): string
     {
         return $this->actionsFrom ? $this->actionsFrom : $this->getName();
+    }
+
+    /**
+     * Returns the target field of the owning side of the association.
+     * @param string $assocName
+     * @return string
+     */
+    public function getAssociationMappedByTargetField($assocName)
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
+    }
+
+    /**
+     * Returns a numerically indexed list of association names of this persistent class.
+     *
+     * This array includes identifier associations if present on this class.
+     * @return array
+     */
+    public function getAssociationNames()
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
+    }
+
+    /**
+     * Returns the target class name of the given association.
+     * @param string $assocName
+     * @return string
+     */
+    public function getAssociationTargetClass($assocName)
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
@@ -207,6 +238,27 @@ class ClassMetadata implements ClassMetadataInterface
     public function getIdentifier(): string
     {
         return $this->identifier;
+    }
+
+    /**
+     * Returns an array of identifier field names numerically indexed.
+     * @return array
+     */
+    public function getIdentifierFieldNames()
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
+    }
+
+    /**
+     * Returns the identifier of this object as an array with field name as key.
+     *
+     * Has to return an empty array if no identifier isset.
+     * @param object $object
+     * @return array
+     */
+    public function getIdentifierValues($object)
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
@@ -309,6 +361,26 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
+     * Checks if the given field is a mapped association for this class.
+     * @param string $fieldName
+     * @return boolean
+     */
+    public function hasAssociation($fieldName)
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
+    }
+
+    /**
+     * Checks if the given field is a mapped property for this class.
+     * @param string $fieldName
+     * @return boolean
+     */
+    public function hasField($fieldName)
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
+    }
+
+    /**
      * Checks if there is a public getter for the given field name.
      * @param string $fieldName
      * @return bool
@@ -319,6 +391,16 @@ class ClassMetadata implements ClassMetadataInterface
         $reflection = $this->getReflectionClass();
 
         return $reflection->hasMethod($method) && $reflection->getMethod($method)->isPublic();
+    }
+
+    /**
+     * Has the persistent class events for the given event name.
+     * @param string $eventName
+     * @return bool
+     */
+    public function hasLifecycleEvents(string $eventName): bool
+    {
+        return array_key_exists($eventName, $this->lifecycleEvents);
     }
 
     /**
@@ -335,13 +417,56 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
-     * Has the persistent class events for the given event name.
-     * @param string $eventName
+     * Is this field ignored if the data is empty.
+     * @param string $fieldName
      * @return bool
      */
-    public function hasLifecycleEvents(string $eventName): bool
+    public function ignoreFieldOnEmpty(string $fieldName): bool
     {
-        return array_key_exists($eventName, $this->lifecycleEvents);
+        $mappings = $this->getFieldMappings();
+        $return = false;
+
+        if (array_key_exists($fieldName, $mappings)) {
+            $return = $mappings[$fieldName]->ignoreOnEmpty();
+        }
+
+        return $return;
+    }
+
+    /**
+     * Checks if the association is the inverse side of a bidirectional association.
+     * @param string $assocName
+     * @return boolean
+     */
+    public function isAssociationInverseSide($assocName)
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
+    }
+
+    /**
+     * Is this persistent class a commercetools standard model?
+     * @param bool $status The new status.
+     * @return bool The old status.
+     */
+    public function isCTStandardModel(bool $status = true): bool
+    {
+        $oldStatus = $this->isCTStandardModel;
+
+        if (func_num_args()) {
+            $this->isCTStandardModel = $status;
+        }
+
+        return $oldStatus;
+    }
+
+    /**
+     * Checks if the given field is a mapped collection valued association for this class.
+     * @param string $fieldName
+     * @return boolean
+     */
+    public function isCollectionValuedAssociation($fieldName)
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
@@ -379,6 +504,16 @@ class ClassMetadata implements ClassMetadataInterface
     public function isIdentifier($fieldName): bool
     {
         return $this->getIdentifier() === $fieldName;
+    }
+
+    /**
+     * Checks if the given field is a mapped single valued association for this class.
+     * @param string $fieldName
+     * @return boolean
+     */
+    public function isSingleValuedAssociation($fieldName)
+    {
+        throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
@@ -510,7 +645,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the reflection class.
-     * @param ReflectionClass $reflectionClass
+     * @param null|ReflectionClass $reflectionClass
      * @return ClassMetadata
      */
     public function setReflectionClass(ReflectionClass $reflectionClass): ClassMetadata
@@ -554,123 +689,5 @@ class ClassMetadata implements ClassMetadataInterface
         $this->version = $version;
 
         return $this;
-    }
-
-    /**
-     * Checks if the given field is a mapped property for this class.
-     * @param string $fieldName
-     * @return boolean
-     */
-    public function hasField($fieldName)
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Checks if the given field is a mapped association for this class.
-     * @param string $fieldName
-     * @return boolean
-     */
-    public function hasAssociation($fieldName)
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Checks if the given field is a mapped single valued association for this class.
-     * @param string $fieldName
-     * @return boolean
-     */
-    public function isSingleValuedAssociation($fieldName)
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Checks if the given field is a mapped collection valued association for this class.
-     * @param string $fieldName
-     * @return boolean
-     */
-    public function isCollectionValuedAssociation($fieldName)
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Is this persistent class a commercetools standard model?
-     * @param bool $status The new status.
-     * @return bool The old status.
-     */
-    public function isCTStandardModel(bool $status = true): bool
-    {
-        $oldStatus = $this->isCTStandardModel;
-
-        if (func_num_args()) {
-            $this->isCTStandardModel = $status;
-        }
-
-        return $oldStatus;
-    }
-
-    /**
-     * Returns an array of identifier field names numerically indexed.
-     * @return array
-     */
-    public function getIdentifierFieldNames()
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Returns a numerically indexed list of association names of this persistent class.
-     *
-     * This array includes identifier associations if present on this class.
-     * @return array
-     */
-    public function getAssociationNames()
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Returns the target class name of the given association.
-     * @param string $assocName
-     * @return string
-     */
-    public function getAssociationTargetClass($assocName)
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Checks if the association is the inverse side of a bidirectional association.
-     * @param string $assocName
-     * @return boolean
-     */
-    public function isAssociationInverseSide($assocName)
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Returns the target field of the owning side of the association.
-     * @param string $assocName
-     * @return string
-     */
-    public function getAssociationMappedByTargetField($assocName)
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
-    }
-
-    /**
-     * Returns the identifier of this object as an array with field name as key.
-     *
-     * Has to return an empty array if no identifier isset.
-     * @param object $object
-     * @return array
-     */
-    public function getIdentifierValues($object)
-    {
-        throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 }

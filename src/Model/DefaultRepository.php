@@ -9,6 +9,7 @@ use BestIt\CommercetoolsODM\Helper\DocumentManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
+use BestIt\CommercetoolsODM\RepositoryAwareInterface;
 use BestIt\CTAsyncPool\PoolAwareTrait;
 use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
@@ -205,6 +206,10 @@ class DefaultRepository implements ObjectRepository
                 }
 
                 $document = $uow->createDocument($this->getClassName(), $response, []);
+
+                if ($document instanceof RepositoryAwareInterface) {
+                    $document->setRepository($this);
+                }
             }
         }
 
@@ -232,7 +237,13 @@ class DefaultRepository implements ObjectRepository
         $rawDocuments = $this->getQueryHelper()->getAll($documentManager->getClient(), $request);
 
         foreach ($rawDocuments as $rawDocument) {
-            $documents[$rawDocument->getId()] = $uow->createDocument($this->getClassName(), $rawDocument, []);
+            $document = $uow->createDocument($this->getClassName(), $rawDocument, []);
+
+            $documents[$rawDocument->getId()] = $document;
+
+            if ($document instanceof RepositoryAwareInterface) {
+                $document->setRepository($this);
+            }
         }
 
         return $documents;
@@ -260,6 +271,10 @@ class DefaultRepository implements ObjectRepository
         if (!$document = $this->getDocumentManager()->getUnitOfWork()->tryGetById($id)) {
             $return = $this->processQueryAsync($request, $onResolve, $onReject)->then(function ($document) {
                 $this->getDocumentManager()->getUnitOfWork()->createDocument(get_class($document), $document, []);
+
+                if ($document instanceof RepositoryAwareInterface) {
+                    $document->setRepository($this);
+                }
 
                 return $document;
             })->then($onResolve, $onReject);
@@ -387,7 +402,15 @@ class DefaultRepository implements ObjectRepository
         $uow = $this->getDocumentManager()->getUnitOfWork();
 
         foreach ($rawDocuments as $rawDocument) {
-            $documents[$rawDocument->getId()] = $uow->createDocument($this->getClassName(), $rawDocument, []);
+            $documents[$rawDocument->getId()] = $document = $uow->createDocument(
+                $this->getClassName(),
+                $rawDocument,
+                []
+            );
+
+            if ($document instanceof RepositoryAwareInterface) {
+                $document->setRepository($this);
+            }
         }
 
         return $documents;

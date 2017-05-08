@@ -92,6 +92,13 @@ interface ClassMetadataInterface extends \Doctrine\Common\Persistence\Mapping\Cl
     public function hasLifecycleEvents(string $eventName): bool;
 
     /**
+     * Is this field ignored if the data is empty
+     * @param string $fieldName
+     * @return bool
+     */
+    public function ignoreFieldOnEmpty(string $fieldName): bool;
+
+    /**
      * Is this persistent class a commercetools standard model?
      * @param bool $status The new status.
      * @return bool The old status.

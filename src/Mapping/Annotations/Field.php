@@ -22,7 +22,13 @@ class Field implements Annotation
     public $collection = '';
 
     /**
-     * Should this field only be red?
+     * Will this field be ignored if the response is empty?
+     * @var bool
+     */
+    public $ignoreOnEmpty = false;
+
+    /**
+     * Should this field only be read?
      * @var bool
      */
     public $readOnly = false;
@@ -44,6 +50,15 @@ class Field implements Annotation
         return $this->collection;
     }
 
+    /**
+     * Returns true if the field is ignored on empty.
+     * @return bool
+     */
+    public function ignoreOnEmpty(): bool
+    {
+        return $this->ignoreOnEmpty;
+    }
+    
     /**
      * Is the field only read?
      * @return bool
