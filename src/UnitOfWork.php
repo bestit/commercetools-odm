@@ -347,9 +347,11 @@ class UnitOfWork implements UnitOfWorkInterface
                         : $responseObject->$fieldName;
                 }
 
-                $parsedValue = $this->parseFoundFieldValue($fieldName, $metadata, $foundValue);
+                if (!empty($foundValue) || !$metadata->ignoreFieldOnEmpty($fieldName)) {
+                    $parsedValue = $this->parseFoundFieldValue($fieldName, $metadata, $foundValue);
 
-                $targetDocument->{'set' . ucfirst($fieldName)}($parsedValue);
+                    $targetDocument->{'set' . ucfirst($fieldName)}($parsedValue);
+                }
             }
         }
 
