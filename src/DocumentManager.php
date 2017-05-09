@@ -14,6 +14,9 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Common\Persistence\ObjectRepository;
 use InvalidArgumentException;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use ReflectionClass;
 
 /**
@@ -25,7 +28,10 @@ use ReflectionClass;
  */
 class DocumentManager implements DocumentManagerInterface
 {
-    use ClientAwareTrait, MetadataFactoryAwareTrait, QueryHelperAwareTrait;
+    use ClientAwareTrait;
+    use LoggerAwareTrait;
+    use MetadataFactoryAwareTrait;
+    use QueryHelperAwareTrait;
 
     /**
      * The repository factory.
@@ -66,6 +72,28 @@ class DocumentManager implements DocumentManagerInterface
             ->setQueryHelper($queryHelper)
             ->setRepositoryFactory($repositoryFactory)
             ->setUnitOfWorkFactory($unitOfWorkFactory);
+    }
+
+    /**
+     * Clears the ObjectManager. All objects that are currently managed
+     * by this ObjectManager become detached.
+     *
+     * @param string|null $objectName if given, only objects of this type will get detached.
+     *
+     * @return void
+     */
+    public function clear($objectName = null)
+    {
+    }
+
+    /**
+     * Checks if the $document is part of the current UnitOfWork and therefore managed.
+     * @param object $document
+     * @return bool
+     */
+    public function contains($document): bool
+    {
+        return $this->getUnitOfWork()->contains($document);
     }
 
     /**
@@ -128,6 +156,32 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
+     * Finds an object by its identifier.
+     *
+     * This is just a convenient shortcut for getRepository($className)->find($id).
+     *
+     * @param string $className The class name of the object to find.
+     * @param mixed $id The identity of the object to find.
+     *
+     * @return object The found object.
+     */
+    public function find($className, $id)
+    {
+        return $this->getRepositoryFactory()->getRepository($this, $className)->find($id);
+    }
+
+    /**
+     * Flushes all changes to objects that have been queued up to now to the database.
+     * This effectively synchronizes the in-memory state of managed objects with the
+     * database.
+     * @return void
+     */
+    public function flush()
+    {
+        $this->getUnitOfWork()->flush();
+    }
+
+    /**
      * Returns the ClassMetadata descriptor for a class.
      *
      * The class name must be the fully-qualified class name without a leading backslash
@@ -139,6 +193,19 @@ class DocumentManager implements DocumentManagerInterface
     public function getClassMetadata($className): ClassMetadata
     {
         return $this->getMetadataFactory()->getMetadataFor($className);
+    }
+
+    /**
+     * Returns the logger.
+     * @return LoggerInterface
+     */
+    private function getLogger(): LoggerInterface
+    {
+        if (!$this->logger) {
+            $this->setLogger(new NullLogger());
+        }
+
+        return $this->logger;
     }
 
     /**
@@ -183,18 +250,29 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
-     * Finds an object by its identifier.
+     * Helper method to initialize a lazy loading proxy or persistent collection.
      *
-     * This is just a convenient shortcut for getRepository($className)->find($id).
+     * This method is a no-op for other objects.
      *
-     * @param string $className The class name of the object to find.
-     * @param mixed $id The identity of the object to find.
+     * @param object $obj
      *
-     * @return object The found object.
+     * @return void
      */
-    public function find($className, $id)
+    public function initializeObject($obj)
     {
-        return $this->getRepositoryFactory()->getRepository($this, $className)->find($id);
+    }
+
+    /**
+     * Merges the state of a detached object into the persistence context
+     * of this ObjectManager and returns the managed copy of the object.
+     * The object passed to merge will not become associated/managed with this ObjectManager.
+     *
+     * @param object $object
+     *
+     * @return object
+     */
+    public function merge($object)
+    {
     }
 
     /**
@@ -268,64 +346,5 @@ class DocumentManager implements DocumentManagerInterface
         $this->unitOfWorkFactory = $unitOfWorkFactory;
 
         return $this;
-    }
-
-    /**
-     * Merges the state of a detached object into the persistence context
-     * of this ObjectManager and returns the managed copy of the object.
-     * The object passed to merge will not become associated/managed with this ObjectManager.
-     *
-     * @param object $object
-     *
-     * @return object
-     */
-    public function merge($object)
-    {
-    }
-
-    /**
-     * Clears the ObjectManager. All objects that are currently managed
-     * by this ObjectManager become detached.
-     *
-     * @param string|null $objectName if given, only objects of this type will get detached.
-     *
-     * @return void
-     */
-    public function clear($objectName = null)
-    {
-    }
-
-    /**
-     * Flushes all changes to objects that have been queued up to now to the database.
-     * This effectively synchronizes the in-memory state of managed objects with the
-     * database.
-     * @return void
-     */
-    public function flush()
-    {
-        $this->getUnitOfWork()->flush();
-    }
-
-    /**
-     * Helper method to initialize a lazy loading proxy or persistent collection.
-     *
-     * This method is a no-op for other objects.
-     *
-     * @param object $obj
-     *
-     * @return void
-     */
-    public function initializeObject($obj)
-    {
-    }
-
-    /**
-     * Checks if the $document is part of the current UnitOfWork and therefore managed.
-     * @param object $document
-     * @return bool
-     */
-    public function contains($document): bool
-    {
-        return $this->getUnitOfWork()->contains($document);
     }
 }

@@ -18,6 +18,7 @@ use function Funct\Strings\toUpper;
 use function Funct\Strings\underscore;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Testing of the document manager.
@@ -28,11 +29,13 @@ use PHPUnit_Framework_MockObject_MockObject;
  */
 class DocumentManagerTest extends TestCase
 {
+    use TestTraitsTrait;
+
     /**
      * The document manager.
      * @var DocumentManagerInterface
      */
-    private $fixture = null;
+    protected $fixture = null;
 
     /**
      * The used unit of work factory.
@@ -62,12 +65,13 @@ class DocumentManagerTest extends TestCase
      * Returns the used traits.
      * @return array
      */
-    public static function getUsedTraits(): array
+    public static function getUsedTraitNames(): array
     {
         return [
-            [ClientAwareTrait::class],
-            [MetadataFactoryAwareTrait::class],
-            [QueryHelperAwareTrait::class]
+            ClientAwareTrait::class,
+            LoggerAwareTrait::class,
+            MetadataFactoryAwareTrait::class,
+            QueryHelperAwareTrait::class
         ];
     }
 
@@ -78,11 +82,11 @@ class DocumentManagerTest extends TestCase
     public function setUp()
     {
         $this->fixture = new DocumentManager(
-            static::createMock(ClassMetadataFactory::class),
-            static::createMock(Client::class),
-            static::createMock(QueryHelper::class),
-            static::createMock(RepositoryFactoryInterface::class),
-            $this->unitOfWorkFactory = static::CreateMock(UnitOfWorkFactoryInterface::class)
+            $this->createMock(ClassMetadataFactory::class),
+            $this->createMock(Client::class),
+            $this->createMock(QueryHelper::class),
+            $this->createMock(RepositoryFactoryInterface::class),
+            $this->unitOfWorkFactory = $this->CreateMock(UnitOfWorkFactoryInterface::class)
         );
     }
 
@@ -109,7 +113,7 @@ class DocumentManagerTest extends TestCase
         array_walk($map, function (string $constValue) {
             $constName = toUpper(underscore($constValue));
 
-            static::assertSame(
+            $this->assertSame(
                 $constValue,
                 constant(sprintf('%s::REQUEST_TYPE_%s', DocumentManager::class, $constName))
             );
@@ -123,20 +127,20 @@ class DocumentManagerTest extends TestCase
      */
     public function testGetUnitOfWork()
     {
-        $unitOfWorkMock = static::createMock(UnitOfWorkInterface::class);
+        $unitOfWorkMock = $this->createMock(UnitOfWorkInterface::class);
 
         $this->unitOfWorkFactory
             ->method('getUnitOfWork')
             ->with($this->fixture)
             ->willReturn($unitOfWorkMock);
 
-        static::assertSame(
+        $this->assertSame(
             $unitOfWorkMock,
             $first = $this->fixture->getUnitOfWork(),
             'Return was wrong.'
         );
 
-        static::assertSame($first, $this->fixture->getUnitOfWork(), 'Wrong instance.');
+        $this->assertSame($first, $this->fixture->getUnitOfWork(), 'Wrong instance.');
     }
 
     /**
@@ -145,19 +149,9 @@ class DocumentManagerTest extends TestCase
      */
     public function testInterfaces()
     {
-        static::assertInstanceOf(DocumentManagerInterface::class, $this->fixture);
+        $this->assertInstanceOf(DocumentManagerInterface::class, $this->fixture);
     }
-
-    /**
-     * Checks if the trait is implemented.
-     * @dataProvider getUsedTraits
-     * @param string $trait
-     */
-    public function testTraits(string $trait)
-    {
-        static::assertContains($trait, class_uses($this->fixture));
-    }
-
+    
     /**
      * Checks if the unit of work is called correctly.
      * @dataProvider getUnitOfWorkDelegations
@@ -170,18 +164,18 @@ class DocumentManagerTest extends TestCase
         string $unitOfWorkMethod = '',
         bool $withObject = true
     ) {
-        $unitOfWorkMock = static::createMock(UnitOfWorkInterface::class);
+        $unitOfWorkMock = $this->createMock(UnitOfWorkInterface::class);
 
         if ($withObject) {
             $mock = new Product();
 
             $unitOfWorkMock
-                ->expects(static::once())
+                ->expects($this->once())
                 ->method($unitOfWorkMethod ?: $documentManagerMethod)
                 ->with($mock);
         } else {
             $unitOfWorkMock
-                ->expects(static::once())
+                ->expects($this->once())
                 ->method($unitOfWorkMethod ?: $documentManagerMethod);
         }
 

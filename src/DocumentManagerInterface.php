@@ -9,6 +9,7 @@ use Commercetools\Core\Request\AbstractCreateRequest;
 use Commercetools\Core\Request\AbstractDeleteRequest;
 use Commercetools\Core\Request\AbstractUpdateRequest;
 use Doctrine\Common\Persistence\ObjectManager;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * The public api for the document manager for commercetools.
@@ -16,7 +17,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  * @package BestIt\CommercetoolsODM
  * @version $id$
  */
-interface DocumentManagerInterface extends ObjectManager
+interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
 {
     /**
      * Key to request the request-class for creating.
@@ -47,25 +48,21 @@ interface DocumentManagerInterface extends ObjectManager
      * @var string
      */
     const REQUEST_TYPE_FIND_BY_CONTAINER_AND_KEY = 'FindByContainerAndKey';
-
-    /**
-     * Key to request the request-class for finding by id.
-     * @var string
-     */
-    const REQUEST_TYPE_FIND_BY_ID = 'FindById';
-
-    /**
-     * Key to request the request-class for finding by key.
-     * @var string
-     */
-    const REQUEST_TYPE_FIND_BY_KEY = 'FindByKey';
-
     /**
      * Key to request the request-class for finding by customer id.
      * @var string
      */
     const REQUEST_TYPE_FIND_BY_CUSTOMER_ID = 'FindByCustomerId';
-
+    /**
+     * Key to request the request-class for finding by id.
+     * @var string
+     */
+    const REQUEST_TYPE_FIND_BY_ID = 'FindById';
+    /**
+     * Key to request the request-class for finding by key.
+     * @var string
+     */
+    const REQUEST_TYPE_FIND_BY_KEY = 'FindByKey';
     /**
      * Key to request the request-class for simple querying.
      * @var string

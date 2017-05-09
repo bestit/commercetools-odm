@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM;
 
 use Countable;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * The basic interface for the commercetools unit of work.
@@ -10,7 +11,7 @@ use Countable;
  * @package BestIt\CommercetoolsODM
  * @version $id$
  */
-interface UnitOfWorkInterface extends Countable
+interface UnitOfWorkInterface extends Countable, LoggerAwareInterface
 {
     /**
      * This state marks an entity as detached.

@@ -32,11 +32,15 @@ use Commercetools\Core\Model\Product\ProductVariantDraft;
 use Commercetools\Core\Model\Type\TypeReference;
 use Commercetools\Core\Request\AbstractDeleteRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
+use Commercetools\Core\Response\AbstractApiResponse;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use DateTime;
 use Doctrine\Common\EventManager;
 use InvalidArgumentException;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use SplObjectStorage;
 use Traversable;
 
@@ -52,6 +56,7 @@ class UnitOfWork implements UnitOfWorkInterface
     use ClientAwareTrait;
     use EventManagerAwareTrait;
     use ListenerInvokerAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * Maps containers and keys to ids.
@@ -206,8 +211,9 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function cleanQueue()
     {
-        $this->newDocuments =
-        $this->scheduledRemovals = [];
+        $this->getLogger()->debug('Cleaned the queue.');
+
+        $this->newDocuments = $this->scheduledRemovals = [];
     }
 
     /**
@@ -221,6 +227,16 @@ class UnitOfWork implements UnitOfWorkInterface
         $changedData = $this->extractChanges(
             $newData = $this->extractData($object, $metadata),
             $oldData = $this->getOriginalData($object)
+        );
+
+        $this->getLogger()->debug(
+            'Extracted changed data from the object.',
+            [
+                'changedData' => $changedData,
+                'newData' => $newData,
+                'objectKey' => $this->getKeyForObject($object),
+                'oldData' => $oldData
+            ]
         );
 
         return $changedData ? $this->createUpdateRequest($changedData, $oldData, $object) : null;
@@ -427,6 +443,14 @@ class UnitOfWork implements UnitOfWorkInterface
         );
     }
 
+    /**
+     * Creates the update request for the given changed data.
+     * @param array $changedData
+     * @param array $oldData
+     * @param object $document
+     * @param ClassMetadataInterface|null $metadata
+     * @return ClientRequestInterface
+     */
     private function createUpdateRequest(
         array $changedData,
         array $oldData,
@@ -450,6 +474,17 @@ class UnitOfWork implements UnitOfWorkInterface
             $changedData,
             $oldData,
             $document
+        );
+
+        $this->getLogger()->debug(
+            'Created the update request.',
+            [
+                'actions' => $actions,
+                'objectId' => $document->getId(),
+                'objectKey' => $this->getKeyForObject($document),
+                'objectVersion' => $document->getVersion(),
+                'request' => get_class($request),
+            ]
         );
 
         return $request->setActions($actions);
@@ -639,11 +674,17 @@ class UnitOfWork implements UnitOfWorkInterface
 
         $this->getEventManager()->dispatchEvent(Events::ON_FLUSH, new OnFlushEventArgs($this));
 
+        $logger = $this->getLogger();
+
+        $logger->debug('Flushes the batch.');
+
         if ($batchResponses = $this->getClient()->executeBatch()) {
             $this->processResponsesFromBatch($batchResponses);
         }
 
         $this->cleanQueue();
+
+        $this->getLogger()->info('Flushed the batch.');
     }
 
     /**
@@ -731,6 +772,19 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
+     * Returns the used logger.
+     * @return LoggerInterface
+     */
+    private function getLogger(): LoggerInterface
+    {
+        if (!$this->logger) {
+            $this->setLogger(new NullLogger());
+        }
+
+        return $this->logger;
+    }
+
+    /**
      * Returns the cached original data for the given document.
      * @param mixed $document
      * @return array
@@ -764,7 +818,17 @@ class UnitOfWork implements UnitOfWorkInterface
                     $class = APIException::class;
             }
 
-            throw $class::fromResponse($response);
+            $exception = $class::fromResponse($response);
+
+            // Just debug level. You can make it to an error on higher layers.
+            $this->getLogger()->debug(
+                'Received an error and throws it as an exception.',
+                [
+                    'exception' => $exception
+                ]
+            );
+
+            throw $exception;
         }
 
         return false;
@@ -1021,6 +1085,8 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processDeleteResponse(string $objectId, ApiResponseInterface $response)
     {
+        $this->getLogger()->info('Deleted object.', ['objectKey' => $objectId]);
+
         $this->getListenerInvoker()->invoke(
             new LifecycleEventArgs($object = $this->scheduledRemovals[$objectId], $this->getDocumentManager()),
             Events::POST_REMOVE,
@@ -1039,6 +1105,8 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processPersistResponse(string $objectId, ApiResponseInterface $response)
     {
+        $this->getLogger()->info('Persisted object.', ['objectKey' => $objectId]);
+
         $statusCode = $response->getStatusCode();
 
         if ($statusCode >= 200 && $statusCode < 300) {
@@ -1117,7 +1185,19 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processResponsesFromBatch(array $batchResponses)
     {
+        $this->getLogger()->debug('Handling batch responses.', ['responseCount' => count($batchResponses)]);
+
+        /** @var ApiResponseInterface $response */
         foreach ($batchResponses as $key => $response) {
+            $this->getLogger()->debug(
+                'Got a batch response.',
+                [
+                    'objectKey' => $key,
+                    'response' => $response->getResponse(),
+                    'request' => $response->getRequest(),
+                ]
+            );
+
             $this->handleErrorResponse($response);
 
             // TODO Check status code, remove from maps, remove from removal, check existance in scheduledRemovals

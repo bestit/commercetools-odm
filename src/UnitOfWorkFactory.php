@@ -7,6 +7,7 @@ use BestIt\CommercetoolsODM\Event\ListenersInvoker;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use Doctrine\Common\EventManager;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Provides unit of works for this odm package.
@@ -16,7 +17,10 @@ use Doctrine\Common\EventManager;
  */
 class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
 {
-    use ActionBuilderProcessorAwareTrait, EventManagerAwareTrait, ListenerInvokerAwareTrait;
+    use ActionBuilderProcessorAwareTrait;
+    use EventManagerAwareTrait;
+    use ListenerInvokerAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * UnitOfWorkFactory constructor.
@@ -42,11 +46,17 @@ class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
      */
     public function getUnitOfWork(DocumentManagerInterface $documentManager): UnitOfWorkInterface
     {
-        return new UnitOfWork(
+        $uow = new UnitOfWork(
             $this->getActionBuilderProcessor(),
             $documentManager,
             $this->getEventManager(),
             $this->getListenerInvoker()
         );
+
+        if ($this->logger) {
+            $uow->setLogger($this->logger);
+        }
+
+        return $uow;
     }
 }

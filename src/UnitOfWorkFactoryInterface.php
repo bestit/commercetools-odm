@@ -1,11 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lange
- * Date: 18.11.2016
- * Time: 14:12
- */
+
 namespace BestIt\CommercetoolsODM;
+
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Provides unit of works for this odm package.
@@ -13,7 +10,7 @@ namespace BestIt\CommercetoolsODM;
  * @package BestIt\CommercetoolsODM
  * @version $id$
  */
-interface UnitOfWorkFactoryInterface
+interface UnitOfWorkFactoryInterface extends LoggerAwareInterface
 {
     /**
      * Returns a fresh instance of the unit of work for the given document manager.
