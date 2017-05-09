@@ -14,6 +14,7 @@ use BestIt\CTAsyncPool\PoolAwareTrait;
 use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client\Adapter\Guzzle6Promise;
+use Commercetools\Core\Model\Channel\ChannelReference;
 use Commercetools\Core\Model\Common\Collection;
 use Commercetools\Core\Request\AbstractQueryRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
@@ -132,6 +133,16 @@ class DefaultRepository implements ObjectRepository
         if ((method_exists($request, 'staged')) && ($criteria) && isset($criteria['staged'])) {
             $request->staged($criteria['staged']);
             unset($criteria['staged']);
+        }
+
+        if ((method_exists($request, 'channel')) && ($criteria) && isset($criteria['priceChannel'])) {
+            $request->channel(ChannelReference::ofId($criteria['priceChannel']));
+            unset($criteria['priceChannel']);
+        }
+
+        if ((method_exists($request, 'currency')) && ($criteria) && isset($criteria['priceCurrency'])) {
+            $request->currency($criteria['priceCurrency']);
+            unset($criteria['priceCurrency']);
         }
 
         if ($criteria) {
