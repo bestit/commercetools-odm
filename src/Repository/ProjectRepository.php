@@ -23,16 +23,6 @@ use Exception;
 class ProjectRepository extends DefaultRepository implements ProjectRepositoryInterface
 {
     /**
-     * Should the expand cache be cleared after the query.
-     * @param bool $newStatus The new status.
-     * @return bool The old status.
-     */
-    public function clearExpandAfterQuery($newStatus = false): bool
-    {
-        throw new BadMethodCallException('Method not supported for projects.');
-    }
-
-    /**
      * Finds an object by its primary key / identifier.
      *
      * @param mixed $id The identifier.
@@ -141,15 +131,6 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
         callable $onResolve = null,
         callable $onReject = null
     ): ApiResponseInterface {
-        throw new BadMethodCallException('Method not supported for projects.');
-    }
-
-    /**
-     * Returns the used document manager.
-     * @return DocumentManagerInterface
-     */
-    public function getDocumentManager(): DocumentManagerInterface
-    {
         throw new BadMethodCallException('Method not supported for projects.');
     }
 
