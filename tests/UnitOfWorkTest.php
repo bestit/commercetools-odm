@@ -117,13 +117,23 @@ class UnitOfWorkTest extends TestCase
     /**
      * Adds a mocked call for metadata for the given model.
      * @param string $model
-     * @param bool $once Is the metadata only reguested once.
+     * @param bool|int $once If true then just once, if false then any, if integer the exact count.
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    private function getOneMockedMetadata(string $model, bool $once = true): PHPUnit_Framework_MockObject_MockObject
+    private function getOneMockedMetadata(string $model, $once = true): PHPUnit_Framework_MockObject_MockObject
     {
+        $expects = $this->once();
+
+        if ($once !== true) {
+            if ($once === false) {
+                $expects = $this->any();
+            } else {
+                $expects = $this->exactly($once);
+            }
+        }
+
         $this->documentManager
-            ->expects($once ? $this->once() : $this->any())
+            ->expects($expects)
             ->method('getClassMetadata')
             ->with($model)
             ->willReturn($classMetadata = $this->createMock(ClassMetadataInterface::class));
@@ -760,7 +770,7 @@ class UnitOfWorkTest extends TestCase
      */
     public function testRegisterAsManaged(): Order
     {
-        $this->getOneMockedMetadata(Order::class);
+        $this->getOneMockedMetadata(Order::class, 2);
 
         $this->assertCount(0, $this->fixture, 'Start count failed.');
 

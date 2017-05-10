@@ -1105,7 +1105,7 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processPersistResponse(string $objectId, ApiResponseInterface $response)
     {
-        $this->getLogger()->info('Persisted object.', ['objectKey' => $objectId]);
+        $this->getLogger()->info('Persisted object.', ['objectId' => $objectId]);
 
         $statusCode = $response->getStatusCode();
 
@@ -1192,7 +1192,7 @@ class UnitOfWork implements UnitOfWorkInterface
             $this->getLogger()->debug(
                 'Got a batch response.',
                 [
-                    'objectKey' => $key,
+                    'objectId' => $key,
                     'response' => $response->getResponse(),
                     'request' => $response->getRequest(),
                 ]
@@ -1321,26 +1321,16 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
-     * Caches the original data for the given dataobject based in the field mapping of the metadata.
+     * Caches the original data for the given data object based in the field mapping of the metadata.
      * @param mixed $dataObject
      * @param ClassMetadataInterface|void $metadata
-     * @param bool $force
      * @return UnitOfWork
      */
     private function setOriginalData(
         $dataObject,
-        ClassMetadataInterface $metadata = null,
-        bool $force = false
+        ClassMetadataInterface $metadata = null
     ): UnitOfWork {
-        $objectId = $this->getKeyForObject($dataObject);
-
-        if (!array_key_exists($objectId, $this->originalEntityData)) {
-            $force = true;
-        }
-
-        if ($force) {
-            $this->originalEntityData[$objectId] = $this->extractData($dataObject, $metadata);
-        }
+        $this->originalEntityData[$this->getKeyForObject($dataObject)] = $this->extractData($dataObject, $metadata);
 
         return $this;
     }
