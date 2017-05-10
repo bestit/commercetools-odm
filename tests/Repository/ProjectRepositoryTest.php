@@ -8,6 +8,8 @@ use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
 use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryTrait;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use BestIt\CommercetoolsODM\Repository\ProductTypeRepository;
+use BestIt\CommercetoolsODM\Repository\ProjectRepository;
+use BestIt\CommercetoolsODM\Repository\ProjectRepositoryInterface;
 use BestIt\CommercetoolsODM\Tests\TestTraitsTrait;
 use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
@@ -16,20 +18,19 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
- * Class ProductTypeRepositoryTest
+ * Class ProjectRepositoryTest
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @subpackage Repository
  * @version $id$
  */
-class ProductTypeRepositoryTest extends TestCase
+class ProjectRepositoryTest extends TestCase
 {
     use TestRepositoryTrait;
-    use TestTraitsTrait;
 
     /**
      * The tested class.
-     * @var ProductTypeRepository
+     * @var ProjectRepository
      */
     protected $fixture = null;
 
@@ -39,18 +40,7 @@ class ProductTypeRepositoryTest extends TestCase
      */
     protected function getRepositoryClass(): string
     {
-        return ProductTypeRepository::class;
-    }
-
-    /**
-     * Returns the names of the used traits.
-     * @return array
-     */
-    protected function getUsedTraitNames(): array
-    {
-        return [
-            ByKeySearchRepositoryTrait::class
-        ];
+        return ProjectRepository::class;
     }
 
     /**
@@ -60,26 +50,6 @@ class ProductTypeRepositoryTest extends TestCase
     public function testInterfaces()
     {
         static::assertInstanceOf(ObjectRepository::class, $this->fixture);
-        static::assertInstanceOf(ByKeySearchRepositoryInterface::class, $this->fixture);
-    }
-
-    /**
-     * Checks the save call.
-     * @return void
-     */
-    public function testSave()
-    {
-        $type = new ProductType();
-
-        $this->documentManager
-            ->expects(static::once())
-            ->method('flush');
-
-        $this->documentManager
-            ->expects(static::once())
-            ->method('persist')
-            ->with($type);
-
-        $this->fixture->save($type);
+        static::assertInstanceOf(ProjectRepositoryInterface::class, $this->fixture);
     }
 }

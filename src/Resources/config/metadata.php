@@ -103,6 +103,10 @@ return [
             ->setUpdateByKey(\Commercetools\Core\Request\ProductTypes\ProductTypeUpdateByKeyRequest::class),
     ],
 
+    \Commercetools\Core\Model\Project\Project::class => [
+        'repository' => \BestIt\CommercetoolsODM\Repository\ProjectRepository::class
+    ],
+
     \Commercetools\Core\Model\ShippingMethod\ShippingMethod::class => [
         'draft' => \Commercetools\Core\Model\ShippingMethod\ShippingMethodDraft::class,
         'requestClassMap' => (new RequestMap())

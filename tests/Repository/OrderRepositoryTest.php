@@ -14,7 +14,6 @@ use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\Order\Order;
 use Commercetools\Core\Request\Orders\OrderCreateFromCartRequest;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class OrderRepositoryTest
@@ -25,30 +24,21 @@ use PHPUnit_Framework_MockObject_MockObject;
  */
 class OrderRepositoryTest extends TestCase
 {
-    /**
-     * The used document manager.
-     * @var DocumentManagerInterface|PHPUnit_Framework_MockObject_MockObject
-     */
-    private $documentManager = null;
+    use TestRepositoryTrait;
 
     /**
      * The tested class.
      * @var OrderRepositoryInterface
      */
-    private $fixture = null;
+    protected $fixture = null;
 
     /**
-     * Sets up the test.
-     * @return void
+     * Returns the class name for the repository.
+     * @return string
      */
-    public function setUp()
+    protected function getRepositoryClass(): string
     {
-        $this->fixture = new OrderRepository(
-            static::createMock(ClassMetadataInterface::class),
-            $this->documentManager = static::createMock(DocumentManagerInterface::class),
-            static::createMock(QueryHelper::class),
-            static::createMock(PoolInterface::class)
-        );
+        return OrderRepository::class;
     }
 
     /**
@@ -116,21 +106,21 @@ class OrderRepositoryTest extends TestCase
     }
 
     /**
-     * Checks the parent class.
-     * @return void
-     */
-    public function testParent()
-    {
-        static::assertInstanceOf(DefaultRepository::class, $this->fixture);
-    }
-
-    /**
      * Checks the used interfaces.
      * @return void
      */
     public function testInterfaces()
     {
         static::assertInstanceOf(OrderRepositoryInterface::class, $this->fixture);
+    }
+
+    /**
+     * Checks the parent class.
+     * @return void
+     */
+    public function testParent()
+    {
+        static::assertInstanceOf(DefaultRepository::class, $this->fixture);
     }
 
     /**
