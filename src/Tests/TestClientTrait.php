@@ -98,9 +98,9 @@ trait TestClientTrait
     /**
      * Sets the cache for the client request history.
      * @param ArrayObject $requestCache
-     * @return UnitOfWorkTest
+     * @return $this
      */
-    public function setRequestCache(ArrayObject $requestCache): UnitOfWorkTest
+    public function setRequestCache(ArrayObject $requestCache)
     {
         $this->requestCache = $requestCache;
 
