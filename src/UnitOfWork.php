@@ -1143,8 +1143,9 @@ class UnitOfWork implements UnitOfWorkInterface
                 if ($mappedResponse instanceof CustomerSigninResult) {
                     $mappedResponse = $mappedResponse->getCustomer();
 
-                    // TODO
-                    $document->setAddresses($mappedResponse->getAddresses());
+                    if ($document instanceof Customer) {
+                        $document->setAddresses($mappedResponse->getAddresses());
+                    }
                 }
 
                 if ($metadata->isCTStandardModel()) {

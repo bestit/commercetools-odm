@@ -53,7 +53,7 @@ trait TestClientTrait
     }
 
     /**
-     * Returns tTe cache for the client request history.
+     * Returns the cache for the client request history.
      * @return ArrayObject
      */
     public function getRequestCache(): ArrayObject
