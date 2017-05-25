@@ -291,14 +291,17 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
-     * Refreshes the persistent state of an object from the database overriding any local changes that have not yet
-     * been persisted.
+     * Refreshes the persistent state of an object from the database,
+     * overriding any local changes that have not yet been persisted.
+     *
      * @param object $object The object to refresh.
+     * @param object $overwrite Commercetools returns a representation of the objectfor many update actions, so use
+     * this respons directly.
      * @return void
      */
-    public function refresh($object)
+    public function refresh($object, $overwrite = null)
     {
-        $this->getUnitOfWork()->refresh($object);
+        $this->getUnitOfWork()->refresh($object, $overwrite);
     }
 
     /**

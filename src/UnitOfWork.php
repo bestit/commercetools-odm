@@ -43,6 +43,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SplObjectStorage;
 use Traversable;
+use function Funct\Strings\upperCaseFirst;
 
 /**
  * The unit of work inspired by the couch db odm structure.
@@ -1211,12 +1212,33 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
-     * Refresh the given object by querying commercetools to get the current state.
-     * @param object $object
+     * Refreshes the persistent state of an object from the database,
+     * overriding any local changes that have not yet been persisted.
+     *
+     * @param object $object The object to refresh.
+     * @param object $overwrite Commercetools returns a representation of the objectfor many update actions, so use
+     * this respons directly.
+     * @return void
      */
-    public function refresh($object)
+    public function refresh($object, $overwrite = null)
     {
-        throw new \RuntimeException('Not yet implemented');
+        $metadata = $this->getClassMetadata($object);
+
+        if (!$overwrite) {
+            throw new \RuntimeException('Not yet implemented');
+        }
+
+        foreach ($metadata->getFieldNames() as $fieldName) {
+            $value = $overwrite->{'get' . upperCaseFirst($fieldName)}();
+
+            if ($value instanceof DateTimeDecorator) {
+                $value = $value->getDateTime();
+            }
+
+            if ($value !== null) {
+                $object->{'set' . upperCaseFirst($fieldName)}($value);
+            }
+        }
     }
 
     /**
