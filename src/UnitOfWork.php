@@ -846,6 +846,7 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         switch ($metadata->getTypeOfField($field)) {
             case 'array':
+            case 'set':
                 // Force parse to array.
                 if (!$value) {
                     $value = [];

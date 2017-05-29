@@ -159,9 +159,9 @@ class UnitOfWorkTest extends TestCase
             ->method('invoke')
             ->with(
                 $this->callback(function (LifecycleEventArgs $eventArgs) use ($order) {
-                    $this->assertSame($order, $eventArgs->getDocument(), 'Wrong object in event.');
+                    static::assertSame($order, $eventArgs->getDocument(), 'Wrong object in event.');
 
-                    $this->assertSame(
+                    static::assertSame(
                         $this->documentManager,
                         $eventArgs->getDocumentManager(),
                         'Wrong object manager in event.'
@@ -215,13 +215,13 @@ class UnitOfWorkTest extends TestCase
             )
             ->willReturn(new OrderDeleteRequest($orderId, $orderVersion));
 
-        $this->assertSame(
+        static::assertSame(
             $this->fixture,
             $this->fixture->scheduleRemove($order),
             'Fluent interface broken.'
         );
 
-        $this->assertSame(
+        static::assertSame(
             1,
             $this->fixture->countRemovals(),
             'The object should be marked for removal.'
@@ -252,7 +252,7 @@ class UnitOfWorkTest extends TestCase
      */
     public function testCountDefault()
     {
-        $this->assertCount(0, $this->fixture);
+        static::assertCount(0, $this->fixture);
     }
 
     /**
@@ -261,7 +261,7 @@ class UnitOfWorkTest extends TestCase
      */
     public function testCountManagedObjectsDefault()
     {
-        $this->assertSame(0, $this->fixture->countManagedObjects());
+        static::assertSame(0, $this->fixture->countManagedObjects());
     }
 
     /**
@@ -270,7 +270,7 @@ class UnitOfWorkTest extends TestCase
      */
     public function testCountRemovalsDefault()
     {
-        $this->assertSame(0, $this->fixture->countRemovals());
+        static::assertSame(0, $this->fixture->countRemovals());
     }
 
     /**
@@ -323,9 +323,63 @@ class UnitOfWorkTest extends TestCase
         );
 
         /** @var $address Address */
-        $this->assertCount(1, $addresses = $createdDoc->getAddresses(), 'Wrong address count.');
-        $this->assertInstanceOf(Address::class, $address = $addresses[0], 'Wrong address instance.');
-        $this->assertSame($addressId, $address->getId(), 'Wrong address id.');
+        static::assertCount(1, $addresses = $createdDoc->getAddresses(), 'Wrong address count.');
+        static::assertInstanceOf(Address::class, $address = $addresses[0], 'Wrong address instance.');
+        static::assertSame($addressId, $address->getId(), 'Wrong address id.');
+    }
+
+    /**
+     * Checks if an array for a custom entity is parsed correctly, even when its declared as set.
+     * @return void
+     */
+    public function testCreateDocumentParseCustomEntitiesArrayPropertyWithSetDeclaration()
+    {
+        $this->documentManager
+            ->expects($this->once())
+            ->method('getClassMetadata')
+            ->with(TestCustomEntity::class)
+            ->will($this->returnValue($metadata = new ClassMetadata(TestCustomEntity::class)));
+
+        $metadata
+            ->setFieldMappings(['addresses' => $field = new Field()])
+            ->setReflectionClass(new ReflectionClass(TestCustomEntity::class));
+
+        $field->collection = AddressCollection::class;
+        $field->type = 'set';
+
+        /** @var TestCustomEntity $createdDoc */
+        $createdDoc = $this->fixture->createDocument(
+            TestCustomEntity::class,
+            Customer::fromArray([
+                'addresses' => [
+                    [
+                        'id' => $addressId = uniqid(),
+                        'salutation' => 'mr',
+                        'firstName' => 'Björn',
+                        'lastName' => 'Lange',
+                        'streetName' => 'Rekener Str',
+                        'streetNumber' => '60',
+                        'additionalStreetInfo' => 'CTO',
+                        'postalCode' => '46342',
+                        'city' => 'Velen',
+                        'region' => 'Nordrhein-Westfalen',
+                        'state' => 'Nordrhein-Westfalen',
+                        'country' => 'DE',
+                        'company' => 'best it',
+                        'department' => 'Management',
+                        'apartment' => 'best it GmbH & Co. KG',
+                        'phone' => '+49 2863 38362773',
+                        'mobile' => '+49 160 91084976',
+                        'email' => 'lange@bestit-online.de'
+                    ]
+                ]
+            ])
+        );
+
+        /** @var $address Address */
+        static::assertCount(1, $addresses = $createdDoc->getAddresses(), 'Wrong address count.');
+        static::assertInstanceOf(Address::class, $address = $addresses[0], 'Wrong address instance.');
+        static::assertSame($addressId, $address->getId(), 'Wrong address id.');
     }
 
     /**
@@ -355,7 +409,7 @@ class UnitOfWorkTest extends TestCase
         );
 
         /** @var $address Address */
-        $this->assertCount(0, $addresses = $createdDoc->getAddresses());
+        static::assertCount(0, $addresses = $createdDoc->getAddresses());
     }
 
     /**
@@ -366,7 +420,7 @@ class UnitOfWorkTest extends TestCase
     {
         $this->getOneMockedMetadata(Order::class, false);
 
-        $this->assertCount(0, $this->fixture, 'Start count failed.');
+        static::assertCount(0, $this->fixture, 'Start count failed.');
 
         $order = new Order([
             'customerId' => uniqid(),
@@ -375,19 +429,19 @@ class UnitOfWorkTest extends TestCase
             'version' => 5
         ]);
 
-        $this->assertSame(
+        static::assertSame(
             $this->fixture,
             $this->fixture->registerAsManaged($order, $order->getId(), $order->getVersion()),
             'Fluent interface failed.'
         );
 
-        $this->assertCount(1, $this->fixture, 'There should be a managed entity.');
+        static::assertCount(1, $this->fixture, 'There should be a managed entity.');
 
         $this->fixture->scheduleSave($order);
         $this->fixture->detachDeferred($order);
         $this->fixture->flush();
 
-        $this->assertCount(0, $this->fixture, 'The entity should be detached.');
+        static::assertCount(0, $this->fixture, 'The entity should be detached.');
     }
 
     /**
@@ -396,11 +450,11 @@ class UnitOfWorkTest extends TestCase
      */
     public function testDetachEmpty()
     {
-        $this->assertCount(0, $this->fixture, 'There should be no entity.');
+        static::assertCount(0, $this->fixture, 'There should be no entity.');
 
         $this->fixture->detach(new Order());
 
-        $this->assertCount(0, $this->fixture, 'There should be no entity. (control value)');
+        static::assertCount(0, $this->fixture, 'There should be no entity. (control value)');
     }
 
     /**
@@ -660,18 +714,18 @@ class UnitOfWorkTest extends TestCase
                 $className,
                 DocumentManagerInterface::REQUEST_TYPE_CREATE,
                 $this->callback(function (ProductDraft $draftObject) use ($desc, $key, $name, $taxCatId, $typeId) {
-                    $this->assertSame($desc, $draftObject->getDescription()->toArray(), 'Wrong Desc.');
-                    $this->assertSame($key, $draftObject->getKey(), 'Wrong Key.');
-                    $this->assertSame($typeId, $draftObject->getProductType()->getId(), 'Wrong type id.');
-                    $this->assertSame($taxCatId, $draftObject->getTaxCategory()->getId(), 'Wrong tax id.');
-                    $this->assertSame($name, $draftObject->getName()->toArray(), 'Wrong name.');
+                    static::assertSame($desc, $draftObject->getDescription()->toArray(), 'Wrong Desc.');
+                    static::assertSame($key, $draftObject->getKey(), 'Wrong Key.');
+                    static::assertSame($typeId, $draftObject->getProductType()->getId(), 'Wrong type id.');
+                    static::assertSame($taxCatId, $draftObject->getTaxCategory()->getId(), 'Wrong tax id.');
+                    static::assertSame($name, $draftObject->getName()->toArray(), 'Wrong name.');
 
                     return true;
                 })
             )->willThrowException(new RuntimeException('Controlled stop.', $excCode));
 
-        $this->assertCount(0, $this->fixture, 'Start count failed.');
-        $this->assertSame(0, $this->fixture->countNewObjects(), 'Start count of new objects failed.');
+        static::assertCount(0, $this->fixture, 'Start count failed.');
+        static::assertSame(0, $this->fixture->countNewObjects(), 'Start count of new objects failed.');
 
         $this->fixture->scheduleSave($product);
 
@@ -684,7 +738,7 @@ class UnitOfWorkTest extends TestCase
      */
     public function testInstance()
     {
-        $this->assertInstanceOf(UnitOfWorkInterface::class, $this->fixture);
+        static::assertInstanceOf(UnitOfWorkInterface::class, $this->fixture);
     }
 
     /**
@@ -695,25 +749,25 @@ class UnitOfWorkTest extends TestCase
     {
         $this->getOneMockedMetadata(Order::class, 2);
 
-        $this->assertCount(0, $this->fixture, 'Start count failed.');
+        static::assertCount(0, $this->fixture, 'Start count failed.');
 
-        $this->assertSame(
+        static::assertSame(
             $this->fixture,
             $this->fixture->registerAsManaged($order = new Order(), $orderId = uniqid(), 5),
             'Fluent interface failed.'
         );
 
-        $this->assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
+        static::assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
 
-        $this->assertCount(1, $this->fixture, 'The object should be saved.');
+        static::assertCount(1, $this->fixture, 'The object should be saved.');
 
-        $this->assertSame(
+        static::assertSame(
             0,
             $this->fixture->countNewObjects(),
             'The object should not be saved as new.'
         );
 
-        $this->assertSame(
+        static::assertSame(
             1,
             $this->fixture->countManagedObjects(),
             'The object should be saved as managed.'
@@ -721,15 +775,15 @@ class UnitOfWorkTest extends TestCase
 
         $this->fixture->registerAsManaged($order, uniqid(), 6);
 
-        $this->assertCount(1, $this->fixture, 'The object should be saved only once.');
+        static::assertCount(1, $this->fixture, 'The object should be saved only once.');
 
-        $this->assertSame(
+        static::assertSame(
             1,
             $this->fixture->countManagedObjects(),
             'The object should be saved as managed only once.'
         );
 
-        $this->assertSame($order, $this->fixture->tryGetById($orderId));
+        static::assertSame($order, $this->fixture->tryGetById($orderId));
 
         return $order;
     }
@@ -740,25 +794,25 @@ class UnitOfWorkTest extends TestCase
      */
     public function testRegisterAsManagedNew()
     {
-        $this->assertCount(0, $this->fixture, 'Start count failed.');
+        static::assertCount(0, $this->fixture, 'Start count failed.');
 
-        $this->assertSame(
+        static::assertSame(
             $this->fixture,
             $this->fixture->registerAsManaged($order = new Order()),
             'Fluent interface failed.'
         );
 
-        $this->assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
+        static::assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
 
-        $this->assertCount(1, $this->fixture, 'The object should be saved.');
+        static::assertCount(1, $this->fixture, 'The object should be saved.');
 
-        $this->assertSame(
+        static::assertSame(
             1,
             $this->fixture->countNewObjects(),
             'The object should be saved as new.'
         );
 
-        $this->assertSame(
+        static::assertSame(
             0,
             $this->fixture->countManagedObjects(),
             'The object should not be saved as managed.'
@@ -766,9 +820,9 @@ class UnitOfWorkTest extends TestCase
 
         $this->fixture->registerAsManaged($order);
 
-        $this->assertCount(1, $this->fixture, 'The object should be saved only once.');
+        static::assertCount(1, $this->fixture, 'The object should be saved only once.');
 
-        $this->assertSame(
+        static::assertSame(
             1,
             $this->fixture->countNewObjects(),
             'The object should be saved as new only once.'
@@ -783,12 +837,12 @@ class UnitOfWorkTest extends TestCase
     {
         $order = $this->testRegisterAsManaged();
 
-        $this->assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
+        static::assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
 
         $this->fixture->detach($order);
 
-        $this->assertFalse($this->fixture->contains($order), 'Object should not be contained in the uow.');
-        $this->assertCount(0, $this->fixture, 'There should be no entity.');
+        static::assertFalse($this->fixture->contains($order), 'Object should not be contained in the uow.');
+        static::assertCount(0, $this->fixture, 'There should be no entity.');
     }
 
     /**
@@ -826,7 +880,7 @@ class UnitOfWorkTest extends TestCase
 
         $this->fixture->flush();
 
-        $this->assertSame(
+        static::assertSame(
             0,
             $this->fixture->countRemovals(),
             'The object should be removed.'
@@ -871,19 +925,19 @@ class UnitOfWorkTest extends TestCase
 
         $this->fixture->flush();
 
-        $this->assertSame(
+        static::assertSame(
             0,
             $this->fixture->countRemovals(),
             'The object should be removed.'
         );
 
-        $this->assertSame(
+        static::assertSame(
             0,
             $this->fixture->countManagedObjects(),
             'The should be removed as managed.'
         );
 
-        $this->assertCount(0, $this->fixture, 'There should be no countable entity.');
+        static::assertCount(0, $this->fixture, 'There should be no countable entity.');
     }
 
     /**
@@ -923,7 +977,7 @@ class UnitOfWorkTest extends TestCase
 
         $this->fixture->flush();
 
-        $this->assertSame(
+        static::assertSame(
             0,
             $this->fixture->countRemovals(),
             'The object should be removed.'
@@ -960,10 +1014,10 @@ class UnitOfWorkTest extends TestCase
                 $className,
                 DocumentManager::REQUEST_TYPE_CREATE,
                 $this->callback(function (ProductTypeDraft $draftObject) use ($draftClassName, $typeName) {
-                    $this->assertInstanceOf($draftClassName, $draftObject, 'Wrong draft instance.');
+                    static::assertInstanceOf($draftClassName, $draftObject, 'Wrong draft instance.');
 
                     // Are the standard fields removed?
-                    $this->assertSame(
+                    static::assertSame(
                         ['name' => $typeName],
                         $draftObject->toArray(),
                         'The default data was not removed.'
@@ -984,13 +1038,13 @@ class UnitOfWorkTest extends TestCase
             $this->fixture->detachDeferred($type);
         }
 
-        $this->assertSame(
+        static::assertSame(
             0,
             $this->fixture->countManagedObjects(),
             'There should be a new managed object.'
         );
 
-        $this->assertSame(
+        static::assertSame(
             1,
             $this->fixture->countNewObjects(),
             'There should be a new object.'
@@ -1026,27 +1080,27 @@ class UnitOfWorkTest extends TestCase
         $this->fixture->flush();
 
         if (!$withDetach) {
-            $this->assertSame(
+            static::assertSame(
                 1,
                 $this->fixture->countManagedObjects(),
                 'There should be a managed object.'
             );
         } else {
-            $this->assertSame(
+            static::assertSame(
                 0,
                 $this->fixture->countManagedObjects(),
                 'There should be no managed object cause of detaching.'
             );
         }
 
-        $this->assertSame(
+        static::assertSame(
             0,
             $this->fixture->countNewObjects(),
             'There should be no new object.'
         );
 
         if (!$withDetach) {
-            $this->assertInstanceOf(
+            static::assertInstanceOf(
                 ProductType::class,
                 $this->fixture->tryGetById('a58213d7-c5c6-4fd0-9b9e-635785fa8d4f'),
                 'The object was not registered correctly.'
