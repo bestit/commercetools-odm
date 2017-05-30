@@ -93,4 +93,11 @@ interface ObjectRepository extends BasicInterface
      * @return ObjectRepository
      */
     public function setExpands(array $expands, $clearAfterwards = false): ObjectRepository;
+
+    /**
+     * Apply filters
+     * @param string[] ...$filters
+     * @return ObjectRepository
+     */
+    public function filter(string... $filters): ObjectRepository;
 }
