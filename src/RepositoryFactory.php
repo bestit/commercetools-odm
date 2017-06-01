@@ -2,6 +2,8 @@
 
 namespace BestIt\CommercetoolsODM;
 
+use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
+use BestIt\CommercetoolsODM\Helper\FilterManagerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use BestIt\CTAsyncPool\PoolAwareTrait;
@@ -17,6 +19,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 class RepositoryFactory implements RepositoryFactoryInterface
 {
     use PoolAwareTrait;
+    use FilterManagerAwareTrait;
 
     /**
      * The default repository for this factory.
@@ -24,8 +27,16 @@ class RepositoryFactory implements RepositoryFactoryInterface
      */
     const DEFAULT_REPOSITORY = DefaultRepository::class;
 
-    public function __construct(PoolInterface $pool = null)
+    /**
+     * RepositoryFactory constructor.
+     *
+     * @param FilterManagerInterface $filterManager
+     * @param PoolInterface|null $pool
+     */
+    public function __construct(FilterManagerInterface $filterManager, PoolInterface $pool = null)
     {
+        $this->setFilterManager($filterManager);
+
         if ($pool) {
             $this->setPool($pool);
         }
@@ -47,6 +58,12 @@ class RepositoryFactory implements RepositoryFactoryInterface
             $repository = $tmp;
         }
 
-        return new $repository($metadata, $documentManager, $documentManager->getQueryHelper(), $this->getPool());
+        return new $repository(
+            $metadata,
+            $documentManager,
+            $documentManager->getQueryHelper(),
+            $this->getFilterManager(),
+            $this->getPool()
+        );
     }
 }

@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use BestIt\CTAsyncPool\PoolInterface;
@@ -63,6 +64,7 @@ trait TestRepositoryTrait
             $this->createMock(ClassMetadataInterface::class),
             $this->documentManager = $this->createMock(DocumentManagerInterface::class),
             $this->createMock(QueryHelper::class),
+            $this->createMock(FilterManagerInterface::class),
             $this->createMock(PoolInterface::class)
         );
     }
