@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests;
 
 use BestIt\CommercetoolsODM\ClientAwareTrait;
@@ -23,9 +25,7 @@ use Psr\Log\LoggerAwareTrait;
 /**
  * Testing of the document manager.
  * @author blange <lange@bestit-online.de>
- * @category Tests
- * @package BestIt\CommercetoolsODM
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests
  */
 class DocumentManagerTest extends TestCase
 {
@@ -33,15 +33,15 @@ class DocumentManagerTest extends TestCase
 
     /**
      * The document manager.
-     * @var DocumentManagerInterface
+     * @var DocumentManagerInterface|null
      */
-    protected $fixture = null;
+    protected $fixture;
 
     /**
      * The used unit of work factory.
-     * @var UnitOfWorkFactoryInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var UnitOfWorkFactoryInterface|PHPUnit_Framework_MockObject_MockObject|null
      */
-    private $unitOfWorkFactory = null;
+    private $unitOfWorkFactory;
 
     /**
      * Returns some tests for the unit of work delegations.

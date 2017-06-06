@@ -24,7 +24,6 @@ use ReflectionClass;
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @todo Add api for multiple clients.
- * @version $id$
  */
 class DocumentManager implements DocumentManagerInterface
 {
@@ -104,7 +103,7 @@ class DocumentManager implements DocumentManagerInterface
      * @return AbstractCreateRequest|AbstractUpdateRequest|AbstractDeleteRequest|AbstractApiRequest
      * @throws InvalidArgumentException
      */
-    public function createRequest(string $className, $requestType = self::REQUEST_TYPE_QUERY, ...$args)
+    public function createRequest(string $className, string $requestType = self::REQUEST_TYPE_QUERY, ...$args)
     {
         if (!class_exists($requestType)) {
             $metadata = $this->getClassMetadata($className);
