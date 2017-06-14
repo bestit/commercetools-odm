@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
@@ -10,10 +12,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 /**
  * Tests ProductActionBuilder.
  * @author lange <lange@bestit-online.de>
- * @category Tests
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Product
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  */
 class ProductActionBuilderTest extends TestCase
 {
@@ -21,15 +20,15 @@ class ProductActionBuilderTest extends TestCase
      * The test class.
      * @var ProductActionBuilder|PHPUnit_Framework_MockObject_MockObject
      */
-    protected $fixture = null;
+    private $fixture;
 
     /**
      * Sets up the test.
      * @return void
      */
-    public function setUp()
+    protected function setUp()
     {
-        $this->fixture = static::getMockForAbstractClass(ProductActionBuilder::class);
+        $this->fixture = $this->getMockForAbstractClass(ProductActionBuilder::class);
     }
 
     /**
