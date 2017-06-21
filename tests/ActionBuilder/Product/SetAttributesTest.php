@@ -199,7 +199,10 @@ class SetAttributesTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             [
-                1 => [
+                [
+                    'value' => [null]
+                ],
+                [
                     'value' => [
                         [
                             'value' => $mockedValue1 = uniqid()
@@ -242,23 +245,36 @@ class SetAttributesTest extends TestCase
             new Product()
         );
 
-        static::assertCount(1, $actions, 'Wrong action count.');
+        static::assertCount(2, $actions, 'Wrong action count.');
 
-        /** @var $action ProductSetAttributeAction */
+        /** @var $action1 ProductSetAttributeAction */
         static::assertInstanceOf(
             ProductSetAttributeAction::class,
-            $action = $actions[0],
+            $action1 = $actions[0],
             'Wrong instance.'
         );
 
-        static::assertSame(1, $action->getVariantId(), 'Wrong variant id.');
-        static::assertSame($attrName, $action->getName(), 'Wrong name.');
-        static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
+        static::assertSame(1, $action1->getVariantId(), 'Wrong variant id. (1)');
+        static::assertSame('array', $action1->getName(), 'Wrong name. (1)');
+        static::assertSame($staged, $action1->getStaged(), 'Staged wrongly set. (1)');
+
+        static::assertSame([], $action1->getValue(), 'Wrong value. (1)');
+        
+        /** @var $action2 ProductSetAttributeAction */
+        static::assertInstanceOf(
+            ProductSetAttributeAction::class,
+            $action2 = $actions[1],
+            'Wrong instance.'
+        );
+
+        static::assertSame(1, $action2->getVariantId(), 'Wrong variant id. (2)');
+        static::assertSame($attrName, $action2->getName(), 'Wrong name. (2)');
+        static::assertSame($staged, $action2->getStaged(), 'Staged wrongly set. (2)');
 
         static::assertSame(
             [['value' => $mockedValue1, 'name' => $subAttrName1], ['value' => $mockedValue2, 'name' => $subAttrName2]],
-            $action->getValue(),
-            'Wrong value'
+            $action2->getValue(),
+            'Wrong value. (2)'
         );
     }
 

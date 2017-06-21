@@ -74,6 +74,10 @@ class SetAttributes extends ProductActionBuilder
                             $attrSubValue['name'] = $oldAttrs[$attrIndex]['value'][$index]['name'];
                         }
                     }
+
+                    $attrValue = array_filter($attrValue, function ($attrSubValue) {
+                        return $attrSubValue !== null;
+                    });
                 }
 
                 $action->setValue($attrValue);
