@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
@@ -9,9 +11,7 @@ use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 /**
  * Sets the attributes for products.
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Product
- * @version $id$
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  */
 class SetAttributes extends ProductActionBuilder
 {
@@ -62,9 +62,13 @@ class SetAttributes extends ProductActionBuilder
                 $attrValue = $attr['value'];
 
                 // TODO: Refactor this and enable more levels.
+                // We can only check for the name/value structure for a nested attribute, because the attribute
+                // defintion must not be set every time.
                 if ((is_array($attrValue)) && (is_array(@$oldAttrs[$attrIndex]['value']))) {
                     foreach ($attrValue as $index => &$attrSubValue) {
-                        if (@$oldAttrs[$attrIndex]['value'][$index]['name'] &&
+                        if (is_array($oldAttrs[$attrIndex]['value'][$index]) &&
+                            array_key_exists('name', $oldAttrs[$attrIndex]['value'][$index]) &&
+                            @$oldAttrs[$attrIndex]['value'][$index]['name'] &&
                             @$oldAttrs[$attrIndex]['value'][$index]['value'] && !@$attrSubValue['name']
                         ) {
                             $attrSubValue['name'] = $oldAttrs[$attrIndex]['value'][$index]['name'];

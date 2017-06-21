@@ -610,7 +610,9 @@ class UnitOfWork implements UnitOfWorkInterface
                     $changedData[$key] = $changedSubData;
                 }
             } else {
-                if ((!array_key_exists($key, $oldData)) || ($value !== $oldData[$key])) {
+                if ((!array_key_exists($key, $oldData)) || (($value !== $oldData[$key]) &&
+                        // Sometimes the sdk parses an int to float.
+                        (!is_numeric($value) || ((float) $value !== (float) $oldData[$key])))) {
                     $changedData[$key] = $value;
                 }
             }
