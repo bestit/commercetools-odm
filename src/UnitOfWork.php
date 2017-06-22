@@ -595,15 +595,21 @@ class UnitOfWork implements UnitOfWorkInterface
      * Extracts the changes of the two arrays.
      * @param array $newData
      * @param array $oldData
+     * @param string $parentKey The hierarchy key for the parent of the checked data.
      * @return array
      */
-    private function extractChanges(array $newData, array $oldData): array
+    private function extractChanges(array $newData, array $oldData, string $parentKey = ''): array
     {
         $changedData = [];
 
         foreach ($newData as $key => $value) {
-            if (is_array($value)) {
-                $changedSubData = $this->extractChanges($value, $oldData[$key] ?? []);
+            // We use the name attribute to check for a nested set, because we do not have something else.
+            if (is_array($value) && !$this->isSimpleAttributeArray(ltrim($parentKey . '/' . $key, '/'), $value)) {
+                $changedSubData = $this->extractChanges(
+                    $value,
+                    $oldData[$key] ?? [],
+                    ltrim($parentKey . '/' . $key, '/')
+                );
 
                 // We think that an empty value can be ignored, except if we want to _add_ a new value.
                 if ($changedSubData || !array_key_exists($key, $oldData)) {
@@ -612,7 +618,8 @@ class UnitOfWork implements UnitOfWorkInterface
             } else {
                 if ((!array_key_exists($key, $oldData)) || (($value !== $oldData[$key]) &&
                         // Sometimes the sdk parses an int to float.
-                        (!is_numeric($value) || ((float) $value !== (float) $oldData[$key])))) {
+                        (!is_numeric($value) || ((float)$value !== (float)$oldData[$key])))
+                ) {
                     $changedData[$key] = $value;
                 }
             }
@@ -835,6 +842,38 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         return false;
+    }
+
+    /**
+     * Checks if the given array is an associative one or has other array childs.
+     * @param array $array
+     * @return bool
+     */
+    private function hasNestedArray(array $array): bool
+    {
+        $isNested = false;
+
+        foreach ($array as $key => $value) {
+            if (is_array($value) || !is_numeric($key)) {
+                $isNested = true;
+                break;
+            }
+        }
+
+        return $isNested;
+    }
+
+    /**
+     * We should not deep iterate into simple value arrays, so check, if the given value array is "the end".
+     * @param string $key
+     * @param array $value
+     * @return bool
+     */
+    private function isSimpleAttributeArray(string $key, array $value): bool
+    {
+        // The simple value array must be a direct child of the attributes themselves or an nested attribute which is
+        // contained in an attribute value.
+        return preg_match('~(attributes|value)/\w+/value$~', $key) === 1 && !$this->hasNestedArray($value);
     }
 
     /**

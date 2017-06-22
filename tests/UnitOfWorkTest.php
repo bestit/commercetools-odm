@@ -621,7 +621,15 @@ class UnitOfWorkTest extends TestCase
                             'id' => 1,
                             'attributes' => [
                                 [
-                                    'name' => 'array',
+                                    'name' => 'arrayAdd',
+                                    'value' => []
+                                ],
+                                [
+                                    'name' => 'arrayChange',
+                                    'value' => [1,2,3]
+                                ],
+                                [
+                                    'name' => 'arrayEmpty',
                                     'value' => [
                                         uniqid(),
                                         uniqid()
@@ -708,7 +716,19 @@ class UnitOfWorkTest extends TestCase
         $productCatalogData
             ->getMasterVariant()
             ->getAttributes()
-            ->getByName('array')
+            ->getByName('arrayAdd')
+            ->setValue($newAddedArray = [uniqid(), uniqid()]);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('arrayChange')
+            ->setValue([2,3]);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('arrayEmpty')
             ->setValue([]);
 
         $productCatalogData
@@ -766,12 +786,18 @@ class UnitOfWorkTest extends TestCase
                             'masterVariant' => [
                                 'attributes' => [
                                     [
-                                        'value' => [null, null]
+                                        'value' => $newAddedArray
                                     ],
-                                    2 => [
+                                    [
+                                        'value' => [2,3],
+                                    ],
+                                    [
+                                        'value' => [],
+                                    ],
+                                    4 => [
                                         'value' => 1.5
                                     ],
-                                    8 => [
+                                    10 => [
                                         'value' => [
                                             'centAmount' => $newAmount
                                         ]
