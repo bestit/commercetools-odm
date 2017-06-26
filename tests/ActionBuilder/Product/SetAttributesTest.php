@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\ActionBuilder\Product\SetAttributes;
@@ -207,12 +209,14 @@ class SetAttributesTest extends TestCase
                 ],
                 [
                     'value' => [
-                        [
-                            'value' => $mockedValue1 = uniqid()
+                        1 => [
+                            'value' => 'new-value2'
                         ],
+                        // We add this value.
                         [
-                            'value' => $mockedValue2 = uniqid()
-                        ]
+                            'name' => 'new-name3',
+                            'value' => 'new-value3'
+                        ],
                     ]
                 ]
             ],
@@ -234,12 +238,14 @@ class SetAttributesTest extends TestCase
                                 [
                                     'name' => $attrName = 'nested',
                                     'value' => [
+                                        // attr 1 needs to be overtaken, because it is a nested attr.
                                         [
-                                            'name' => $subAttrName1 = uniqid(),
-                                            'value' => uniqid()
+                                            'name' => 'name1',
+                                            'value' => 'value1'
                                         ],
+                                        // We overwrite only the value here
                                         [
-                                            'name' => $subAttrName2 = uniqid(),
+                                            'name' => 'name2',
                                             'value' => uniqid()
                                         ]
                                     ]
@@ -292,7 +298,11 @@ class SetAttributesTest extends TestCase
         static::assertSame($staged, $action3->getStaged(), 'Staged wrongly set. (3)');
 
         static::assertSame(
-            [['value' => $mockedValue1, 'name' => $subAttrName1], ['value' => $mockedValue2, 'name' => $subAttrName2]],
+            [
+                ['name' => 'name1', 'value' => 'value1'],
+                ['value' => 'new-value2', 'name' => 'name2'],
+                ['name' => 'new-name3', 'value' => 'new-value3']
+            ],
             $action3->getValue(),
             'Wrong value. (3)'
         );
