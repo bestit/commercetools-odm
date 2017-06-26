@@ -66,7 +66,7 @@ class SetAttributes extends ProductActionBuilder
                 // defintion must not be set every time.
                 if ((is_array($attrValue)) && (is_array(@$oldAttrs[$attrIndex]['value']))) {
                     foreach ($attrValue as $index => &$attrSubValue) {
-                        if (is_array($oldAttrs[$attrIndex]['value'][$index]) &&
+                        if (is_array(@$oldAttrs[$attrIndex]['value'][$index]) &&
                             array_key_exists('name', $oldAttrs[$attrIndex]['value'][$index]) &&
                             @$oldAttrs[$attrIndex]['value'][$index]['name'] &&
                             @$oldAttrs[$attrIndex]['value'][$index]['value'] && !@$attrSubValue['name']
