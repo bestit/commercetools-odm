@@ -256,14 +256,14 @@ class UnitOfWork implements UnitOfWorkInterface
             $state = $this->getDocumentState($object);
 
             if ($state == self::STATE_MANAGED) {
-                $updateRequest = $this->computeChangedObject($this->getClassMetadata($object), $object);
-
                 $this->getListenerInvoker()->invoke(
                     new LifecycleEventArgs($object, $this->getDocumentManager()),
                     Events::PRE_PERSIST,
                     $object,
                     $this->getClassMetadata($object)
                 );
+
+                $updateRequest = $this->computeChangedObject($this->getClassMetadata($object), $object);
 
                 if ($updateRequest) {
                     $client->addBatchRequest($updateRequest->setIdentifier($id));
