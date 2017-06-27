@@ -62,17 +62,20 @@ class AddAddressTest extends TestCase
     {
         $customer = new Customer();
 
-        $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
+        $this->fixture->setLastFoundMatch([uniqid(), 0]);
 
         $actions = $this->fixture->createUpdateActions(
             [
-                'id' => uniqid(),
                 'company' => uniqid()
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
             [
-                'addresses' => []
+                'addresses' => [
+                    [
+                        'id' => uniqid()
+                    ]
+                ]
             ],
             $customer
         );
