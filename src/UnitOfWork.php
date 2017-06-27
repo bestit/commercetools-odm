@@ -611,7 +611,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
         foreach ($newData as $key => $value) {
             // We use the name attribute to check for a nested set, because we do not have something else.
-            if (is_array($value) && !$this->isSimpleAttributeArray(ltrim($parentKey . '/' . $key, '/'), $value)) {
+            if (is_array($value) && $this->hasNestedArray($value)) {
                 $changedSubData = $this->extractChanges(
                     $value,
                     $oldData[$key] ?? [],
