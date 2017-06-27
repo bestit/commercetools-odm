@@ -59,7 +59,6 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetCustomField::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsDatetime()
@@ -70,7 +69,7 @@ class SetCustomFieldTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             $value = new DateTime(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $order
@@ -84,7 +83,6 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetCustomField::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsScalar()
@@ -95,7 +93,7 @@ class SetCustomFieldTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             $value = uniqid(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $order

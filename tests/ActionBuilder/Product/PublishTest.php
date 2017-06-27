@@ -58,14 +58,13 @@ class PublishTest extends TestCase
 
     /**
      * Checks if the product is published thru this action.
-     * @covers Publish::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActions()
     {
         $actions = $this->fixture->createUpdateActions(
             true,
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             new Product()
@@ -78,14 +77,13 @@ class PublishTest extends TestCase
 
     /**
      * Checks if the product is not unpublished thru this action.
-     * @covers Publish::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsIgnoreOnUnpublish()
     {
         $actions = $this->fixture->createUpdateActions(
             false,
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             new Product()

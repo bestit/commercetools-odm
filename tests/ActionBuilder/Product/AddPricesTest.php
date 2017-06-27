@@ -42,14 +42,13 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the default return for the action builder.
-     * @covers AddPrices::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsEmpty()
     {
         static::assertSame([], $this->fixture->createUpdateActions(
             [],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             new Product()
@@ -58,7 +57,6 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the default return for the action builder if there is no added price.
-     * @covers AddPrices::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsNoChanges()
@@ -84,7 +82,7 @@ class AddPricesTest extends TestCase
             [
                 ['id' => $oldId]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $product
@@ -93,7 +91,6 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the return for the action builder if there is an added price.
-     * @covers AddPrices::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsWithChanges()
@@ -125,7 +122,7 @@ class AddPricesTest extends TestCase
                 ['id' => $oldId],
                 ['country' => $country],
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $product
@@ -140,7 +137,6 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the default return for the action builder if there is no added price.
-     * @covers AddPrices::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsNoPrices()
@@ -149,7 +145,7 @@ class AddPricesTest extends TestCase
 
         static::assertSame([], $this->fixture->createUpdateActions(
             [],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             new Product()

@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType;
 
-use BestIt\CommercetoolsODM\ActionBuilder\Customer\AddAddress;
+use BestIt\CommercetoolsODM\ActionBuilder\Customer\ChangeAddress;
 use BestIt\CommercetoolsODM\ActionBuilder\Customer\CustomerActionBuilder;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Customer\Customer;
-use Commercetools\Core\Request\Customers\Command\CustomerAddAddressAction;
+use Commercetools\Core\Request\Customers\Command\CustomerChangeAddressAction;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
- * Tests AddAddress.
- * @author lange <lange@bestit-online.de>
+ * Test the ChangeAddress-Builder.
+ * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  */
-class AddAddressTest extends TestCase
+class ChangeAddressTest extends TestCase
 {
     use SupportTestTrait;
 
     /**
      * The test class.
-     * @var AddAddress|PHPUnit_Framework_MockObject_MockObject|null
+     * @var ChangeAddress|PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $fixture;
 
@@ -45,46 +45,21 @@ class AddAddressTest extends TestCase
         ];
     }
 
+
     /**
      * Sets up the test.
      * @return void
      */
     protected function setUp()
     {
-        $this->fixture = new AddAddress();
+        $this->fixture = new ChangeAddress();
     }
 
     /**
-     * Checks if the old address is ignored.
+     * Checks if new addresses are not added.
      * @return void
      */
-    public function testCreateUpdateActionsIgnoreOldAddress()
-    {
-        $customer = new Customer();
-
-        $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
-
-        $actions = $this->fixture->createUpdateActions(
-            [
-                'id' => uniqid(),
-                'company' => uniqid()
-            ],
-            $this->createMock(ClassMetadataInterface::class),
-            [],
-            [
-                'addresses' => []
-            ],
-            $customer
-        );
-
-        static::assertCount(0, $actions);
-    }
-
-    /**
-     * Checks if the address is added.
-     * @return void
-     */
-    public function testCreateUpdateActionsWithNewAddress()
+    public function testCreateUpdateActionsIgnoreNewAddress()
     {
         $customer = new Customer();
 
@@ -102,10 +77,37 @@ class AddAddressTest extends TestCase
             $customer
         );
 
-        /** @var CustomerAddAddressAction $action */
+        static::assertCount(0, $actions);
+    }
+
+
+    /**
+     * Checks if the address is changed.
+     * @return void
+     */
+    public function testCreateUpdateActionsWithChangedAddress()
+    {
+        $customer = new Customer();
+
+        $this->fixture->setLastFoundMatch([uniqid(), 0]);
+
+        $actions = $this->fixture->createUpdateActions(
+            $addressMock = ['company' => uniqid('', true)],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'addresses' => [
+                    ['id' => $addressId = uniqid('', true)]
+                ]
+            ],
+            $customer
+        );
+
+        /** @var CustomerChangeAddressAction $action */
         static::assertCount(1, $actions);
-        static::assertInstanceOf(CustomerAddAddressAction::class, $action = $actions[0]);
-        static::assertSame($addressMock, $action->getAddress()->toArray());
+        static::assertInstanceOf(CustomerChangeAddressAction::class, $action = $actions[0]);
+        static::assertSame($addressId, $action->getAddressId());
+        static::assertSame($addressMock + ['id' => $addressId], $action->getAddress()->toArray());
     }
 
     /**

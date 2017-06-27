@@ -66,12 +66,10 @@ class SetAttributes extends ProductActionBuilder
                 // We can only check for the name/value structure for a nested attribute, because the attribute
                 // defintion must not be set every time.
                 if ((is_array($attrValue)) && (is_array(@$oldAttrs[$attrIndex]['value']))) {
-                    if ($this->isNestedAttribute($oldAttrs[$attrIndex])) {
-                        $nestedStartValue = $oldAttrs[$attrIndex]['value'];
-                    }
+                    $isNested = $this->isNestedAttribute($oldAttrs[$attrIndex]);
 
                     foreach ($attrValue as $subIndex => &$attrSubValue) {
-                        if ($this->isNestedAttribute($oldAttrs[$attrIndex])) {
+                        if ($isNested) {
                             if (!@$attrSubValue['name']) {
                                 $attrSubValue['name'] = $oldAttrs[$attrIndex]['value'][$subIndex]['name'];
                             }
@@ -82,7 +80,7 @@ class SetAttributes extends ProductActionBuilder
                         return $attrSubValue !== null;
                     });
 
-                    if ($this->isNestedAttribute($oldAttrs[$attrIndex])) {
+                    if ($isNested) {
                         $attrValue = $attrValue + $oldAttrs[$attrIndex]['value'];
 
                         ksort($attrValue);

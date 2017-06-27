@@ -53,7 +53,6 @@ class ChangeSearchableForAttrTest extends TestCase
 
     /**
      * Checks if the update is ignored, if there is no old attribute matching the requested settings.
-     * @covers ChangeSearchableForAttr::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsOnNew()
@@ -62,7 +61,7 @@ class ChangeSearchableForAttrTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             true,
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             new ProductType()
@@ -74,7 +73,6 @@ class ChangeSearchableForAttrTest extends TestCase
 
     /**
      * Checks if the update action is rendered correctly, on an old entry.
-     * @covers ChangeSearchableForAttr::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsOnOld()
@@ -83,7 +81,7 @@ class ChangeSearchableForAttrTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             true,
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'attributes' => [

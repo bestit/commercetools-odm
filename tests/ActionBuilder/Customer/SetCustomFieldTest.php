@@ -59,7 +59,6 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetCustomField::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsDatetime()
@@ -84,7 +83,6 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetCustomField::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsNull()
@@ -109,7 +107,6 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetCustomField::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsScalar()

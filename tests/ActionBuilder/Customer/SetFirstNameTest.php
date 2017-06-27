@@ -60,7 +60,7 @@ class SetFirstNameTest extends TestCase
     {
         $actions = $this->fixture->createUpdateActions(
             $mock = uniqid(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             uniqid()

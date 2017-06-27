@@ -58,7 +58,6 @@ class AddAttributesTest extends TestCase
 
     /**
      * Checks the default return for the creation method.
-     * @covers AddAttributes::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsEmpty()
@@ -69,7 +68,7 @@ class AddAttributesTest extends TestCase
             [],
             $this->fixture->createUpdateActions(
                 uniqid(),
-                static::createMock(ClassMetadataInterface::class),
+                $this->createMock(ClassMetadataInterface::class),
                 [],
                 [],
                 $object
@@ -79,7 +78,6 @@ class AddAttributesTest extends TestCase
 
     /**
      * Checks the default return for the creation method.
-     * @covers AddAttributes::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsFilled()
@@ -97,7 +95,7 @@ class AddAttributesTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             uniqid(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'attributes' => [

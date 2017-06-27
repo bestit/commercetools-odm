@@ -58,7 +58,6 @@ class SetDefaultShippingAddressIdTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetDefaultShippingAddressId::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActions()
@@ -67,7 +66,7 @@ class SetDefaultShippingAddressIdTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             $value = uniqid(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $customer

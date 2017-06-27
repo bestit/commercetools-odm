@@ -32,7 +32,6 @@ use Commercetools\Core\Model\Product\ProductVariantDraft;
 use Commercetools\Core\Model\Type\TypeReference;
 use Commercetools\Core\Request\AbstractDeleteRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
-use Commercetools\Core\Response\AbstractApiResponse;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use DateTime;
@@ -222,6 +221,7 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param ClassMetadataInterface $metadata
      * @param object $object
      * @return ClientRequestInterface|null
+     * @todo Topmost array should be used as a whole.
      */
     private function computeChangedObject(ClassMetadataInterface $metadata, $object)
     {

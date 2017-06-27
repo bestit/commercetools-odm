@@ -51,7 +51,6 @@ class SetShippingMethodTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetShippingMethod::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsString()
@@ -63,7 +62,7 @@ class SetShippingMethodTest extends TestCase
         /** @var CartSetShippingMethodAction[] $actions */
         $actions = $this->fixture->createUpdateActions(
             $changedData,
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $cart
@@ -76,7 +75,6 @@ class SetShippingMethodTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetShippingMethod::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsNonString()
@@ -88,7 +86,7 @@ class SetShippingMethodTest extends TestCase
         /** @var CartSetShippingMethodAction[] $actions */
         $actions = $this->fixture->createUpdateActions(
             $changedData,
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $cart

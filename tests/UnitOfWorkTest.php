@@ -625,6 +625,10 @@ class UnitOfWorkTest extends TestCase
                                     'value' => []
                                 ],
                                 [
+                                    'name' => 'arrayAddPartly',
+                                    'value' => [1]
+                                ],
+                                [
                                     'name' => 'arrayChange',
                                     'value' => [1,2,3]
                                 ],
@@ -722,6 +726,12 @@ class UnitOfWorkTest extends TestCase
         $productCatalogData
             ->getMasterVariant()
             ->getAttributes()
+            ->getByName('arrayAddPartly')
+            ->setValue([1,2,3]);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
             ->getByName('arrayChange')
             ->setValue([2,3]);
 
@@ -789,15 +799,18 @@ class UnitOfWorkTest extends TestCase
                                         'value' => $newAddedArray
                                     ],
                                     [
+                                        'value' => [1,2,3],
+                                    ],
+                                    [
                                         'value' => [2,3],
                                     ],
                                     [
                                         'value' => [],
                                     ],
-                                    4 => [
+                                    5 => [
                                         'value' => 1.5
                                     ],
-                                    10 => [
+                                    11 => [
                                         'value' => [
                                             'centAmount' => $newAmount
                                         ]

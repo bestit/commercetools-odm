@@ -56,7 +56,6 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * Checks if new addresses are added.
-     * @covers AddShippingAddressIds::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsIgnoreOldAddresses()
@@ -70,7 +69,7 @@ class AddShippingAddressIdsTest extends TestCase
                 $oldId1 = uniqid('', true),
                 $oldId2 = uniqid('', true),
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             ['shippingAddressIds' => [$oldId1, $oldId2]],
             $customer
@@ -81,7 +80,6 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * Checks if new addresses are added.
-     * @covers AddShippingAddressIds::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsAddOnlyNewAddresses()
@@ -96,7 +94,7 @@ class AddShippingAddressIdsTest extends TestCase
                 $newId2 = uniqid('', true),
                 $oldId = uniqid('', true)
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'shippingAddressIds' => [

@@ -89,7 +89,7 @@ class SetAttributesTest extends TestCase
                     'value' => $mockedValue = uniqid()
                 ]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [
@@ -143,7 +143,7 @@ class SetAttributesTest extends TestCase
                     'value' => $mockedValue2 = uniqid()
                 ]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [
@@ -220,7 +220,7 @@ class SetAttributesTest extends TestCase
                     ]
                 ]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [
@@ -330,7 +330,7 @@ class SetAttributesTest extends TestCase
                     null
                 ]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [

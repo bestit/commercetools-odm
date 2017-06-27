@@ -74,7 +74,6 @@ class SetSKUTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks if the action is rendered correctly.
-     * @covers       SetSKU::createUpdateActions()
      * @dataProvider getCreateAssertions
      * @param string $path
      * @param bool $staged
@@ -87,7 +86,7 @@ class SetSKUTest extends \PHPUnit_Framework_TestCase
 
         $actions = $this->fixture->createUpdateActions(
             $sku = uniqid(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             new Product()

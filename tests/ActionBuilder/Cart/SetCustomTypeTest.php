@@ -60,7 +60,7 @@ class SetCustomTypeTest extends TestCase
         /** @var SetCustomTypeAction[] $actions */
         $actions = $this->fixture->createUpdateActions(
             $changedData,
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             $cart
@@ -82,7 +82,6 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action is created.
-     * @covers SetCustomType::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsScalar()
@@ -102,7 +101,6 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action with mutiple fields is created.
-     * @covers SetCustomType::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsMultipleScalar()
@@ -123,7 +121,6 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action with integer field is created.
-     * @covers SetCustomType::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsInteger()
@@ -143,7 +140,6 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action with float field is created.
-     * @covers SetCustomType::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsFloat()
@@ -163,7 +159,6 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action with object field is created.
-     * @covers SetCustomType::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsObject()

@@ -55,14 +55,13 @@ class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks if the tax category can be removed.
-     * @covers SetTaxCategory::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsEmpty()
     {
         $actions = $this->fixture->createUpdateActions(
             [],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             new Product()
@@ -76,7 +75,6 @@ class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks if the tax category can be changed.
-     * @covers SetTaxCategory::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsFilled()
@@ -85,7 +83,7 @@ class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => $taxCategoryId = uniqid()
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [],
             new Product()

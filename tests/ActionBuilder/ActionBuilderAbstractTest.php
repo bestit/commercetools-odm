@@ -50,7 +50,6 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks the priority getter.
-     * @covers ActionBuilderAbstract::getPriority()
      * @return void
      */
     public function testGetPriorityDefault()
@@ -69,7 +68,6 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks the handling of the stackable parameter.
-     * @covers ActionBuilderAbstract::isStackable()
      * @return void
      */
     public function testIsStackable()
