@@ -272,6 +272,9 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function merge($object)
     {
+        $this->getUnitOfWork()->registerAsManaged($object, $object->getId(), $object->getVersion());
+
+        return $object;
     }
 
     /**
