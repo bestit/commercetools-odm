@@ -533,8 +533,9 @@ class UnitOfWork implements UnitOfWorkInterface
             $this->getDetachQueue()->detach($object);
 
             $this->removeFromIdentityMap($object);
-
             $this->cascadeDetach($object, $visited);
+
+            unset($this->newDocuments[$oid]);
         }
     }
 
