@@ -36,19 +36,19 @@ class DocumentManager implements DocumentManagerInterface
      * The repository factory.
      * @var RepositoryFactoryInterface
      */
-    private $repositoryFactory = null;
+    private $repositoryFactory;
 
     /**
      * The unit of work for this manager.
      * @var UnitOfWorkInterface
      */
-    private $unitOfWork = null;
+    private $unitOfWork;
 
     /**
      * The factory for the unit of work.
      * @var UnitOfWorkFactoryInterface
      */
-    private $unitOfWorkFactory = null;
+    private $unitOfWorkFactory;
 
     /**
      * DocumentManager constructor.
@@ -69,8 +69,10 @@ class DocumentManager implements DocumentManagerInterface
             ->setClient($client)
             ->setMetadataFactory($metadataFactory)
             ->setQueryHelper($queryHelper)
-            ->setRepositoryFactory($repositoryFactory)
-            ->setUnitOfWorkFactory($unitOfWorkFactory);
+            ->setLogger(new NullLogger());
+
+        $this->repositoryFactory = $repositoryFactory;
+        $this->unitOfWorkFactory = $unitOfWorkFactory;
     }
 
     /**
@@ -166,7 +168,7 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function find($className, $id)
     {
-        return $this->getRepositoryFactory()->getRepository($this, $className)->find($id);
+        return $this->repositoryFactory->getRepository($this, $className)->find($id);
     }
 
     /**
@@ -195,35 +197,13 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
-     * Returns the logger.
-     * @return LoggerInterface
-     */
-    private function getLogger(): LoggerInterface
-    {
-        if (!$this->logger) {
-            $this->setLogger(new NullLogger());
-        }
-
-        return $this->logger;
-    }
-
-    /**
      * Gets the repository for a class.
      * @param string $className
      * @return ObjectRepository
      */
     public function getRepository($className): ObjectRepository
     {
-        return $this->getRepositoryFactory()->getRepository($this, $className);
-    }
-
-    /**
-     * Returns the repository factory.
-     * @return RepositoryFactoryInterface
-     */
-    protected function getRepositoryFactory(): RepositoryFactoryInterface
-    {
-        return $this->repositoryFactory;
+        return $this->repositoryFactory->getRepository($this, $className);
     }
 
     /**
@@ -233,19 +213,10 @@ class DocumentManager implements DocumentManagerInterface
     public function getUnitOfWork(): UnitOfWorkInterface
     {
         if (!$this->unitOfWork) {
-            $this->setUnitOfWork($this->getUnitOfWorkFactory()->getUnitOfWork($this));
+            $this->setUnitOfWork($this->unitOfWorkFactory->getUnitOfWork($this));
         }
 
         return $this->unitOfWork;
-    }
-
-    /**
-     * Returns the unit of work factory.
-     * @return UnitOfWorkFactoryInterface
-     */
-    private function getUnitOfWorkFactory(): UnitOfWorkFactoryInterface
-    {
-        return $this->unitOfWorkFactory;
     }
 
     /**
@@ -319,17 +290,6 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
-     * Sets the repository factory.
-     * @param RepositoryFactoryInterface $repositoryFactory
-     * @return DocumentManager
-     */
-    protected function setRepositoryFactory(RepositoryFactoryInterface $repositoryFactory): DocumentManager
-    {
-        $this->repositoryFactory = $repositoryFactory;
-        return $this;
-    }
-
-    /**
      * Sets the unit of work for this manager.
      * @param UnitOfWorkInterface $unitOfWork
      * @return DocumentManager
@@ -337,18 +297,6 @@ class DocumentManager implements DocumentManagerInterface
     protected function setUnitOfWork(UnitOfWorkInterface $unitOfWork): DocumentManager
     {
         $this->unitOfWork = $unitOfWork;
-
-        return $this;
-    }
-
-    /**
-     * Sets the unit of work interface.s
-     * @param UnitOfWorkFactoryInterface $unitOfWorkFactory
-     * @return DocumentManager
-     */
-    private function setUnitOfWorkFactory(UnitOfWorkFactoryInterface $unitOfWorkFactory): DocumentManager
-    {
-        $this->unitOfWorkFactory = $unitOfWorkFactory;
 
         return $this;
     }
