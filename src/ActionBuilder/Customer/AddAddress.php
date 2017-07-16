@@ -14,14 +14,8 @@ use Commercetools\Core\Request\Customers\Command\CustomerAddAddressAction;
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
  */
-class AddAddress extends CustomerActionBuilder
+class AddAddress extends AddressActionBuilder
 {
-    /**
-     * Matches to the address element.
-     * @var string
-     */
-    protected $complexFieldFilter = '^addresses/(\d*)$';
-
     /**
      * Creates the update actions for the given class and data.
      * @param array $changedValue

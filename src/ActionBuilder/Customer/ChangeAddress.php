@@ -8,21 +8,14 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Address;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Customers\Command\CustomerChangeAddressAction;
-use InvalidArgumentException;
 
 /**
  * Changes an address.
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
  */
-class ChangeAddress extends CustomerActionBuilder
+class ChangeAddress extends AddressActionBuilder
 {
-    /**
-     * Matches to the address element.
-     * @var string
-     */
-    protected $complexFieldFilter = '^addresses/(\d*)$';
-
     /**
      * Creates the update actions for the given class and data.
      * @param array $changedValue
