@@ -53,6 +53,7 @@ return [
         'requestClassMap' => (new RequestMap())
             ->setCreate(\Commercetools\Core\Request\Customers\CustomerCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\Customers\CustomerDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Customers\CustomerByIdGetRequest::class)
             ->setQuery(\Commercetools\Core\Request\Customers\CustomerQueryRequest::class)
             ->setUpdateById(\Commercetools\Core\Request\Customers\CustomerUpdateRequest::class)
     ],
