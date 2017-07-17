@@ -36,7 +36,7 @@ class ChangeAddress extends AddressActionBuilder
 
         $actions = [];
 
-        if ((array_key_exists($addressIndex, $oldData['addresses'])) &&
+        if (is_array($changedValue) && (array_key_exists($addressIndex, $oldData['addresses'])) &&
             ($oldData['addresses'][$addressIndex]['id'])
         ) {
             $actions = [

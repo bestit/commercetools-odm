@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType;
 
+use BestIt\CommercetoolsODM\ActionBuilder\Customer\AddressActionBuilder;
 use BestIt\CommercetoolsODM\ActionBuilder\Customer\ChangeAddress;
-use BestIt\CommercetoolsODM\ActionBuilder\Customer\CustomerActionBuilder;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Customer\Customer;
@@ -80,6 +80,30 @@ class ChangeAddressTest extends TestCase
         static::assertCount(0, $actions);
     }
 
+    /**
+     * Checks if removed addresses are not added.
+     * @return void
+     */
+    public function testCreateUpdateActionsIgnoreRemovedAddress()
+    {
+        $customer = new Customer();
+
+        $this->fixture->setLastFoundMatch([uniqid(), 0]);
+
+        $actions = $this->fixture->createUpdateActions(
+            null,
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'addresses' => [
+                    ['id' => uniqid()]
+                ]
+            ],
+            $customer
+        );
+
+        static::assertCount(0, $actions);
+    }
 
     /**
      * Checks if the address is changed.
@@ -116,6 +140,6 @@ class ChangeAddressTest extends TestCase
      */
     public function testInstance()
     {
-        static::assertInstanceOf(CustomerActionBuilder::class, $this->fixture);
+        static::assertInstanceOf(AddressActionBuilder::class, $this->fixture);
     }
 }

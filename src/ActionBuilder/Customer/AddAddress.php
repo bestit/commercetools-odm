@@ -36,7 +36,9 @@ class AddAddress extends AddressActionBuilder
 
         list(, $addressIndex) = $this->getLastFoundMatch();
 
-        if ((!array_key_exists($addressIndex, $oldData['addresses'])) && (!array_key_exists('id', $changedValue))) {
+        if (is_array($changedValue) && (!array_key_exists($addressIndex, $oldData['addresses'])) &&
+            (!array_key_exists('id', $changedValue))
+        ) {
             $actions[] = CustomerAddAddressAction::ofAddress(Address::fromArray($changedValue));
         }
 
