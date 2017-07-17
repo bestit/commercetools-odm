@@ -106,10 +106,39 @@ class ChangeAddressTest extends TestCase
     }
 
     /**
-     * Checks if the address is changed.
+     * Checks if the address is changed but the old address id is used.
      * @return void
      */
-    public function testCreateUpdateActionsWithChangedAddress()
+    public function testCreateUpdateActionsWithChangedAddressIdOfNewAddress()
+    {
+        $customer = new Customer();
+
+        $this->fixture->setLastFoundMatch([uniqid(), 0]);
+
+        $actions = $this->fixture->createUpdateActions(
+            $addressMock = ['company' => uniqid('', true), 'id' => $addressId = uniqid('', true)],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'addresses' => [
+                    ['id' => uniqid('', true)]
+                ]
+            ],
+            $customer
+        );
+
+        /** @var CustomerChangeAddressAction $action */
+        static::assertCount(1, $actions);
+        static::assertInstanceOf(CustomerChangeAddressAction::class, $action = $actions[0]);
+        static::assertSame($addressId, $action->getAddressId());
+        static::assertSame($addressMock + ['id' => $addressId], $action->getAddress()->toArray());
+    }
+
+    /**
+     * Checks if the address is changed but the old address id is used.
+     * @return void
+     */
+    public function testCreateUpdateActionsWithChangedAddressIdOfOldAddress()
     {
         $customer = new Customer();
 

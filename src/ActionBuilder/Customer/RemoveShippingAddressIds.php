@@ -39,10 +39,12 @@ class RemoveShippingAddressIds extends CustomerActionBuilder
         $sourceObject
     ): array {
         $actions = [];
+        $addresses = $sourceObject->getAddresses();
         $shippingAddressIds = $sourceObject->getShippingAddressIds();
 
         foreach ($oldData[$this->getFieldName()] ?? [] as $id) {
-            if (!in_array($id, $shippingAddressIds)) {
+            // If the address is removed completely, then we do not need to remove the shipping address id
+            if ((!in_array($id, $shippingAddressIds)) && ($addresses->getById($id))) {
                 $actions[] = (new CustomerRemoveShippingAddressAction())->setAddressId($id);
             }
         }

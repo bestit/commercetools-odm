@@ -36,12 +36,13 @@ class ChangeAddress extends AddressActionBuilder
 
         $actions = [];
 
+        // An ID can not be changed and it is a sign, that just the key was changed.
         if (is_array($changedValue) && (array_key_exists($addressIndex, $oldData['addresses'])) &&
             ($oldData['addresses'][$addressIndex]['id'])
         ) {
             $actions = [
                 CustomerChangeAddressAction::ofAddressIdAndAddress(
-                    $oldData['addresses'][$addressIndex]['id'],
+                    $changedValue['id'] ?? $oldData['addresses'][$addressIndex]['id'],
                     Address::fromArray($changedValue + $oldData['addresses'][$addressIndex])
                 )
             ];

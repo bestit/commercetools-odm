@@ -14,8 +14,14 @@ use Commercetools\Core\Request\Customers\Command\CustomerRemoveAddressAction;
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
  */
-class RemoveAddresses extends AddressActionBuilder
+class RemoveAddresses extends CustomerActionBuilder
 {
+    /**
+     * Matches to the address element.
+     * @var string
+     */
+    protected $complexFieldFilter = '^addresses$';
+
     /**
      * Creates the update actions for the given class and data.
      * @param mixed $changedValue
