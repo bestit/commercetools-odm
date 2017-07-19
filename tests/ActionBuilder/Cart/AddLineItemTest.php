@@ -6,6 +6,7 @@ use BestIt\CommercetoolsODM\ActionBuilder\Cart\AddLineItem;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Cart\Cart;
+use Commercetools\Core\Model\CustomField\CustomFieldObjectDraft;
 use Commercetools\Core\Request\Carts\Command\CartAddLineItemAction;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
@@ -90,7 +91,16 @@ class AddLineItemTest extends TestCase
             'variant' => [
                 'id' => 1
             ],
-            'quantity' => 2
+            'quantity' => 2,
+            'custom' => [
+                'type' => [
+                    'typeId' => 'type',
+                    'key' => 'specific-key'
+                ],
+                'fields' => [
+                    'fieldname' => 'fieldvalue'
+                ]
+            ]
         ];
 
 
@@ -110,6 +120,10 @@ class AddLineItemTest extends TestCase
         static::assertSame($value['productId'], $actions[0]->getProductId());
         static::assertSame($value['variant']['id'], $actions[0]->getVariantId());
         static::assertSame($value['quantity'], $actions[0]->getQuantity());
+        static::assertEquals(
+            CustomFieldObjectDraft::fromArray($value['custom'])->toArray(),
+            $actions[0]->getCustom()->toArray()
+        );
     }
 
     /**

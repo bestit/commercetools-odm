@@ -53,11 +53,17 @@ class AddLineItem extends ActionBuilderAbstract
             return [];
         }
 
-        $action = CartAddLineItemAction::fromArray([
+        $cartAddLineItemAction = [
             'productId' => $changedValue['productId'],
             'variantId' => $changedValue['variant']['id'],
             'quantity' => $changedValue['quantity']
-        ]);
+        ];
+
+        if (array_key_exists('custom', $changedValue)) {
+            $cartAddLineItemAction['custom'] = $changedValue['custom'];
+        }
+
+        $action = CartAddLineItemAction::fromArray($cartAddLineItemAction);
 
         if (isset($changedValue['distributionChannel']['id'])) {
             $action->setDistributionChannel(ChannelReference::ofId($changedValue['distributionChannel']['id']));
