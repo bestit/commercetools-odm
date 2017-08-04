@@ -1162,7 +1162,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
         if ($statusCode >= 200 && $statusCode < 300) {
             if ($statusCode === 200) {
-                $document = @$this->identityMap[$objectId] ?? $response->toObject();
+                $document = @$this->identityMap[$objectId] ?? ($this->newDocuments[$objectId] ?? $response->toObject());
                 $mappedResponse = $response->toObject();
                 /** @var ClassMetadataInterface $metadata */
                 $metadata = $this->getClassMetadata($document);
