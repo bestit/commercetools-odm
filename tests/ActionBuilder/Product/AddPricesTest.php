@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\ActionBuilder\Product\AddPrices;
@@ -18,24 +20,21 @@ use PHPUnit_Framework_MockObject_MockObject;
 /**
  * Tests AddPrices.
  * @author lange <lange@bestit-online.de>
- * @category Tests
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Product
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  */
 class AddPricesTest extends TestCase
 {
     /**
      * The test class.
-     * @var AddPrices|PHPUnit_Framework_MockObject_MockObject
+     * @var AddPrices|PHPUnit_Framework_MockObject_MockObject|null
      */
-    private $fixture = null;
+    private $fixture;
 
     /**
      * Sets up the test.
      * @return void
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->fixture = new AddPrices();
     }
@@ -53,6 +52,49 @@ class AddPricesTest extends TestCase
             [],
             new Product()
         ));
+    }
+
+    /**
+     * No prices should be added, if the given added array is empty.
+     * @return void
+     */
+    public function testCreateUpdateActionsIgnoreNullChanges()
+    {
+        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant']);
+
+        $product = new Product();
+
+        $product
+            ->setMasterData(new ProductCatalogData())
+            ->getMasterData()
+            ->setStaged(new ProductData())
+            ->getStaged()
+            ->setMasterVariant(new ProductVariant())
+            ->getMasterVariant()
+            ->setId($variantId = mt_rand(1, 10000))
+            ->setPrices($prices = new PriceCollection());
+
+        $prices->add(Price::fromArray([
+            'id' => $oldId = uniqid()
+        ]));
+
+        $prices->add(Price::fromArray([
+            'country' => $country = uniqid()
+        ]));
+
+        $actions = $this->fixture->createUpdateActions(
+            [
+                ['id' => $oldId],
+                null,
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            $product
+        );
+
+        /** @var ProductAddPriceAction $action */
+        static::assertCount(0, $actions, 'Wrong action count.');
     }
 
     /**
@@ -86,6 +128,23 @@ class AddPricesTest extends TestCase
             [],
             [],
             $product
+        ));
+    }
+
+    /**
+     * Checks the default return for the action builder if there is no added price.
+     * @return void
+     */
+    public function testCreateUpdateActionsNoPrices()
+    {
+        $this->fixture->setLastFoundMatch([uniqid(), 'staging', 'masterVariant']);
+
+        static::assertSame([], $this->fixture->createUpdateActions(
+            [],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            new Product()
         ));
     }
 
@@ -133,23 +192,6 @@ class AddPricesTest extends TestCase
         static::assertInstanceOf(ProductAddPriceAction::class, $action = $actions[0], 'Wrong action type.');
         static::assertSame($variantId, $action->getVariantId(), 'Wrong variant id.');
         static::assertSame($country, $action->getPrice()->getCountry(), 'Wrong country.');
-    }
-
-    /**
-     * Checks the default return for the action builder if there is no added price.
-     * @return void
-     */
-    public function testCreateUpdateActionsNoPrices()
-    {
-        $this->fixture->setLastFoundMatch([uniqid(), 'staging', 'masterVariant']);
-
-        static::assertSame([], $this->fixture->createUpdateActions(
-            [],
-            $this->createMock(ClassMetadataInterface::class),
-            [],
-            [],
-            new Product()
-        ));
     }
 
     /**

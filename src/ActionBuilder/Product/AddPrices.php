@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
@@ -11,9 +13,7 @@ use Commercetools\Core\Request\Products\Command\ProductAddPriceAction;
 /**
  * Adds prices to the product.
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Product
- * @version $id$
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  */
 class AddPrices extends PriceActionBuilder
 {
@@ -45,7 +45,7 @@ class AddPrices extends PriceActionBuilder
                 $variantPrices = $variant->getPrices();
 
                 foreach ($changedValue as $index => $priceArray) {
-                    if (!$variantPrices->getAt($index)->getId()) {
+                    if ($priceArray && !$variantPrices->getAt($index)->getId()) {
                         $actions[] = ProductAddPriceAction::ofVariantIdAndPrice(
                             $variant->getId(),
                             PriceDraft::fromArray($priceArray)
