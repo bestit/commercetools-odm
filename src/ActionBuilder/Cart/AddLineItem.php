@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\ActionBuilder\Cart;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
@@ -11,10 +13,9 @@ use Commercetools\Core\Request\Carts\Command\CartAddLineItemAction;
 
 /**
  * Builds the action to add cart item
+ * @author blange <lange@bestit-online.de>
  * @author chowanski <chowanski@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Cart
- * @version $id$
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Cart
  */
 class AddLineItem extends ActionBuilderAbstract
 {
@@ -22,7 +23,7 @@ class AddLineItem extends ActionBuilderAbstract
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
      */
-    protected $complexFieldFilter = 'lineItems/[^/]+';
+    protected $complexFieldFilter = '^lineItems/[^/]+';
 
     /**
      * For which class is this description used?
@@ -61,6 +62,10 @@ class AddLineItem extends ActionBuilderAbstract
 
         if (array_key_exists('custom', $changedValue)) {
             $cartAddLineItemAction['custom'] = $changedValue['custom'];
+        }
+
+        if ((array_key_exists('priceMode', $changedValue) && ($changedValue['priceMode'] === 'ExternalPrice'))) {
+            $cartAddLineItemAction['externalPrice'] = $changedValue['price'];
         }
 
         $action = CartAddLineItemAction::fromArray($cartAddLineItemAction);
