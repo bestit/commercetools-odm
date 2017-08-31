@@ -27,7 +27,7 @@ return [
 
     \Commercetools\Core\Model\Channel\Channel::class => [
         'draft' => \Commercetools\Core\Model\Channel\ChannelDraft::class,
-        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'repository' => \BestIt\CommercetoolsODM\Repository\ChannelRepository::class,
         'requestClassMap' => (new RequestMap())
             ->setCreate(\Commercetools\Core\Request\Channels\ChannelCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\Channels\ChannelDeleteRequest::class)
