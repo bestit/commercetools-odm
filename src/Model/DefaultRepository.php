@@ -402,7 +402,7 @@ class DefaultRepository implements ObjectRepository
         callable $onResolve = null,
         callable $onReject = null
     ): ApiResponseInterface {
-        return $this->findByAsync($criteria, 1, 0, $onResolve, $onReject);
+        return $this->findByAsync($criteria, [], 1, 0, $onResolve, $onReject);
     }
 
     /**
