@@ -29,10 +29,9 @@ use UnexpectedValueException;
 
 /**
  * The default repository for this commercetools package.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @subpackage $id$
- * @version $id$
  */
 class DefaultRepository implements ObjectRepository
 {
@@ -494,6 +493,26 @@ class DefaultRepository implements ObjectRepository
         }
 
         return $pool->addPromise($request)->then($onResolve, $onReject);
+    }
+
+    /**
+     * Shortcut to save the given model.
+     *
+     * @param mixed $model The saving model.
+     * @param bool $withFlush Should the document manager flush the buffer?
+     * @return mixed The "saved" model.
+     */
+    public function save($model, bool $withFlush = false)
+    {
+        $documentManager = $this->getDocumentManager();
+
+        $documentManager->persist($model);
+
+        if ($withFlush) {
+            $documentManager->flush();
+        }
+
+        return $model;
     }
 
     /**

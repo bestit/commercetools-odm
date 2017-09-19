@@ -101,9 +101,19 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
 
     /**
      * Returns the used commercetools client.
+     *
      * @return Client
      */
     public function getClient(): Client;
+
+    /**
+     * Returns the full qualified class name for the given request type.
+     *
+     * @param string $className The class name for which the request is fetched.
+     * @param string $requestType The type of the request or the request class name it self.
+     * @return string
+     */
+    public function getRequestClass(string $className, string $requestType): string;
 
     /**
      * Returns the common query helper from commercetools.

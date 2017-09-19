@@ -27,7 +27,7 @@ interface OrderRepositoryInterface extends ObjectRepository
      * @param bool $direct Should the deletion be deleted directly with a doc manager flush?
      * @return void
      */
-    public function deleteOrder(Order $order, bool $direct = true);
+    public function deleteOrder(Order $order, bool $direct = false);
 
     /**
      * Imports the given order.
@@ -35,11 +35,4 @@ interface OrderRepositoryInterface extends ObjectRepository
      * @return Order The imported order.
      */
     public function import(Order $order): Order;
-
-    /**
-     * Saves the given order.
-     * @param Order $order
-     * @param bool $direct Should the order be saved directly?
-     */
-    public function save(Order $order, bool $direct = true);
 }

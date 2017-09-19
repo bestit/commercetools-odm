@@ -17,18 +17,4 @@ use Commercetools\Core\Model\ProductType\ProductType;
 class ProductTypeRepository extends DefaultRepository implements ByKeySearchRepositoryInterface
 {
     use ByKeySearchRepositoryTrait;
-
-    /**
-     * Saves the given product tpe.
-     * @param ProductType $type
-     * @return ProductType
-     */
-    public function save(ProductType $type): ProductType
-    {
-        $this->getDocumentManager()->persist($type);
-
-        $this->getDocumentManager()->flush();
-
-        return $type;
-    }
 }

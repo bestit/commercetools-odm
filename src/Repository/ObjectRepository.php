@@ -87,6 +87,15 @@ interface ObjectRepository extends BasicInterface
     public function getExpands(): array;
 
     /**
+     * Shortcut to save the given model.
+     *
+     * @param mixed $model The saving model.
+     * @param bool $withFlush Should the document manager flush the buffer?
+     * @return mixed The "saved" model.
+     */
+    public function save($model, bool $withFlush = false);
+
+    /**
      * Set the elements which should be expanded.
      * @param array $expands
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.

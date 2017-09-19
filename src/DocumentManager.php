@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM;
 
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
@@ -15,7 +17,6 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Common\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ReflectionClass;
 
@@ -107,25 +108,7 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function createRequest(string $className, string $requestType = self::REQUEST_TYPE_QUERY, ...$args)
     {
-        if (!class_exists($requestType)) {
-            $metadata = $this->getClassMetadata($className);
-
-            if (!($metadata instanceof ClassMetadataInterface)) {
-                throw new InvalidArgumentException('The given metadata class was of the wrong type.');
-            }
-
-            $map = $metadata->getRequestClassMap();
-
-            if (!$map) {
-                throw new InvalidArgumentException(sprintf(
-                    'There is no request map for %s / %s.',
-                    $className,
-                    $requestType
-                ));
-            }
-
-            $requestType = $map->{'get' . $requestType}();
-        }
+        $requestType = $this->getRequestClass($className, $requestType);
 
         return (new ReflectionClass($requestType))->newInstanceArgs($args);
     }
@@ -204,6 +187,38 @@ class DocumentManager implements DocumentManagerInterface
     public function getRepository($className): ObjectRepository
     {
         return $this->repositoryFactory->getRepository($this, $className);
+    }
+
+    /**
+     * Returns the full qualified class name for the given request type.
+     *
+     * @param string $className The class name for which the request is fetched.
+     * @param string $requestType The type of the request or the request class name it self.
+     * @return string
+     */
+    public function getRequestClass(string $className, string $requestType): string
+    {
+        if (!class_exists($requestType)) {
+            $metadata = $this->getClassMetadata($className);
+
+            if (!($metadata instanceof ClassMetadataInterface)) {
+                throw new InvalidArgumentException('The given metadata class was of the wrong type.');
+            }
+
+            $map = $metadata->getRequestClassMap();
+
+            if (!$map) {
+                throw new InvalidArgumentException(sprintf(
+                    'There is no request map for %s / %s.',
+                    $className,
+                    $requestType
+                ));
+            }
+
+            $requestType = $map->{'get' . $requestType}();
+        }
+
+        return $requestType;
     }
 
     /**

@@ -92,18 +92,4 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
 
         return $importedOrder;
     }
-
-    /**
-     * Saves the given order.
-     * @param Order $order
-     * @param bool $direct Should the order be saved directly?
-     */
-    public function save(Order $order, bool $direct = true)
-    {
-        $this->getDocumentManager()->persist($order);
-
-        if ($direct) {
-            $this->getDocumentManager()->flush();
-        }
-    }
 }

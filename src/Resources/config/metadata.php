@@ -45,6 +45,7 @@ return [
             ->setDeleteById(\Commercetools\Core\Request\CustomObjects\CustomObjectDeleteRequest::class)
             ->setFindByContainerAndKey(\Commercetools\Core\Request\CustomObjects\CustomObjectByKeyGetRequest::class)
             ->setQuery(\Commercetools\Core\Request\CustomObjects\CustomObjectQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\CustomObjects\CustomObjectCreateRequest::class)
     ],
 
     \Commercetools\Core\Model\Customer\Customer::class => [

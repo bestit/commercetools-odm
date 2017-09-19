@@ -465,37 +465,51 @@ class UnitOfWork implements UnitOfWorkInterface
         $document,
         ClassMetadataInterface $metadata = null
     ): ClientRequestInterface {
+        $documentClass = get_class($document);
+
         if (!$metadata) {
             /** @var ClassMetadataInterface $metadata */
             $metadata = $this->getClassMetadata($document);
         }
 
-        $request = $this->getDocumentManager()->createRequest(
-            get_class($document),
-            DocumentManager::REQUEST_TYPE_UPDATE_BY_ID,
-            $document->getId(),
-            $document->getVersion()
+        $requestClass = $this->getDocumentManager()->getRequestClass(
+            $documentClass,
+            DocumentManager::REQUEST_TYPE_UPDATE_BY_ID
         );
 
-        $actions = $this->getActionBuilderProcessor()->createUpdateActions(
-            $metadata,
-            $changedData,
-            $oldData,
-            $document
-        );
+        if (method_exists($requestClass, 'ofObject')) {
+            $request = $requestClass::ofObject($document);
+        } else {
+            $request = $this->getDocumentManager()->createRequest(
+                $documentClass,
+                $requestClass,
+                $document->getId(),
+                $document->getVersion()
+            );
 
-        $this->getLogger()->debug(
-            'Created the update request.',
-            [
-                'actions' => $actions,
-                'objectId' => $document->getId(),
-                'objectKey' => $this->getKeyForObject($document),
-                'objectVersion' => $document->getVersion(),
-                'request' => get_class($request),
-            ]
-        );
 
-        return $request->setActions($actions);
+            $actions = $this->getActionBuilderProcessor()->createUpdateActions(
+                $metadata,
+                $changedData,
+                $oldData,
+                $document
+            );
+
+            $this->getLogger()->debug(
+                'Created the update request.',
+                [
+                    'actions' => $actions,
+                    'objectId' => $document->getId(),
+                    'objectKey' => $this->getKeyForObject($document),
+                    'objectVersion' => $document->getVersion(),
+                    'request' => get_class($request),
+                ]
+            );
+
+            $request->setActions($actions);
+        }
+
+        return $request;
     }
 
     /**
@@ -1325,6 +1339,7 @@ class UnitOfWork implements UnitOfWorkInterface
      * @ignore
      * @param object $document
      * @return bool
+     * @todo Add key/container clear.
      */
     private function removeFromIdentityMap($document)
     {
