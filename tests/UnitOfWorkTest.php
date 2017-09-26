@@ -54,6 +54,7 @@ use RuntimeException;
 
 /**
  * Class UnitOfWorkTest
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests
  */
@@ -525,6 +526,8 @@ class UnitOfWorkTest extends TestCase
      */
     public function testDetachEmpty()
     {
+        $this->getOneMockedMetadata(Order::class, false);
+
         static::assertCount(0, $this->fixture, 'There should be no entity.');
 
         $this->fixture->detach(new Order());
@@ -861,7 +864,7 @@ class UnitOfWorkTest extends TestCase
      */
     public function testRegisterAsManaged(): Order
     {
-        $this->getOneMockedMetadata(Order::class, 2);
+        $this->getOneMockedMetadata(Order::class, false);
 
         static::assertCount(0, $this->fixture, 'Start count failed.');
 
@@ -908,6 +911,8 @@ class UnitOfWorkTest extends TestCase
      */
     public function testRegisterAsManagedNew()
     {
+        $this->getOneMockedMetadata(Order::class, false);
+
         static::assertCount(0, $this->fixture, 'Start count failed.');
 
         static::assertSame(
@@ -1083,9 +1088,11 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if the new object is saved.
+     *
+     * @param bool $withDetach Is the detach used?
      * @return void
      */
-    public function testScheduleSaveNew($withDetach = false)
+    public function testScheduleSaveNew(bool $withDetach = false)
     {
         $type = new ProductType([
             'createdAt' => new DateTime(),
@@ -1126,8 +1133,15 @@ class UnitOfWorkTest extends TestCase
             ->willReturn(new ProductTypeCreateRequest(new ProductTypeDraft(['name' => $typeName])));
 
         $this
+            // TODO: Fix the redundant calls
             ->mockAndCheckInvokerCall($type, Events::PRE_PERSIST, $typeMetadata, 0)
-            ->mockAndCheckInvokerCall($type, Events::POST_PERSIST, $typeMetadata, 1);
+            ->mockAndCheckInvokerCall($type, Events::POST_REGISTER, $typeMetadata, 1)
+            ->mockAndCheckInvokerCall($type, Events::POST_REGISTER, $typeMetadata, 2)
+            ->mockAndCheckInvokerCall($type, Events::POST_PERSIST, $typeMetadata, 3);
+
+        if ($withDetach) {
+            $this->mockAndCheckInvokerCall($type, Events::POST_DETACH, $typeMetadata, 4);
+        }
 
         $this->fixture->scheduleSave($type);
 

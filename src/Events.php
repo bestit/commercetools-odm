@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM;
 
 /**
  * Event Storage for this odm.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @version $id$
  */
 final class Events
 {
@@ -39,6 +41,17 @@ final class Events
      * @var string
      */
     const PRE_UPDATE = 'preUpdate';
+
+    /**
+     * Event after the detach.
+     * @var string
+     */
+    const POST_DETACH = 'postDetach';
+
+    /**
+     * @var string Event after registering a document in the unit of work.
+     */
+    const POST_REGISTER = 'postRegister';
 
     /**
      * Event after the removal.

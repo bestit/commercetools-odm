@@ -211,7 +211,10 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function cleanQueue()
     {
-        $this->getLogger()->debug('Cleaned the queue.');
+        $this->getLogger()->debug(
+            'Cleaned the queue.',
+            ['memory' => memory_get_usage(true) / 1024 / 1024]
+        );
 
         $this->newDocuments = $this->scheduledRemovals = [];
     }
@@ -234,6 +237,7 @@ class UnitOfWork implements UnitOfWorkInterface
             'Extracted changed data from the object.',
             [
                 'changedData' => $changedData,
+                'memory' => memory_get_usage(true) / 1024 / 1024,
                 'newData' => $newData,
                 'objectKey' => $this->getKeyForObject($object),
                 'oldData' => $oldData
@@ -381,16 +385,16 @@ class UnitOfWork implements UnitOfWorkInterface
 
         // TODO Find in new objects.
 
-        if (@$id) {
-            $this->registerAsManaged($targetDocument, $id, @$version);
-        }
-
         $this->getListenerInvoker()->invoke(
             new LifecycleEventArgs($targetDocument, $this->getDocumentManager()),
             Events::POST_LOAD,
             $targetDocument,
             $metadata
         );
+
+        if (@$id) {
+            $this->registerAsManaged($targetDocument, $id, @$version);
+        }
 
         return $targetDocument;
     }
@@ -499,6 +503,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 'Created the update request.',
                 [
                     'actions' => $actions,
+                    'memory' => memory_get_usage(true) / 1024 / 1024,
                     'objectId' => $document->getId(),
                     'objectKey' => $this->getKeyForObject($document),
                     'objectVersion' => $document->getVersion(),
@@ -549,7 +554,14 @@ class UnitOfWork implements UnitOfWorkInterface
             $this->removeFromIdentityMap($object);
             $this->cascadeDetach($object, $visited);
 
-            unset($this->newDocuments[$oid]);
+            unset($this->newDocuments[$oid], $this->originalEntityData[$oid]);
+
+            $this->getListenerInvoker()->invoke(
+                new LifecycleEventArgs($object, $this->getDocumentManager()),
+                Events::POST_DETACH,
+                $object,
+                $this->getClassMetadata($object)
+            );
         }
     }
 
@@ -708,7 +720,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
         $logger = $this->getLogger();
 
-        $logger->debug('Flushes the batch.');
+        $logger->debug(
+            'Flushes the batch.',
+            ['memory' => memory_get_usage(true) / 1024 / 1024]
+        );
 
         if ($batchResponses = $this->getClient()->executeBatch()) {
             $this->processResponsesFromBatch($batchResponses);
@@ -856,7 +871,8 @@ class UnitOfWork implements UnitOfWorkInterface
             $this->getLogger()->debug(
                 'Received an error and throws it as an exception.',
                 [
-                    'exception' => $exception
+                    'exception' => $exception,
+                    'memory' => memory_get_usage(true) / 1024 / 1024
                 ]
             );
 
@@ -1232,7 +1248,6 @@ class UnitOfWork implements UnitOfWorkInterface
 
             // We need to do these things immediately.
             $this->registerAsManaged($document, $document->getId(), $document->getVersion());
-            $this->processDeferredDetach($document);
 
             // TODO Everything has a version?
             $this->getListenerInvoker()->invoke(
@@ -1241,6 +1256,8 @@ class UnitOfWork implements UnitOfWorkInterface
                 $document,
                 $this->getClassMetadata($document)
             );
+
+            $this->processDeferredDetach($document);
         }
     }
 
@@ -1251,13 +1268,17 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processResponsesFromBatch(array $batchResponses)
     {
-        $this->getLogger()->debug('Handling batch responses.', ['responseCount' => count($batchResponses)]);
+        $this->getLogger()->debug(
+            'Handling batch responses.',
+            ['memory' => memory_get_usage(true) / 1024 / 1024, 'responseCount' => count($batchResponses)]
+        );
 
         /** @var ApiResponseInterface $response */
         foreach ($batchResponses as $key => $response) {
             $this->getLogger()->debug(
                 'Got a batch response.',
                 [
+                    'memory' => memory_get_usage(true) / 1024 / 1024,
                     'objectId' => $key,
                     'response' => $response->getResponse(),
                     'request' => $response->getRequest(),
@@ -1307,6 +1328,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Registers the given document as managed.
+     *
      * @param object $document
      * @param string|int $identifier
      * @param mixed|null $revision
@@ -1327,6 +1349,13 @@ class UnitOfWork implements UnitOfWorkInterface
         } else {
             $this->newDocuments[$oid] = $document;
         }
+
+        $this->getListenerInvoker()->invoke(
+            new LifecycleEventArgs($document, $this->getDocumentManager()),
+            Events::POST_REGISTER,
+            $document,
+            $this->getClassMetadata($document)
+        );
 
         return $this;
     }

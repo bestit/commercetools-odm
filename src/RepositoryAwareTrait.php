@@ -15,13 +15,15 @@ use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 trait RepositoryAwareTrait
 {
     /**
-     * The used repository.
-     * @var ObjectRepository|null
+     * @var ObjectRepository|null The used repository.
      */
-    private $repository;
+    protected $repository = null;
 
     /**
      * Returns the used repository.
+     *
+     * This getter exists to provide you a type safe way.
+     *
      * @return ObjectRepository
      */
     public function getRepository(): ObjectRepository
@@ -31,6 +33,7 @@ trait RepositoryAwareTrait
 
     /**
      * Sets the used repository.
+     *
      * @param ObjectRepository $repository The used repository.
      * @return $this
      */
