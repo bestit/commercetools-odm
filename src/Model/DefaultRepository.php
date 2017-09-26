@@ -179,7 +179,7 @@ class DefaultRepository implements ObjectRepository
             });
         }
 
-        foreach($this->filters as $filterKey) {
+        foreach ($this->filters as $filterKey) {
             $this->getFilterManager()->apply($filterKey, $request);
         }
 
@@ -202,7 +202,7 @@ class DefaultRepository implements ObjectRepository
 
         $this->addExpandsToRequest($request);
 
-        foreach($this->filters as $filterKey) {
+        foreach ($this->filters as $filterKey) {
             $this->getFilterManager()->apply($filterKey, $request);
         }
 
