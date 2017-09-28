@@ -116,8 +116,10 @@ class AddLineItemTest extends TestCase
 
         $value = [
             'price' => [
-                'currencyCode' => $currency = 'EUR',
-                'centAmount' => $centAmount = 50000,
+                'value' => [
+                    'currencyCode' => $currency = 'EUR',
+                    'centAmount' => $centAmount = 50000,
+                ]
             ],
             'priceMode' => 'ExternalPrice',
             'productId' => '444',
