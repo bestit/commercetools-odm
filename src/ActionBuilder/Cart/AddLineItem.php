@@ -65,7 +65,7 @@ class AddLineItem extends ActionBuilderAbstract
         }
 
         if ((array_key_exists('priceMode', $changedValue) && ($changedValue['priceMode'] === 'ExternalPrice'))) {
-            $cartAddLineItemAction['externalPrice'] = $changedValue['price'];
+            $cartAddLineItemAction['externalPrice'] = $changedValue['price']['value'];
         }
 
         $action = CartAddLineItemAction::fromArray($cartAddLineItemAction);
