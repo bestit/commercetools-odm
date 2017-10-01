@@ -80,8 +80,12 @@ class AddLineItem extends ActionBuilderAbstract
 
         $action = CartAddLineItemAction::fromArray($cartAddLineItemAction);
 
-        if (isset($changedValue['distributionChannel']['id'])) {
-            $action->setDistributionChannel(ChannelReference::ofId($changedValue['distributionChannel']['id']));
+        if (isset($changedValue['distributionChannel'])) {
+            if (isset($changedValue['distributionChannel']['id'])) {
+                $action->setDistributionChannel(ChannelReference::ofId($changedValue['distributionChannel']['id']));
+            } elseif (isset($changedValue['distributionChannel']['key'])) {
+                $action->setDistributionChannel(ChannelReference::ofKey($changedValue['distributionChannel']['key']));
+            }
         }
 
         return [$action];
