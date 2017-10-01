@@ -112,13 +112,22 @@ class AddLineItemTest extends TestCase
      */
     public function testAddExternalPrice()
     {
-        $cart = new Cart();
+        $currency = 'EUR';
 
         $value = [
             'price' => [
+                'tiers' => [
+                    [
+                        'minimumQuantity' => 10,
+                        'value' => [
+                            'currencyCode' => $currency,
+                            'centAmount' => $centAmountTier = 40000,
+                        ]
+                    ]
+                ],
                 'value' => [
-                    'currencyCode' => $currency = 'EUR',
-                    'centAmount' => $centAmount = 50000,
+                    'currencyCode' => $currency,
+                    'centAmount' => $centAmountDefault = 50000,
                 ]
             ],
             'priceMode' => 'ExternalPrice',
@@ -126,14 +135,14 @@ class AddLineItemTest extends TestCase
             'variant' => [
                 'id' => 1
             ],
-            'quantity' => 2,
+            'quantity' => 20,
         ];
 
         $actions = $this->createAndTestSingleAddAction($value);
 
         static::assertInstanceOf(Money::class, $money = $actions[0]->getExternalPrice());
         static::assertSame($currency, $money->getCurrencyCode());
-        static::assertSame($centAmount, $money->getCentAmount());
+        static::assertSame($centAmountTier, $money->getCentAmount());
     }
 
     /**

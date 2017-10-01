@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace BestIt\CommercetoolsODM\ActionBuilder\Cart;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
+use BestIt\CommercetoolsODM\Helper\PriceHelperTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Cart\Cart;
+use Commercetools\Core\Model\Cart\LineItem;
 use Commercetools\Core\Model\Channel\ChannelReference;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Carts\Command\CartAddLineItemAction;
@@ -19,6 +21,8 @@ use Commercetools\Core\Request\Carts\Command\CartAddLineItemAction;
  */
 class AddLineItem extends ActionBuilderAbstract
 {
+    use PriceHelperTrait;
+
     /**
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
@@ -64,8 +68,14 @@ class AddLineItem extends ActionBuilderAbstract
             $cartAddLineItemAction['custom'] = $changedValue['custom'];
         }
 
-        if ((array_key_exists('priceMode', $changedValue) && ($changedValue['priceMode'] === 'ExternalPrice'))) {
-            $cartAddLineItemAction['externalPrice'] = $changedValue['price']['value'];
+        if (array_key_exists('priceMode', $changedValue)
+            && $changedValue['priceMode'] === LineItem::PRICE_MODE_EXTERNAL_PRICE
+            && array_key_exists('price', $changedValue)
+        ) {
+            $cartAddLineItemAction['externalPrice'] = $this->getCorrectPrice(
+                $changedValue['price'],
+                $changedValue['quantity']
+            );
         }
 
         $action = CartAddLineItemAction::fromArray($cartAddLineItemAction);
