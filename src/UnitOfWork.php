@@ -1186,62 +1186,23 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processPersistResponse(string $objectId, ApiResponseInterface $response)
     {
-        $this->getLogger()->info('Persisted object.', ['objectId' => $objectId]);
-
         $statusCode = $response->getStatusCode();
+
+        $this->getLogger()->info(
+            'Persisted object.',
+            ['objectId' => $objectId, 'statusCode' => $statusCode]
+        );
 
         if ($statusCode >= 200 && $statusCode < 300) {
             if ($statusCode === 200) {
                 $document = @$this->identityMap[$objectId] ?? ($this->newDocuments[$objectId] ?? $response->toObject());
-                $mappedResponse = $response->toObject();
-                /** @var ClassMetadataInterface $metadata */
-                $metadata = $this->getClassMetadata($document);
 
-                if ($document instanceof Customer) {
-                    $document->setAddresses($mappedResponse->getAddresses());
-                }
-
-                if ($metadata->isCTStandardModel()) {
-                    $document
-                        ->setId($mappedResponse->getId())
-                        ->setversion($mappedResponse->getVersion());
-                } else {
-                    if ($versionField = $metadata->getVersion()) {
-                        $document->{'set' . ucfirst($versionField)}($mappedResponse->getVersion());
-                    }
-
-                    if ($idField = $metadata->getIdentifier()) {
-                        $document->{'set' . ucfirst($idField)}($mappedResponse->getId());
-                    }
-                }
+                $this->updateWorkingObjectWithResponse($document, $response->toObject());
             } elseif ($statusCode === 201) {
                 // Handle the new rows.
                 $document = $this->newDocuments[$objectId];
-                $mappedResponse = $response->toObject();
-                /** @var ClassMetadataInterface $metadata */
-                $metadata = $this->getClassMetadata($document);
 
-                if ($mappedResponse instanceof CustomerSigninResult) {
-                    $mappedResponse = $mappedResponse->getCustomer();
-
-                    if ($document instanceof Customer) {
-                        $document->setAddresses($mappedResponse->getAddresses());
-                    }
-                }
-
-                if ($metadata->isCTStandardModel()) {
-                    $document
-                        ->setId($mappedResponse->getId())
-                        ->setversion($mappedResponse->getVersion());
-                } else {
-                    if ($versionField = $metadata->getVersion()) {
-                        $document->{'set' . ucfirst($versionField)}($mappedResponse->getVersion());
-                    }
-
-                    if ($idField = $metadata->getIdentifier()) {
-                        $document->{'set' . ucfirst($idField)}($mappedResponse->getId());
-                    }
-                }
+                $this->updateWorkingObjectWithResponse($document, $response->toObject());
 
                 unset($this->newDocuments[$objectId]);
             }
@@ -1514,5 +1475,47 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         return $return;
+    }
+
+    /**
+     * There is no public working and safe api to update a ct object with the data of another one, so use own mapping.
+     *
+     * @param mixed $document The working object.
+     * @param JsonObject $mappedResponse The ct response.
+     * @return mixed
+     * @todo Refactor to mapper.
+     */
+    private function updateWorkingObjectWithResponse($document, JsonObject $mappedResponse)
+    {
+        /** @var ClassMetadataInterface $metadata */
+        $metadata = $this->getClassMetadata($document);
+
+        if ($mappedResponse instanceof CustomerSigninResult) {
+            $mappedResponse = $mappedResponse->getCustomer();
+        }
+
+        if ($metadata->isCTStandardModel()) {
+            foreach ($document->fieldDefinitions() as $field => $fieldDefinition) {
+                $newValue = $mappedResponse->{'get' . upperCaseFirst($field)}();
+
+                if ($newValue instanceof DateTimeDecorator) {
+                    $newValue = $newValue->getDateTime();
+                }
+
+                if ($newValue !== null) {
+                    $document->{'set' . upperCaseFirst($field)}($newValue);
+                }
+            }
+        } else {
+            if ($versionField = $metadata->getVersion()) {
+                $document->{'set' . ucfirst($versionField)}($mappedResponse->getVersion());
+            }
+
+            if ($idField = $metadata->getIdentifier()) {
+                $document->{'set' . ucfirst($idField)}($mappedResponse->getId());
+            }
+        }
+
+        return $document;
     }
 }
