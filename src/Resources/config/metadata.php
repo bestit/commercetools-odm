@@ -59,6 +59,17 @@ return [
             ->setUpdateById(\Commercetools\Core\Request\Customers\CustomerUpdateRequest::class)
     ],
 
+    \Commercetools\Core\Model\Inventory\InventoryEntry::class => [
+        'draft' => \Commercetools\Core\Model\Inventory\InventoryDraft::class,
+        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Inventory\InventoryCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Inventory\InventoryDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Inventory\InventoryByIdGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Inventory\InventoryQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Inventory\InventoryUpdateRequest::class)
+    ],
+
     \Commercetools\Core\Model\Order\Order::class => [
         'repository' => \BestIt\CommercetoolsODM\Repository\OrderRepository::class,
         'requestClassMap' => (new RequestMap())
