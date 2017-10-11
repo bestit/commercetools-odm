@@ -69,6 +69,7 @@ class AddLineItem extends ActionBuilderAbstract
         }
 
         if (array_key_exists('priceMode', $changedValue)
+            && defined('Commercetools\Core\Model\Cart\LineItem::PRICE_MODE_EXTERNAL_PRICE')
             && $changedValue['priceMode'] === LineItem::PRICE_MODE_EXTERNAL_PRICE
             && array_key_exists('price', $changedValue)
         ) {
