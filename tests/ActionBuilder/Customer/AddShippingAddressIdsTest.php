@@ -6,6 +6,7 @@ use BestIt\CommercetoolsODM\ActionBuilder\Customer\CustomerActionBuilder;
 use BestIt\CommercetoolsODM\ActionBuilder\Customer\AddShippingAddressIds;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
+use Commercetools\Core\Model\Common\AddressCollection;
 use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Request\Customers\Command\CustomerAddShippingAddressAction;
 use PHPUnit\Framework\TestCase;
@@ -56,7 +57,6 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * Checks if new addresses are added.
-     * @covers AddShippingAddressIds::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsIgnoreOldAddresses()
@@ -70,7 +70,7 @@ class AddShippingAddressIdsTest extends TestCase
                 $oldId1 = uniqid('', true),
                 $oldId2 = uniqid('', true),
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             ['shippingAddressIds' => [$oldId1, $oldId2]],
             $customer
@@ -81,22 +81,26 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * Checks if new addresses are added.
-     * @covers AddShippingAddressIds::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsAddOnlyNewAddresses()
     {
         $customer = new Customer();
 
+        $customer->setAddresses(AddressCollection::fromArray([
+            ['id' => $newId1 = uniqid('', true)],
+            ['id' => $newId2 = uniqid('', true)],
+        ]));
+
         $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
 
         $actions = $this->fixture->createUpdateActions(
             [
-                $newId1 = uniqid('', true),
-                $newId2 = uniqid('', true),
+                $newId1,
+                $newId2,
                 $oldId = uniqid('', true)
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'shippingAddressIds' => [

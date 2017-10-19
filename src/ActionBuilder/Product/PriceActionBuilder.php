@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 /**
  * Builder for price actions of a product.
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Product
- * @version $id$
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  */
 abstract class PriceActionBuilder extends ProductActionBuilder
 {

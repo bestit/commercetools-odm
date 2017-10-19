@@ -32,7 +32,6 @@ use Commercetools\Core\Model\Product\ProductVariantDraft;
 use Commercetools\Core\Model\Type\TypeReference;
 use Commercetools\Core\Request\AbstractDeleteRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
-use Commercetools\Core\Response\AbstractApiResponse;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use DateTime;
@@ -212,7 +211,10 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function cleanQueue()
     {
-        $this->getLogger()->debug('Cleaned the queue.');
+        $this->getLogger()->debug(
+            'Cleaned the queue.',
+            ['memory' => memory_get_usage(true) / 1024 / 1024]
+        );
 
         $this->newDocuments = $this->scheduledRemovals = [];
     }
@@ -222,6 +224,7 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param ClassMetadataInterface $metadata
      * @param object $object
      * @return ClientRequestInterface|null
+     * @todo Topmost array should be used as a whole.
      */
     private function computeChangedObject(ClassMetadataInterface $metadata, $object)
     {
@@ -234,6 +237,7 @@ class UnitOfWork implements UnitOfWorkInterface
             'Extracted changed data from the object.',
             [
                 'changedData' => $changedData,
+                'memory' => memory_get_usage(true) / 1024 / 1024,
                 'newData' => $newData,
                 'objectKey' => $this->getKeyForObject($object),
                 'oldData' => $oldData
@@ -256,6 +260,13 @@ class UnitOfWork implements UnitOfWorkInterface
             $state = $this->getDocumentState($object);
 
             if ($state == self::STATE_MANAGED) {
+                $this->getListenerInvoker()->invoke(
+                    new LifecycleEventArgs($object, $this->getDocumentManager()),
+                    Events::PRE_PERSIST,
+                    $object,
+                    $this->getClassMetadata($object)
+                );
+
                 $updateRequest = $this->computeChangedObject($this->getClassMetadata($object), $object);
 
                 if ($updateRequest) {
@@ -374,16 +385,16 @@ class UnitOfWork implements UnitOfWorkInterface
 
         // TODO Find in new objects.
 
-        if (@$id) {
-            $this->registerAsManaged($targetDocument, $id, @$version);
-        }
-
         $this->getListenerInvoker()->invoke(
             new LifecycleEventArgs($targetDocument, $this->getDocumentManager()),
             Events::POST_LOAD,
             $targetDocument,
             $metadata
         );
+
+        if (@$id) {
+            $this->registerAsManaged($targetDocument, $id, @$version);
+        }
 
         return $targetDocument;
     }
@@ -458,37 +469,52 @@ class UnitOfWork implements UnitOfWorkInterface
         $document,
         ClassMetadataInterface $metadata = null
     ): ClientRequestInterface {
+        $documentClass = get_class($document);
+
         if (!$metadata) {
             /** @var ClassMetadataInterface $metadata */
             $metadata = $this->getClassMetadata($document);
         }
 
-        $request = $this->getDocumentManager()->createRequest(
-            get_class($document),
-            DocumentManager::REQUEST_TYPE_UPDATE_BY_ID,
-            $document->getId(),
-            $document->getVersion()
+        $requestClass = $this->getDocumentManager()->getRequestClass(
+            $documentClass,
+            DocumentManager::REQUEST_TYPE_UPDATE_BY_ID
         );
 
-        $actions = $this->getActionBuilderProcessor()->createUpdateActions(
-            $metadata,
-            $changedData,
-            $oldData,
-            $document
-        );
+        if (method_exists($requestClass, 'ofObject')) {
+            $request = $requestClass::ofObject($document);
+        } else {
+            $request = $this->getDocumentManager()->createRequest(
+                $documentClass,
+                $requestClass,
+                $document->getId(),
+                $document->getVersion()
+            );
 
-        $this->getLogger()->debug(
-            'Created the update request.',
-            [
-                'actions' => $actions,
-                'objectId' => $document->getId(),
-                'objectKey' => $this->getKeyForObject($document),
-                'objectVersion' => $document->getVersion(),
-                'request' => get_class($request),
-            ]
-        );
 
-        return $request->setActions($actions);
+            $actions = $this->getActionBuilderProcessor()->createUpdateActions(
+                $metadata,
+                $changedData,
+                $oldData,
+                $document
+            );
+
+            $this->getLogger()->debug(
+                'Created the update request.',
+                [
+                    'actions' => $actions,
+                    'memory' => memory_get_usage(true) / 1024 / 1024,
+                    'objectId' => $document->getId(),
+                    'objectKey' => $this->getKeyForObject($document),
+                    'objectVersion' => $document->getVersion(),
+                    'request' => get_class($request),
+                ]
+            );
+
+            $request->setActions($actions);
+        }
+
+        return $request;
     }
 
     /**
@@ -526,8 +552,16 @@ class UnitOfWork implements UnitOfWorkInterface
             $this->getDetachQueue()->detach($object);
 
             $this->removeFromIdentityMap($object);
-
             $this->cascadeDetach($object, $visited);
+
+            unset($this->newDocuments[$oid], $this->originalEntityData[$oid]);
+
+            $this->getListenerInvoker()->invoke(
+                new LifecycleEventArgs($object, $this->getDocumentManager()),
+                Events::POST_DETACH,
+                $object,
+                $this->getClassMetadata($object)
+            );
         }
     }
 
@@ -595,22 +629,31 @@ class UnitOfWork implements UnitOfWorkInterface
      * Extracts the changes of the two arrays.
      * @param array $newData
      * @param array $oldData
+     * @param string $parentKey The hierarchy key for the parent of the checked data.
      * @return array
      */
-    private function extractChanges(array $newData, array $oldData): array
+    private function extractChanges(array $newData, array $oldData, string $parentKey = ''): array
     {
         $changedData = [];
 
         foreach ($newData as $key => $value) {
-            if (is_array($value)) {
-                $changedSubData = $this->extractChanges($value, $oldData[$key] ?? []);
+            // We use the name attribute to check for a nested set, because we do not have something else.
+            if (is_array($value) && $this->hasNestedArray($value)) {
+                $changedSubData = $this->extractChanges(
+                    $value,
+                    $oldData[$key] ?? [],
+                    ltrim($parentKey . '/' . $key, '/')
+                );
 
                 // We think that an empty value can be ignored, except if we want to _add_ a new value.
                 if ($changedSubData || !array_key_exists($key, $oldData)) {
                     $changedData[$key] = $changedSubData;
                 }
             } else {
-                if ((!array_key_exists($key, $oldData)) || ($value !== $oldData[$key])) {
+                if ((!array_key_exists($key, $oldData)) || (($value !== $oldData[$key]) &&
+                        // Sometimes the sdk parses an int to float.
+                        (!is_numeric($value) || ((float)$value !== (float)$oldData[$key])))
+                ) {
                     $changedData[$key] = $value;
                 }
             }
@@ -677,7 +720,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
         $logger = $this->getLogger();
 
-        $logger->debug('Flushes the batch.');
+        $logger->debug(
+            'Flushes the batch.',
+            ['memory' => memory_get_usage(true) / 1024 / 1024]
+        );
 
         if ($batchResponses = $this->getClient()->executeBatch()) {
             $this->processResponsesFromBatch($batchResponses);
@@ -825,7 +871,8 @@ class UnitOfWork implements UnitOfWorkInterface
             $this->getLogger()->debug(
                 'Received an error and throws it as an exception.',
                 [
-                    'exception' => $exception
+                    'exception' => $exception,
+                    'memory' => memory_get_usage(true) / 1024 / 1024
                 ]
             );
 
@@ -833,6 +880,38 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         return false;
+    }
+
+    /**
+     * Checks if the given array is an associative one or has other array childs.
+     * @param array $array
+     * @return bool
+     */
+    private function hasNestedArray(array $array): bool
+    {
+        $isNested = false;
+
+        foreach ($array as $key => $value) {
+            if (is_array($value) || !is_numeric($key)) {
+                $isNested = true;
+                break;
+            }
+        }
+
+        return $isNested;
+    }
+
+    /**
+     * We should not deep iterate into simple value arrays, so check, if the given value array is "the end".
+     * @param string $key
+     * @param array $value
+     * @return bool
+     */
+    private function isSimpleAttributeArray(string $key, array $value): bool
+    {
+        // The simple value array must be a direct child of the attributes themselves or an nested attribute which is
+        // contained in an attribute value.
+        return preg_match('~(attributes|value)/\w+/value$~', $key) === 1 && !$this->hasNestedArray($value);
     }
 
     /**
@@ -1107,69 +1186,29 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processPersistResponse(string $objectId, ApiResponseInterface $response)
     {
-        $this->getLogger()->info('Persisted object.', ['objectId' => $objectId]);
-
         $statusCode = $response->getStatusCode();
+
+        $this->getLogger()->info(
+            'Persisted object.',
+            ['objectId' => $objectId, 'statusCode' => $statusCode]
+        );
 
         if ($statusCode >= 200 && $statusCode < 300) {
             if ($statusCode === 200) {
-                $document = @$this->identityMap[$objectId] ?? $response->toObject();
-                $mappedResponse = $response->toObject();
-                /** @var ClassMetadataInterface $metadata */
-                $metadata = $this->getClassMetadata($document);
+                $document = @$this->identityMap[$objectId] ?? ($this->newDocuments[$objectId] ?? $response->toObject());
 
-                if ($document instanceof Customer) {
-                    $document->setAddresses($mappedResponse->getAddresses());
-                }
-
-                if ($metadata->isCTStandardModel()) {
-                    $document
-                        ->setId($mappedResponse->getId())
-                        ->setversion($mappedResponse->getVersion());
-                } else {
-                    if ($versionField = $metadata->getVersion()) {
-                        $document->{'set' . ucfirst($versionField)}($mappedResponse->getVersion());
-                    }
-
-                    if ($idField = $metadata->getIdentifier()) {
-                        $document->{'set' . ucfirst($idField)}($mappedResponse->getId());
-                    }
-                }
+                $this->updateWorkingObjectWithResponse($document, $response->toObject());
             } elseif ($statusCode === 201) {
                 // Handle the new rows.
                 $document = $this->newDocuments[$objectId];
-                $mappedResponse = $response->toObject();
-                /** @var ClassMetadataInterface $metadata */
-                $metadata = $this->getClassMetadata($document);
 
-                if ($mappedResponse instanceof CustomerSigninResult) {
-                    $mappedResponse = $mappedResponse->getCustomer();
-
-                    if ($document instanceof Customer) {
-                        $document->setAddresses($mappedResponse->getAddresses());
-                    }
-                }
-
-                if ($metadata->isCTStandardModel()) {
-                    $document
-                        ->setId($mappedResponse->getId())
-                        ->setversion($mappedResponse->getVersion());
-                } else {
-                    if ($versionField = $metadata->getVersion()) {
-                        $document->{'set' . ucfirst($versionField)}($mappedResponse->getVersion());
-                    }
-
-                    if ($idField = $metadata->getIdentifier()) {
-                        $document->{'set' . ucfirst($idField)}($mappedResponse->getId());
-                    }
-                }
+                $this->updateWorkingObjectWithResponse($document, $response->toObject());
 
                 unset($this->newDocuments[$objectId]);
             }
 
             // We need to do these things immediately.
             $this->registerAsManaged($document, $document->getId(), $document->getVersion());
-            $this->processDeferredDetach($document);
 
             // TODO Everything has a version?
             $this->getListenerInvoker()->invoke(
@@ -1178,6 +1217,8 @@ class UnitOfWork implements UnitOfWorkInterface
                 $document,
                 $this->getClassMetadata($document)
             );
+
+            $this->processDeferredDetach($document);
         }
     }
 
@@ -1188,13 +1229,17 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processResponsesFromBatch(array $batchResponses)
     {
-        $this->getLogger()->debug('Handling batch responses.', ['responseCount' => count($batchResponses)]);
+        $this->getLogger()->debug(
+            'Handling batch responses.',
+            ['memory' => memory_get_usage(true) / 1024 / 1024, 'responseCount' => count($batchResponses)]
+        );
 
         /** @var ApiResponseInterface $response */
         foreach ($batchResponses as $key => $response) {
             $this->getLogger()->debug(
                 'Got a batch response.',
                 [
+                    'memory' => memory_get_usage(true) / 1024 / 1024,
                     'objectId' => $key,
                     'response' => $response->getResponse(),
                     'request' => $response->getRequest(),
@@ -1244,6 +1289,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Registers the given document as managed.
+     *
      * @param object $document
      * @param string|int $identifier
      * @param mixed|null $revision
@@ -1265,6 +1311,13 @@ class UnitOfWork implements UnitOfWorkInterface
             $this->newDocuments[$oid] = $document;
         }
 
+        $this->getListenerInvoker()->invoke(
+            new LifecycleEventArgs($document, $this->getDocumentManager()),
+            Events::POST_REGISTER,
+            $document,
+            $this->getClassMetadata($document)
+        );
+
         return $this;
     }
 
@@ -1276,6 +1329,7 @@ class UnitOfWork implements UnitOfWorkInterface
      * @ignore
      * @param object $document
      * @return bool
+     * @todo Add key/container clear.
      */
     private function removeFromIdentityMap($document)
     {
@@ -1421,5 +1475,47 @@ class UnitOfWork implements UnitOfWorkInterface
         }
 
         return $return;
+    }
+
+    /**
+     * There is no public working and safe api to update a ct object with the data of another one, so use own mapping.
+     *
+     * @param mixed $document The working object.
+     * @param JsonObject $mappedResponse The ct response.
+     * @return mixed
+     * @todo Refactor to mapper.
+     */
+    private function updateWorkingObjectWithResponse($document, JsonObject $mappedResponse)
+    {
+        /** @var ClassMetadataInterface $metadata */
+        $metadata = $this->getClassMetadata($document);
+
+        if ($mappedResponse instanceof CustomerSigninResult) {
+            $mappedResponse = $mappedResponse->getCustomer();
+        }
+
+        if ($metadata->isCTStandardModel()) {
+            foreach ($document->fieldDefinitions() as $field => $fieldDefinition) {
+                $newValue = $mappedResponse->{'get' . upperCaseFirst($field)}();
+
+                if ($newValue instanceof DateTimeDecorator) {
+                    $newValue = $newValue->getDateTime();
+                }
+
+                if ($newValue !== null) {
+                    $document->{'set' . upperCaseFirst($field)}($newValue);
+                }
+            }
+        } else {
+            if ($versionField = $metadata->getVersion()) {
+                $document->{'set' . ucfirst($versionField)}($mappedResponse->getVersion());
+            }
+
+            if ($idField = $metadata->getIdentifier()) {
+                $document->{'set' . ucfirst($idField)}($mappedResponse->getId());
+            }
+        }
+
+        return $document;
     }
 }

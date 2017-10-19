@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\ActionBuilder\Customer;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Request\Customers\Command\CustomerAddShippingAddressAction;
 
 /**
@@ -26,7 +27,7 @@ class AddShippingAddressIds extends CustomerActionBuilder
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
-     * @param mixed $sourceObject
+     * @param Customer $sourceObject
      * @return AbstractAction[]
      */
     public function createUpdateActions(
@@ -39,11 +40,12 @@ class AddShippingAddressIds extends CustomerActionBuilder
         $actions = [];
 
         if ($changedValue && is_array($changedValue)) {
+            $addresses = $sourceObject->getAddresses();
             $fieldName = $this->getFieldName();
 
             foreach ($changedValue as $id) {
                 if ((!array_key_exists($fieldName, $oldData)) || (!is_array($oldData[$fieldName])) ||
-                    (!in_array($id, $oldData[$fieldName]))
+                    (!in_array($id, $oldData[$fieldName])) && ($addresses->getById($id))
                 ) {
                     $actions[] = (new CustomerAddShippingAddressAction())->setAddressId($id);
                 }

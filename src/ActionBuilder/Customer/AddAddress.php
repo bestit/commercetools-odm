@@ -1,26 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\ActionBuilder\Customer;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Address;
+use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Customers\Command\CustomerAddAddressAction;
 
 /**
  * Adds an address.
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Customer
- * @version $id$
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
  */
-class AddAddress extends CustomerActionBuilder
+class AddAddress extends AddressActionBuilder
 {
-    /**
-     * Matches to the address element.
-     * @var string
-     */
-    protected $complexFieldFilter = '^addresses/\d*$';
-
     /**
      * Creates the update actions for the given class and data.
      * @param array $changedValue
@@ -39,7 +34,11 @@ class AddAddress extends CustomerActionBuilder
     ): array {
         $actions = [];
 
-        if ((!array_key_exists('id', $changedValue)) || (!$changedValue['id'])) {
+        list(, $addressIndex) = $this->getLastFoundMatch();
+
+        if (is_array($changedValue) && (!array_key_exists($addressIndex, $oldData['addresses'])) &&
+            (!array_key_exists('id', $changedValue))
+        ) {
             $actions[] = CustomerAddAddressAction::ofAddress(Address::fromArray($changedValue));
         }
 

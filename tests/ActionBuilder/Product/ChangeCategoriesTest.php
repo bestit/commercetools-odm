@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\ActionBuilder\Product\ChangeCategories;
@@ -8,17 +10,13 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductAddToCategoryAction;
-use Commercetools\Core\Request\Products\Command\ProductChangeCategoriesAction;
 use Commercetools\Core\Request\Products\Command\ProductRemoveFromCategoryAction;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class ChangeCategoriesTest
  * @author blange <lange@bestit-online.de>
- * @cstegory Tests
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Product
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  */
 class ChangeCategoriesTest extends TestCase
 {
@@ -26,9 +24,9 @@ class ChangeCategoriesTest extends TestCase
 
     /**
      * The tested class.
-     * @var ChangeCategories
+     * @var ChangeCategories|null
      */
-    protected $fixture = null;
+    protected $fixture;
 
     /**
      * Returns assertions for the create call.
@@ -72,13 +70,13 @@ class ChangeCategoriesTest extends TestCase
     }
 
     /**
-     * Checks if the action is rendered correctly.
+     * Checks if old ids are removed and new ones added.
      * @dataProvider getCreateAssertions
      * @param string $path
      * @param bool $staged
      * @return void
      */
-    public function testCreateUpdateActions(string $path, bool $staged = true)
+    public function testCreateUpdateActionsWithOldData(string $path, bool $staged = true)
     {
         $this->fixture->supports($path, Product::class);
 
@@ -92,7 +90,7 @@ class ChangeCategoriesTest extends TestCase
                     'id' => $newCatId2 = uniqid()
                 ]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [
@@ -142,6 +140,59 @@ class ChangeCategoriesTest extends TestCase
             );
 
             static::assertSame($staged, $actions[$actionIndex]->getStaged(), 'Wrong staged ' . $actionIndex);
+        }
+    }
+
+    /**
+     * Checks if new ones are added.
+     * @dataProvider getCreateAssertions
+     * @param string $path
+     * @param bool $staged
+     * @return void
+     */
+    public function testCreateUpdateActionsWithoutOldData(string $path, bool $staged = true)
+    {
+        $this->fixture->supports($path, Product::class);
+
+        $checkCats = [];
+        $actions = $this->fixture->createUpdateActions(
+            [
+                [
+                    'id' => $checkCats[] = uniqid(),
+                ],
+                null,
+                [
+                    'id' => $checkCats[] = uniqid()
+                ]
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'masterData' => [
+                    $staged ? 'staged' : 'current' => [
+                        'categories' => []
+                    ]
+                ]
+            ],
+            new Product()
+        );
+
+        static::assertCount(2, $actions, 'Wrong action count.');
+
+        foreach ($checkCats as $index => $checkCatId) {
+            static::assertInstanceOf(
+                ProductAddToCategoryAction::class,
+                $actions[$index],
+                'Wrong instance for ' . $checkCatId
+            );
+
+            static::assertSame(
+                $checkCatId,
+                $actions[$index]->getCategory()->getId(),
+                'Wrong id for ' . $checkCatId
+            );
+
+            static::assertSame($staged, $actions[$index]->getStaged(), 'Wrong staged for ' . $checkCatId);
         }
     }
 

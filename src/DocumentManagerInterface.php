@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM;
 
 use Commercetools\Commons\Helper\QueryHelper;
@@ -15,7 +17,6 @@ use Psr\Log\LoggerAwareInterface;
  * The public api for the document manager for commercetools.
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @version $id$
  */
 interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
 {
@@ -89,7 +90,7 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
      * @return AbstractCreateRequest|AbstractUpdateRequest|AbstractDeleteRequest|AbstractApiRequest
      * @throws \InvalidArgumentException
      */
-    public function createRequest(string $className, $requestType = self::REQUEST_TYPE_QUERY, ...$args);
+    public function createRequest(string $className, string $requestType = self::REQUEST_TYPE_QUERY, ...$args);
 
     /**
      * Detaches the given object after flush.
@@ -100,9 +101,19 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
 
     /**
      * Returns the used commercetools client.
+     *
      * @return Client
      */
     public function getClient(): Client;
+
+    /**
+     * Returns the full qualified class name for the given request type.
+     *
+     * @param string $className The class name for which the request is fetched.
+     * @param string $requestType The type of the request or the request class name it self.
+     * @return string
+     */
+    public function getRequestClass(string $className, string $requestType): string;
 
     /**
      * Returns the common query helper from commercetools.
@@ -115,4 +126,15 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
      * @return UnitOfWorkInterface
      */
     public function getUnitOfWork(): UnitOfWorkInterface;
+
+    /**
+     * Refreshes the persistent state of an object from the database,
+     * overriding any local changes that have not yet been persisted.
+     *
+     * @param object $object The object to refresh.
+     * @param object $overwrite Commercetools returns a representation of the objectfor many update actions, so use
+     * this respons directly.
+     * @return void
+     */
+    public function refresh($object, $overwrite = null);
 }

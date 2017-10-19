@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
@@ -17,10 +19,9 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class ProductTypeRepositoryTest
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage Repository
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests\Repository
  */
 class ProductTypeRepositoryTest extends TestCase
 {
@@ -29,12 +30,13 @@ class ProductTypeRepositoryTest extends TestCase
 
     /**
      * The tested class.
-     * @var ProductTypeRepository
+     * @var ProductTypeRepository|null
      */
-    protected $fixture = null;
+    protected $fixture;
 
     /**
      * Returns the class name for the repository.
+     *
      * @return string
      */
     protected function getRepositoryClass(): string
@@ -44,6 +46,7 @@ class ProductTypeRepositoryTest extends TestCase
 
     /**
      * Returns the names of the used traits.
+     *
      * @return array
      */
     protected function getUsedTraitNames(): array
@@ -55,31 +58,12 @@ class ProductTypeRepositoryTest extends TestCase
 
     /**
      * Checks the class interfaces.
+     *
      * @return void
      */
     public function testInterfaces()
     {
         static::assertInstanceOf(ObjectRepository::class, $this->fixture);
         static::assertInstanceOf(ByKeySearchRepositoryInterface::class, $this->fixture);
-    }
-
-    /**
-     * Checks the save call.
-     * @return void
-     */
-    public function testSave()
-    {
-        $type = new ProductType();
-
-        $this->documentManager
-            ->expects(static::once())
-            ->method('flush');
-
-        $this->documentManager
-            ->expects(static::once())
-            ->method('persist')
-            ->with($type);
-
-        $this->fixture->save($type);
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\ActionBuilder;
 
 /**
  * Base class for building an update action.
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\ProductType
- * @version $id$
+ * @package BestIt\CommercetoolsODM\ActionBuilder\ProductType
  */
 abstract class ActionBuilderAbstract implements ActionBuilderInterface
 {

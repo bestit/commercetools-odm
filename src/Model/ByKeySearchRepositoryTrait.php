@@ -82,7 +82,7 @@ trait ByKeySearchRepositoryTrait
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
      * @return void
-     * @todo Not tested.
+     * @todo Not tested. Readd the expand api.
      */
     public function findByKeyAsync(string $key, callable $onResolve = null, callable $onReject = null)
     {
@@ -94,7 +94,6 @@ trait ByKeySearchRepositoryTrait
             $request = $this->createSimpleQuery(
                 $this->getClassName(),
                 DocumentManagerInterface::REQUEST_TYPE_FIND_BY_KEY,
-                $this->getExpands(),
                 $key
             );
 

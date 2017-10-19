@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use BestIt\CommercetoolsODM\Repository\OrderRepository;
@@ -58,6 +59,7 @@ class OrderRepositoryTest extends TestCase
                 $metadata = static::createMock(ClassMetadataInterface::class),
                 $this->documentManager = static::createMock(DocumentManagerInterface::class),
                 static::createMock(QueryHelper::class),
+                static::createMock(FilterManagerInterface::class),
                 static::createMock(PoolInterface::class)
             ])
             ->getMock();

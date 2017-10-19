@@ -27,7 +27,7 @@ return [
 
     \Commercetools\Core\Model\Channel\Channel::class => [
         'draft' => \Commercetools\Core\Model\Channel\ChannelDraft::class,
-        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'repository' => \BestIt\CommercetoolsODM\Repository\ChannelRepository::class,
         'requestClassMap' => (new RequestMap())
             ->setCreate(\Commercetools\Core\Request\Channels\ChannelCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\Channels\ChannelDeleteRequest::class)
@@ -45,6 +45,7 @@ return [
             ->setDeleteById(\Commercetools\Core\Request\CustomObjects\CustomObjectDeleteRequest::class)
             ->setFindByContainerAndKey(\Commercetools\Core\Request\CustomObjects\CustomObjectByKeyGetRequest::class)
             ->setQuery(\Commercetools\Core\Request\CustomObjects\CustomObjectQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\CustomObjects\CustomObjectCreateRequest::class)
     ],
 
     \Commercetools\Core\Model\Customer\Customer::class => [
@@ -53,8 +54,20 @@ return [
         'requestClassMap' => (new RequestMap())
             ->setCreate(\Commercetools\Core\Request\Customers\CustomerCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\Customers\CustomerDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Customers\CustomerByIdGetRequest::class)
             ->setQuery(\Commercetools\Core\Request\Customers\CustomerQueryRequest::class)
             ->setUpdateById(\Commercetools\Core\Request\Customers\CustomerUpdateRequest::class)
+    ],
+
+    \Commercetools\Core\Model\Inventory\InventoryEntry::class => [
+        'draft' => \Commercetools\Core\Model\Inventory\InventoryDraft::class,
+        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Inventory\InventoryCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Inventory\InventoryDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Inventory\InventoryByIdGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Inventory\InventoryQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Inventory\InventoryUpdateRequest::class)
     ],
 
     \Commercetools\Core\Model\Order\Order::class => [

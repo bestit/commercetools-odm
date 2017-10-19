@@ -58,7 +58,6 @@ class RemoveAttributesTest extends TestCase
 
     /**
      * Checks the default return for the creation method.
-     * @covers RemoveAttributes::createUpdateActions()
      * @return void
      */
     public function testCreateUpdateActionsEmpty()
@@ -69,7 +68,7 @@ class RemoveAttributesTest extends TestCase
             [],
             $this->fixture->createUpdateActions(
                 uniqid(),
-                static::createMock(ClassMetadataInterface::class),
+                $this->createMock(ClassMetadataInterface::class),
                 [],
                 [],
                 $object
@@ -79,8 +78,6 @@ class RemoveAttributesTest extends TestCase
 
     /**
      * Checks the default return for the creation method.
-     * @covers RemoveAttributes::createUpdateActions()
-     * @return void
      */
     public function testCreateUpdateActionsFilled()
     {
@@ -94,7 +91,7 @@ class RemoveAttributesTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             uniqid(),
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'attributes' => [

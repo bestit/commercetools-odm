@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Repository;
 
 use Commercetools\Core\Model\Cart\Cart;
@@ -8,9 +10,7 @@ use Commercetools\Core\Model\Order\Order;
 /**
  * Repository for orders.
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage Repository
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Repository
  */
 interface OrderRepositoryInterface extends ObjectRepository
 {
@@ -22,9 +22,17 @@ interface OrderRepositoryInterface extends ObjectRepository
     public function createFromCart(Cart $cart): Order;
 
     /**
-     * Saves the given order.
-     * @param Order $order
-     * @param bool $direct Should the order be saved directly?
+     * Removes the given order.
+     * @param Order $order The order.
+     * @param bool $direct Should the deletion be deleted directly with a doc manager flush?
+     * @return void
      */
-    public function save(Order $order, bool $direct = true);
+    public function deleteOrder(Order $order, bool $direct = false);
+
+    /**
+     * Imports the given order.
+     * @param Order $order The importable order.
+     * @return Order The imported order.
+     */
+    public function import(Order $order): Order;
 }

@@ -3,8 +3,10 @@
 namespace BestIt\CommercetoolsODM\ActionBuilder\Cart;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
+use BestIt\CommercetoolsODM\Helper\PriceHelperTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Cart\Cart;
+use Commercetools\Core\Model\Cart\LineItem;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Carts\Command\CartChangeLineItemQuantityAction;
 
@@ -17,6 +19,8 @@ use Commercetools\Core\Request\Carts\Command\CartChangeLineItemQuantityAction;
  */
 class SetLineItemQuantity extends ActionBuilderAbstract
 {
+    use PriceHelperTrait;
+
     /**
      * A PCRE to match the hierarchical field path without delimiter.
      * @var string
@@ -55,17 +59,29 @@ class SetLineItemQuantity extends ActionBuilderAbstract
         }
 
         $offset = $this->getLastFoundMatch()[1];
-        $lineItemId = $sourceObject->getLineItems()->getAt($offset)->getId();
+        $lineItem = $sourceObject->getLineItems()->getAt($offset);
+        $lineItemId = $lineItem->getId();
 
         // Do not process on added items
         if (!$lineItemId) {
             return $actions;
         }
 
-        $actions[] = CartChangeLineItemQuantityAction::fromArray([
+        $changeLineItemQuantityAction = [
             'lineItemId' => $lineItemId,
             'quantity' => $changedValue['quantity']
-        ]);
+        ];
+
+        if (defined('Commercetools\Core\Model\Cart\LineItem::PRICE_MODE_EXTERNAL_PRICE')
+            && $lineItem->getPriceMode() === LineItem::PRICE_MODE_EXTERNAL_PRICE
+        ) {
+            $changeLineItemQuantityAction['externalPrice'] = $this->getCorrectPrice(
+                $changedValue['price'],
+                $changedValue['quantity']
+            );
+        }
+
+        $actions[] = CartChangeLineItemQuantityAction::fromArray($changeLineItemQuantityAction);
 
         return $actions;
     }

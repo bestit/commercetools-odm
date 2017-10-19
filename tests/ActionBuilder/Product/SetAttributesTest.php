@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\ActionBuilder\Product\SetAttributes;
@@ -10,12 +12,9 @@ use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class SetAttributesTest
+ * Tests the SetAttributes.
  * @author blange <lange@bestit-online.de>
- * @cstegory Tests
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder\Product
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  */
 class SetAttributesTest extends TestCase
 {
@@ -23,9 +22,9 @@ class SetAttributesTest extends TestCase
 
     /**
      * The tested class.
-     * @var ChangeName
+     * @var SetAttributes|null
      */
-    protected $fixture = null;
+    protected $fixture;
 
     /**
      * Returns assertions for the create call.
@@ -90,7 +89,7 @@ class SetAttributesTest extends TestCase
                     'value' => $mockedValue = uniqid()
                 ]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [
@@ -125,77 +124,6 @@ class SetAttributesTest extends TestCase
     }
 
     /**
-     * Checks if a nested master variant attribute can be changed.
-     * @dataProvider getCatalogs
-     * @param string $container
-     * @param bool $staged
-     */
-    public function testCreateUpdateActionsForMasterVariantNestedAttr(string $container, bool $staged = false)
-    {
-        $this->fixture->supports("masterData/{$container}/masterVariant/attributes", Product::class);
-
-        $actions = $this->fixture->createUpdateActions(
-            [
-                [
-                    'value' => [
-                        [
-                            'value' => $mockedValue1 = uniqid()
-                        ],
-                        [
-                            'value' => $mockedValue2 = uniqid()
-                        ]
-                    ]
-                ]
-            ],
-            static::createMock(ClassMetadataInterface::class),
-            [],
-            [
-                'masterData' => [
-                    $container => [
-                        'masterVariant' => [
-                            'attributes' => [
-                                [
-                                    'name' => $attrName = 'manufacturer',
-                                    'value' => [
-                                        [
-                                            'name' => $subAttrName1 = uniqid(),
-                                            'value' => uniqid()
-                                        ],
-                                        [
-                                            'name' => $subAttrName2 = uniqid(),
-                                            'value' => uniqid()
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            new Product()
-        );
-
-        static::assertCount(1, $actions, 'Wrong action count.');
-
-        /** @var $action ProductSetAttributeAction */
-        static::assertInstanceOf(
-            ProductSetAttributeAction::class,
-            $action = $actions[0],
-            'Wrong instance.'
-        );
-
-        static::assertSame(1, $action->getVariantId(), 'Wrong variant id.');
-        static::assertSame($attrName, $action->getName(), 'Wrong name.');
-        static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
-
-        static::assertSame(
-            [['value' => $mockedValue1, 'name' => $subAttrName1], ['value' => $mockedValue2, 'name' => $subAttrName2]],
-            $action->getValue(),
-            'Wrong value'
-        );
-    }
-
-    /**
      * Checks an attribute can be added to the master variant attributes.
      * @dataProvider getCatalogs
      * @param string $container
@@ -215,7 +143,7 @@ class SetAttributesTest extends TestCase
                     'value' => $mockedValue2 = uniqid()
                 ]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [
@@ -262,6 +190,125 @@ class SetAttributesTest extends TestCase
     }
 
     /**
+     * Checks if a nested master variant attribute and its difference to arrays can be changed
+     * @dataProvider getCatalogs
+     * @param string $container
+     * @param bool $staged
+     */
+    public function testCreateUpdateActionsForMasterVariantNestedAttr(string $container, bool $staged = false)
+    {
+        $this->fixture->supports("masterData/{$container}/masterVariant/attributes", Product::class);
+
+        $actions = $this->fixture->createUpdateActions(
+            [
+                [
+                    'value' => []
+                ],
+                [
+                    'value' => [2]
+                ],
+                [
+                    'value' => [
+                        1 => [
+                            'value' => 'new-value2'
+                        ],
+                        // We add this value.
+                        [
+                            'name' => 'new-name3',
+                            'value' => 'new-value3'
+                        ],
+                    ]
+                ]
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'masterData' => [
+                    $container => [
+                        'masterVariant' => [
+                            'attributes' => [
+                                [
+                                    'name' => 'array1',
+                                    'value' => [uniqid(), uniqid()]
+                                ],
+                                [
+                                    'name' => 'array2',
+                                    'value' => [1,2]
+                                ],
+                                [
+                                    'name' => $attrName = 'nested',
+                                    'value' => [
+                                        // attr 1 needs to be overtaken, because it is a nested attr.
+                                        [
+                                            'name' => 'name1',
+                                            'value' => 'value1'
+                                        ],
+                                        // We overwrite only the value here
+                                        [
+                                            'name' => 'name2',
+                                            'value' => uniqid()
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            new Product()
+        );
+
+        static::assertCount(3, $actions, 'Wrong action count.');
+
+        /** @var $action1 ProductSetAttributeAction */
+        static::assertInstanceOf(
+            ProductSetAttributeAction::class,
+            $action1 = $actions[0],
+            'Wrong instance. (1)'
+        );
+
+        static::assertSame(1, $action1->getVariantId(), 'Wrong variant id. (1)');
+        static::assertSame('array1', $action1->getName(), 'Wrong name. (1)');
+        static::assertSame($staged, $action1->getStaged(), 'Staged wrongly set. (1)');
+
+        static::assertSame([], $action1->getValue(), 'Wrong value. (1)');
+
+        /** @var $action1 ProductSetAttributeAction */
+        static::assertInstanceOf(
+            ProductSetAttributeAction::class,
+            $action1 = $actions[1],
+            'Wrong instance. (2)'
+        );
+
+        static::assertSame(1, $action1->getVariantId(), 'Wrong variant id. (2)');
+        static::assertSame('array2', $action1->getName(), 'Wrong name. (2)');
+        static::assertSame($staged, $action1->getStaged(), 'Staged wrongly set. (2)');
+
+        static::assertSame([2], $action1->getValue(), 'Wrong value. (2)');
+
+        /** @var $action3 ProductSetAttributeAction */
+        static::assertInstanceOf(
+            ProductSetAttributeAction::class,
+            $action3 = $actions[2],
+            'Wrong instance. (3)'
+        );
+
+        static::assertSame(1, $action3->getVariantId(), 'Wrong variant id. (3)');
+        static::assertSame($attrName, $action3->getName(), 'Wrong name. (3)');
+        static::assertSame($staged, $action3->getStaged(), 'Staged wrongly set. (3)');
+
+        static::assertSame(
+            [
+                ['name' => 'name1', 'value' => 'value1'],
+                ['value' => 'new-value2', 'name' => 'name2'],
+                ['name' => 'new-name3', 'value' => 'new-value3']
+            ],
+            $action3->getValue(),
+            'Wrong value. (3)'
+        );
+    }
+
+    /**
      * Checks if variant attributes can be changed.
      * @dataProvider getCatalogs
      * @param string $container
@@ -283,7 +330,7 @@ class SetAttributesTest extends TestCase
                     null
                 ]
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [

@@ -1,11 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\ActionBuilder\Customer;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Customers\Command\CustomerRemoveShippingAddressAction;
 
+/**
+ * Removes shipping address ids.
+ * @author blange <lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
+ */
 class RemoveShippingAddressIds extends CustomerActionBuilder
 {
     /**
@@ -20,9 +28,8 @@ class RemoveShippingAddressIds extends CustomerActionBuilder
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
-     * @param mixed $sourceObject
+     * @param Customer $sourceObject
      * @return AbstractAction[]
-     * @todo Not tested yet.
      */
     public function createUpdateActions(
         $changedValue,
@@ -32,13 +39,13 @@ class RemoveShippingAddressIds extends CustomerActionBuilder
         $sourceObject
     ): array {
         $actions = [];
-        $fieldName = $this->getFieldName();
+        $addresses = $sourceObject->getAddresses();
+        $shippingAddressIds = $sourceObject->getShippingAddressIds();
 
-        if ($oldData && array_key_exists($fieldName, $oldData) && is_array($oldData[$fieldName])) {
-            foreach ($oldData[$fieldName] as $id) {
-                if ((!is_array($changedValue)) || (array_search($id, $changedValue) === false)) {
-                    $actions[] = (new CustomerRemoveShippingAddressAction())->setAddressId($id);
-                }
+        foreach ($oldData[$this->getFieldName()] ?? [] as $id) {
+            // If the address is removed completely, then we do not need to remove the shipping address id
+            if ((!in_array($id, $shippingAddressIds)) && ($addresses->getById($id))) {
+                $actions[] = (new CustomerRemoveShippingAddressAction())->setAddressId($id);
             }
         }
 

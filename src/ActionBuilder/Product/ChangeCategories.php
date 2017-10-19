@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
@@ -8,6 +10,11 @@ use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductAddToCategoryAction;
 use Commercetools\Core\Request\Products\Command\ProductRemoveFromCategoryAction;
 
+/**
+ * Action Builder to change the categories of an product.
+ * @author blange <lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Product
+ */
 class ChangeCategories extends ProductActionBuilder
 {
     /**
@@ -39,9 +46,13 @@ class ChangeCategories extends ProductActionBuilder
         $isStaging = $productCatalogData === 'staged';
 
         foreach ($changedValue as $index => $categoryData) {
-            $actions[] = ProductRemoveFromCategoryAction::ofCategory(CategoryReference::ofId(
-                $oldData['masterData'][$productCatalogData]['categories'][$index]['id']
-            ))->setStaged($isStaging);
+            if ((array_key_exists($index, $oldData['masterData'][$productCatalogData]['categories'])) &&
+                ($oldData['masterData'][$productCatalogData]['categories'])
+            ) {
+                $actions[] = ProductRemoveFromCategoryAction::ofCategory(CategoryReference::ofId(
+                    $oldData['masterData'][$productCatalogData]['categories'][$index]['id']
+                ))->setStaged($isStaging);
+            }
 
             if (!is_null($categoryData)) {
                 $actions[] = ProductAddToCategoryAction::ofCategory(CategoryReference::ofId($categoryData['id']))

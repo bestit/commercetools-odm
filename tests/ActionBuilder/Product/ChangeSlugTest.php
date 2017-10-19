@@ -86,7 +86,7 @@ class ChangeSlugTest extends TestCase
                 'fr' => null,
                 'en' => $newEn = uniqid()
             ],
-            static::createMock(ClassMetadataInterface::class),
+            $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [

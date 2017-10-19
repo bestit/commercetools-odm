@@ -1,25 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM;
 
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 
 /**
  * Helper for using repositories.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @version $id$
  */
 trait RepositoryAwareTrait
 {
     /**
-     * The used repository.
-     * @var ObjectRepository
+     * @var ObjectRepository|null The used repository.
      */
     protected $repository = null;
 
     /**
      * Returns the used repository.
+     *
+     * This getter exists to provide you a type safe way.
+     *
      * @return ObjectRepository
      */
     public function getRepository(): ObjectRepository
@@ -29,10 +33,11 @@ trait RepositoryAwareTrait
 
     /**
      * Sets the used repository.
-     * @param ObjectRepository $repository
+     *
+     * @param ObjectRepository $repository The used repository.
      * @return $this
      */
-    public function setRepository(ObjectRepository $repository)
+    public function setRepository(ObjectRepository $repository): self
     {
         $this->repository = $repository;
 

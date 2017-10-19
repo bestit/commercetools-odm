@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Helper;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
@@ -7,20 +9,18 @@ use BestIt\CommercetoolsODM\DocumentManagerInterface;
 /**
  * Helps to provide the document manager.
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage Helper
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Helper
  */
 trait DocumentManagerAwareTrait
 {
     /**
-     * The used document manager.
-     * @var DocumentManagerInterface
+     * @var DocumentManagerInterface|null The used document manager.
      */
-    private $documentManager = null;
+    private $documentManager;
 
     /**
      * Returns the used document manager.
+     *
      * @return DocumentManagerInterface
      */
     public function getDocumentManager(): DocumentManagerInterface
@@ -30,10 +30,11 @@ trait DocumentManagerAwareTrait
 
     /**
      * Sets the used document manager.
-     * @param DocumentManagerInterface $documentManager
+     *
+     * @param DocumentManagerInterface $documentManager The used document manager.
      * @return $this
      */
-    public function setDocumentManager(DocumentManagerInterface $documentManager)
+    public function setDocumentManager(DocumentManagerInterface $documentManager): self
     {
         $this->documentManager = $documentManager;
 

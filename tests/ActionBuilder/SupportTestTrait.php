@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
@@ -8,18 +10,15 @@ use PHPUnit_Framework_MockObject_MockObject;
 /**
  * Checks the support method of the action builder.
  * @author lange <lange@bestit-online.de>
- * @category Tests
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder
  */
 trait SupportTestTrait
 {
     /**
      * The test class.
-     * @var ActionBuilderAbstract|PHPUnit_Framework_MockObject_MockObject
+     * @var ActionBuilderAbstract|PHPUnit_Framework_MockObject_MockObject|null
      */
-    protected $fixture = null;
+    protected $fixture;
 
     /**
      * Returns an array with the assertions for the upport method.

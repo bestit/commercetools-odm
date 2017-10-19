@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests;
 
 use ArrayObject;
@@ -20,9 +22,6 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\UnitOfWork\TestCustomEntity;
 use BestIt\CommercetoolsODM\UnitOfWork;
 use BestIt\CommercetoolsODM\UnitOfWorkInterface;
-use Commercetools\Core\Client;
-use Commercetools\Core\Client\OAuth\Manager;
-use Commercetools\Core\Client\OAuth\Token;
 use Commercetools\Core\Model\Cart\LineItem;
 use Commercetools\Core\Model\Category\CategoryReference;
 use Commercetools\Core\Model\Common\Address;
@@ -46,9 +45,6 @@ use Commercetools\Core\Request\Orders\OrderDeleteRequest;
 use Commercetools\Core\Request\ProductTypes\ProductTypeCreateRequest;
 use DateTime;
 use Doctrine\Common\EventManager;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
@@ -58,9 +54,9 @@ use RuntimeException;
 
 /**
  * Class UnitOfWorkTest
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests
  */
 class UnitOfWorkTest extends TestCase
 {
@@ -275,7 +271,6 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if an array for a custom entity is parsed correctly.
-     * @covers UnitOfWork::createDocument()
      * @return void
      */
     public function testCreateDocumentParseCustomEntitiesArrayProperty()
@@ -326,6 +321,35 @@ class UnitOfWorkTest extends TestCase
         static::assertCount(1, $addresses = $createdDoc->getAddresses(), 'Wrong address count.');
         static::assertInstanceOf(Address::class, $address = $addresses[0], 'Wrong address instance.');
         static::assertSame($addressId, $address->getId(), 'Wrong address id.');
+    }
+
+    /**
+     * Checks if an array for a custom entity is parsed correctly even if its null.
+     * @return void
+     */
+    public function testCreateDocumentParseCustomEntitiesArrayPropertyParseNull()
+    {
+        $this->documentManager
+            ->expects($this->once())
+            ->method('getClassMetadata')
+            ->with(TestCustomEntity::class)
+            ->will($this->returnValue($metadata = new ClassMetadata(TestCustomEntity::class)));
+
+        $metadata
+            ->setFieldMappings(['addresses' => $field = new Field()])
+            ->setReflectionClass(new ReflectionClass(TestCustomEntity::class));
+
+        $field->collection = AddressCollection::class;
+        $field->type = 'array';
+
+        /** @var TestCustomEntity $createdDoc */
+        $createdDoc = $this->fixture->createDocument(
+            TestCustomEntity::class,
+            Customer::fromArray([])
+        );
+
+        /** @var $address Address */
+        static::assertCount(0, $addresses = $createdDoc->getAddresses());
     }
 
     /**
@@ -383,291 +407,7 @@ class UnitOfWorkTest extends TestCase
     }
 
     /**
-     * Checks if an array for a custom entity is parsed correctly even if its null.
-     * @covers UnitOfWork::createDocument()
-     * @return void
-     */
-    public function testCreateDocumentParseCustomEntitiesArrayPropertyParseNull()
-    {
-        $this->documentManager
-            ->expects($this->once())
-            ->method('getClassMetadata')
-            ->with(TestCustomEntity::class)
-            ->will($this->returnValue($metadata = new ClassMetadata(TestCustomEntity::class)));
-
-        $metadata
-            ->setFieldMappings(['addresses' => $field = new Field()])
-            ->setReflectionClass(new ReflectionClass(TestCustomEntity::class));
-
-        $field->collection = AddressCollection::class;
-        $field->type = 'array';
-
-        /** @var TestCustomEntity $createdDoc */
-        $createdDoc = $this->fixture->createDocument(
-            TestCustomEntity::class,
-            Customer::fromArray([])
-        );
-
-        /** @var $address Address */
-        static::assertCount(0, $addresses = $createdDoc->getAddresses());
-    }
-
-    /**
-     * The deferred detach should remove the entity on flush, even if there is no change.
-     * @return void
-     */
-    public function testDetachDeferredNoChange()
-    {
-        $this->getOneMockedMetadata(Order::class, false);
-
-        static::assertCount(0, $this->fixture, 'Start count failed.');
-
-        $order = new Order([
-            'customerId' => uniqid(),
-            'customerEmail' => 'test@example.com',
-            'id' => uniqid(),
-            'version' => 5
-        ]);
-
-        static::assertSame(
-            $this->fixture,
-            $this->fixture->registerAsManaged($order, $order->getId(), $order->getVersion()),
-            'Fluent interface failed.'
-        );
-
-        static::assertCount(1, $this->fixture, 'There should be a managed entity.');
-
-        $this->fixture->scheduleSave($order);
-        $this->fixture->detachDeferred($order);
-        $this->fixture->flush();
-
-        static::assertCount(0, $this->fixture, 'The entity should be detached.');
-    }
-
-    /**
-     * Checks that the "empty" detach does not trigger any error.
-     * @return void
-     */
-    public function testDetachEmpty()
-    {
-        static::assertCount(0, $this->fixture, 'There should be no entity.');
-
-        $this->fixture->detach(new Order());
-
-        static::assertCount(0, $this->fixture, 'There should be no entity. (control value)');
-    }
-
-    /**
-     * Checks if the changes are extracted correctly.
-     * @covers UnitOfWork::extractChanges()
-     * @return void
-     */
-    public function testExtractChangesFullWithProduct()
-    {
-        $this->expectException(RuntimeException::class);
-
-        $metadata = $this->getOneMockedMetadata($className = Product::class, false);
-
-        /** @var Product $product */
-        $this->fixture->registerAsManaged(
-            $product = $className::fromArray($oldData = [
-                'id' => $oldId = uniqid(),
-                'masterData' => [
-                    'current' => [
-                        'categories' => [
-                            [
-                                'typeId' => 'category',
-                                'id' => $category1Id = uniqid()
-                            ],
-                            [
-                                'typeId' => 'category',
-                                'id' => $category2Id = uniqid()
-                            ],
-                        ],
-                        'masterVariant' => [
-                            'id' => 1,
-                            'attributes' => [
-                                [
-                                    'name' => 'manufacturer',
-                                    'value' => uniqid()
-                                ],
-                                [
-                                    'name' => 'price',
-                                    'value' => [
-                                        'currencyCode' => 'EUR',
-                                        'centAmount' => 10010
-                                    ]
-                                ]
-                            ]
-                        ],
-                        'name' => ['de' => $oldGermanName = uniqid(), 'fr' => uniqid()],
-                        'variants' => [
-                            [
-                                'id' => 2,
-                                'attributes' => [
-                                    [
-                                        'name' => 'manufacturer',
-                                        'value' => uniqid()
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                'taxCategory' => [
-                    'typeId' => 'tax-category',
-                    'id' => uniqid()
-                ]
-            ]),
-            uniqid(),
-            5
-        );
-
-        $productCatalogData = $product->setId($newId = uniqid())->getMasterData()->getCurrent();
-        $categories = $productCatalogData->getCategories();
-
-        $productCatalogData
-            ->setName(LocalizedString::fromArray(['de' => $oldGermanName, 'en' => $newEnglishName = uniqid()]));
-
-        unset($categories[1]);
-        $categories->add(CategoryReference::ofId($category3Id = uniqid()));
-
-        $productCatalogData
-            ->getMasterVariant()
-            ->getAttributes()
-            ->getByName('price')
-            ->setValue(Money::fromArray(['currencyCode' => 'EUR', 'centAmount' => $newAmount = 5050]));
-
-        $productCatalogData
-            ->getMasterVariant()
-            ->getAttributes()
-            ->add(Attribute::fromArray(['name' => $newAttrName = uniqid(), 'value' => $newAttrValue = []]));
-
-        $productCatalogData
-            ->getVariants()
-            ->getById(2)
-            ->getAttributes()
-            ->getByName('manufacturer')
-            ->setValue($newManId = uniqid());
-
-        $this->actionBuilderProcessor
-            ->expects($this->once())
-            ->method('createUpdateActions')
-            ->with(
-                $this->isInstanceOf(ClassMetadataInterface::class),
-                [
-                    'id' => $newId,
-                    'masterData' => [
-                        'current' => [
-                            'categories' => [
-                                1 => null,
-                                2 => [
-                                    'typeId' => 'category',
-                                    'id' => $category3Id
-                                ]
-                            ],
-                            'masterVariant' => [
-                                'attributes' => [
-                                    1 => [
-                                        'value' => [
-                                            'centAmount' => $newAmount
-                                        ]
-                                    ],
-                                    [
-                                        'name' => $newAttrName,
-                                        'value' => $newAttrValue
-                                    ]
-                                ]
-                            ],
-                            'name' => [
-                                'en' => $newEnglishName,
-                                'fr' => null
-                            ],
-                            'variants' => [
-                                [
-                                    'attributes' => [
-                                        [
-                                            'value' => $newManId
-                                        ]
-                                    ]
-                                ],
-                            ]
-                        ]
-                    ]
-                ],
-                $oldData,
-                $product
-            )
-            ->willThrowException(new RuntimeException('Controlled stop.'));
-
-        $this->fixture->scheduleSave($product);
-        $this->fixture->flush();
-    }
-
-    /**
-     * Checks if the changes are extracted correctly.
-     * @covers UnitOfWork::extractChanges()
-     * @return void
-     */
-    public function testExtractChangesFullWithOrder()
-    {
-        $this->expectException(RuntimeException::class);
-
-        $metadata = $this->getOneMockedMetadata($className = Order::class, false);
-
-        /** @var Order $order */
-        $this->fixture->registerAsManaged(
-            $order = $className::fromArray($oldData = [
-                'id' => $oldOrderId = uniqid(),
-                'billingAddress' => [
-                    'id' => $oldAddressId = uniqid()
-                ],
-                'lineItems' => $lineItems = [
-                    ['id' => $lineItemId1 = uniqid()],
-                    ['id' => $lineItemId2 = uniqid()]
-                ]
-            ]),
-            uniqid(),
-            5
-        );
-
-        $order
-            ->setId($newOrderId = uniqid())
-            ->getBillingAddress()->setStreetName($streeName = uniqid());
-
-        $order->getLineItems()->add(LineItem::fromArray(['id' => $lineItemId3 = uniqid()]));
-        unset($order->getLineItems()[0]);
-
-        $this->actionBuilderProcessor
-            ->expects($this->once())
-            ->method('createUpdateActions')
-            ->with(
-                $this->isInstanceOf(ClassMetadataInterface::class),
-                [
-                    'id' => $newOrderId,
-                    'lineItems' => [
-                        0 => null,
-                        2 => [
-                            'id' => $lineItemId3
-                        ]
-                    ],
-                    'billingAddress' => [
-                        'streetName' => $streeName
-                    ]
-                ],
-                $oldData,
-                $order
-            )
-            ->willThrowException(new RuntimeException('Controlled stop.'));
-
-        $this->fixture->scheduleSave($order);
-        $this->fixture->flush();
-    }
-
-    /**
      * Checks that a product draft is created correctly.
-     * @covers UnitOfWork::createDraftObjectForNewRequest()
-     * @covers UnitOfWork::parseValuesForProductDraft()
      * @return void
      * @todo Check more values.
      */
@@ -733,6 +473,383 @@ class UnitOfWorkTest extends TestCase
     }
 
     /**
+     * Checks that an registered object is returned.
+     * @return void
+     */
+    public function testDetach()
+    {
+        $order = $this->testRegisterAsManaged();
+
+        static::assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
+
+        $this->fixture->detach($order);
+
+        static::assertFalse($this->fixture->contains($order), 'Object should not be contained in the uow.');
+        static::assertCount(0, $this->fixture, 'There should be no entity.');
+    }
+
+    /**
+     * The deferred detach should remove the entity on flush, even if there is no change.
+     * @return void
+     */
+    public function testDetachDeferredNoChange()
+    {
+        $this->getOneMockedMetadata(Order::class, false);
+
+        static::assertCount(0, $this->fixture, 'Start count failed.');
+
+        $order = new Order([
+            'customerId' => uniqid(),
+            'customerEmail' => 'test@example.com',
+            'id' => uniqid(),
+            'version' => 5
+        ]);
+
+        static::assertSame(
+            $this->fixture,
+            $this->fixture->registerAsManaged($order, $order->getId(), $order->getVersion()),
+            'Fluent interface failed.'
+        );
+
+        static::assertCount(1, $this->fixture, 'There should be a managed entity.');
+
+        $this->fixture->scheduleSave($order);
+        $this->fixture->detachDeferred($order);
+        $this->fixture->flush();
+
+        static::assertCount(0, $this->fixture, 'The entity should be detached.');
+    }
+
+    /**
+     * Checks that the "empty" detach does not trigger any error.
+     * @return void
+     */
+    public function testDetachEmpty()
+    {
+        $this->getOneMockedMetadata(Order::class, false);
+
+        static::assertCount(0, $this->fixture, 'There should be no entity.');
+
+        $this->fixture->detach(new Order());
+
+        static::assertCount(0, $this->fixture, 'There should be no entity. (control value)');
+    }
+
+    /**
+     * Checks if the changes are extracted correctly.
+     * @return void
+     */
+    public function testExtractChangesFullWithOrder()
+    {
+        $this->expectException(RuntimeException::class);
+
+        $metadata = $this->getOneMockedMetadata($className = Order::class, false);
+
+        /** @var Order $order */
+        $this->fixture->registerAsManaged(
+            $order = $className::fromArray($oldData = [
+                'id' => $oldOrderId = uniqid(),
+                'billingAddress' => [
+                    'id' => $oldAddressId = uniqid()
+                ],
+                'lineItems' => $lineItems = [
+                    ['id' => $lineItemId1 = uniqid()],
+                    ['id' => $lineItemId2 = uniqid()]
+                ]
+            ]),
+            uniqid(),
+            5
+        );
+
+        $order
+            ->setId($newOrderId = uniqid())
+            ->getBillingAddress()->setStreetName($streeName = uniqid());
+
+        $order->getLineItems()->add(LineItem::fromArray(['id' => $lineItemId3 = uniqid()]));
+        unset($order->getLineItems()[0]);
+
+        $this->actionBuilderProcessor
+            ->expects($this->once())
+            ->method('createUpdateActions')
+            ->with(
+                $this->isInstanceOf(ClassMetadataInterface::class),
+                [
+                    'id' => $newOrderId,
+                    'lineItems' => [
+                        0 => null,
+                        2 => [
+                            'id' => $lineItemId3
+                        ]
+                    ],
+                    'billingAddress' => [
+                        'streetName' => $streeName
+                    ]
+                ],
+                $oldData,
+                $order
+            )
+            ->willThrowException(new RuntimeException('Controlled stop.'));
+
+        $this->fixture->scheduleSave($order);
+        $this->fixture->flush();
+    }
+
+    /**
+     * Checks if the changes are extracted correctly.
+     * @return void
+     */
+    public function testExtractChangesFullWithProduct()
+    {
+        $this->expectException(RuntimeException::class);
+
+        $metadata = $this->getOneMockedMetadata($className = Product::class, false);
+
+        /** @var Product $product */
+        $this->fixture->registerAsManaged(
+            $product = $className::fromArray($oldData = [
+                'id' => $oldId = uniqid(),
+                'masterData' => [
+                    'current' => [
+                        'categories' => [
+                            [
+                                'typeId' => 'category',
+                                'id' => $category1Id = uniqid()
+                            ],
+                            [
+                                'typeId' => 'category',
+                                'id' => $category2Id = uniqid()
+                            ],
+                        ],
+                        'masterVariant' => [
+                            'id' => 1,
+                            'attributes' => [
+                                [
+                                    'name' => 'arrayAdd',
+                                    'value' => []
+                                ],
+                                [
+                                    'name' => 'arrayAddPartly',
+                                    'value' => [1]
+                                ],
+                                [
+                                    'name' => 'arrayChange',
+                                    'value' => [1,2,3]
+                                ],
+                                [
+                                    'name' => 'arrayEmpty',
+                                    'value' => [
+                                        uniqid(),
+                                        uniqid()
+                                    ]
+                                ],
+                                [
+                                    'name' => 'date',
+                                    'value' => new DateTime()
+                                ],
+                                [
+                                    'name' => 'float',
+                                    'value' => 1.1
+                                ],
+                                [
+                                    'name' => 'floatInt',
+                                    'value' => (float) 1
+                                ],
+                                [
+                                    'name' => 'manufacturer',
+                                    'value' => uniqid()
+                                ],
+                                [
+                                    'name' => 'null',
+                                    'value' => 0,
+                                ],
+                                [
+                                    'name' => 'nested',
+                                    'value' => [
+                                        [
+                                            'name' => 'nestedNumber',
+                                            'value' => 5,
+                                        ],
+                                        [
+                                            'name' => 'nestedString',
+                                            'value' => uniqid(),
+                                        ]
+                                    ],
+                                ],
+                                [
+                                    'name' => 'number',
+                                    'value' => 1,
+                                ],
+                                [
+                                    'name' => 'price',
+                                    'value' => [
+                                        'currencyCode' => 'EUR',
+                                        'centAmount' => 10010
+                                    ]
+                                ]
+                            ]
+                        ],
+                        'name' => ['de' => $oldGermanName = uniqid(), 'fr' => uniqid()],
+                        'variants' => [
+                            [
+                                'id' => 2,
+                                'attributes' => [
+                                    [
+                                        'name' => 'manufacturer',
+                                        'value' => uniqid()
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'taxCategory' => [
+                    'typeId' => 'tax-category',
+                    'id' => uniqid()
+                ]
+            ]),
+            uniqid(),
+            5
+        );
+
+        $productCatalogData = $product->setId($newId = uniqid())->getMasterData()->getCurrent();
+        $categories = $productCatalogData->getCategories();
+
+        $productCatalogData
+            ->setName(LocalizedString::fromArray(['de' => $oldGermanName, 'en' => $newEnglishName = uniqid()]));
+
+        unset($categories[1]);
+        $categories->add(CategoryReference::ofId($category3Id = uniqid()));
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('arrayAdd')
+            ->setValue($newAddedArray = [uniqid(), uniqid()]);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('arrayAddPartly')
+            ->setValue([1,2,3]);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('arrayChange')
+            ->setValue([2,3]);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('arrayEmpty')
+            ->setValue([]);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('float')
+            ->setValue(1.5);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('floatInt')
+            ->setValue(1);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('null')
+            ->setValue(0);
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->getByName('price')
+            ->setValue(Money::fromArray(['currencyCode' => 'EUR', 'centAmount' => $newAmount = 5050]));
+
+        $productCatalogData
+            ->getMasterVariant()
+            ->getAttributes()
+            ->add(Attribute::fromArray(['name' => $newAttrName = uniqid(), 'value' => $newAttrValue = []]));
+
+        $productCatalogData
+            ->getVariants()
+            ->getById(2)
+            ->getAttributes()
+            ->getByName('manufacturer')
+            ->setValue($newManId = uniqid());
+
+        $this->actionBuilderProcessor
+            ->expects($this->once())
+            ->method('createUpdateActions')
+            ->with(
+                $this->isInstanceOf(ClassMetadataInterface::class),
+                [
+                    'id' => $newId,
+                    'masterData' => [
+                        'current' => [
+                            'categories' => [
+                                1 => null,
+                                2 => [
+                                    'typeId' => 'category',
+                                    'id' => $category3Id
+                                ]
+                            ],
+                            'masterVariant' => [
+                                'attributes' => [
+                                    [
+                                        'value' => $newAddedArray
+                                    ],
+                                    [
+                                        'value' => [1,2,3],
+                                    ],
+                                    [
+                                        'value' => [2,3],
+                                    ],
+                                    [
+                                        'value' => [],
+                                    ],
+                                    5 => [
+                                        'value' => 1.5
+                                    ],
+                                    11 => [
+                                        'value' => [
+                                            'centAmount' => $newAmount
+                                        ]
+                                    ],
+                                    [
+                                        'name' => $newAttrName,
+                                        'value' => $newAttrValue
+                                    ]
+                                ]
+                            ],
+                            'name' => [
+                                'en' => $newEnglishName,
+                                'fr' => null
+                            ],
+                            'variants' => [
+                                [
+                                    'attributes' => [
+                                        [
+                                            'value' => $newManId
+                                        ]
+                                    ]
+                                ],
+                            ]
+                        ]
+                    ]
+                ],
+                $oldData,
+                $product
+            )
+            ->willThrowException(new RuntimeException('Controlled stop.'));
+
+        $this->fixture->scheduleSave($product);
+        $this->fixture->flush();
+    }
+
+    /**
      * Checks the correct class instance.
      * @return void
      */
@@ -747,7 +864,7 @@ class UnitOfWorkTest extends TestCase
      */
     public function testRegisterAsManaged(): Order
     {
-        $this->getOneMockedMetadata(Order::class, 2);
+        $this->getOneMockedMetadata(Order::class, false);
 
         static::assertCount(0, $this->fixture, 'Start count failed.');
 
@@ -794,6 +911,8 @@ class UnitOfWorkTest extends TestCase
      */
     public function testRegisterAsManagedNew()
     {
+        $this->getOneMockedMetadata(Order::class, false);
+
         static::assertCount(0, $this->fixture, 'Start count failed.');
 
         static::assertSame(
@@ -827,22 +946,6 @@ class UnitOfWorkTest extends TestCase
             $this->fixture->countNewObjects(),
             'The object should be saved as new only once.'
         );
-    }
-
-    /**
-     * Checks that an registered object is returned.
-     * @return void
-     */
-    public function testDetach()
-    {
-        $order = $this->testRegisterAsManaged();
-
-        static::assertTrue($this->fixture->contains($order), 'Object should be contained in the uow.');
-
-        $this->fixture->detach($order);
-
-        static::assertFalse($this->fixture->contains($order), 'Object should not be contained in the uow.');
-        static::assertCount(0, $this->fixture, 'There should be no entity.');
     }
 
     /**
@@ -887,6 +990,49 @@ class UnitOfWorkTest extends TestCase
         );
     }
 
+    /**
+     * Checks if the not-found remove is handled correctly.
+     */
+    public function testScheduleRemoveFailNotFound()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $this->prepareRemovalOfOneOrder(false);
+
+        $this->fixture->setClient($this->getClientWithResponses(
+            function (): Response {
+                return new Response(
+                    404,
+                    [
+                        'x-served-config' => 'sphere-projects-ws-1.0',
+                        'server' => 'nginx',
+                        'content-type' => 'application/json; charset=utf-8',
+                        'content-encoding' => 'gzip',
+                        'date' => 'Mon, 10 Apr 2017 20:21:03 GMT',
+                        'access-control-max-age' => '299',
+                        'x-served-by' => 'api-pt-reverent-engelbart.sphere.prod.commercetools.de',
+                        'x-correlation-id' => 'projects-bob-058c-4c13-a372-3fa2a4ddbe23',
+                        'transfer-encoding' => 'chunked',
+                        'access-control-allow-origin' => '*',
+                        'connection' => 'close',
+                        'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
+                        'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    ],
+                    file_get_contents(
+                        __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_notfound_response.json'
+                    )
+                );
+            }
+        ));
+
+        $this->fixture->flush();
+
+        static::assertSame(
+            0,
+            $this->fixture->countRemovals(),
+            'The object should be removed.'
+        );
+    }
 
     /**
      * Checks if the remove is handled correctly, even if the order is registered before.
@@ -941,54 +1087,12 @@ class UnitOfWorkTest extends TestCase
     }
 
     /**
-     * Checks if the not-found remove is handled correctly.
-     */
-    public function testScheduleRemoveFailNotFound()
-    {
-        $this->expectException(NotFoundException::class);
-
-        $this->prepareRemovalOfOneOrder(false);
-
-        $this->fixture->setClient($this->getClientWithResponses(
-            function (): Response {
-                return new Response(
-                    404,
-                    [
-                        'x-served-config' => 'sphere-projects-ws-1.0',
-                        'server' => 'nginx',
-                        'content-type' => 'application/json; charset=utf-8',
-                        'content-encoding' => 'gzip',
-                        'date' => 'Mon, 10 Apr 2017 20:21:03 GMT',
-                        'access-control-max-age' => '299',
-                        'x-served-by' => 'api-pt-reverent-engelbart.sphere.prod.commercetools.de',
-                        'x-correlation-id' => 'projects-bob-058c-4c13-a372-3fa2a4ddbe23',
-                        'transfer-encoding' => 'chunked',
-                        'access-control-allow-origin' => '*',
-                        'connection' => 'close',
-                        'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
-                        'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
-                    ],
-                    file_get_contents(
-                        __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_notfound_response.json'
-                    )
-                );
-            }
-        ));
-
-        $this->fixture->flush();
-
-        static::assertSame(
-            0,
-            $this->fixture->countRemovals(),
-            'The object should be removed.'
-        );
-    }
-
-    /**
      * Checks if the new object is saved.
+     *
+     * @param bool $withDetach Is the detach used?
      * @return void
      */
-    public function testScheduleSaveNew($withDetach = false)
+    public function testScheduleSaveNew(bool $withDetach = false)
     {
         $type = new ProductType([
             'createdAt' => new DateTime(),
@@ -1029,8 +1133,15 @@ class UnitOfWorkTest extends TestCase
             ->willReturn(new ProductTypeCreateRequest(new ProductTypeDraft(['name' => $typeName])));
 
         $this
+            // TODO: Fix the redundant calls
             ->mockAndCheckInvokerCall($type, Events::PRE_PERSIST, $typeMetadata, 0)
-            ->mockAndCheckInvokerCall($type, Events::POST_PERSIST, $typeMetadata, 1);
+            ->mockAndCheckInvokerCall($type, Events::POST_REGISTER, $typeMetadata, 1)
+            ->mockAndCheckInvokerCall($type, Events::POST_REGISTER, $typeMetadata, 2)
+            ->mockAndCheckInvokerCall($type, Events::POST_PERSIST, $typeMetadata, 3);
+
+        if ($withDetach) {
+            $this->mockAndCheckInvokerCall($type, Events::POST_DETACH, $typeMetadata, 4);
+        }
 
         $this->fixture->scheduleSave($type);
 

@@ -5,7 +5,9 @@ namespace BestIt\CommercetoolsODM\Model;
 use BadMethodCallException;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\APIException;
+use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Helper\DocumentManagerAwareTrait;
+use BestIt\CommercetoolsODM\Helper\FilterManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
@@ -27,14 +29,16 @@ use UnexpectedValueException;
 
 /**
  * The default repository for this commercetools package.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @subpackage $id$
- * @version $id$
  */
 class DefaultRepository implements ObjectRepository
 {
-    use DocumentManagerAwareTrait, QueryHelperAwareTrait, PoolAwareTrait;
+    use DocumentManagerAwareTrait;
+    use QueryHelperAwareTrait;
+    use PoolAwareTrait;
+    use FilterManagerAwareTrait;
 
     /**
      * Should the expand cache be cleared after the query.
@@ -55,22 +59,32 @@ class DefaultRepository implements ObjectRepository
     private $metdata = null;
 
     /**
+     * Filters
+     * @var string[]
+     */
+    private $filters = [];
+
+    /**
      * DefaultRepository constructor.
+     *
      * @param ClassMetadataInterface $metadata
      * @param DocumentManagerInterface $documentManager
      * @param QueryHelper $queryHelper
+     * @param FilterManagerInterface $filterManager
      * @param PoolInterface|null $pool
      */
     public function __construct(
         ClassMetadataInterface $metadata,
         DocumentManagerInterface $documentManager,
         QueryHelper $queryHelper,
+        FilterManagerInterface $filterManager,
         PoolInterface $pool = null
     ) {
         $this
             ->setDocumentManager($documentManager)
             ->setMetdata($metadata)
-            ->setQueryHelper($queryHelper);
+            ->setQueryHelper($queryHelper)
+            ->setFilterManager($filterManager);
 
         if ($pool) {
             $this->setPool($pool);
@@ -165,6 +179,10 @@ class DefaultRepository implements ObjectRepository
             });
         }
 
+        foreach ($this->filters as $filterKey) {
+            $this->getFilterManager()->apply($filterKey, $request);
+        }
+
         return $request;
     }
 
@@ -183,6 +201,10 @@ class DefaultRepository implements ObjectRepository
         $request = $this->getDocumentManager()->createRequest($objectClass, $queryType, ...$parameters);
 
         $this->addExpandsToRequest($request);
+
+        foreach ($this->filters as $filterKey) {
+            $this->getFilterManager()->apply($filterKey, $request);
+        }
 
         return $request;
     }
@@ -380,7 +402,7 @@ class DefaultRepository implements ObjectRepository
         callable $onResolve = null,
         callable $onReject = null
     ): ApiResponseInterface {
-        return $this->findByAsync($criteria, 1, 0, $onResolve, $onReject);
+        return $this->findByAsync($criteria, [], 1, 0, $onResolve, $onReject);
     }
 
     /**
@@ -474,6 +496,26 @@ class DefaultRepository implements ObjectRepository
     }
 
     /**
+     * Shortcut to save the given model.
+     *
+     * @param mixed $model The saving model.
+     * @param bool $withFlush Should the document manager flush the buffer?
+     * @return mixed The "saved" model.
+     */
+    public function save($model, bool $withFlush = false)
+    {
+        $documentManager = $this->getDocumentManager();
+
+        $documentManager->persist($model);
+
+        if ($withFlush) {
+            $documentManager->flush();
+        }
+
+        return $model;
+    }
+
+    /**
      * Set the elements which should be expanded.
      * @param array $expands
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
@@ -496,6 +538,16 @@ class DefaultRepository implements ObjectRepository
     protected function setMetdata(ClassMetadataInterface $metdata): DefaultRepository
     {
         $this->metdata = $metdata;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filter(string... $filters): ObjectRepository
+    {
+        $this->filters = $filters;
 
         return $this;
     }

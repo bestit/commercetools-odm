@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests;
 
 use BestIt\CommercetoolsODM\ClientAwareTrait;
@@ -14,18 +16,16 @@ use BestIt\CommercetoolsODM\UnitOfWorkInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client;
 use Commercetools\Core\Model\Product\Product;
-use function Funct\Strings\toUpper;
-use function Funct\Strings\underscore;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 use Psr\Log\LoggerAwareTrait;
+use function Funct\Strings\toUpper;
+use function Funct\Strings\underscore;
 
 /**
  * Testing of the document manager.
  * @author blange <lange@bestit-online.de>
- * @category Tests
- * @package BestIt\CommercetoolsODM
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests
  */
 class DocumentManagerTest extends TestCase
 {
@@ -33,15 +33,15 @@ class DocumentManagerTest extends TestCase
 
     /**
      * The document manager.
-     * @var DocumentManagerInterface
+     * @var DocumentManagerInterface|null
      */
-    protected $fixture = null;
+    protected $fixture;
 
     /**
      * The used unit of work factory.
-     * @var UnitOfWorkFactoryInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var UnitOfWorkFactoryInterface|PHPUnit_Framework_MockObject_MockObject|null
      */
-    private $unitOfWorkFactory = null;
+    private $unitOfWorkFactory;
 
     /**
      * Returns some tests for the unit of work delegations.
@@ -55,6 +55,14 @@ class DocumentManagerTest extends TestCase
             ['detach'],
             ['detachDeferred', 'detachDeferred'],
             ['flush', '', false],
+            [
+                'merge',
+                'registerAsManaged',
+                true,
+                function (Product $product): array {
+                    return [$product->getId(), $product->getVersion()];
+                }
+            ],
             ['persist', 'scheduleSave'],
             ['refresh', 'refresh'],
             ['remove', 'scheduleRemove']
@@ -122,7 +130,6 @@ class DocumentManagerTest extends TestCase
 
     /**
      * Checks the return for the unit of work.
-     * @covers DocumentManager::getUnitOfWork()
      * @return void
      */
     public function testGetUnitOfWork()
@@ -151,28 +158,37 @@ class DocumentManagerTest extends TestCase
     {
         $this->assertInstanceOf(DocumentManagerInterface::class, $this->fixture);
     }
-    
+
     /**
      * Checks if the unit of work is called correctly.
      * @dataProvider getUnitOfWorkDelegations
      * @param string $documentManagerMethod
      * @param string $unitOfWorkMethod
      * @param bool $withObject
+     * @param callable $argumentsCreator A possible callback to create more arguments.
      */
     public function testUnitOfWorkDelegation(
         string $documentManagerMethod,
         string $unitOfWorkMethod = '',
-        bool $withObject = true
+        bool $withObject = true,
+        callable $argumentsCreator = null
     ) {
+        $arguments = [];
         $unitOfWorkMock = $this->createMock(UnitOfWorkInterface::class);
 
         if ($withObject) {
             $mock = new Product();
 
+            $mock
+                ->setId(uniqid('', true))
+                ->setVersion(mt_rand(1, 1000));
+
             $unitOfWorkMock
                 ->expects($this->once())
                 ->method($unitOfWorkMethod ?: $documentManagerMethod)
                 ->with($mock);
+
+            $arguments[] = $mock;
         } else {
             $unitOfWorkMock
                 ->expects($this->once())
@@ -183,6 +199,10 @@ class DocumentManagerTest extends TestCase
             ->method('getUnitOfWork')
             ->willReturn($unitOfWorkMock);
 
-        $this->fixture->{$documentManagerMethod}($mock ?? null);
+        if ($argumentsCreator) {
+            $arguments += $argumentsCreator($mock ?? null);
+        }
+
+        $this->fixture->{$documentManagerMethod}(...$arguments);
     }
 }

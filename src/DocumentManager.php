@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM;
 
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
@@ -15,7 +17,6 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Common\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ReflectionClass;
 
@@ -24,7 +25,6 @@ use ReflectionClass;
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @todo Add api for multiple clients.
- * @version $id$
  */
 class DocumentManager implements DocumentManagerInterface
 {
@@ -37,19 +37,19 @@ class DocumentManager implements DocumentManagerInterface
      * The repository factory.
      * @var RepositoryFactoryInterface
      */
-    private $repositoryFactory = null;
+    private $repositoryFactory;
 
     /**
      * The unit of work for this manager.
      * @var UnitOfWorkInterface
      */
-    private $unitOfWork = null;
+    private $unitOfWork;
 
     /**
      * The factory for the unit of work.
      * @var UnitOfWorkFactoryInterface
      */
-    private $unitOfWorkFactory = null;
+    private $unitOfWorkFactory;
 
     /**
      * DocumentManager constructor.
@@ -70,8 +70,10 @@ class DocumentManager implements DocumentManagerInterface
             ->setClient($client)
             ->setMetadataFactory($metadataFactory)
             ->setQueryHelper($queryHelper)
-            ->setRepositoryFactory($repositoryFactory)
-            ->setUnitOfWorkFactory($unitOfWorkFactory);
+            ->setLogger(new NullLogger());
+
+        $this->repositoryFactory = $repositoryFactory;
+        $this->unitOfWorkFactory = $unitOfWorkFactory;
     }
 
     /**
@@ -104,27 +106,9 @@ class DocumentManager implements DocumentManagerInterface
      * @return AbstractCreateRequest|AbstractUpdateRequest|AbstractDeleteRequest|AbstractApiRequest
      * @throws InvalidArgumentException
      */
-    public function createRequest(string $className, $requestType = self::REQUEST_TYPE_QUERY, ...$args)
+    public function createRequest(string $className, string $requestType = self::REQUEST_TYPE_QUERY, ...$args)
     {
-        if (!class_exists($requestType)) {
-            $metadata = $this->getClassMetadata($className);
-
-            if (!($metadata instanceof ClassMetadataInterface)) {
-                throw new InvalidArgumentException('The given metadata class was of the wrong type.');
-            }
-
-            $map = $metadata->getRequestClassMap();
-
-            if (!$map) {
-                throw new InvalidArgumentException(sprintf(
-                    'There is no request map for %s / %s.',
-                    $className,
-                    $requestType
-                ));
-            }
-
-            $requestType = $map->{'get' . $requestType}();
-        }
+        $requestType = $this->getRequestClass($className, $requestType);
 
         return (new ReflectionClass($requestType))->newInstanceArgs($args);
     }
@@ -167,7 +151,7 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function find($className, $id)
     {
-        return $this->getRepositoryFactory()->getRepository($this, $className)->find($id);
+        return $this->repositoryFactory->getRepository($this, $className)->find($id);
     }
 
     /**
@@ -196,35 +180,45 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
-     * Returns the logger.
-     * @return LoggerInterface
-     */
-    private function getLogger(): LoggerInterface
-    {
-        if (!$this->logger) {
-            $this->setLogger(new NullLogger());
-        }
-
-        return $this->logger;
-    }
-
-    /**
      * Gets the repository for a class.
      * @param string $className
      * @return ObjectRepository
      */
     public function getRepository($className): ObjectRepository
     {
-        return $this->getRepositoryFactory()->getRepository($this, $className);
+        return $this->repositoryFactory->getRepository($this, $className);
     }
 
     /**
-     * Returns the repository factory.
-     * @return RepositoryFactoryInterface
+     * Returns the full qualified class name for the given request type.
+     *
+     * @param string $className The class name for which the request is fetched.
+     * @param string $requestType The type of the request or the request class name it self.
+     * @return string
      */
-    protected function getRepositoryFactory(): RepositoryFactoryInterface
+    public function getRequestClass(string $className, string $requestType): string
     {
-        return $this->repositoryFactory;
+        if (!class_exists($requestType)) {
+            $metadata = $this->getClassMetadata($className);
+
+            if (!($metadata instanceof ClassMetadataInterface)) {
+                throw new InvalidArgumentException('The given metadata class was of the wrong type.');
+            }
+
+            $map = $metadata->getRequestClassMap();
+
+            if (!$map) {
+                throw new InvalidArgumentException(sprintf(
+                    'There is no request map for %s / %s.',
+                    $className,
+                    $requestType
+                ));
+            }
+
+            $requestType = $map->{'get' . $requestType}();
+        }
+
+        return $requestType;
     }
 
     /**
@@ -234,19 +228,10 @@ class DocumentManager implements DocumentManagerInterface
     public function getUnitOfWork(): UnitOfWorkInterface
     {
         if (!$this->unitOfWork) {
-            $this->setUnitOfWork($this->getUnitOfWorkFactory()->getUnitOfWork($this));
+            $this->setUnitOfWork($this->unitOfWorkFactory->getUnitOfWork($this));
         }
 
         return $this->unitOfWork;
-    }
-
-    /**
-     * Returns the unit of work factory.
-     * @return UnitOfWorkFactoryInterface
-     */
-    private function getUnitOfWorkFactory(): UnitOfWorkFactoryInterface
-    {
-        return $this->unitOfWorkFactory;
     }
 
     /**
@@ -273,6 +258,9 @@ class DocumentManager implements DocumentManagerInterface
      */
     public function merge($object)
     {
+        $this->getUnitOfWork()->registerAsManaged($object, $object->getId(), $object->getVersion());
+
+        return $object;
     }
 
     /**
@@ -317,17 +305,6 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
-     * Sets the repository factory.
-     * @param RepositoryFactoryInterface $repositoryFactory
-     * @return DocumentManager
-     */
-    protected function setRepositoryFactory(RepositoryFactoryInterface $repositoryFactory): DocumentManager
-    {
-        $this->repositoryFactory = $repositoryFactory;
-        return $this;
-    }
-
-    /**
      * Sets the unit of work for this manager.
      * @param UnitOfWorkInterface $unitOfWork
      * @return DocumentManager
@@ -335,18 +312,6 @@ class DocumentManager implements DocumentManagerInterface
     protected function setUnitOfWork(UnitOfWorkInterface $unitOfWork): DocumentManager
     {
         $this->unitOfWork = $unitOfWork;
-
-        return $this;
-    }
-
-    /**
-     * Sets the unit of work interface.s
-     * @param UnitOfWorkFactoryInterface $unitOfWorkFactory
-     * @return DocumentManager
-     */
-    private function setUnitOfWorkFactory(UnitOfWorkFactoryInterface $unitOfWorkFactory): DocumentManager
-    {
-        $this->unitOfWorkFactory = $unitOfWorkFactory;
 
         return $this;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
@@ -10,26 +12,23 @@ use PHPUnit_Framework_MockObject_MockObject;
 /**
  * Tests ActionBuilderAbstract.
  * @author lange <lange@bestit-online.de>
- * @category Tests
- * @package BestIt\CommercetoolsODM
- * @subpackage ActionBuilder
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder
  */
 class ActionBuilderAbstractTest extends TestCase
 {
     /**
      * The test class.
-     * @var ActionBuilderAbstract|PHPUnit_Framework_MockObject_MockObject
+     * @var ActionBuilderAbstract|PHPUnit_Framework_MockObject_MockObject|null
      */
-    private $fixture = null;
+    private $fixture;
 
     /**
      * Sets up the test.
      * @return void
      */
-    public function setUp()
+    protected function setUp()
     {
-        $this->fixture = static::getMockForAbstractClass(ActionBuilderAbstract::class);
+        $this->fixture = $this->getMockForAbstractClass(ActionBuilderAbstract::class);
     }
 
     /**
@@ -51,7 +50,6 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks the priority getter.
-     * @covers ActionBuilderAbstract::getPriority()
      * @return void
      */
     public function testGetPriorityDefault()
@@ -70,7 +68,6 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks the handling of the stackable parameter.
-     * @covers ActionBuilderAbstract::isStackable()
      * @return void
      */
     public function testIsStackable()
