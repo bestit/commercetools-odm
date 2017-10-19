@@ -115,5 +115,15 @@ return [
             ->setFindById(\Commercetools\Core\Request\ShippingMethods\ShippingMethodByIdGetRequest::class)
             ->setQuery(\Commercetools\Core\Request\ShippingMethods\ShippingMethodQueryRequest::class)
             ->setUpdateById(\Commercetools\Core\Request\ShippingMethods\ShippingMethodUpdateRequest::class),
+    ],
+
+    \Commercetools\Core\Model\Zone\Zone::class => [
+        'draft' => \Commercetools\Core\Model\Zone\ZoneDraft::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Zones\ZoneCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Zones\ZoneDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Zones\ZoneByIdGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Zones\ZoneQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Zones\ZoneUpdateRequest::class),
     ]
 ];
