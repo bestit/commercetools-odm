@@ -72,7 +72,9 @@ class SetLineItemQuantity extends ActionBuilderAbstract
             'quantity' => $changedValue['quantity']
         ];
 
-        if ($lineItem->getPriceMode() === LineItem::PRICE_MODE_EXTERNAL_PRICE) {
+        if (defined('Commercetools\Core\Model\Cart\LineItem::PRICE_MODE_EXTERNAL_PRICE')
+            && $lineItem->getPriceMode() === LineItem::PRICE_MODE_EXTERNAL_PRICE
+        ) {
             $changeLineItemQuantityAction['externalPrice'] = $this->getCorrectPrice(
                 $changedValue['price'],
                 $changedValue['quantity']
