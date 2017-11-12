@@ -9,6 +9,11 @@
             "BestIt\\CommercetoolsODM\\Tests\\": "tests/"
         }
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
     "name": "bestit/commercetools-odm",
     "description": "Makes the commercetools database accessible with the doctrine commons api.",
     "type": "lib",
