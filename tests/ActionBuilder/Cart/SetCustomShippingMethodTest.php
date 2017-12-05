@@ -54,8 +54,6 @@ class SetCustomShippingMethodTest extends TestCase
     /**
      * Checks if a no action will created if cart state mismatch
      *
-     * @covers SetCustomShippingMethod::createUpdateActions()
-     *
      * @return void
      */
     public function testOnlyBuildActionWithState()
@@ -76,8 +74,6 @@ class SetCustomShippingMethodTest extends TestCase
 
     /**
      * Checks if a action will created without old data
-     *
-     * @covers SetCustomShippingMethod::createUpdateActions()
      *
      * @return void
      */
@@ -135,8 +131,6 @@ class SetCustomShippingMethodTest extends TestCase
 
     /**
      * Checks if a action will created with merged old data
-     *
-     * @covers SetCustomShippingMethod::createUpdateActions()
      *
      * @return void
      */
