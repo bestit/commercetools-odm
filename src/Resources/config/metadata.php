@@ -130,6 +130,20 @@ return [
             ->setUpdateById(\Commercetools\Core\Request\ShippingMethods\ShippingMethodUpdateRequest::class),
     ],
 
+    \Commercetools\Core\Model\ShoppingList\ShoppingList::class => [
+        'draft' => \Commercetools\Core\Model\ShoppingList\ShoppingListDraft::class,
+        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\ShoppingLists\ShoppingListCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\ShoppingLists\ShoppingListDeleteRequest::class)
+            ->setDeleteByKey(\Commercetools\Core\Request\ShoppingLists\ShoppingListDeleteByKeyRequest::class)
+            ->setFindById(\Commercetools\Core\Request\ShoppingLists\ShoppingListByIdGetRequest::class)
+            ->setFindByKey(\Commercetools\Core\Request\ShoppingLists\ShoppingListByKeyGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\ShoppingLists\ShoppingListQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\ShoppingLists\ShoppingListUpdateRequest::class)
+            ->setUpdateByKey(\Commercetools\Core\Request\ShoppingLists\ShoppingListUpdateByKeyRequest::class),
+    ],
+
     \Commercetools\Core\Model\Zone\Zone::class => [
         'draft' => \Commercetools\Core\Model\Zone\ZoneDraft::class,
         'requestClassMap' => (new RequestMap())
