@@ -8,6 +8,7 @@ use BestIt\CommercetoolsODM\DocumentManagerInterface;
 
 /**
  * Helps to provide the document manager.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Helper
  */
@@ -16,10 +17,10 @@ trait DocumentManagerAwareTrait
     /**
      * @var DocumentManagerInterface|null The used document manager.
      */
-    private $documentManager;
+    protected $documentManager = null;
 
     /**
-     * Returns the used document manager.
+     * Returns the used document manager in a type safe way.
      *
      * @return DocumentManagerInterface
      */

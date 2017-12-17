@@ -1,26 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Helper;
 
 use Commercetools\Commons\Helper\QueryHelper;
 
 /**
  * Helps with handling the query helper.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage Helper
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Helper
  */
 trait QueryHelperAwareTrait
 {
     /**
-     * The commons query helper.
-     * @var QueryHelper
+     * @var QueryHelper|null The commons query helper.
      */
-    private $queryHelper = null;
+    protected $queryHelper = null;
 
     /**
-     * Returns the common query helper for commercetools.
+     * Returns the common query helper for commercetools in a type safe way.
+     *
      * @return QueryHelper
      */
     public function getQueryHelper(): QueryHelper
@@ -30,10 +31,11 @@ trait QueryHelperAwareTrait
 
     /**
      * Sets the common query helper for commercetools.
+     *
      * @param QueryHelper $queryHelper
      * @return $this
      */
-    public function setQueryHelper(QueryHelper $queryHelper)
+    public function setQueryHelper(QueryHelper $queryHelper): self
     {
         $this->queryHelper = $queryHelper;
 

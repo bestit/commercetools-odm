@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Model;
 
 use BadMethodCallException;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
-use BestIt\CommercetoolsODM\Exception\APIException;
+use BestIt\CommercetoolsODM\Exception\ResponseException;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Helper\DocumentManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\FilterManagerAwareTrait;
@@ -26,6 +28,12 @@ use Commercetools\Core\Response\ErrorResponse;
 use Commercetools\Core\Response\ResourceResponse;
 use GuzzleHttp\Promise\FulfilledPromise;
 use UnexpectedValueException;
+use function array_map;
+use function array_walk;
+use function func_num_args;
+use function is_numeric;
+use function method_exists;
+use function sprintf;
 
 /**
  * The default repository for this commercetools package.
@@ -41,28 +49,24 @@ class DefaultRepository implements ObjectRepository
     use FilterManagerAwareTrait;
 
     /**
-     * Should the expand cache be cleared after the query.
-     * @var bool
+     * @var bool Should the expand cache be cleared after the query.
      */
     private $clearExpandAfterQuery = false;
 
     /**
-     * Saves the elements which should be expanded.
-     * @var array
+     * @var array Saves the elements which should be expanded.
      */
     private $expands = [];
 
     /**
-     * The metadata for the used class.
-     * @var ClassMetadataInterface
-     */
-    private $metdata = null;
-
-    /**
-     * Filters
-     * @var string[]
+     * @var string[] Filters
      */
     private $filters = [];
+
+    /**
+     * @var ClassMetadataInterface The metadata for the used class.
+     */
+    private $metadata;
 
     /**
      * DefaultRepository constructor.
@@ -82,9 +86,10 @@ class DefaultRepository implements ObjectRepository
     ) {
         $this
             ->setDocumentManager($documentManager)
-            ->setMetdata($metadata)
             ->setQueryHelper($queryHelper)
             ->setFilterManager($filterManager);
+
+        $this->metadata = $metadata;
 
         if ($pool) {
             $this->setPool($pool);
@@ -210,10 +215,21 @@ class DefaultRepository implements ObjectRepository
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function filter(string... $filters): ObjectRepository
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
+
+    /**
      * Finds an object by its primary key / identifier.
+     *
      * @param mixed $id The identifier.
-     * @return object The object.
-     * @throws APIException
+     * @throws ResponseException
+     * @return object The found object.
      */
     public function find($id)
     {
@@ -235,7 +251,7 @@ class DefaultRepository implements ObjectRepository
 
             if ($rawResponse->getStatusCode() !== 404) {
                 if ($rawResponse->isError()) {
-                    throw APIException::fromResponse($rawResponse);
+                    throw ResponseException::fromResponse($rawResponse);
                 }
 
                 $document = $uow->createDocument($this->getClassName(), $response, []);
@@ -333,17 +349,16 @@ class DefaultRepository implements ObjectRepository
      * @param int|null $offset
      * @return array The objects.
      * @throws UnexpectedValueException
-     * @todo Add staged as general on the test webs
+     * @throws ResponseException
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
         $request = $this->createFindByQuery($criteria, $orderBy ?? [], $limit ?? 0, $offset ?? 0);
 
-        // TODO Error Message
         list($rawDocuments, $response) = $this->processQuery($request);
 
         if ($response instanceof ErrorResponse) {
-            var_dump($response->getMessage());
+            throw ResponseException::fromResponse($response);
         }
 
         return $this->getObjectsFromCollection($rawDocuments);
@@ -411,7 +426,7 @@ class DefaultRepository implements ObjectRepository
      */
     public function getClassName(): string
     {
-        return $this->getMetdata()->getName();
+        return $this->metadata->getName();
     }
 
     /**
@@ -447,15 +462,6 @@ class DefaultRepository implements ObjectRepository
         }
 
         return $documents;
-    }
-
-    /**
-     * Returns the metadata for the used class.
-     * @return ClassMetadataInterface
-     */
-    protected function getMetdata(): ClassMetadataInterface
-    {
-        return $this->metdata;
     }
 
     /**
@@ -526,28 +532,6 @@ class DefaultRepository implements ObjectRepository
         $this->expands = $expands;
 
         $this->clearExpandAfterQuery($clearAfterwards);
-
-        return $this;
-    }
-
-    /**
-     * Sets the metadata for the used class.
-     * @param ClassMetadataInterface $metdata
-     * @return DefaultRepository
-     */
-    protected function setMetdata(ClassMetadataInterface $metdata): DefaultRepository
-    {
-        $this->metdata = $metdata;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function filter(string... $filters): ObjectRepository
-    {
-        $this->filters = $filters;
 
         return $this;
     }

@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Helper;
 
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 
 /**
- * Getter and setter for filter manager
+ * Getter and setter for filter manager.
+ *
+ * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Helper
  */
 trait FilterManagerAwareTrait
 {
     /**
-     * The used filter manager
-     *
-     * @var FilterManagerInterface
+     * @var FilterManagerInterface|null The used filter manager
      */
-    private $filterManager;
+    protected $filterManager = null;
 
     /**
-     * Returns the used document manager
+     * Returns the used filter manager in a type safe way.
      *
      * @return FilterManagerInterface
      */
@@ -31,10 +33,9 @@ trait FilterManagerAwareTrait
      * Sets the used filter manager
      *
      * @param FilterManagerInterface $filterManager
-     *
      * @return $this
      */
-    public function setFilterManager(FilterManagerInterface $filterManager)
+    public function setFilterManager(FilterManagerInterface $filterManager): self
     {
         $this->filterManager = $filterManager;
 
