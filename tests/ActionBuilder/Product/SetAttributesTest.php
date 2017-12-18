@@ -10,9 +10,11 @@ use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 use PHPUnit\Framework\TestCase;
+use function uniqid;
 
 /**
  * Tests the SetAttributes.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  */
@@ -21,13 +23,13 @@ class SetAttributesTest extends TestCase
     use SupportTestTrait;
 
     /**
-     * The tested class.
-     * @var SetAttributes|null
+     * @var SetAttributes|null The tested class.
      */
     protected $fixture;
 
     /**
      * Returns assertions for the create call.
+     *
      * @return array
      */
     public function getCatalogs(): array
@@ -66,7 +68,8 @@ class SetAttributesTest extends TestCase
 
     /**
      * Sets up the test.
-     * @reteurn void
+     *
+     * @return void
      */
     protected function setUp()
     {
@@ -75,9 +78,11 @@ class SetAttributesTest extends TestCase
 
     /**
      * Checks if the master variant attributes can be changed.
+     *
      * @dataProvider getCatalogs
      * @param string $container
      * @param bool $staged
+     * @return void
      */
     public function testCreateUpdateActionsForMasterVariant(string $container, bool $staged = false)
     {
@@ -125,9 +130,11 @@ class SetAttributesTest extends TestCase
 
     /**
      * Checks an attribute can be added to the master variant attributes.
+     *
      * @dataProvider getCatalogs
      * @param string $container
      * @param bool $staged
+     * @return void
      */
     public function testCreateUpdateActionsForMasterVariantAddAttr(string $container, bool $staged = false)
     {
@@ -190,10 +197,97 @@ class SetAttributesTest extends TestCase
     }
 
     /**
-     * Checks if a nested master variant attribute and its difference to arrays can be changed
+     * Checks if an array attribute is merged correctly.
+     *
      * @dataProvider getCatalogs
      * @param string $container
      * @param bool $staged
+     * @return void
+     */
+    public function testCreateUpdateActionsForMasterVariantArrayMerge(string $container, bool $staged = false)
+    {
+        $this->fixture->supports("masterData/{$container}/masterVariant/attributes", Product::class);
+
+        $actions = $this->fixture->createUpdateActions(
+            [
+                56 => [
+                    'value' => [
+                        7 => [
+                            'de' => 'Polnisch',
+                        ],
+                        null
+                    ],
+                ],
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [
+                'attributes' => [
+                    56 => [
+                        'value' => [
+                            7 => [
+                                'de' => 'Polnisch',
+                            ],
+                            null
+                        ],
+                    ],
+                ],
+            ],
+            include realpath(__DIR__ . '/_mocks/attributes/old_data_for_array_merge.php'),
+            new Product()
+        );
+
+        static::assertCount(1, $actions, 'Wrong action count.');
+
+        /** @var $action1 ProductSetAttributeAction */
+        static::assertInstanceOf(
+            ProductSetAttributeAction::class,
+            $action1 = $actions[0],
+            'Wrong instance. (1)'
+        );
+
+        static::assertSame(1, $action1->getVariantId(), 'Wrong variant id. (1)');
+        static::assertSame('bildschirmdisplay_osd_sprachen', $action1->getName(), 'Wrong name. (1)');
+        static::assertSame($staged, $action1->getStaged(), 'Staged wrongly set. (1)');
+
+        static::assertSame(
+            [
+                [
+                    'de' => 'CZE',
+                ],
+                [
+                    'de' => 'Deutsch',
+                ],
+                [
+                    'de' => 'Niederländisch',
+                ],
+                [
+                    'de' => 'Englisch',
+                ],
+                [
+                    'de' => 'Spanisch',
+                ],
+                [
+                    'de' => 'Französisch',
+                ],
+                [
+                    'de' => 'Italienisch',
+                ],
+                [
+                    'de' => 'Polnisch',
+                ]
+            ],
+            $action1->getValue(),
+            'Wrong value. (1)'
+        );
+    }
+
+    /**
+     * Checks if a nested master variant attribute and its difference to arrays can be changed.
+     *
+     * @dataProvider getCatalogs
+     * @param string $container
+     * @param bool $staged
+     * @return void
      */
     public function testCreateUpdateActionsForMasterVariantNestedAttr(string $container, bool $staged = false)
     {
@@ -202,10 +296,10 @@ class SetAttributesTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 [
-                    'value' => []
+                    'value' => [null, null]
                 ],
                 [
-                    'value' => [2]
+                    'value' => [2, null]
                 ],
                 [
                     'value' => [
@@ -233,7 +327,7 @@ class SetAttributesTest extends TestCase
                                 ],
                                 [
                                     'name' => 'array2',
-                                    'value' => [1,2]
+                                    'value' => [1, 2]
                                 ],
                                 [
                                     'name' => $attrName = 'nested',
@@ -310,9 +404,11 @@ class SetAttributesTest extends TestCase
 
     /**
      * Checks if variant attributes can be changed.
+     *
      * @dataProvider getCatalogs
      * @param string $container
      * @param bool $staged
+     * @return void
      */
     public function testCreateUpdateActionsForVariantAttributes(string $container, bool $staged = false)
     {

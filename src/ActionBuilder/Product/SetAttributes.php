@@ -8,22 +8,28 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
+use function array_filter;
+use function array_key_exists;
+use function current;
+use function is_array;
+use function ksort;
 
 /**
  * Sets the attributes for products.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  */
 class SetAttributes extends ProductActionBuilder
 {
     /**
-     * A PCRE to match the hierarchical field path without delimiter.
-     * @var string
+     * @var string A PCRE to match the hierarchical field path without delimiter.
      */
     protected $complexFieldFilter = '^masterData/(current|staged)/(masterVariant|variants)/([\d]*)/?attributes$';
 
     /**
      * Creates the update actions for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
@@ -64,27 +70,25 @@ class SetAttributes extends ProductActionBuilder
 
                 // TODO: Refactor this and enable more levels.
                 // We can only check for the name/value structure for a nested attribute, because the attribute
-                // defintion must not be set every time.
+                // definition must not be set every time.
                 if ((is_array($attrValue)) && (is_array(@$oldAttrs[$attrIndex]['value']))) {
                     $isNested = $this->isNestedAttribute($oldAttrs[$attrIndex]);
 
-                    foreach ($attrValue as $subIndex => &$attrSubValue) {
-                        if ($isNested) {
+                    if ($isNested) {
+                        foreach ($attrValue as $subIndex => &$attrSubValue) {
                             if (!@$attrSubValue['name']) {
                                 $attrSubValue['name'] = $oldAttrs[$attrIndex]['value'][$subIndex]['name'];
                             }
                         }
                     }
 
+                    $attrValue = $attrValue + $oldAttrs[$attrIndex]['value'];
+
                     $attrValue = array_filter($attrValue, function ($attrSubValue) {
                         return $attrSubValue !== null;
                     });
 
-                    if ($isNested) {
-                        $attrValue = $attrValue + $oldAttrs[$attrIndex]['value'];
-
-                        ksort($attrValue);
-                    }
+                    ksort($attrValue);
                 }
 
                 $action->setValue($attrValue);
@@ -96,6 +100,12 @@ class SetAttributes extends ProductActionBuilder
         return $actions;
     }
 
+    /**
+     * Returns true if the given attribute is a nested attribute.
+     *
+     * @param array|mixed $attr The checked attribute.
+     * @return bool
+     */
     private function isNestedAttribute($attr): bool
     {
         $isNested = false;
