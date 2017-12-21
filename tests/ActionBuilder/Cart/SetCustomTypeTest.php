@@ -51,10 +51,14 @@ class SetCustomTypeTest extends TestCase
      */
     private function runAction(array $changedData)
     {
+        $expectedFields = array_merge(['non-changed' => 'foobar'], $changedData['fields']);
+
         $cart = new Cart();
         $customField = new CustomFieldObject();
         $customField->setType(TypeReference::ofKey($changedData['type']['key']));
-        $customField->setFields(FieldContainer::fromArray($changedData['fields']));
+        $customField->setFields(
+            FieldContainer::fromArray(['non-changed' => 'foobar'])
+        );
         $cart->setCustom($customField);
 
         /** @var SetCustomTypeAction[] $actions */
@@ -69,7 +73,7 @@ class SetCustomTypeTest extends TestCase
         static::assertCount(1, $actions);
         static::assertInstanceOf(SetCustomTypeAction::class, $actions[0]);
         static::assertSame($changedData['type'], $actions[0]->getType()->toArray());
-        static::assertSame($changedData['fields'], $actions[0]->getFields()->toArray());
+        static::assertSame($expectedFields, $actions[0]->getFields()->toArray());
     }
 
     /**
