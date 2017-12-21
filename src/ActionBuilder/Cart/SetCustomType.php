@@ -50,7 +50,12 @@ class SetCustomType extends CartActionBuilder
             $action->setType(TypeReference::ofKey($changedValue['type']['key']));
             $container = new FieldContainer();
 
-            foreach ($changedValue['fields'] as $name => $value) {
+            $fields = array_merge(
+                $sourceObject->getCustom()->getFields()->toArray(),
+                $changedValue['fields']
+            );
+
+            foreach ($fields as $name => $value) {
                 $container->set($name, $value);
             }
 
