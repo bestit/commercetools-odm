@@ -1,26 +1,32 @@
 <?php
 
-namespace BestIt\CommercetoolsODM\Repository;
+declare(strict_types=1);
+
+namespace BestIt\CommercetoolsODM\Repository\Decorator;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Repository\ObjectRepository;
+use Commercetools\Core\Response\ApiResponseInterface;
+use Exception;
+use function func_get_args;
 
 /**
  * Decorator for the default repository.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage Repository
+ * @package BestIt\CommercetoolsODM\Repository
  * @version $id$
  */
 class DefaultRepositoryDecorator implements ObjectRepository
 {
     /**
-     * The wrapped repository.
-     * @var ObjectRepository
+     * @var ObjectRepository The wrapped repository.
      */
-    private $wrapped = null;
+    private $wrapped;
 
     /**
      * DefaultRepositoryDecorator constructor.
+     *
      * @param ObjectRepository $wrapped
      */
     public function __construct(ObjectRepository $wrapped)
@@ -30,10 +36,22 @@ class DefaultRepositoryDecorator implements ObjectRepository
 
     /**
      * Should the expand cache be cleared after the query.
+     *
      * @param bool $newStatus The new status.
      * @return bool The old status.
      */
-    public function clearExpandAfterQuery($newStatus = false): bool
+    public function clearExpandAfterQuery(bool $newStatus = false): bool
+    {
+        return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
+    }
+
+    /**
+     * Apply the filters with the given names.
+     *
+     * @param string[] ...$filters
+     * @return ObjectRepository
+     */
+    public function filter(string... $filters): ObjectRepository
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
@@ -42,7 +60,6 @@ class DefaultRepositoryDecorator implements ObjectRepository
      * Finds an object by its primary key / identifier.
      *
      * @param mixed $id The identifier.
-     *
      * @return object|null The object.
      */
     public function find($id)
@@ -62,13 +79,16 @@ class DefaultRepositoryDecorator implements ObjectRepository
 
     /**
      * Finds an object by its primary key / identifier.
+     *
      * @param mixed $id The identifier.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
+     *
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @throws Exception If there is something wrong.
+     * @return ApiResponseInterface
      */
-    public function findAsync($id, callable $onResolve = null, callable $onReject = null)
+    public function findAsync($id, callable $onResolve = null, callable $onReject = null): ApiResponseInterface
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
@@ -97,17 +117,19 @@ class DefaultRepositoryDecorator implements ObjectRepository
     /**
      * Finds objects by a set of criteria.
      *
-     * Optionally sorting and limiting details can be passed. An implementation may throw
-     * an UnexpectedValueException if certain values of the sorting or limiting details are
-     * not supported.
+     * Optionally sorting and limiting details can be passed. An implementation may throw an UnexpectedValueException
+     * if certain values of the sorting or limiting details are not supported.
+     *
      * @param array $criteria
      * @param array $orderBy
      * @param int $limit
      * @param int $offset
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
+     *
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @throws Exception If there is something wrong.
+     * @return ApiResponseInterface
      */
     public function findByAsync(
         array $criteria,
@@ -116,7 +138,7 @@ class DefaultRepositoryDecorator implements ObjectRepository
         int $offset = 0,
         callable $onResolve = null,
         callable $onReject = null
-    ) {
+    ): ApiResponseInterface {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
 
@@ -124,7 +146,6 @@ class DefaultRepositoryDecorator implements ObjectRepository
      * Finds a single object by a set of criteria.
      *
      * @param array $criteria The criteria.
-     *
      * @return object|null The object.
      */
     public function findOneBy(array $criteria)
@@ -134,14 +155,20 @@ class DefaultRepositoryDecorator implements ObjectRepository
 
     /**
      * Finds a single object by a set of criteria.
+     *
      * @param array $criteria The criteria.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
+     *
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @throws Exception If there is something wrong.
+     * @return ApiResponseInterface
      */
-    public function findOneByAsync(array $criteria, callable $onResolve = null, callable $onReject = null)
-    {
+    public function findOneByAsync(
+        array $criteria,
+        callable $onResolve = null,
+        callable $onReject = null
+    ): ApiResponseInterface {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
 
@@ -157,6 +184,7 @@ class DefaultRepositoryDecorator implements ObjectRepository
 
     /**
      * Returns the used document manager.
+     *
      * @return DocumentManagerInterface
      */
     public function getDocumentManager(): DocumentManagerInterface
@@ -166,6 +194,7 @@ class DefaultRepositoryDecorator implements ObjectRepository
 
     /**
      * Returns the elements which should be expanded.
+     *
      * @return array
      */
     public function getExpands(): array
@@ -174,7 +203,18 @@ class DefaultRepositoryDecorator implements ObjectRepository
     }
 
     /**
+     * Returns the array of registered filters.
+     *
+     * @return array
+     */
+    public function getFilters(): array
+    {
+        return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
+    }
+
+    /**
      * Returns the wrapped repository.
+     *
      * @return ObjectRepository
      */
     protected function getWrapped(): ObjectRepository
@@ -183,22 +223,36 @@ class DefaultRepositoryDecorator implements ObjectRepository
     }
 
     /**
+     * Shortcut to save the given model.
+     *
+     * @param mixed $model The saving model.
+     * @param bool $withFlush Should the document manager flush the buffer?
+     * @return mixed The "saved" model.
+     */
+    public function save($model, bool $withFlush = false)
+    {
+        return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
+    }
+
+    /**
      * Set the elements which should be expanded.
-     * @param array $expands
+     *
+     * @param array $expands The identifiers of the types.
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
      * @return ObjectRepository
      */
-    public function setExpands(array $expands, $clearAfterwards = false): ObjectRepository
+    public function setExpands(array $expands, bool $clearAfterwards = false): ObjectRepository
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
 
     /**
      * Sets the wrapped repository.
-     * @param ObjectRepository $wrapped
-     * @return DefaultRepositoryDecorator
+     *
+     * @param ObjectRepository $wrapped The original repository.
+     * @return $this
      */
-    private function setWrapped(ObjectRepository $wrapped): DefaultRepositoryDecorator
+    private function setWrapped(ObjectRepository $wrapped): self
     {
         $this->wrapped = $wrapped;
 

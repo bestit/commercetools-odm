@@ -21,34 +21,37 @@ interface ObjectRepository extends BasicInterface
      * @param bool $newStatus The new status.
      * @return bool The old status.
      */
-    public function clearExpandAfterQuery($newStatus = false): bool;
+    public function clearExpandAfterQuery(bool $newStatus = false): bool;
 
     /**
      * Finds an object by its primary key / identifier.
+     *
      * @param mixed $id The identifier.
-     * @deprecated Don't use the callback param anymore. Use chaining!
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return ApiResponseInterface
+     *
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @throws Exception If there is something wrong.
+     * @return ApiResponseInterface
      */
     public function findAsync($id, callable $onResolve = null, callable $onReject = null): ApiResponseInterface;
 
     /**
      * Finds objects by a set of criteria.
      *
-     * Optionally sorting and limiting details can be passed. An implementation may throw
-     * an UnexpectedValueException if certain values of the sorting or limiting details are
-     * not supported.
-     * @deprecated Don't use the callback param anymore. Use chaining!
+     * Optionally sorting and limiting details can be passed. An implementation may throw an UnexpectedValueException
+     * if certain values of the sorting or limiting details are not supported.
+     *
      * @param array $criteria
      * @param array $orderBy
      * @param int $limit
      * @param int $offset
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return ApiResponseInterface
+     *
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @throws Exception If there is something wrong.
+     * @return ApiResponseInterface
      */
     public function findByAsync(
         array $criteria,
@@ -61,12 +64,14 @@ interface ObjectRepository extends BasicInterface
 
     /**
      * Finds a single object by a set of criteria.
-     * @deprecated Don't use the callback param anymore. Use chaining!
+     *
      * @param array $criteria The criteria.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return ApiResponseInterface
+     *
+     * @deprecated Don't use the callback param anymore. Use chaining!
      * @throws Exception If there is something wrong.
+     * @return ApiResponseInterface
      */
     public function findOneByAsync(
         array $criteria,
@@ -87,6 +92,13 @@ interface ObjectRepository extends BasicInterface
     public function getExpands(): array;
 
     /**
+     * Returns the array of registered filters.
+     *
+     * @return array
+     */
+    public function getFilters(): array;
+
+    /**
      * Shortcut to save the given model.
      *
      * @param mixed $model The saving model.
@@ -101,7 +113,7 @@ interface ObjectRepository extends BasicInterface
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
      * @return ObjectRepository
      */
-    public function setExpands(array $expands, $clearAfterwards = false): ObjectRepository;
+    public function setExpands(array $expands, bool $clearAfterwards = false): ObjectRepository;
 
     /**
      * Apply filters

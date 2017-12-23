@@ -167,7 +167,7 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
      * @return ObjectRepository
      */
-    public function setExpands(array $expands, $clearAfterwards = false): ObjectRepository
+    public function setExpands(array $expands, bool $clearAfterwards = false): ObjectRepository
     {
         throw new BadMethodCallException('Method not supported for projects.');
     }

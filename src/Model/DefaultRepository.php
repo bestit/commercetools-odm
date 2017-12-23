@@ -116,7 +116,7 @@ class DefaultRepository implements ObjectRepository
      * @param bool $newStatus The new status.
      * @return bool The old status.
      */
-    public function clearExpandAfterQuery($newStatus = false): bool
+    public function clearExpandAfterQuery(bool $newStatus = false): bool
     {
         $oldStatus = $this->clearExpandAfterQuery;
 
@@ -439,6 +439,16 @@ class DefaultRepository implements ObjectRepository
     }
 
     /**
+     * Returns the array of registered filters.
+     *
+     * @return array
+     */
+    public function getFilters(): array
+    {
+        return $this->filters;
+    }
+
+    /**
      * Returns the collection as an array with the ids as keys.
      * @param Collection $rawDocuments
      * @return array
@@ -527,7 +537,7 @@ class DefaultRepository implements ObjectRepository
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
      * @return ObjectRepository
      */
-    public function setExpands(array $expands, $clearAfterwards = false): ObjectRepository
+    public function setExpands(array $expands, bool $clearAfterwards = false): ObjectRepository
     {
         $this->expands = $expands;
 
