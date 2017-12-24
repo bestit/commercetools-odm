@@ -6,13 +6,16 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Attribute;
-use Commercetools\Core\Request\AbstractAction;
+use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 use function array_filter;
 use function array_key_exists;
+use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
+use function count;
 use function current;
 use function is_array;
 use function ksort;
+use function Funct\Strings\upperCaseFirst;
 
 /**
  * Sets the attributes for products.
@@ -34,8 +37,8 @@ class SetAttributes extends ProductActionBuilder
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
-     * @param mixed $sourceObject
-     * @return AbstractAction[]
+     * @param Product $sourceObject The full product object.
+     * @return ProductSetAttributeAction[]|ProductSetAttributeInAllVariantsAction[]
      * @todo Check if the name of the attr matches the oldattr if you just use the attrindex.
      */
     public function createUpdateActions(
@@ -50,6 +53,7 @@ class SetAttributes extends ProductActionBuilder
 
         $actions = [];
         $oldProductCatalogData = $oldData['masterData'][$productCatalogContainer];
+        $variants = $sourceObject->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getVariants();
 
         foreach ($changedValue as $attrIndex => $attr) {
             if ($variantContainer === 'masterVariant') {
@@ -60,10 +64,20 @@ class SetAttributes extends ProductActionBuilder
                 $variantId = $oldProductCatalogData[$variantContainer][$variantIndex]['id'];
             }
 
-            $action = ProductSetAttributeAction::ofVariantIdAndName(
-                $variantId,
-                $attr['name'] ?? $oldAttrs[$attrIndex]['name']
-            )->setStaged($productCatalogContainer === 'staged');
+            /** @var ProductSetAttributeAction|ProductSetAttributeInAllVariantsAction $action */
+            if ($variants && count($variants)) {
+                $action = ProductSetAttributeAction::ofVariantIdAndName(
+                    $variantId,
+                    $attr['name'] ?? $oldAttrs[$attrIndex]['name']
+                );
+            } else {
+                // Workaround against "variant duplication" error on a single master variant with no attr constraint
+                $action = ProductSetAttributeInAllVariantsAction::ofName(
+                    $attr['name'] ?? $oldAttrs[$attrIndex]['name']
+                );
+            }
+
+            $action->setStaged($productCatalogContainer === 'staged');
 
             if ($attr && isset($attr['value'])) {
                 $attrValue = $attr['value'];

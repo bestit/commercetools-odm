@@ -9,6 +9,7 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
+use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
 use PHPUnit\Framework\TestCase;
 use function uniqid;
 
@@ -84,6 +85,64 @@ class SetAttributesTest extends TestCase
      * @param bool $staged
      * @return void
      */
+    public function testCreateUpdateActionsForVariant(string $container, bool $staged = false)
+    {
+        $this->fixture->supports("masterData/{$container}/variants/0/attributes", Product::class);
+
+        $actions = $this->fixture->createUpdateActions(
+            [
+                [
+                    'value' => $mockedValue = uniqid()
+                ]
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'masterData' => [
+                    $container => [
+                        'variants' => [
+                            [
+                                'id' => 2,
+                                'attributes' => [
+                                    [
+                                        'name' => $attrName = 'manufacturer',
+                                        'value' => uniqid()
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            Product::fromArray(['masterData' => [$container => ['variants' => [
+                ['id' => 2]
+            ]]]])
+        );
+
+        static::assertCount(1, $actions, 'Wrong action count.');
+
+        /** @var $action ProductSetAttributeAction */
+        static::assertInstanceOf(
+            ProductSetAttributeAction::class,
+            $action = $actions[0],
+            'Wrong instance.'
+        );
+
+        static::assertSame(2, $action->getVariantId(), 'Wrong variant id.');
+        static::assertSame($attrName, $action->getName(), 'Wrong name.');
+        static::assertSame($mockedValue, $action->getValue(), 'Wrong value');
+        static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
+    }
+
+
+    /**
+     * Checks if the master variant attributes can be changed.
+     *
+     * @dataProvider getCatalogs
+     * @param string $container
+     * @param bool $staged
+     * @return void
+     */
     public function testCreateUpdateActionsForMasterVariant(string $container, bool $staged = false)
     {
         $this->fixture->supports("masterData/{$container}/masterVariant/attributes", Product::class);
@@ -110,19 +169,18 @@ class SetAttributesTest extends TestCase
                     ]
                 ]
             ],
-            new Product()
+            Product::fromArray(['masterData' => [$container => []]])
         );
 
         static::assertCount(1, $actions, 'Wrong action count.');
 
-        /** @var $action ProductSetAttributeAction */
+        /** @var $action ProductSetAttributeInAllVariantsAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action = $actions[0],
             'Wrong instance.'
         );
 
-        static::assertSame(1, $action->getVariantId(), 'Wrong variant id.');
         static::assertSame($attrName, $action->getName(), 'Wrong name.');
         static::assertSame($mockedValue, $action->getValue(), 'Wrong value');
         static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
@@ -166,31 +224,29 @@ class SetAttributesTest extends TestCase
                     ]
                 ]
             ],
-            new Product()
+            Product::fromArray(['masterData' => [$container => []]])
         );
 
         static::assertCount(2, $actions, 'Wrong action count.');
 
-        /** @var $action ProductSetAttributeAction */
+        /** @var $action ProductSetAttributeInAllVariantsAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action = $actions[0],
             'Wrong instance.'
         );
 
-        static::assertSame(1, $action->getVariantId(), 'Wrong variant id.');
         static::assertSame($attrName1, $action->getName(), 'Wrong name.');
         static::assertSame($mockedValue1, $action->getValue(), 'Wrong value');
         static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
 
-        /** @var $action ProductSetAttributeAction */
+        /** @var $action ProductSetAttributeInAllVariantsAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action = $actions[1],
             'Wrong instance.'
         );
 
-        static::assertSame(1, $action->getVariantId(), 'Wrong variant id.');
         static::assertSame($attrName2, $action->getName(), 'Wrong name.');
         static::assertSame($mockedValue2, $action->getValue(), 'Wrong value');
         static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
@@ -233,19 +289,18 @@ class SetAttributesTest extends TestCase
                 ],
             ],
             include realpath(__DIR__ . '/_mocks/attributes/old_data_for_array_merge.php'),
-            new Product()
+            Product::fromArray(['masterData' => [$container => []]])
         );
 
         static::assertCount(1, $actions, 'Wrong action count.');
 
-        /** @var $action1 ProductSetAttributeAction */
+        /** @var $action1 ProductSetAttributeInAllVariantsAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action1 = $actions[0],
             'Wrong instance. (1)'
         );
 
-        static::assertSame(1, $action1->getVariantId(), 'Wrong variant id. (1)');
         static::assertSame('bildschirmdisplay_osd_sprachen', $action1->getName(), 'Wrong name. (1)');
         static::assertSame($staged, $action1->getStaged(), 'Staged wrongly set. (1)');
 
@@ -349,19 +404,18 @@ class SetAttributesTest extends TestCase
                     ]
                 ]
             ],
-            new Product()
+            Product::fromArray(['masterData' => [$container => []]])
         );
 
         static::assertCount(3, $actions, 'Wrong action count.');
 
-        /** @var $action1 ProductSetAttributeAction */
+        /** @var $action1 ProductSetAttributeInAllVariantsAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action1 = $actions[0],
             'Wrong instance. (1)'
         );
 
-        static::assertSame(1, $action1->getVariantId(), 'Wrong variant id. (1)');
         static::assertSame('array1', $action1->getName(), 'Wrong name. (1)');
         static::assertSame($staged, $action1->getStaged(), 'Staged wrongly set. (1)');
 
@@ -369,25 +423,23 @@ class SetAttributesTest extends TestCase
 
         /** @var $action1 ProductSetAttributeAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action1 = $actions[1],
             'Wrong instance. (2)'
         );
 
-        static::assertSame(1, $action1->getVariantId(), 'Wrong variant id. (2)');
         static::assertSame('array2', $action1->getName(), 'Wrong name. (2)');
         static::assertSame($staged, $action1->getStaged(), 'Staged wrongly set. (2)');
 
         static::assertSame([2], $action1->getValue(), 'Wrong value. (2)');
 
-        /** @var $action3 ProductSetAttributeAction */
+        /** @var $action3 ProductSetAttributeInAllVariantsAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action3 = $actions[2],
             'Wrong instance. (3)'
         );
 
-        static::assertSame(1, $action3->getVariantId(), 'Wrong variant id. (3)');
         static::assertSame($attrName, $action3->getName(), 'Wrong name. (3)');
         static::assertSame($staged, $action3->getStaged(), 'Staged wrongly set. (3)');
 
@@ -449,31 +501,29 @@ class SetAttributesTest extends TestCase
                     ]
                 ]
             ],
-            new Product()
+            Product::fromArray(['masterData' => [$container => []]])
         );
 
         static::assertCount(2, $actions, 'Wrong action count.');
 
-        /** @var $action ProductSetAttributeAction */
+        /** @var $action ProductSetAttributeInAllVariantsAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action = $actions[0],
             'Wrong instance.'
         );
 
-        static::assertSame($variantId, $action->getVariantId(), 'Wrong variant id.');
         static::assertSame($attrName1, $action->getName(), 'Wrong name.');
         static::assertSame($mockedValue1, $action->getValue(), 'Wrong value');
         static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
 
-        /** @var $action ProductSetAttributeAction */
+        /** @var $action ProductSetAttributeInAllVariantsAction */
         static::assertInstanceOf(
-            ProductSetAttributeAction::class,
+            ProductSetAttributeInAllVariantsAction::class,
             $action = $actions[1],
             'Wrong instance.'
         );
 
-        static::assertSame($variantId, $action->getVariantId(), 'Wrong variant id.');
         static::assertSame($attrName2, $action->getName(), 'Wrong name.');
         static::assertSame(null, $action->getValue(), 'Wrong value');
         static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
