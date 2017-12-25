@@ -1,20 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Model;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use BestIt\CommercetoolsODM\Exception\APIException;
+use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 
 /**
  * Added an additional find api to the respository.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage Model
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Model
  */
 interface ByKeySearchRepositoryInterface extends ObjectRepository
 {
     /**
      * Finds an object by its user defined key.
+     *
      * @param string $key
      * @return mixed|void
      * @throws APIException If there is something wrong.
@@ -23,6 +26,7 @@ interface ByKeySearchRepositoryInterface extends ObjectRepository
 
     /**
      * Finds an object by its user defined key.
+     *
      * @param string $key
      * @return mixed|void
      * @param callable|void $onResolve Callback on the successful response.

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace BestIt\CommercetoolsODM\Repository\Decorator;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Exception\APIException;
+use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Exception;
@@ -17,7 +19,7 @@ use function func_get_args;
  * @package BestIt\CommercetoolsODM\Repository
  * @version $id$
  */
-class DefaultRepositoryDecorator implements ObjectRepository
+class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
 {
     /**
      * @var ObjectRepository The wrapped repository.
@@ -139,6 +141,32 @@ class DefaultRepositoryDecorator implements ObjectRepository
         callable $onResolve = null,
         callable $onReject = null
     ): ApiResponseInterface {
+        return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
+    }
+
+    /**
+     * Finds an object by its user defined key.
+     *
+     * @param string $key
+     * @return mixed|void
+     * @throws APIException If there is something wrong.
+     */
+    public function findByKey(string $key)
+    {
+        return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
+    }
+
+    /**
+     * Finds an object by its user defined key.
+     *
+     * @param string $key
+     * @return mixed|void
+     * @param callable|void $onResolve Callback on the successful response.
+     * @param callable|void $onReject Callback for an error.
+     * @return void
+     */
+    public function findByKeyAsync(string $key, callable $onResolve = null, callable $onReject = null)
+    {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
 

@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\APIException;
 use BestIt\CommercetoolsODM\Exception\ResponseException;
-use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
-use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryTrait;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductPublishAction;
@@ -18,15 +18,12 @@ use SplFileInfo;
 
 /**
  * The repository for products.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
- * @subpackage Repository
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Repository
  */
-class ProductRepository extends DefaultRepository implements ByKeySearchRepositoryInterface, ProductRepositoryInterface
+class ProductRepository extends DefaultRepository implements ProductRepositoryInterface
 {
-    use ByKeySearchRepositoryTrait;
-
     /**
      * Adds the given image to the variant of the product.
      * @param SplFileInfo $fileInfo

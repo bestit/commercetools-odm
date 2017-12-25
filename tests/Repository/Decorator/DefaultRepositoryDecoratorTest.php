@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace BestIt\CommercetoolsODM\Tests\Repository\Decorator;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
 use BestIt\CommercetoolsODM\Repository\Decorator\DefaultRepositoryDecorator;
-use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Response\ApiResponseInterface;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +29,7 @@ class DefaultRepositoryDecoratorTest extends TestCase
     private $fixture;
 
     /**
-     * @var ObjectRepository|PHPUnit_Framework_MockObject_MockObject The decorated original repository.
+     * @var ByKeySearchRepositoryInterface|PHPUnit_Framework_MockObject_MockObject The decorated original repository.
      */
     protected $originalRepository;
 
@@ -68,7 +68,7 @@ class DefaultRepositoryDecoratorTest extends TestCase
     protected function setUp()
     {
         $this->fixture = new DefaultRepositoryDecorator(
-            $this->originalRepository = $this->createMock(ObjectRepository::class)
+            $this->originalRepository = $this->createMock(ByKeySearchRepositoryInterface::class)
         );
     }
 
@@ -188,6 +188,38 @@ class DefaultRepositoryDecoratorTest extends TestCase
      *
      * @return void
      */
+    public function testFindByKey()
+    {
+        $this->mockOriginalRepoMethod(
+            $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
+            [$productId = uniqid()],
+            $return = new Product()
+        );
+
+        static::assertSame($return, $this->fixture->$function($productId));
+    }
+
+    /**
+     * Checks if the call is delegated to the original class.
+     *
+     * @return void
+     */
+    public function testFindByKeyAsync()
+    {
+        $this->mockOriginalRepoMethod(
+            $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
+            [$productId = uniqid()],
+            $return = $this->createMock(ApiResponseInterface::class)
+        );
+
+        static::assertSame($return, $this->fixture->$function($productId));
+    }
+
+    /**
+     * Checks if the call is delegated to the original class.
+     *
+     * @return void
+     */
     public function testFindOneBy()
     {
         $this->mockOriginalRepoMethod(
@@ -213,24 +245,6 @@ class DefaultRepositoryDecoratorTest extends TestCase
         );
 
         static::assertSame($return, $this->fixture->$function(...$arguments));
-    }
-
-    /**
-     * Checks if the call is delegated to the original class.
-     *
-     * @return void
-     */
-    public function testGetFilters()
-    {
-        $return = [uniqid(), uniqid()];
-
-        $this->mockOriginalRepoMethod(
-            $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
-            [],
-            $return
-        );
-
-        static::assertSame($return, $this->fixture->$function());
     }
 
     /**
@@ -277,6 +291,24 @@ class DefaultRepositoryDecoratorTest extends TestCase
     public function testGetExpands()
     {
         $return = [uniqid()];
+
+        $this->mockOriginalRepoMethod(
+            $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
+            [],
+            $return
+        );
+
+        static::assertSame($return, $this->fixture->$function());
+    }
+
+    /**
+     * Checks if the call is delegated to the original class.
+     *
+     * @return void
+     */
+    public function testGetFilters()
+    {
+        $return = [uniqid(), uniqid()];
 
         $this->mockOriginalRepoMethod(
             $function = $this->extractOriginalRepoMethodName(__FUNCTION__),

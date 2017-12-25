@@ -15,10 +15,13 @@ use Commercetools\Core\Request\AbstractUpdateRequest;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Common\Persistence\ObjectRepository;
+use DomainException;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use ReflectionClass;
+use function class_exists;
+use function sprintf;
 
 /**
  * Basic manager for the commercetools processes.
@@ -216,6 +219,14 @@ class DocumentManager implements DocumentManagerInterface
             }
 
             $requestType = $map->{'get' . $requestType}();
+
+            if (!class_exists($requestType)) {
+                throw new DomainException(sprintf(
+                    'The request type %s for class %s is not declared.',
+                    $requestType,
+                    $className
+                ));
+            }
         }
 
         return $requestType;
@@ -223,6 +234,7 @@ class DocumentManager implements DocumentManagerInterface
 
     /**
      * Returns the unit of work for this manager.
+     *
      * @return UnitOfWorkInterface
      */
     public function getUnitOfWork(): UnitOfWorkInterface

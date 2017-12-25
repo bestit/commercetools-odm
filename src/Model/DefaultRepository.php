@@ -41,8 +41,9 @@ use function sprintf;
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  */
-class DefaultRepository implements ObjectRepository
+class DefaultRepository implements ByKeySearchRepositoryInterface
 {
+    use ByKeySearchRepositoryTrait;
     use DocumentManagerAwareTrait;
     use QueryHelperAwareTrait;
     use PoolAwareTrait;
@@ -142,7 +143,7 @@ class DefaultRepository implements ObjectRepository
         int $offset = 0
     ): ClientRequestInterface {
         /** @var AbstractQueryRequest $request */
-        $request = $this->getDocumentManager()->createRequest(
+        $request = $this->documentManager->createRequest(
             $this->getClassName(),
             DocumentManagerInterface::REQUEST_TYPE_QUERY
         );
@@ -203,7 +204,7 @@ class DefaultRepository implements ObjectRepository
         string $queryType,
         ...$parameters
     ): ClientRequestInterface {
-        $request = $this->getDocumentManager()->createRequest($objectClass, $queryType, ...$parameters);
+        $request = $this->documentManager->createRequest($objectClass, $queryType, ...$parameters);
 
         $this->addExpandsToRequest($request);
 
@@ -234,7 +235,7 @@ class DefaultRepository implements ObjectRepository
     public function find($id)
     {
         /** @var DocumentManagerInterface $documentManager */
-        $documentManager = $this->getDocumentManager();
+        $documentManager = $this->documentManager;
         $uow = $documentManager->getUnitOfWork();
 
         $document = $uow->tryGetById($id);
@@ -274,7 +275,7 @@ class DefaultRepository implements ObjectRepository
     {
         /** @var DocumentManagerInterface $documentManager */
         $documents = [];
-        $documentManager = $this->getDocumentManager();
+        $documentManager = $this->documentManager;
         $uow = $documentManager->getUnitOfWork();
 
         $request = $this->createSimpleQuery(
@@ -317,9 +318,9 @@ class DefaultRepository implements ObjectRepository
             $id
         );
 
-        if (!$document = $this->getDocumentManager()->getUnitOfWork()->tryGetById($id)) {
+        if (!$document = $this->documentManager->getUnitOfWork()->tryGetById($id)) {
             $return = $this->processQueryAsync($request, $onResolve, $onReject)->then(function ($document) {
-                $this->getDocumentManager()->getUnitOfWork()->createDocument(get_class($document), $document, []);
+                $this->documentManager->getUnitOfWork()->createDocument(get_class($document), $document, []);
 
                 if ($document instanceof RepositoryAwareInterface) {
                     $document->setRepository($this);
@@ -457,7 +458,7 @@ class DefaultRepository implements ObjectRepository
     {
         /** @var DocumentManagerInterface $documentManager */
         $documents = [];
-        $uow = $this->getDocumentManager()->getUnitOfWork();
+        $uow = $this->documentManager->getUnitOfWork();
 
         foreach ($rawDocuments as $rawDocument) {
             $documents[$rawDocument->getId()] = $document = $uow->createDocument(
@@ -482,7 +483,7 @@ class DefaultRepository implements ObjectRepository
      */
     protected function processQuery(ClientRequestInterface $request): array
     {
-        $response = $this->getDocumentManager()->getClient()->execute($request);
+        $response = $this->documentManager->getClient()->execute($request);
 
         if ($this->clearExpandAfterQuery()) {
             $this->setExpands([]);
@@ -520,7 +521,7 @@ class DefaultRepository implements ObjectRepository
      */
     public function save($model, bool $withFlush = false)
     {
-        $documentManager = $this->getDocumentManager();
+        $documentManager = $this->documentManager;
 
         $documentManager->persist($model);
 
