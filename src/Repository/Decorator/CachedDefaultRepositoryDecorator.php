@@ -175,6 +175,32 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
     }
 
     /**
+     * Finds an object by its user defined key.
+     *
+     * @param string $key
+     * @return mixed|void
+     * @throws APIExceptiona If there is something wrong.
+     */
+    public function findByKey(string $key)
+    {
+        return $this->decorateCallWithCache(func_get_args(), __FUNCTION__);
+    }
+
+    /**
+     * Finds an object by its user defined key.
+     *
+     * @param string $key
+     * @return mixed|void
+     * @param callable|void $onResolve Callback on the successful response.
+     * @param callable|void $onReject Callback for an error.
+     * @return void
+     */
+    public function findByKeyAsync(string $key, callable $onResolve = null, callable $onReject = null)
+    {
+        return $this->decorateCallWithCache(func_get_args(), __FUNCTION__);
+    }
+
+    /**
      * Finds a single object by a set of criteria.
      *
      * @param array $criteria The criteria.

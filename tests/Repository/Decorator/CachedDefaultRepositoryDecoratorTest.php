@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests\Repository\Decorator;
 
+use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
 use BestIt\CommercetoolsODM\Repository\Decorator\CachedDefaultRepositoryDecorator;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Model\Product\Product;
@@ -127,7 +128,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
     {
         $this->fixture = new CachedDefaultRepositoryDecorator(
             $this->cache = $this->createMock(CacheItemPoolInterface::class),
-            $this->originalRepository = $this->createMock(ObjectRepository::class),
+            $this->originalRepository = $this->createMock(ByKeySearchRepositoryInterface::class),
             $this->cacheTTL = mt_rand(1, 1000)
         );
     }
@@ -227,6 +228,45 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
         );
 
         static::assertSame($return, $this->fixture->$function(...$arguments));
+    }
+
+    /**
+     * Checks if the call to the original class is cached or not and called directly.
+     *
+     * @dataProvider getCacheMarkers
+     * @param bool $isCached
+     * @return void
+     */
+    public function testFindByKey(bool $isCached)
+    {
+        $this->mockOriginalRepoMethod(
+            $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
+            $isCached,
+            $return = new Product(),
+            [$productId = uniqid()]
+        );
+
+        static::assertSame($return, $this->fixture->$function($productId));
+    }
+
+    /**
+     * Checks if the call to the original class is cached or not and called directly.
+     *
+     * @dataProvider getCacheMarkers
+     * @param bool $isCached
+     * @return void
+     * @todo Needs to be fixed.
+     */
+    public function testFindByKeyAsync(bool $isCached)
+    {
+        $this->mockOriginalRepoMethod(
+            $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
+            $isCached,
+            $return = $this->createMock(ApiResponseInterface::class),
+            [$productId = uniqid()]
+        );
+
+        static::assertSame($return, $this->fixture->$function($productId));
     }
 
     /**
