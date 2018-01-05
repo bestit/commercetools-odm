@@ -76,7 +76,7 @@ class SetLineItemQuantity extends ActionBuilderAbstract
             && $lineItem->getPriceMode() === LineItem::PRICE_MODE_EXTERNAL_PRICE
         ) {
             $changeLineItemQuantityAction['externalPrice'] = $this->getCorrectPrice(
-                $changedValue['price'],
+                $lineItem->getPrice()->toArray(),
                 $changedValue['quantity']
             );
         }
