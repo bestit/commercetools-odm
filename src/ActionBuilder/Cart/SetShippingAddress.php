@@ -16,18 +16,12 @@ use Commercetools\Core\Request\Carts\Command\CartSetShippingAddressAction;
  * @subpackage ActionBuilder\Cart
  * @version $id$
  */
-class SetShippingAddress extends ActionBuilderAbstract
+class SetShippingAddress extends CartActionBuilder
 {
     /**
      * @inheritdoc
      */
     protected $fieldName = 'shippingAddress';
-
-    /**
-     * For which class is this description used?
-     * @var string
-     */
-    protected $modelClass = Cart::class;
 
     /**
      * Creates the update action for the given class and data.

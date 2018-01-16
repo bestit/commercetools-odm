@@ -19,7 +19,7 @@ use Commercetools\Core\Request\Carts\Command\CartAddLineItemAction;
  * @author chowanski <chowanski@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Cart
  */
-class AddLineItem extends ActionBuilderAbstract
+class AddLineItem extends CartActionBuilder
 {
     use PriceHelperTrait;
 
@@ -28,12 +28,6 @@ class AddLineItem extends ActionBuilderAbstract
      * @var string
      */
     protected $complexFieldFilter = '^lineItems/[^/]+';
-
-    /**
-     * For which class is this description used?
-     * @var string
-     */
-    protected $modelClass = Cart::class;
 
     /**
      * Creates the update action for the given class and data.
