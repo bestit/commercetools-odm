@@ -32,7 +32,7 @@ class RemoveAttributesTest extends TestCase
     protected $fixture = null;
 
     /**
-     * Returns an array with the assertions for the upport method.
+     * Returns an array with the assertions for the support method.
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
