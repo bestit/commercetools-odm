@@ -5,7 +5,7 @@ namespace BestIt\CommercetoolsODM\Mapping;
 use BadMethodCallException;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Field;
 use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
-use Commercetools\Core\Model\Common\Resource;
+use Commercetools\Core\Model\Common\JSONObject;
 use ReflectionClass;
 
 /**
@@ -109,7 +109,7 @@ class ClassMetadata implements ClassMetadataInterface
     {
         $this
             ->setName($name)
-            ->isCTStandardModel(is_a($name, Resource::class, true));
+            ->isCTStandardModel(is_a($name, JSONObject::class, true));
     }
 
     /**
