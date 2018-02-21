@@ -15,19 +15,12 @@ use Commercetools\Core\Request\Carts\Command\CartSetBillingAddressAction;
  * @author Tim Kellner <tim.kellner@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Cart
  */
-class SetBillingAddress extends ActionBuilderAbstract
+class SetBillingAddress extends CartActionBuilder
 {
     /**
      * @inheritdoc
      */
     protected $fieldName = 'billingAddress';
-
-    /**
-     * For which class is this description used?
-     *
-     * @var string
-     */
-    protected $modelClass = Cart::class;
 
     /**
      * Creates the update action for the given class and data.

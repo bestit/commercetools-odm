@@ -17,7 +17,7 @@ use Commercetools\Core\Request\Carts\Command\CartChangeLineItemQuantityAction;
  * @subpackage ActionBuilder\Cart
  * @version $id$
  */
-class SetLineItemQuantity extends ActionBuilderAbstract
+class SetLineItemQuantity extends CartActionBuilder
 {
     use PriceHelperTrait;
 
@@ -26,12 +26,6 @@ class SetLineItemQuantity extends ActionBuilderAbstract
      * @var string
      */
     protected $complexFieldFilter = 'lineItems/([^/]+)';
-
-    /**
-     * For which class is this description used?
-     * @var string
-     */
-    protected $modelClass = Cart::class;
 
     /**
      * Creates the update action for the given class and data.
