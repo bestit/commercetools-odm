@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Repository;
 
+use BestIt\CommercetoolsODM\Exception\ResponseException;
 use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\Order\Order;
 
@@ -15,8 +16,9 @@ use Commercetools\Core\Model\Order\Order;
 interface OrderRepositoryInterface extends ObjectRepository
 {
     /**
-     * Creates an order frmo a cart.
+     * Creates an order from a cart.
      * @param Cart $cart
+     * @throws ResponseException
      * @return Order
      */
     public function createFromCart(Cart $cart): Order;

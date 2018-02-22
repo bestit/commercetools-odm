@@ -22,8 +22,9 @@ use Commercetools\Core\Response\ErrorResponse;
 class OrderRepository extends DefaultRepository implements OrderRepositoryInterface
 {
     /**
-     * Creates an order frmo a cart.
+     * Creates an order from a cart.
      * @param Cart $cart
+     * @throws ResponseException
      * @return Order
      */
     public function createFromCart(Cart $cart): Order
@@ -38,7 +39,11 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
         );
 
         /** @var Order $order */
-        list($order) = $this->processQuery($request);
+        list($order, $response) = $this->processQuery($request);
+
+        if ($response instanceof ErrorResponse) {
+            throw APIException::fromResponse($response);
+        }
 
         $documentManager->getUnitOfWork()->registerAsManaged($order, $order->getId(), $order->getVersion());
 
