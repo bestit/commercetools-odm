@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Exception\ResponseException;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
@@ -14,6 +15,8 @@ use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\Order\Order;
 use Commercetools\Core\Request\Orders\OrderCreateFromCartRequest;
+use Commercetools\Core\Response\ApiResponseInterface;
+use Commercetools\Core\Response\ErrorResponse;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -97,7 +100,7 @@ class OrderRepositoryTest extends TestCase
             ->expects(static::once())
             ->method('processQuery')
             ->with($request)
-            ->willReturn([$order]);
+            ->willReturn([$order, $response = $this->createMock(ApiResponseInterface::class)]);
 
         $unitOfWork
             ->expects(static::once())
@@ -105,6 +108,66 @@ class OrderRepositoryTest extends TestCase
             ->with($order, $orderId, $orderVersion);
 
         static::assertSame($order, $this->fixture->createFromCart($cart));
+    }
+
+    /**
+     * Test the create order from cart function with an error response from processQuery
+     * @return void
+     */
+    public function testCreateOrderFromCartWithException()
+    {
+        $cart = new Cart();
+        $order = new Order();
+
+        $this->fixture = $this->getMockBuilder(OrderRepository::class)
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->disallowMockingUnknownTypes()
+            ->setMethods(['processQuery'])
+            ->setConstructorArgs([
+                $metadata = static::createMock(ClassMetadataInterface::class),
+                $this->documentManager = static::createMock(DocumentManagerInterface::class),
+                static::createMock(QueryHelper::class),
+                static::createMock(FilterManagerInterface::class),
+                static::createMock(PoolInterface::class)
+            ])
+            ->getMock();
+
+        $cart
+            ->setId($cartId = uniqid())
+            ->setVersion($cartVersion = mt_rand(1, 10000));
+
+        $metadata
+            ->expects(static::once())
+            ->method('getName')
+            ->willReturn(Order::class);
+
+        $this->documentManager
+            ->expects(static::once())
+            ->method('createRequest')
+            ->with(
+                Order::class,
+                OrderCreateFromCartRequest::class,
+                $cartId,
+                $cartVersion
+            )
+            ->willReturn($request = OrderCreateFromCartRequest::ofCartIdAndVersion($cartId, $cartVersion));
+
+        $response = $this->createMock(ErrorResponse::class);
+        $response
+            ->expects(static::once())
+            ->method('getCorrelationId')
+            ->willReturn('1');
+
+        $this->fixture
+            ->expects(static::once())
+            ->method('processQuery')
+            ->with($request)
+            ->willReturn([$order, $response]);
+
+        static::expectException(ResponseException::class);
+
+        $this->fixture->createFromCart($cart);
     }
 
     /**
