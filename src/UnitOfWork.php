@@ -12,6 +12,7 @@ use BestIt\CommercetoolsODM\Exception\NotFoundException;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Model\Cart\CartDraft;
 use Commercetools\Core\Model\Common\AbstractJsonDeserializeObject;
 use Commercetools\Core\Model\Common\AssetDraft;
@@ -21,7 +22,6 @@ use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Common\PriceDraft;
 use Commercetools\Core\Model\Common\PriceDraftCollection;
 use Commercetools\Core\Model\Common\Resource;
-use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\Customer\CustomerSigninResult;
 use Commercetools\Core\Model\CustomField\CustomFieldObject;
 use Commercetools\Core\Model\CustomField\FieldContainer;
@@ -42,13 +42,18 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SplObjectStorage;
 use Traversable;
+use function array_walk;
+use function count;
 use function Funct\Strings\upperCaseFirst;
+use function get_class;
+use function memory_get_usage;
+use function method_exists;
 
 /**
  * The unit of work inspired by the couch db odm structure.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @version $id$
  */
 class UnitOfWork implements UnitOfWorkInterface
 {
@@ -457,10 +462,12 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Creates the update request for the given changed data.
+     *
      * @param array $changedData
      * @param array $oldData
      * @param object $document
      * @param ClassMetadataInterface|null $metadata
+     *
      * @return ClientRequestInterface
      */
     private function createUpdateRequest(
@@ -491,6 +498,13 @@ class UnitOfWork implements UnitOfWorkInterface
                 $document->getVersion()
             );
 
+            /** @var ObjectRepository $repository */
+            $repository = $this->getDocumentManager()->getRepository($documentClass);
+
+            // TODO Try to refactor to an explicit api, even if the doctrine base api does not support it.
+            if (($repository instanceof ObjectRepository) && ($expands = $repository->getExpands())) {
+                array_walk($expands, [$request, 'expand']);
+            }
 
             $actions = $this->getActionBuilderProcessor()->createUpdateActions(
                 $metadata,
