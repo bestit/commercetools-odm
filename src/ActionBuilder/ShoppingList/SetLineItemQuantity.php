@@ -4,7 +4,6 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\ShoppingList;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\ShoppingList\ShoppingList;
-use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\ShoppingLists\Command\ShoppingListChangeLineItemQuantityAction;
 
 /**
@@ -18,7 +17,7 @@ class SetLineItemQuantity extends ShoppingListActionBuilder
     /**
      * @var string A PCRE to match the hierarchical field path without delimiter.
      */
-    protected $complexFieldFilter = '^lineItems/(\d*)$';
+    protected $complexFieldFilter = '^lineItems\/(\d+)\/quantity$';
 
     /**
      * Creates the update action for the given class and data.
@@ -29,7 +28,7 @@ class SetLineItemQuantity extends ShoppingListActionBuilder
      * @param array $oldData
      * @param ShoppingList $sourceObject
      * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
-     * @return AbstractAction[]
+     * @return ShoppingListChangeLineItemQuantityAction[]
      */
     public function createUpdateActions(
         $changedValue,
@@ -43,13 +42,13 @@ class SetLineItemQuantity extends ShoppingListActionBuilder
 
         list(, $itemIndex) = $this->getLastFoundMatch();
 
-        $lineItem = $sourceObject->getLineItems()->getAt($itemIndex);
+        $lineItems = $sourceObject->getLineItems();
 
-        if ($lineItem && ($lineItemId = $lineItem->getId())) {
-            $actions[] = ShoppingListChangeLineItemQuantityAction::ofLineItemIdAndQuantity(
-                $lineItemId,
-                $changedValue['quantity']
-            );
+        if (isset($lineItems[$itemIndex]) && ($lineItem = $lineItems->getAt($itemIndex)) &&
+            ($lineItemId = $lineItem->getId()) && $oldData['lineItems'][$itemIndex] &&
+            ($oldData['lineItems'][$itemIndex]['id'] === $lineItemId))
+        {
+            $actions[] = ShoppingListChangeLineItemQuantityAction::ofLineItemIdAndQuantity($lineItemId, $changedValue);
         }
 
         return $actions;
