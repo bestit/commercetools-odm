@@ -47,8 +47,11 @@ class RemoveLineItem extends ShoppingListActionBuilder
 
         $lineItems = $sourceObject->getLineItems();
 
-        foreach ($oldData['lineItems'] ?? [] as $lineItemArray) {
-            if ($lineItemArray && ($lineItemId = $lineItemArray['id']) && (!$lineItems->getById($lineItemId))) {
+        foreach ($oldData['lineItems'] ?? [] as $index => $lineItemArray) {
+            // offsetExists Workaround against the symfony exception for the "missing index" notice in the getter of
+            // the ct sdk
+            if ($lineItemArray && ($lineItemId = $lineItemArray['id']) && ((!$lineItems->offsetExists($index)) ||
+                    ($lineItems->getAt($index)->getId() !== $lineItemId))) {
                 $actions[] = ShoppingListRemoveLineItemAction::ofLineItemId($lineItemId);
             }
         }
