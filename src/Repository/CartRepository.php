@@ -97,6 +97,12 @@ class CartRepository extends DefaultRepository
             throw new RuntimeException('Invalid response.');
         }
 
+        $this->getDocumentManager()->getUnitOfWork()->registerAsManaged(
+            $response,
+            $response->getId(),
+            $response->getVersion()
+        );
+
         return $response;
     }
 }

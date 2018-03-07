@@ -8,6 +8,7 @@ use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Repository\CartRepository;
+use BestIt\CommercetoolsODM\UnitOfWorkInterface;
 use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client;
@@ -16,6 +17,7 @@ use Commercetools\Core\Request\Carts\CartUpdateRequest;
 use Commercetools\Core\Request\Carts\Command\CartRecalculateAction;
 use Commercetools\Core\Response\ApiResponseInterface;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * Class CartRepositoryTest.
@@ -101,6 +103,16 @@ class CartRepositoryTest extends TestCase
                 }
             );
 
+        $documentManager
+            ->expects(static::once())
+            ->method('getUnitOfWork')
+            ->willReturn($uow = $this->createMock(UnitOfWorkInterface::class));
+
+        $uow
+            ->expects(static::once())
+            ->method('registerAsManaged')
+            ->with(static::isInstanceOf(Cart::class), $id, $version);
+
         self::assertInstanceOf(Cart::class, $fixture->recalculateCart($cart));
     }
 
@@ -166,7 +178,7 @@ class CartRepositoryTest extends TestCase
                 }
             );
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $fixture->recalculateCart($cart);
     }
 }
