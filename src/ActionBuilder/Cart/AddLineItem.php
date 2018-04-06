@@ -75,12 +75,16 @@ class AddLineItem extends CartActionBuilder
 
         $action = CartAddLineItemAction::fromArray($cartAddLineItemAction);
 
-        if (isset($changedValue['distributionChannel'])) {
-            if (isset($changedValue['distributionChannel']['id'])) {
-                $action->setDistributionChannel(ChannelReference::ofId($changedValue['distributionChannel']['id']));
-            } elseif (isset($changedValue['distributionChannel']['key'])) {
-                $action->setDistributionChannel(ChannelReference::ofKey($changedValue['distributionChannel']['key']));
-            }
+        if (isset($changedValue['distributionChannel']['id'])) {
+            $action->setDistributionChannel(ChannelReference::ofId($changedValue['distributionChannel']['id']));
+        } elseif (isset($changedValue['distributionChannel']['key'])) {
+            $action->setDistributionChannel(ChannelReference::ofKey($changedValue['distributionChannel']['key']));
+        }
+
+        if (isset($changedValue['supplyChannel']['id'])) {
+            $action->setSupplyChannel(ChannelReference::ofId($changedValue['supplyChannel']['id']));
+        } elseif (isset($changedValue['supplyChannel']['key'])) {
+            $action->setSupplyChannel(ChannelReference::ofKey($changedValue['supplyChannel']['key']));
         }
 
         return [$action];

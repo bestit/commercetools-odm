@@ -86,10 +86,8 @@ class AddLineItemTest extends TestCase
      * Checks if a action contains optional channel
      * @return void
      */
-    public function testAddChannel()
+    public function testAddChannelById()
     {
-        $cart = new Cart();
-
         $value = [
             'productId' => '444',
             'variant' => [
@@ -97,13 +95,43 @@ class AddLineItemTest extends TestCase
             ],
             'quantity' => 2,
             'distributionChannel' => [
-                'id' => '7878'
+                'id' => '7878',
+            ],
+            'supplyChannel' => [
+                'id' => '1111'
             ]
         ];
 
         $actions = $this->createAndTestSingleAddAction($value);
 
         static::assertSame($value['distributionChannel']['id'], $actions[0]->getDistributionChannel()->getId());
+        static::assertSame($value['supplyChannel']['id'], $actions[0]->getSupplyChannel()->getId());
+    }
+
+    /**
+     * Checks if a action contains optional channel
+     * @return void
+     */
+    public function testAddChannelByKey()
+    {
+        $value = [
+            'productId' => '444',
+            'variant' => [
+                'id' => 1
+            ],
+            'quantity' => 2,
+            'distributionChannel' => [
+                'key' => '7878',
+            ],
+            'supplyChannel' => [
+                'key' => '1111'
+            ]
+        ];
+
+        $actions = $this->createAndTestSingleAddAction($value);
+
+        static::assertSame($value['distributionChannel']['key'], $actions[0]->getDistributionChannel()->getKey());
+        static::assertSame($value['supplyChannel']['key'], $actions[0]->getSupplyChannel()->getKey());
     }
 
     /**
