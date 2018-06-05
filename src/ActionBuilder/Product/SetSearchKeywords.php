@@ -9,6 +9,7 @@ use Commercetools\Core\Model\Product\LocalizedSearchKeywords;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductSetSearchKeywordsAction;
 use function array_filter;
+use function is_array;
 
 /**
  * Sets the search keywords on variants.
@@ -46,7 +47,9 @@ class SetSearchKeywords extends ProductActionBuilder
         $actions = [];
 
         if ($this->hasRealTextChange($changedValue)) {
-            $actions[] = ProductSetSearchKeywordsAction::ofKeywords(LocalizedSearchKeywords::fromArray($changedValue))
+            $actions[] = ProductSetSearchKeywordsAction::ofKeywords(LocalizedSearchKeywords::fromArray(
+                $this->getCleanedValue($changedValue)
+            ))
                 ->setStaged($dataContainer === 'staged');
         }
 
@@ -54,20 +57,42 @@ class SetSearchKeywords extends ProductActionBuilder
     }
 
     /**
+     * Returns the changed value without delete markers.
+     *
+     * @param array $langSearchSearchKeys
+     *
+     * @return array
+     */
+    private function getCleanedValue(array $langSearchSearchKeys): array
+    {
+        // Remove empty languages.
+        $langSearchSearchKeys = array_filter($langSearchSearchKeys);
+
+        foreach ($langSearchSearchKeys as $lang => &$searchKeys) {
+            // Remove empty childs
+            $searchKeys = array_filter($searchKeys);
+        }
+
+        // And now we should removed the cleaned empty childs again.
+        return array_filter($langSearchSearchKeys);
+    }
+
+    /**
      * Returns true if an language array has search keywords where the text is changed too!
      *
-     * @param $changedValue
+     * @param array $changedValue
      *
      * @return bool
      */
-    protected function hasRealTextChange($changedValue): bool
+    private function hasRealTextChange(array $changedValue): bool
     {
         // Has every language ...
-        return (bool)array_filter($changedValue, function (array $langSearchKeywords): bool {
-            // real search keywords changes with a text change
-            return (bool)array_filter($langSearchKeywords, function (array $searchKeyword): bool {
-                return (bool)@$searchKeyword['text'];
-            });
+        return (bool)array_filter($changedValue, function ($langSearchKeywords): bool {
+            // ... real search keywords changes with a text change
+            return is_array($langSearchKeywords) &&
+                (bool)array_filter($langSearchKeywords, function ($searchKeyword): bool {
+                    return is_array($searchKeyword) && @$searchKeyword['text'];
+                });
         });
     }
 }
