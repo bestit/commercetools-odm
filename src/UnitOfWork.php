@@ -963,7 +963,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 break;
 
             case 'dateTime':
-                $returnValue = (new DateTimeDecorator($value))->getDateTime();
+                $returnValue = $value === null ? null : (new DateTimeDecorator($value))->getDateTime();
                 break;
 
             case 'int':
