@@ -73,7 +73,7 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
      *
      * @throws \UnexpectedValueException
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
         throw new BadMethodCallException('Method not supported for projects.');
     }

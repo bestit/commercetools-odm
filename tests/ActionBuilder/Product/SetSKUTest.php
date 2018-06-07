@@ -8,6 +8,7 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetSkuAction;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
@@ -17,7 +18,7 @@ use PHPUnit_Framework_MockObject_MockObject;
  * @subpackage ActionBuilder\Product
  * @version $id$
  */
-class SetSKUTest extends \PHPUnit_Framework_TestCase
+class SetSKUTest extends TestCase
 {
     use SupportTestTrait;
 

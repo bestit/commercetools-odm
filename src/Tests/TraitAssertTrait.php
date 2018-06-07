@@ -24,11 +24,11 @@ trait TraitAssertTrait
     abstract public static function assertContains(
         $needle,
         $haystack,
-        $message = '',
-        $ignoreCase = false,
-        $checkForObjectIdentity = true,
-        $checkForNonObjectIdentity = false
-    );
+        string $message = '',
+        bool $ignoreCase = false,
+        bool $checkForObjectIdentity = true,
+        bool $checkForNonObjectIdentity = false
+    ): void;
 
     /**
      * Checks if the trait is used.

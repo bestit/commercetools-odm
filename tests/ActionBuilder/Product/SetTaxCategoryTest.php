@@ -8,6 +8,7 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetTaxCategoryAction;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
@@ -17,7 +18,7 @@ use PHPUnit_Framework_MockObject_MockObject;
  * @subpackage ActionBuilder\Product
  * @version $id$
  */
-class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
+class SetTaxCategoryTest extends TestCase
 {
     use SupportTestTrait;
 

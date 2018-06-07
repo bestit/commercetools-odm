@@ -32,6 +32,7 @@ use Commercetools\Core\Model\Common\LocalizedString;
 use Commercetools\Core\Model\Common\Money;
 use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\Order\Order;
+use Commercetools\Core\Model\Product\LocalizedSearchKeywords;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductCatalogData;
 use Commercetools\Core\Model\Product\ProductData;
@@ -428,7 +429,8 @@ class UnitOfWorkTest extends TestCase
             ->setStaged(new ProductData())
             ->getStaged()
             ->setDescription(LocalizedString::fromArray($desc = ['de' => uniqid()]))
-            ->setName(LocalizedString::fromArray($name = ['de' => uniqid()]));
+            ->setName(LocalizedString::fromArray($name = ['de' => uniqid()]))
+            ->setSearchKeywords(LocalizedSearchKeywords::of());
 
         $product
             ->getMasterData()->getStaged()->setMasterVariant(new ProductVariant());
