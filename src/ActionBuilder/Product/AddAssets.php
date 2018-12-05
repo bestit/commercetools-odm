@@ -22,7 +22,7 @@ class AddAssets extends ProductActionBuilder
      *
      * @var string
      */
-    protected $complexFieldFilter = '^masterData/(current|staged)/(masterVariant|variants)/([\d]*)/?assets';
+    protected $complexFieldFilter = '^masterData/(current|staged)/(masterVariant|variants)/([\d]*)/?assets$';
 
     /**
      * Creates the update actions for the given class and data.

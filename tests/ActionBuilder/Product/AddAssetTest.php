@@ -46,6 +46,12 @@ class AddAssetsTest extends TestCase
             ['masterData/staged/masterVariant/sku', Product::class],
             ['masterData/staged/variants/1/sku', Product::class],
             ['masterData/staged/variants/100/sku', Product::class],
+            ['masterData/current/masterVariant/assets/sources', Product::class],
+            ['masterData/current/variants/1/assets/name', Product::class],
+            ['masterData/current/variants/10/assets/tags', Product::class],
+            ['masterData/staged/masterVariant/assets/sources', Product::class],
+            ['masterData/staged/variants/1/assets/name', Product::class],
+            ['masterData/staged/variants/10/assets/description', Product::class],
         ];
     }
 
