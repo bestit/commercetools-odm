@@ -51,7 +51,6 @@ class SetCustomShippingMethod extends CartActionBuilder
         $actions = [];
 
         if (($state = $changedData['shippingMethodState'] ?? null) === static::IS_CUSTOM) {
-
             $origin = $oldData['shippingInfo'];
             $info = [
                 'shippingMethodName' => $changedData['shippingMethodName'] ?? $origin['shippingMethodName'],

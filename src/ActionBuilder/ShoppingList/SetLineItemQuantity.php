@@ -46,8 +46,7 @@ class SetLineItemQuantity extends ShoppingListActionBuilder
 
         if (isset($lineItems[$itemIndex]) && ($lineItem = $lineItems->getAt($itemIndex)) &&
             ($lineItemId = $lineItem->getId()) && $oldData['lineItems'][$itemIndex] &&
-            ($oldData['lineItems'][$itemIndex]['id'] === $lineItemId))
-        {
+            ($oldData['lineItems'][$itemIndex]['id'] === $lineItemId)) {
             $actions[] = ShoppingListChangeLineItemQuantityAction::ofLineItemIdAndQuantity($lineItemId, $changedValue);
         }
 
