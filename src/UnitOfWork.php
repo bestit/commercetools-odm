@@ -46,6 +46,7 @@ use function array_walk;
 use function count;
 use function Funct\Strings\upperCaseFirst;
 use function get_class;
+use function is_string;
 use function memory_get_usage;
 use function method_exists;
 
@@ -642,12 +643,16 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * Extracts the changes of the two arrays.
      * @param array $newData
-     * @param array $oldData
+     * @param array|string|mixed $oldData
      * @param string $parentKey The hierarchy key for the parent of the checked data.
      * @return array
      */
-    private function extractChanges(array $newData, array $oldData, string $parentKey = ''): array
+    private function extractChanges(array $newData, $oldData, string $parentKey = ''): array
     {
+        if (is_string($oldData)) {
+            return $newData;
+        }
+
         $changedData = [];
 
         foreach ($newData as $key => $value) {

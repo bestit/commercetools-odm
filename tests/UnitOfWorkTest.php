@@ -31,6 +31,7 @@ use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Common\LocalizedString;
 use Commercetools\Core\Model\Common\Money;
 use Commercetools\Core\Model\Customer\Customer;
+use Commercetools\Core\Model\CustomObject\CustomObject;
 use Commercetools\Core\Model\Order\Order;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductCatalogData;
@@ -51,6 +52,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 use Psr\Log\LoggerAwareTrait;
 use ReflectionClass;
 use RuntimeException;
+use function uniqid;
 
 /**
  * Class UnitOfWorkTest
@@ -533,6 +535,51 @@ class UnitOfWorkTest extends TestCase
         $this->fixture->detach(new Order());
 
         static::assertCount(0, $this->fixture, 'There should be no entity. (control value)');
+    }
+
+    /**
+     * Checks if the changes are extracted correctly.
+     *
+     * @return void
+     */
+    public function testExtractChangesFullWithCustomObjectAndValueTypeChange()
+    {
+        $this->expectException(RuntimeException::class);
+
+        $this->getOneMockedMetadata($className = CustomObject::class, false);
+
+        // Force the unit of work to skip the specific logic for the custom objects.
+        $this->documentManager
+            ->expects(static::once())
+            ->method('getRequestClass')
+            ->with($className, DocumentManagerInterface::REQUEST_TYPE_UPDATE_BY_ID);
+
+        /** @var Order $customObject */
+        $this->fixture->registerAsManaged(
+            $customObject = $className::fromArray($oldData = [
+                'container' => $container = uniqid(),
+                'key' => $key = uniqid(),
+                'value' => '[\"foobar\"]'
+            ]),
+            uniqid(),
+            5
+        );
+
+        $customObject->setValue($newValue = [['sku' => uniqid()]]);
+
+        $this->actionBuilderProcessor
+            ->expects($this->once())
+            ->method('createUpdateActions')
+            ->with(
+                $this->isInstanceOf(ClassMetadataInterface::class),
+                ['value' => $newValue],
+                $oldData,
+                $customObject
+            )
+            ->willThrowException(new RuntimeException('Controlled stop.'));
+
+        $this->fixture->scheduleSave($customObject);
+        $this->fixture->flush();
     }
 
     /**
