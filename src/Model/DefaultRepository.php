@@ -20,9 +20,10 @@ use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client\Adapter\Guzzle6Promise;
 use Commercetools\Core\Model\Channel\ChannelReference;
 use Commercetools\Core\Model\Common\Collection;
+use Commercetools\Core\Request\AbstractApiRequest;
 use Commercetools\Core\Request\AbstractQueryRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
-use Commercetools\Core\Request\ExpandTrait;
+use Commercetools\Core\Request\Query\MultiParameter;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use Commercetools\Core\Response\ResourceResponse;
@@ -99,15 +100,19 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Adds the expanded fields to the request.
+     *
+     * This can only work, if the request supports the expand api. We removed the expand api here, because there are
+     * some bugs in the commercetools sdk. Even if the request itself supports the expands api, the request class misses
+     * the methods.
+     *
      * @param ClientRequestInterface $request
      * @return void
      */
     protected function addExpandsToRequest(ClientRequestInterface $request)
     {
-        /** @var ExpandTrait $request */
-        if (method_exists($request, 'expand')) {
+        if ($request instanceof AbstractApiRequest) {
             array_map(function (string $expand) use ($request) {
-                $request->expand($expand);
+                $request->addParamObject(new MultiParameter('expand', $expand));
             }, $this->getExpands());
         }
     }

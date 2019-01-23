@@ -36,6 +36,8 @@ class CustomObjectRepository extends DefaultRepository
                 $key
             );
 
+            $this->addExpandsToRequest($request);
+
             /** @var ApiResponseInterface $rawResponse */
             list ($response, $rawResponse) = $this->processQuery($request);
 
