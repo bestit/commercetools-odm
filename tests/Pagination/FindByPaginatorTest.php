@@ -4,37 +4,45 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests\Pagination;
 
+use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Pagination\FindByPaginator;
-use Commercetools\Core\Model\Customer\Customer;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
-use function iterator_to_array;
+use Commercetools\Core\Model\Customer\Customer;
 use PHPUnit\Framework\TestCase;
+use function iterator_to_array;
 
 /**
  * Tests for the FindByPaginator.
  *
+ * @author blange <bjoern.lange@bestit-online.de>
  * @author Tim Kellner <tim.kellner@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\Pagination
  */
 class FindByPaginatorTest extends TestCase
 {
     /**
-     * Test that paginator works properly.
+     * Test that paginator works properly and detaches its elements.
+     *
+     * @param bool $withDetach
      *
      * @return void
      */
-    public function testPagination()
+    public function testPagination(bool $withDetach = true)
     {
         $fixture = new FindByPaginator(
             $repository = $this->createMock(ObjectRepository::class),
-            $criteria = ['TEST = TEST'],
-            $pageSize = 3
+            $withDetach,
+            3
         );
+
+        $repository
+            ->method('getDocumentManager')
+            ->willReturn($documentManager = $this->createMock(DocumentManagerInterface::class));
 
         $repository
             ->method('findBy')
             ->withConsecutive(
-                [['TEST = TEST']],
+                [$baseCriteria = ['TEST = TEST']],
                 [['TEST = TEST', 'id > "A3"']],
                 [['TEST = TEST', 'id > "B6"']]
             )
@@ -55,7 +63,27 @@ class FindByPaginatorTest extends TestCase
                 ]
             );
 
-        $elements = iterator_to_array($fixture->getIterator());
+        if ($withDetach) {
+            $documentManager
+                ->expects(static::exactly(8))
+                ->method('detach')
+                ->withConsecutive(
+                    [$element1],
+                    [$element2],
+                    [$element3],
+                    [$element4],
+                    [$element5],
+                    [$element6],
+                    [$element7],
+                    [$element8]
+                );
+        } else {
+            $documentManager
+                ->expects(static::never())
+                ->method('detach');
+        }
+
+        $elements = iterator_to_array($fixture->getIterator($baseCriteria));
 
         self::assertCount(8, $elements);
         self::assertSame($element1, $elements[0]);
@@ -66,5 +94,15 @@ class FindByPaginatorTest extends TestCase
         self::assertSame($element6, $elements[5]);
         self::assertSame($element7, $elements[6]);
         self::assertSame($element8, $elements[7]);
+    }
+
+    /**
+     * Test that paginator works properly and does not detach its elements.
+     *
+     * @return void
+     */
+    public function testPaginationWithoutDetach()
+    {
+        $this->testPagination(false);
     }
 }

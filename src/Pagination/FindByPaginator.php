@@ -4,38 +4,43 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Pagination;
 
+use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use BestIt\CommercetoolsODM\RepositoryAwareTrait;
 use Commercetools\Core\Model\Common\Resource;
-use BestIt\CommercetoolsODM\Repository\ObjectRepository;
-use \Generator;
-use \IteratorAggregate;
-use function sprintf;
+use IteratorAggregate;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
+use Traversable;
 use function count;
+use function sprintf;
 
 /**
  * Paginator for object repositories.
  *
+ * @author blange <bjoern.lange@bestit-online.de>
  * @author Tim Kellner <tim.kellner@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Pagination
  */
-class FindByPaginator implements IteratorAggregate
+class FindByPaginator implements IteratorAggregate, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
     use RepositoryAwareTrait;
 
     /**
      * Default limit for commercetools queries.
      *
-     * @var int DEFAULT_PAGE_SIZE
+     * @internal
+     * @var int
      */
-    const DEFAULT_PAGE_SIZE = 20;
-
+    const DEFAULT_PAGE_SIZE = 500;
     /**
-     * Used filter criteria.
+     * The default sorting for the query.
      *
-     * @var array $criteria
+     * @internal
+     * @var array
      */
-    private $criteria;
-
+    const DEFAULT_SORTING = ['id' => 'ASC'];
     /**
      * The used page size.
      *
@@ -44,51 +49,60 @@ class FindByPaginator implements IteratorAggregate
     private $pageSize;
 
     /**
-     * The last queried id.
+     * Should the element be detached from the unit of work at once?
      *
-     * @var string|null
+     * @var bool
      */
-    private $lastId;
+    private $withDetach;
 
     /**
      * FindByPaginator constructor.
      *
      * @param ObjectRepository $repository Repository which is used for queries.
-     * @param array $criteria The filter criteria.
+     * @param bool $withDetach Should the element be detached from the unit of work at once?
      * @param int $pageSize Used page size. Default value is 20.
      */
     public function __construct(
         ObjectRepository $repository,
-        array $criteria = [],
+        bool $withDetach = true,
         int $pageSize = self::DEFAULT_PAGE_SIZE
     ) {
-        $this->setRepository($repository);
-        $this->criteria = $criteria;
+        $this->logger = new NullLogger();
+        $this->repository = $repository;
         $this->pageSize = $pageSize;
+        $this->withDetach = $withDetach;
     }
 
     /**
      * Get iterator to walk all elements.
      *
-     * @return Generator
+     * @param array $baseCriteria
+     *
+     * @return Traversable
      */
-    public function getIterator(): Generator
+    public function getIterator(array $baseCriteria = []): Traversable
     {
-        do {
-            $criteria = $this->criteria;
+        $documentManager = $this->repository->getDocumentManager();
+        $lastId = '';
 
-            if ($this->lastId) {
-                $criteria[] = sprintf('id > "%s"', $this->lastId);
+        do {
+            $criteria = $baseCriteria;
+
+            if ($lastId) {
+                $criteria[] = sprintf('id > "%s"', $lastId);
             }
 
-            /**
-             * @var Resource[] $elements
-             */
-            $elements = $this->repository->findBy($criteria, ['id' => 'ASC'], $this->pageSize);
+            /** @var Resource[] $elements */
+            $elements = $this->repository->findBy($criteria, static::DEFAULT_SORTING, $this->pageSize);
             $count = count($elements);
 
             foreach ($elements as $element) {
-                $this->lastId = $element->getId();
+                $lastId = $element->getId();
+
+                if ($this->withDetach) {
+                    $documentManager->detach($element);
+                }
+
                 yield $element;
             }
         } while ($count === $this->pageSize);
