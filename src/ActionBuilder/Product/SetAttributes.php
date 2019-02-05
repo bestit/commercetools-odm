@@ -8,14 +8,14 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
+use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
+use function Funct\Strings\upperCaseFirst;
 use function array_filter;
 use function array_key_exists;
-use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
 use function count;
 use function current;
 use function is_array;
 use function ksort;
-use function Funct\Strings\upperCaseFirst;
 
 /**
  * Sets the attributes for products.
@@ -33,13 +33,15 @@ class SetAttributes extends ProductActionBuilder
     /**
      * Creates the update actions for the given class and data.
      *
+     * @todo Check if the name of the attr matches the oldattr if you just use the attrindex.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Product $sourceObject The full product object.
+     *
      * @return ProductSetAttributeAction[]|ProductSetAttributeInAllVariantsAction[]
-     * @todo Check if the name of the attr matches the oldattr if you just use the attrindex.
      */
     public function createUpdateActions(
         $changedValue,
@@ -118,6 +120,7 @@ class SetAttributes extends ProductActionBuilder
      * Returns true if the given attribute is a nested attribute.
      *
      * @param array|mixed $attr The checked attribute.
+     *
      * @return bool
      */
     private function isNestedAttribute($attr): bool

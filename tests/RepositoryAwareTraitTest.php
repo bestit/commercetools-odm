@@ -8,21 +8,24 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class RepositoryAwareTraitTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests
  */
 class RepositoryAwareTraitTest extends TestCase
 {
     /**
      * The tested class.
+     *
      * @var RepositoryAwareTrait
      */
     private $fixture = null;
 
     /**
      * Sets up the test.
+     *
+     * @return void
      */
     protected function setUp()
     {
@@ -31,6 +34,8 @@ class RepositoryAwareTraitTest extends TestCase
 
     /**
      * Checks the getter and setter.
+     *
+     * @return void
      */
     public function testGetAndSetRepository()
     {

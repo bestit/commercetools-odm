@@ -18,7 +18,7 @@ use function sprintf;
  * Checks if the setsearchkeywords action is built.
  *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM\ActionBuilder\Product
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  */
 class SetSearchKeywordsTest extends TestCase
 {

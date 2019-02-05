@@ -15,6 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests AddAddress.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  */
@@ -24,6 +25,7 @@ class AddAddressTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var AddAddress|PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $fixture;
@@ -33,6 +35,7 @@ class AddAddressTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -47,6 +50,7 @@ class AddAddressTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     protected function setUp()
@@ -56,6 +60,7 @@ class AddAddressTest extends TestCase
 
     /**
      * Checks if the old address is ignored.
+     *
      * @return void
      */
     public function testCreateUpdateActionsIgnoreOldAddress()
@@ -85,6 +90,7 @@ class AddAddressTest extends TestCase
 
     /**
      * Checks if a removed address is ignored.
+     *
      * @return void
      */
     public function testCreateUpdateActionsIgnoreRemovedAddress()
@@ -112,6 +118,7 @@ class AddAddressTest extends TestCase
 
     /**
      * Checks if the address is added.
+     *
      * @return void
      */
     public function testCreateUpdateActionsWithNewAddress()
@@ -140,6 +147,7 @@ class AddAddressTest extends TestCase
 
     /**
      * Checks the instance.
+     *
      * @return void
      */
     public function testInstance()

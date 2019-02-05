@@ -3,21 +3,23 @@
 namespace BestIt\CommercetoolsODM\Tests;
 
 use BestIt\CommercetoolsODM\Events;
+use PHPUnit\Framework\TestCase;
 use function Funct\Strings\toUpper;
 use function Funct\Strings\underscore;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class EventsTest
+ *
  * @author blange <lange@bestit-online.de>
  * @categeory Tests
- * @package BestIt\CommercetoolsODM
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests
  */
 class EventsTest extends TestCase
 {
     /**
      * Checks the constants of the class.
+     *
+     * @return void
      */
     public function testConstants()
     {

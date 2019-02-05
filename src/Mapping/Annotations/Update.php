@@ -6,23 +6,25 @@ use Doctrine\Common\Annotations\Annotation\Required;
 
 /**
  * How to update the given field?
+ *
  * @Annotation
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Mapping\Annotations
  * @subpackage Mapping\Annotations
  * @Target({"METHOD","PROPERTY"})
- * @version $id$
  */
 class Update implements Annotation
 {
     /**
      * The method name to create (the request|an array of requests).
+     *
      * @var callable
      */
     public $callback = '';
 
     /**
      * The class name for the update action.
+     *
      * @Required
      * @var string
      */
@@ -30,6 +32,7 @@ class Update implements Annotation
 
     /**
      * The constructor method for the update class.
+     *
      * @Required
      * @var string
      */
@@ -37,12 +40,14 @@ class Update implements Annotation
 
     /**
      * Overwrites the property for which this update annotation is used.
+     *
      * @var string
      */
     public $property = '';
 
     /**
      * Returns the method name to create (the request|an array of requests).
+     *
      * @return string
      */
     public function getCallback(): string
@@ -52,6 +57,7 @@ class Update implements Annotation
 
     /**
      * Returns the class name for the update action.
+     *
      * @return string
      */
     public function getClass(): string
@@ -61,6 +67,7 @@ class Update implements Annotation
 
     /**
      * Returns the constructor method for the update class.
+     *
      * @return string
      */
     public function getMethod(): string
@@ -70,6 +77,7 @@ class Update implements Annotation
 
     /**
      * Maps this update annotation on a property.
+     *
      * @return string
      */
     public function getProperty(): string
@@ -79,7 +87,9 @@ class Update implements Annotation
 
     /**
      * Sets the method name to create (the request|an array of requests).
+     *
      * @param callable $callback
+     *
      * @return Update
      */
     public function setCallback(callable $callback): Update
@@ -91,7 +101,9 @@ class Update implements Annotation
 
     /**
      * Sets the property for which this
+     *
      * @param string $property
+     *
      * @return Update
      */
     public function setProperty(string $property): Update

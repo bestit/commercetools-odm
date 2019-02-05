@@ -9,26 +9,29 @@ use Commercetools\Core\Request\ProductTypes\Command\ProductTypeChangeIsSearchabl
 
 /**
  * Change the searchable value for an attribute def.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class ChangeSearchableForAttr extends ProductTypeActionBuilder
 {
     /**
      * A PCRE to match the hierarchical field path without delimiter.
+     *
      * @var string
      */
     protected $complexFieldFilter = 'attributes/(\d+)/isSearchable$';
 
     /**
      * Creates the update actions for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param ProductType $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

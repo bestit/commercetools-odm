@@ -12,6 +12,7 @@ use Commercetools\Core\Request\Products\Command\ProductAddPriceAction;
 
 /**
  * Adds prices to the product.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  */
@@ -19,13 +20,16 @@ class AddPrices extends PriceActionBuilder
 {
     /**
      * Creates the update actions for the given class and data.
+     *
+     * @todo Add Variants.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Product $sourceObject
+     *
      * @return AbstractAction[]
-     * @todo Add Variants.
      */
     public function createUpdateActions(
         $changedValue,

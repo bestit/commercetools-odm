@@ -13,11 +13,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests SetShippingMethod
+ *
  * @author chowanski <chowanski@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Cart
  * @subpackage ActionBuilder\Cart
- * @version $id$
  */
 class SetShippingMethodTest extends TestCase
 {
@@ -25,6 +25,7 @@ class SetShippingMethodTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var SetShippingMethod|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture;
@@ -42,7 +43,9 @@ class SetShippingMethodTest extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * Sets up the test.
+     *
+     * @return void
      */
     public function setUp()
     {
@@ -51,6 +54,7 @@ class SetShippingMethodTest extends TestCase
 
     /**
      * Checks if a simple action is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsString()
@@ -75,11 +79,12 @@ class SetShippingMethodTest extends TestCase
 
     /**
      * Checks if a simple action is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsNonString()
     {
-        $changedData =['foo' => 'bar'];
+        $changedData = ['foo' => 'bar'];
 
         $cart = new Cart();
 
@@ -97,6 +102,7 @@ class SetShippingMethodTest extends TestCase
 
     /**
      * Checks the instance.
+     *
      * @return void
      */
     public function testInstance()

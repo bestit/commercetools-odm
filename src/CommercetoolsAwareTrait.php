@@ -4,33 +4,38 @@ namespace BestIt\CommercetoolsODM;
 
 /**
  * Provides basic getters and setters for the commercetools manager.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @version $id$
  */
 trait CommercetoolsAwareTrait
 {
     /**
      * The commercetools document manager.
+     *
      * @var DocumentManager|void
      */
     private $commercetools = null;
 
     /**
      * Returns the commercetools document manager.
-     * @return DocumentManager|void
+     *
+     * @return DocumentManagerInterface|void
      */
-    public function getCommercetools(): DocumentManager
+    public function getCommercetools(): DocumentManagerInterface
     {
         return $this->commercetools;
     }
 
     /**
      * Sets the commercetools document manager.
-     * @param DocumentManager $commercetools
-     * @return CommercetoolsAwareTrait
+     *
+     * @param DocumentManagerInterface $commercetools
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
+     *
+     * @return $this
      */
-    public function setCommercetools(DocumentManager $commercetools)
+    public function setCommercetools(DocumentManagerInterface $commercetools)
     {
         $this->commercetools = $commercetools;
 

@@ -46,7 +46,7 @@ class ChangeSlugTest extends TestCase
     /**
      * Sets up the test.
      *
-     * @retern void
+     * @return void
      */
     protected function setUp()
     {

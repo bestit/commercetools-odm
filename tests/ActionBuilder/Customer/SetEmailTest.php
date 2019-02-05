@@ -13,10 +13,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class SetEmailTest
+ *
+ * @author blange <bjoern.lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class SetEmailTest extends TestCase
 {
@@ -24,6 +25,7 @@ class SetEmailTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var SetLastName|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -32,6 +34,7 @@ class SetEmailTest extends TestCase
      * Returns an array with the assertions for the support method.
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -45,6 +48,7 @@ class SetEmailTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -54,6 +58,8 @@ class SetEmailTest extends TestCase
 
     /**
      * Checks if the action is created correctly.
+     *
+     * @return void
      */
     public function testCreateUpdateActions()
     {

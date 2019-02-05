@@ -14,7 +14,6 @@ use Commercetools\Core\Request\ShoppingLists\Command\ShoppingListRemoveLineItemA
  *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\ShoppingList
- * @version $id$
  */
 class RemoveLineItem extends ShoppingListActionBuilder
 {

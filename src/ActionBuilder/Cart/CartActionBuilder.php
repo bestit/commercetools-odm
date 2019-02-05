@@ -7,15 +7,16 @@ use Commercetools\Core\Model\Cart\Cart;
 
 /**
  * The ase class for the customer action builders.s
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Cart
  * @subpackage ActionBuilder\Cart
- * @version $id$
  */
 abstract class CartActionBuilder extends ActionBuilderAbstract
 {
     /**
      * For which class is this description used?
+     *
      * @var string
      */
     protected $modelClass = Cart::class;

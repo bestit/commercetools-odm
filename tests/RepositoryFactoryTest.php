@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests;
 
+use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Filter\FilterManager;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use BestIt\CommercetoolsODM\RepositoryFactory;
-use BestIt\CTAsyncPool\PoolInterface;
 use PHPUnit\Framework\TestCase;
 use function uniqid;
 
@@ -43,7 +43,7 @@ class RepositoryFactoryTest extends TestCase
     /**
      * Checks if the default repository is rendered as a singleton.
      *
-     *@return void
+     * @return void
      */
     public function testGetRepositoryDefaultAsSingleton()
     {

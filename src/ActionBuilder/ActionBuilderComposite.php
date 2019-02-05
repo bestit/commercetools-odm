@@ -6,21 +6,23 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 
 /**
  * Processes the action builders for a changed object.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder
  * @subpackage ActionBuilder
- * @version $id$
  */
 class ActionBuilderComposite implements ActionBuilderProcessorInterface
 {
     /**
      * The factory to get the action builders.
+     *
      * @var ActionBuilderFactoryInterface
      */
     private $actionBuilderFactory = null;
 
     /**
      * ActionBuilderComposite constructor.
+     *
      * @param ActionBuilderFactoryInterface $actionBuilderFactory
      */
     public function __construct(ActionBuilderFactoryInterface $actionBuilderFactory)
@@ -30,10 +32,12 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
 
     /**
      * Creates the update action for the gievn class and data.
+     *
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param object $sourceObject
+     *
      * @return ActionBuilderInterface[]
      */
     public function createUpdateActions(
@@ -48,11 +52,13 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
 
     /**
      * Iterates recursively through the field hierarchy and delivers their actions.
+     *
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param object $sourceObject
      * @param string $parentPath
+     *
      * @return array
      */
     private function createUpdateActionsRecursively(
@@ -113,6 +119,7 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
 
     /**
      * Returns the factory to get the action builders.
+     *
      * @return ActionBuilderFactoryInterface
      */
     private function getActionBuilderFactory(): ActionBuilderFactoryInterface
@@ -122,7 +129,9 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
 
     /**
      * Sets the factory to get the action builders.
+     *
      * @param ActionBuilderFactoryInterface $actionBuilderFactory
+     *
      * @return ActionBuilderProcessorInterface
      */
     private function setActionBuilderFactory(

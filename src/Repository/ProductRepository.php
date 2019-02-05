@@ -26,11 +26,14 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
 {
     /**
      * Adds the given image to the variant of the product.
+     *
+     * @throws ResponseException
+     *
      * @param SplFileInfo $fileInfo
      * @param Product $product
      * @param int $variantId
+     *
      * @return Product The refreshed product.
-     * @throws ResponseException
      */
     public function addImageToProduct(SplFileInfo $fileInfo, Product $product, int $variantId = 1): Product
     {
@@ -63,9 +66,11 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
 
     /**
      * Publishes the given product.
+     *
      * @param Product $product
-     * @return Product
      * @throws ResponseException
+     *
+     * @return Product
      */
     public function publish(Product $product): Product
     {
@@ -95,9 +100,11 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
 
     /**
      * Unpublishes the given product.
+     *
      * @param Product $product
-     * @return Product
      * @throws ResponseException
+     *
+     * @return Product
      */
     public function unpublish(Product $product): Product
     {

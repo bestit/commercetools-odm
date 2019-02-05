@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM;
 
+use BestIt\CTAsyncPool\PoolAwareTrait;
+use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Helper\FilterManagerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
-use BestIt\CTAsyncPool\PoolAwareTrait;
-use BestIt\CTAsyncPool\PoolInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 /**

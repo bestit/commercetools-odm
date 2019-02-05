@@ -7,10 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class FieldTest
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Mapping\Annotations
  * @subpackage Mapping\Annotations
- * @version $id$
  */
 class FieldTest extends TestCase
 {
@@ -18,12 +18,14 @@ class FieldTest extends TestCase
 
     /**
      * The tested class.
+     *
      * @var Field
      */
     protected $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -33,6 +35,7 @@ class FieldTest extends TestCase
 
     /**
      * Checks the declaration for the annotation.
+     *
      * @return void
      */
     public function testAnnotationDeclaration()
@@ -42,6 +45,7 @@ class FieldTest extends TestCase
 
     /**
      * Checks if the target declaration is as required.
+     *
      * @return void
      */
     public function testTargetAnnotation()
@@ -51,6 +55,7 @@ class FieldTest extends TestCase
 
     /**
      * Checks the collection declaration and usage.
+     *
      * @return void
      */
     public function testCollection()
@@ -64,6 +69,8 @@ class FieldTest extends TestCase
 
     /**
      * Checks if ignoreOnEmpty is correctly checked.
+     *
+     * @return void
      */
     public function testIgnoreOnEmpty()
     {
@@ -77,6 +84,8 @@ class FieldTest extends TestCase
     }
     /**
      * Checks if read only is correctly checked.
+     *
+     * @return void
      */
     public function testReadOnly()
     {
@@ -91,6 +100,7 @@ class FieldTest extends TestCase
 
     /**
      * Checks the type declaration and usage.
+     *
      * @return void
      */
     public function testType()

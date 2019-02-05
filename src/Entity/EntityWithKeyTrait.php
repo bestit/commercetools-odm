@@ -2,10 +2,17 @@
 
 namespace BestIt\CommercetoolsODM\Entity;
 
+/**
+ * Helps an entity with its key.
+ *
+ * @author blange <bjoern.lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM\Entity
+ */
 trait EntityWithKeyTrait
 {
     /**
      * The key for the type.
+     *
      * @Commercetools\Field(type="string")
      * @Commercetools\Key
      * @Commercetools\Update(
@@ -18,6 +25,7 @@ trait EntityWithKeyTrait
 
     /**
      * Returns the key for the type.
+     *
      * @return string
      */
     public function getKey(): string
@@ -27,7 +35,9 @@ trait EntityWithKeyTrait
 
     /**
      * Sets the key for the type.
+     *
      * @param string $key
+     *
      * @return ProductType
      */
     public function setKey(string $key): ProductType

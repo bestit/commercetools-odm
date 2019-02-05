@@ -6,17 +6,18 @@ use Doctrine\Common\Annotations\Annotation\Required;
 
 /**
  * Annotation to mark an repository.
+ *
  * @Annotation
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Mapping\Annotations
  * @subpackage Mapping\Annotations
  * @Target("CLASS")
- * @version $id$
  */
 class Repository implements Annotation
 {
     /**
      * The required class name.
+     *
      * @Required
      * @var string
      */
@@ -24,6 +25,7 @@ class Repository implements Annotation
 
     /**
      * Returns the class name for this repository.
+     *
      * @return string
      */
     public function getClass(): string

@@ -20,6 +20,7 @@ class ProductTypeRepositoryTest extends TestCase
 
     /**
      * The tested class.
+     *
      * @var ProductTypeRepository|null
      */
     protected $fixture;

@@ -6,49 +6,57 @@ namespace BestIt\CommercetoolsODM\ActionBuilder;
 
 /**
  * Base class for building an update action.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM\ActionBuilder\ProductType
+ * @package BestIt\CommercetoolsODM\ActionBuilder
  */
 abstract class ActionBuilderAbstract implements ActionBuilderInterface
 {
     /**
      * A PCRE to match the hierarchical field path without delimiter.
+     *
      * @var string
      */
     protected $complexFieldFilter = '';
 
     /**
      * The field name.
+     *
      * @var string
      */
     protected $fieldName = '';
 
     /**
      * Allows this action other actions?
+     *
      * @var bool
      */
     protected $isStackable = true;
 
     /**
      * Caches the last support match.
+     *
      * @var array
      */
     private $lastFoundMatch = [];
 
     /**
      * For which class is this description used?
+     *
      * @var string
      */
     protected $modelClass = '';
 
     /**
      * At which order should this builder be executed? Highest happens first.
+     *
      * @var int
      */
     protected $priority = 0;
 
     /**
      * Returns the complex field filter with slash delimiters if there is one.
+     *
      * @return string
      */
     protected function getComplexFieldFilter(): string
@@ -60,6 +68,7 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * Returns the name of the field.
+     *
      * @return string
      */
     protected function getFieldName(): string
@@ -69,6 +78,7 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * Returns the last support()-match.
+     *
      * @return array
      */
     public function getLastFoundMatch(): array
@@ -78,6 +88,7 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * For which class is this description used?
+     *
      * @return string
      */
     protected function getModelClass(): string
@@ -87,6 +98,7 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * At which order should this builder be executed? Highest happens first.
+     *
      * @return int
      */
     public function getPriority(): int
@@ -96,7 +108,9 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * Allows this action other actions?
+     *
      * @param bool $newStatus The new status.
+     *
      * @return bool The old status.
      */
     public function isStackable(bool $newStatus = false): bool
@@ -112,7 +126,9 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * Sets the PCRE to match the hierarchical field path.
+     *
      * @param string $complexFieldFilter
+     *
      * @return ActionBuilderAbstract
      */
     protected function setComplexFieldFilter(string $complexFieldFilter): ActionBuilderAbstract
@@ -124,7 +140,9 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * Sets the field name.
+     *
      * @param string $fieldName
+     *
      * @return ActionBuilderAbstract
      */
     protected function setFieldName(string $fieldName): ActionBuilderAbstract
@@ -135,7 +153,9 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * Caches the last support match.
+     *
      * @param array $lastFoundMatch
+     *
      * @return ActionBuilderAbstract
      */
     public function setLastFoundMatch(array $lastFoundMatch): ActionBuilderAbstract
@@ -147,7 +167,9 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
     
     /**
      * For which class is this description used?
+     *
      * @param string $modelClass
+     *
      * @return ActionBuilderAbstract
      */
     protected function setModelClass(string $modelClass): ActionBuilderAbstract
@@ -159,8 +181,10 @@ abstract class ActionBuilderAbstract implements ActionBuilderInterface
 
     /**
      * Returns true if the given class name matches the model class for this description.
+     *
      * @param string $fieldPath The hierarchical path of the fields.
      * @param string $referenceClass
+     *
      * @return bool|array If there is a complex match, the matched values are returned.
      */
     public function supports(string $fieldPath, string $referenceClass)

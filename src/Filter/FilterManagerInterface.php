@@ -8,7 +8,7 @@ use BestIt\CommercetoolsODM\Exception\FilterException;
  * FilterManagerInterface executing filters
  *
  * @author Michel Chowanski <chowanski@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Filter
  */
 interface FilterManagerInterface
 {
@@ -24,11 +24,12 @@ interface FilterManagerInterface
     /**
      * Apply filter
      *
+     * @throws FilterException
+     *
      * @param string $key
      * @param mixed $request
      *
      * @return void
-     * @throws FilterException
      */
     public function apply(string $key, $request);
 }

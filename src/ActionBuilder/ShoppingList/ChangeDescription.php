@@ -29,6 +29,7 @@ class ChangeDescription extends ShoppingListActionBuilder
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return ShoppingListSetDescriptionAction[]
      */
     public function createUpdateActions(

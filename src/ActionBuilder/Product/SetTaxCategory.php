@@ -9,28 +9,32 @@ use Commercetools\Core\Request\Products\Command\ProductSetTaxCategoryAction;
 
 /**
  * Sets the tax category.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  * @subpackage ActionBuilder\Product
- * @version $id$
  */
 class SetTaxCategory extends ProductActionBuilder
 {
     /**
      * A PCRE to match the hierarchical field path without delimiter.
+     *
      * @var string
      */
     protected $complexFieldFilter = '^taxCategory$';
 
     /**
      * Creates the update actions for the given class and data.
+     *
+     * @todo The documentation does not tell of the staged param in the action. what does that mean?
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return AbstractAction[]
-     * @todo The documentation does not tell of the staged param in the action. what does that mean?
      */
     public function createUpdateActions(
         $changedValue,

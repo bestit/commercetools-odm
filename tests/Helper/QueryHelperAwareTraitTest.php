@@ -8,22 +8,24 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class QueryHelperAwareTraitTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Helper
  * @subpackage Helper
- * @version $id$
  */
 class QueryHelperAwareTraitTest extends TestCase
 {
     /**
      * The tested class.
+     *
      * @var QueryHelperAwareTrait
      */
     private $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     protected function setUp()
@@ -33,6 +35,7 @@ class QueryHelperAwareTraitTest extends TestCase
 
     /**
      * Checks the getter and setter.
+     *
      * @return void
      */
     public function testSetAndGetQueryHelper()

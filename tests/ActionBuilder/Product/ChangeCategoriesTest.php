@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class ChangeCategoriesTest
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  */
@@ -24,12 +25,14 @@ class ChangeCategoriesTest extends TestCase
 
     /**
      * The tested class.
+     *
      * @var ChangeCategories|null
      */
     protected $fixture;
 
     /**
      * Returns assertions for the create call.
+     *
      * @return array
      */
     public function getCreateAssertions(): array
@@ -45,6 +48,7 @@ class ChangeCategoriesTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -62,7 +66,8 @@ class ChangeCategoriesTest extends TestCase
 
     /**
      * Sets up the test.
-     * @reteurn void
+     *
+     * @return void
      */
     protected function setUp()
     {
@@ -71,9 +76,12 @@ class ChangeCategoriesTest extends TestCase
 
     /**
      * Checks if old ids are removed and new ones added.
+     *
      * @dataProvider getCreateAssertions
+     *
      * @param string $path
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActionsWithOldData(string $path, bool $staged = true)
@@ -145,9 +153,12 @@ class ChangeCategoriesTest extends TestCase
 
     /**
      * Checks if new ones are added.
+     *
      * @dataProvider getCreateAssertions
+     *
      * @param string $path
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActionsWithoutOldData(string $path, bool $staged = true)
@@ -198,6 +209,7 @@ class ChangeCategoriesTest extends TestCase
 
     /**
      * Checks the instance type.
+     *
      * @return void
      */
     public function testInstance()

@@ -10,6 +10,7 @@ use Commercetools\Core\Request\Orders\Command\OrderAddDeliveryAction;
 
 /**
  * Adds deliveries to the order.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Order
  */
@@ -17,17 +18,20 @@ class AddDelivery extends OrderActionBuilder
 {
     /**
      * The field name filter.
+     *
      * @var string
      */
     protected $complexFieldFilter = '^shippingInfo/deliveries/(\d+)$';
 
     /**
      * Creates the update actions for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

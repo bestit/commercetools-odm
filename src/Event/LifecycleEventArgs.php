@@ -7,27 +7,30 @@ use Doctrine\Common\EventArgs;
 
 /**
  * The lifecycle event args.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Event
  * @subpackage Event
- * @version $id$
  */
 class LifecycleEventArgs extends EventArgs
 {
     /**
      * The triggering document.
+     *
      * @var mixed
      */
     private $document;
 
     /**
      * The used document manager.
+     *
      * @var DocumentManagerInterface
      */
     private $documentManager;
 
     /**
      * LifecycleEventArgs constructor.
+     *
      * @param mixed $document
      * @param DocumentManagerInterface $documentManager
      */
@@ -39,6 +42,7 @@ class LifecycleEventArgs extends EventArgs
 
     /**
      * Returns the triggering document.
+     *
      * @return mixed
      */
     public function getDocument()
@@ -48,6 +52,7 @@ class LifecycleEventArgs extends EventArgs
 
     /**
      * Returns the used document manager.
+     *
      * @return DocumentManagerInterface
      */
     public function getDocumentManager(): DocumentManagerInterface

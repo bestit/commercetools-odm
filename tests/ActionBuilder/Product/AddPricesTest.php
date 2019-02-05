@@ -19,6 +19,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests AddPrices.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  */
@@ -26,12 +27,14 @@ class AddPricesTest extends TestCase
 {
     /**
      * The test class.
+     *
      * @var AddPrices|PHPUnit_Framework_MockObject_MockObject|null
      */
     private $fixture;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     protected function setUp()
@@ -41,6 +44,7 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the default return for the action builder.
+     *
      * @return void
      */
     public function testCreateUpdateActionsEmpty()
@@ -56,6 +60,7 @@ class AddPricesTest extends TestCase
 
     /**
      * No prices should be added, if the given added array is empty.
+     *
      * @return void
      */
     public function testCreateUpdateActionsIgnoreNullChanges()
@@ -99,6 +104,7 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the default return for the action builder if there is no added price.
+     *
      * @return void
      */
     public function testCreateUpdateActionsNoChanges()
@@ -133,6 +139,7 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the default return for the action builder if there is no added price.
+     *
      * @return void
      */
     public function testCreateUpdateActionsNoPrices()
@@ -150,6 +157,7 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the return for the action builder if there is an added price.
+     *
      * @return void
      */
     public function testCreateUpdateActionsWithChanges()
@@ -196,6 +204,7 @@ class AddPricesTest extends TestCase
 
     /**
      * Checks the instance type for the action builder.
+     *
      * @return void
      */
     public function testType()

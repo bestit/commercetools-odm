@@ -8,22 +8,24 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class ResponseAwareTraitTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Exception
  * @subpackage Exception
- * @version $id$
  */
 class ResponseAwareTraitTest extends TestCase
 {
     /**
      * The tested class.
+     *
      * @var ResponseAwareTrait
      */
     private $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     protected function setUp()
@@ -33,6 +35,7 @@ class ResponseAwareTraitTest extends TestCase
 
     /**
      * Checks the getter and setter.
+     *
      * @return void
      */
     public function testSetAndGetCorrelationId()
@@ -48,6 +51,7 @@ class ResponseAwareTraitTest extends TestCase
 
     /**
      * Checks the getter and setter.
+     *
      * @return void
      */
     public function testSetAndGetResponse()

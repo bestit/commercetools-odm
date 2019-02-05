@@ -9,16 +9,17 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests ActionBuilderInterface.
+ *
  * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder
  * @subpackage ActionBuilder
- * @version $id$
  */
 class ActionBuilderInterfaceTest extends TestCase
 {
     /**
      * Checks the constants of the interface.
+     *
      * @return void
      */
     public function testConstants()

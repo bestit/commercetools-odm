@@ -24,6 +24,7 @@ use function Funct\Strings\underscore;
 
 /**
  * Testing of the document manager.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests
  */
@@ -33,18 +34,21 @@ class DocumentManagerTest extends TestCase
 
     /**
      * The document manager.
+     *
      * @var DocumentManagerInterface|null
      */
     protected $fixture;
 
     /**
      * The used unit of work factory.
+     *
      * @var UnitOfWorkFactoryInterface|PHPUnit_Framework_MockObject_MockObject|null
      */
     private $unitOfWorkFactory;
 
     /**
      * Returns some tests for the unit of work delegations.
+     *
      * @return array
      */
     public static function getUnitOfWorkDelegations(): array
@@ -71,6 +75,7 @@ class DocumentManagerTest extends TestCase
 
     /**
      * Returns the used traits.
+     *
      * @return array
      */
     public static function getUsedTraitNames(): array
@@ -85,6 +90,7 @@ class DocumentManagerTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -100,6 +106,7 @@ class DocumentManagerTest extends TestCase
 
     /**
      * Checks the constants of the doc manager.
+     *
      * @return void
      */
     public function testConstants()
@@ -130,6 +137,7 @@ class DocumentManagerTest extends TestCase
 
     /**
      * Checks the return for the unit of work.
+     *
      * @return void
      */
     public function testGetUnitOfWork()
@@ -152,6 +160,7 @@ class DocumentManagerTest extends TestCase
 
     /**
      * Checks the interfaces for the document manager.
+     *
      * @return void
      */
     public function testInterfaces()
@@ -161,11 +170,15 @@ class DocumentManagerTest extends TestCase
 
     /**
      * Checks if the unit of work is called correctly.
+     *
      * @dataProvider getUnitOfWorkDelegations
+     *
      * @param string $documentManagerMethod
      * @param string $unitOfWorkMethod
      * @param bool $withObject
      * @param callable $argumentsCreator A possible callback to create more arguments.
+     *
+     * @return void
      */
     public function testUnitOfWorkDelegation(
         string $documentManagerMethod,

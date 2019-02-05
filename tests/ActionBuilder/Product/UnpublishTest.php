@@ -13,11 +13,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class UnpublishTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  * @subpackage ActionBuilder\Product
- * @version $id$
  */
 class UnpublishTest extends TestCase
 {
@@ -25,6 +25,7 @@ class UnpublishTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var Unpublish|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -34,6 +35,7 @@ class UnpublishTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -49,6 +51,7 @@ class UnpublishTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -58,6 +61,7 @@ class UnpublishTest extends TestCase
 
     /**
      * Checks if the product is unpublished thru this action.
+     *
      * @return void
      */
     public function testCreateUpdateActions()
@@ -77,6 +81,7 @@ class UnpublishTest extends TestCase
 
     /**
      * Checks if the product is not published thru this action.
+     *
      * @return void
      */
     public function testCreateUpdateActionsIgnoreOnPublish()
@@ -94,6 +99,7 @@ class UnpublishTest extends TestCase
 
     /**
      * Checks the instance of the builder.
+     *
      * @return void
      */
     public function testInstance()

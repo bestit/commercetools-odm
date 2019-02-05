@@ -11,9 +11,9 @@ use Psr\Log\LoggerAwareTrait;
 
 /**
  * Provides unit of works for this odm package.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
- * @version $id$
  */
 class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
 {
@@ -24,6 +24,7 @@ class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
 
     /**
      * UnitOfWorkFactory constructor.
+     *
      * @param ActionBuilderProcessorInterface $actionBuilderProcessor
      * @param EventManager $eventManager
      * @param ListenersInvoker $listenersInvoker
@@ -41,7 +42,9 @@ class UnitOfWorkFactory implements UnitOfWorkFactoryInterface
 
     /**
      * Returns a fresh instance of the unit of work for the given document manager.
+     *
      * @param DocumentManagerInterface $documentManager
+     *
      * @return UnitOfWorkInterface
      */
     public function getUnitOfWork(DocumentManagerInterface $documentManager): UnitOfWorkInterface

@@ -11,26 +11,29 @@ use DateTime;
 
 /**
  * Builds the action to add an attribute to a product type.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class SetCustomField extends CustomerActionBuilder
 {
     /**
      * A PCRE to match the hierarchical field path without delimiter.
+     *
      * @var string
      */
     protected $complexFieldFilter = 'custom/fields/([^/]*)$';
 
     /**
      * Creates the update actions for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Customer $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

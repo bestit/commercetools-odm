@@ -15,9 +15,8 @@ use RuntimeException;
  * Repository for the carts.
  *
  * @author chowanski <chowanski@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Repository
  * @subpackage Repository
- * @version $id$
  */
 class CartRepository extends DefaultRepository
 {
@@ -25,9 +24,9 @@ class CartRepository extends DefaultRepository
      * Returns a cart object or null by customer id.
      *
      * @param string $id
+     * @throws APIException
      *
      * @return mixed
-     * @throws APIException
      */
     public function findByCustomerId(string $id)
     {
@@ -79,12 +78,13 @@ class CartRepository extends DefaultRepository
     /**
      * Recalculate cart by cart id, version.
      *
+     * @throws RuntimeException
+     *
      * @param string $id Id of recalculated cart.
      * @param int $version Id of recalculated cart.
      * @param bool $updateProductData Update product data?
      *
      * @return Cart
-     * @throws RuntimeException
      */
     public function recalculateCartByIdAndVersion(string $id, int $version, bool $updateProductData = false): Cart
     {

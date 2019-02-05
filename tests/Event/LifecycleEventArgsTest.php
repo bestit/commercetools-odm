@@ -10,34 +10,38 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class LifecycleEventArgsTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Event
  * @subpackage Event
- * @version $id$
  */
 class LifecycleEventArgsTest extends TestCase
 {
     /**
      * The used document in the fixture.
+     *
      * @var null
      */
     private $document = null;
 
     /**
      * The used document manager in the fixture.
+     *
      * @var DocumentManagerInterface
      */
     private $documentManager = null;
 
     /**
      * The tested class.
+     *
      * @var LifecycleEventArgs
      */
     private $fixture = null;
 
     /**
      * Returns the prop names for testing.
+     *
      * @return array
      */
     public function getGetterNames(): array
@@ -47,6 +51,7 @@ class LifecycleEventArgsTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -59,8 +64,11 @@ class LifecycleEventArgsTest extends TestCase
 
     /**
      * Checks if the getter returns the correct value.
+     *
      * @dataProvider getGetterNames
      * @param string $propName
+     *
+     * @return void
      */
     public function testGetter(string $propName)
     {
@@ -69,6 +77,7 @@ class LifecycleEventArgsTest extends TestCase
 
     /**
      * Checks the instance.
+     *
      * @return void
      */
     public function testType()

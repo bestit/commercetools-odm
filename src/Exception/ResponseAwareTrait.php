@@ -7,27 +7,30 @@ use Commercetools\Core\Response\ErrorResponse;
 
 /**
  * Helps with responses in the exceptions.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Exception
  * @subpackage Exception
- * @version $id$
  */
 trait ResponseAwareTrait
 {
     /**
      * The correlation id for the request.
+     *
      * @var string
      */
     private $correlationId = '';
 
     /**
      * The response.
+     *
      * @var ErrorResponse
      */
     private $response = null;
 
     /**
      * Returns the correlation id for the request.
+     *
      * @return string
      */
     public function getCorrelationId(): string
@@ -37,6 +40,7 @@ trait ResponseAwareTrait
 
     /**
      * Returns the used response.
+     *
      * @return ApiResponseInterface
      */
     public function getResponse(): ApiResponseInterface
@@ -46,18 +50,25 @@ trait ResponseAwareTrait
 
     /**
      * Sets the correlation id for the request.
+     *
      * @param string $correlationId
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
+     *
      * @return ResponseAwareTrait
      */
     public function setCorrelationId(string $correlationId)
     {
         $this->correlationId = $correlationId;
+
         return $this;
     }
 
     /**
      * Sets the response.
+     *
      * @param ErrorResponse $response
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
+     *
      * @return $this
      */
     public function setResponse(ErrorResponse $response)

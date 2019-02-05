@@ -23,6 +23,7 @@ trait ListenerInvokerAwareTrait
      * Returns the invoker for the event listener.
      *
      * This getter exists to provide you a type safe way to work.
+     *
      * @return ListenersInvoker
      */
     public function getListenerInvoker(): ListenersInvoker
@@ -32,7 +33,9 @@ trait ListenerInvokerAwareTrait
 
     /**
      * Sets the invoker for the event listener.
+     *
      * @param ListenersInvoker $listenerInvoker The listener invoker.
+     *
      * @return $this
      */
     public function setListenerInvoker(ListenersInvoker $listenerInvoker): self

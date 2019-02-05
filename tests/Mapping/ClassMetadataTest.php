@@ -11,8 +11,8 @@ use BestIt\CommercetoolsODM\Tests\Mapping\ClassMetadata\TestClass;
 use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\Category\Category;
 use Commercetools\Core\Model\Channel\Channel;
-use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\CustomObject\CustomObject;
+use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\Inventory\InventoryEntry;
 use Commercetools\Core\Model\Order\Order;
 use Commercetools\Core\Model\Product\Product;
@@ -79,6 +79,7 @@ class ClassMetadataTest extends TestCase
 
     /**
      * Checks the getter and setter.
+     *
      * @return void
      */
     public function testGetAndSetFieldMappings()
@@ -100,6 +101,7 @@ class ClassMetadataTest extends TestCase
 
     /**
      * Checks the getter and setter.
+     *
      * @return void
      */
     public function testGetAndSetReflectionClass()
@@ -117,6 +119,7 @@ class ClassMetadataTest extends TestCase
 
     /**
      * Checks the field name getter for the standard model.
+     *
      * @return void
      */
     public function testGetFieldNamesStandard()
@@ -124,13 +127,14 @@ class ClassMetadataTest extends TestCase
         $this->fixture = new ClassMetadata($this->objectName = Order::class);
 
         $this->assertSame(
-            array_keys((new $this->objectName)->fieldDefinitions()),
+            array_keys((new $this->objectName())->fieldDefinitions()),
             $this->fixture->getFieldNames()
         );
     }
 
     /**
      * Checks the name getter.
+     *
      * @return void
      */
     public function testGetName()
@@ -140,6 +144,8 @@ class ClassMetadataTest extends TestCase
 
     /**
      * Checks if the ignore marker is used correctly for the given field.
+     *
+     * @return void
      */
     public function testIgnoreFieldOnEmptyFalse()
     {
@@ -152,6 +158,8 @@ class ClassMetadataTest extends TestCase
 
     /**
      * Checks if the ignore marker falls back correctly on a missing field.
+     *
+     * @return void
      */
     public function testIgnoreFieldOnEmptyMissing()
     {
@@ -164,6 +172,8 @@ class ClassMetadataTest extends TestCase
 
     /**
      * Checks if the ignore marker is used correctly for the given field.
+     *
+     * @return void
      */
     public function testIgnoreFieldOnEmptyTrue()
     {

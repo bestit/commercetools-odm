@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
+use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
@@ -11,7 +12,6 @@ use BestIt\CommercetoolsODM\Repository\ProductTypeRepository;
 use BestIt\CommercetoolsODM\Repository\ProjectRepository;
 use BestIt\CommercetoolsODM\Repository\ProjectRepositoryInterface;
 use BestIt\CommercetoolsODM\Tests\TestTraitsTrait;
-use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Model\ProductType\ProductType;
 use PHPUnit\Framework\TestCase;
@@ -19,10 +19,10 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class ProjectRepositoryTest
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Repository
  * @subpackage Repository
- * @version $id$
  */
 class ProjectRepositoryTest extends TestCase
 {
@@ -30,12 +30,14 @@ class ProjectRepositoryTest extends TestCase
 
     /**
      * The tested class.
+     *
      * @var ProjectRepository
      */
     protected $fixture = null;
 
     /**
      * Returns the class name for the repository.
+     *
      * @return string
      */
     protected function getRepositoryClass(): string
@@ -45,6 +47,7 @@ class ProjectRepositoryTest extends TestCase
 
     /**
      * Checks the class interfaces.
+     *
      * @return void
      */
     public function testInterfaces()

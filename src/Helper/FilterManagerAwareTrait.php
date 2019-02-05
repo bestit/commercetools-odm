@@ -33,6 +33,7 @@ trait FilterManagerAwareTrait
      * Sets the used filter manager
      *
      * @param FilterManagerInterface $filterManager
+     *
      * @return $this
      */
     public function setFilterManager(FilterManagerInterface $filterManager): self

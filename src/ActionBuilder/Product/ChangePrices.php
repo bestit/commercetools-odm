@@ -10,22 +10,25 @@ use Commercetools\Core\Request\Products\Command\ProductChangePriceAction;
 
 /**
  * Changes prices for the product.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  * @subpackage ActionBuilder\Product
- * @version $id$
  */
 class ChangePrices extends PriceActionBuilder
 {
     /**
      * Creates the update actions for the given class and data.
+     *
+     * @todo Add Variants.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Product $sourceObject
+     *
      * @return AbstractAction[]
-     * @todo Add Variants.
      */
     public function createUpdateActions(
         $changedValue,

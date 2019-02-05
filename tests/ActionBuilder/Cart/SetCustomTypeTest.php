@@ -11,17 +11,17 @@ use Commercetools\Core\Model\CustomField\CustomFieldObject;
 use Commercetools\Core\Model\CustomField\FieldContainer;
 use Commercetools\Core\Model\Type\TypeReference;
 use Commercetools\Core\Request\CustomField\Command\SetCustomTypeAction;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
-use \DateTime;
 
 /**
  * Tests SetCustomTypeTest
+ *
  * @author chowanski <chowanski@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Cart
  * @subpackage ActionBuilder\Cart
- * @version $id$
  */
 class SetCustomTypeTest extends TestCase
 {
@@ -29,6 +29,7 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var SetCustomType|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture;
@@ -47,7 +48,10 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Create cart with custom type and run / assert test
+     *
      * @param array $changedData
+     *
+     * @return void
      */
     private function runAction(array $changedData)
     {
@@ -77,15 +81,18 @@ class SetCustomTypeTest extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * Sets up the test.
+     *
+     * @return void
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->fixture = new SetCustomType();
     }
 
     /**
      * Checks if a simple action is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsScalar()
@@ -105,6 +112,7 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action with mutiple fields is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsMultipleScalar()
@@ -125,6 +133,7 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action with integer field is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsInteger()
@@ -144,6 +153,7 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action with float field is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsFloat()
@@ -163,6 +173,7 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks if a simple action with object field is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsObject()
@@ -182,6 +193,7 @@ class SetCustomTypeTest extends TestCase
 
     /**
      * Checks the instance.
+     *
      * @return void
      */
     public function testInstance()

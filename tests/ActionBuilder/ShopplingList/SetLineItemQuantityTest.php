@@ -12,6 +12,12 @@ use Commercetools\Core\Request\ShoppingLists\Command\ShoppingListChangeLineItemQ
 use PHPUnit\Framework\TestCase;
 use function uniqid;
 
+/**
+ * Test SetLineItemQuantity
+ *
+ * @author blange <bjoern.lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ShoppingList
+ */
 class SetLineItemQuantityTest extends TestCase
 {
     use SupportTestTrait;
@@ -21,6 +27,7 @@ class SetLineItemQuantityTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -45,6 +52,8 @@ class SetLineItemQuantityTest extends TestCase
 
     /**
      * Checks the success
+     *
+     * @return void
      */
     public function testCreateUpdateActionsSuccess()
     {

@@ -11,7 +11,8 @@ use Doctrine\Common\EventManager;
  * A method invoker based on entity lifecycle.
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
- * @since   2.4
+ * @package BestIt\CommercetoolsODM\Event
+ * @since  2.4
  */
 class ListenersInvoker
 {
@@ -19,30 +20,35 @@ class ListenersInvoker
 
     /**
      * External check if nothing should be invoked.
+     *
      * @var int
      */
     const INVOKE_NONE = 0;
 
     /**
      * Invoke just the entity listeners.
+     *
      * @var int
      */
     const INVOKE_LISTENERS = 1;
 
     /**
      * Invoke the lifecycle callbacks.
+     *
      * @var int
      */
     const INVOKE_CALLBACKS = 2;
 
     /**
      * Invoke the listeners on the event manager.
+     *
      * @var int
      */
     const INVOKE_MANAGER = 4;
 
     /**
      * ListenersInvoker constructor.
+     *
      * @param EventManager $eventManager
      */
     public function __construct(EventManager $eventManager)
@@ -52,8 +58,10 @@ class ListenersInvoker
 
     /**
      * Which event systems are subscribed to the given event?
+     *
      * @param ClassMetadataInterface $metadata
      * @param string $eventName
+     *
      * @return int Returns the bitmask of the invoked callbacks.
      */
     public function getSubscribedSystems(ClassMetadataInterface $metadata, string $eventName): int
@@ -77,11 +85,14 @@ class ListenersInvoker
 
     /**
      * Call the registered callbacks for the given event name.
+     *
      * @param EventArgs $args
      * @param string $eventName
      * @param mixed $entity
      * @param ClassMetadataInterface $metadata
      * @param int|void $invoke
+     *
+     * @return void
      */
     public function invoke(
         EventArgs $args,
@@ -107,7 +118,7 @@ class ListenersInvoker
                 $class = $listener['class'];
                 $method = $listener['method'];
 
-                (new $class)->$method($entity, $args);
+                (new $class())->$method($entity, $args);
             });
         }
 

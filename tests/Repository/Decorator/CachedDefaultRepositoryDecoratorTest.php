@@ -31,7 +31,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
     /**
      * @var int The cache time in seconds.
      */
-    private $cacheTTL;
+    private $cacheTtl;
 
     /**
      * @var CachedDefaultRepositoryDecorator
@@ -47,6 +47,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      * Returns the function name from the given test function name.
      *
      * @param string $function The test class function name.
+     *
      * @return string
      */
     private function extractOriginalRepoMethodName(string $function): string
@@ -74,6 +75,8 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      * @param bool $isCached
      * @param mixed $return
      * @param array $arguments The arguments for the method call of the original method.
+     *
+     * @return void
      */
     private function mockOriginalRepoMethod(string $method, bool $isCached, $return, array $arguments = [])
     {
@@ -103,7 +106,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
             $cacheItem
                 ->expects(static::once())
                 ->method('expiresAfter')
-                ->with($this->cacheTTL)
+                ->with($this->cacheTtl)
                 ->willReturnSelf();
 
             $this->cache
@@ -129,7 +132,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
         $this->fixture = new CachedDefaultRepositoryDecorator(
             $this->cache = $this->createMock(CacheItemPoolInterface::class),
             $this->originalRepository = $this->createMock(ByKeySearchRepositoryInterface::class),
-            $this->cacheTTL = mt_rand(1, 1000)
+            $this->cacheTtl = mt_rand(1, 1000)
         );
     }
 
@@ -138,6 +141,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
+     *
      * @return void
      */
     public function testFind(bool $isCached)
@@ -157,6 +161,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
+     *
      * @return void
      */
     public function testFindAll(bool $isCached)
@@ -176,8 +181,9 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
-     * @return void
      * @todo Needs to be fixed.
+     *
+     * @return void
      */
     public function testFindAsync(bool $isCached)
     {
@@ -196,6 +202,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
+     *
      * @return void
      */
     public function testFindBy(bool $isCached)
@@ -215,8 +222,9 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
-     * @return void
      * @todo Needs to be fixed.
+     *
+     * @return void
      */
     public function testFindByAsync(bool $isCached)
     {
@@ -235,6 +243,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
+     *
      * @return void
      */
     public function testFindByKey(bool $isCached)
@@ -254,8 +263,9 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
-     * @return void
      * @todo Needs to be fixed.
+     *
+     * @return void
      */
     public function testFindByKeyAsync(bool $isCached)
     {
@@ -274,6 +284,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
+     *
      * @return void
      */
     public function testFindOneBy(bool $isCached)
@@ -293,8 +304,9 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
      *
      * @dataProvider getCacheMarkers
      * @param bool $isCached
-     * @return void
      * @todo Needs to be fixed.
+     *
+     * @return void
      */
     public function testFindOneByAsync(bool $isCached)
     {

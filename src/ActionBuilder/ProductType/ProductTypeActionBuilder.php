@@ -7,15 +7,16 @@ use Commercetools\Core\Model\ProductType\ProductType;
 
 /**
  * Base type for the product type action builders.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 abstract class ProductTypeActionBuilder extends ActionBuilderAbstract
 {
     /**
      * For which class is this description used?
+     *
      * @var string
      */
     protected $modelClass = ProductType::class;

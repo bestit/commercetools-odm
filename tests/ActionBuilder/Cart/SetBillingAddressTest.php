@@ -39,6 +39,8 @@ class SetBillingAddressTest extends TestCase
 
     /**
      * Set the fixture to SetBillingAddress.
+     *
+     * @return void
      */
     public function setUp()
     {
@@ -47,6 +49,8 @@ class SetBillingAddressTest extends TestCase
 
     /**
      * Test that the createUpdateActions function add the needed commercetools actions.
+     *
+     * @return void
      */
     public function testCreateUpdateActions()
     {

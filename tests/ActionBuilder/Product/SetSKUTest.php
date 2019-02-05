@@ -8,27 +8,30 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetSkuAction;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Checks if the sku action is built.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  * @subpackage ActionBuilder\Product
- * @version $id$
  */
-class SetSKUTest extends \PHPUnit_Framework_TestCase
+class SetSKUTest extends TestCase
 {
     use SupportTestTrait;
 
     /**
      * The test class.
+     *
      * @var SetSKU|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
 
     /**
      * Returns assertions for the create call.
+     *
      * @return array
      */
     public function getCreateAssertions(): array
@@ -46,6 +49,7 @@ class SetSKUTest extends \PHPUnit_Framework_TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -65,6 +69,7 @@ class SetSKUTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -74,10 +79,13 @@ class SetSKUTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks if the action is rendered correctly.
+     *
      * @dataProvider getCreateAssertions
+     *
      * @param string $path
      * @param bool $staged
      * @param int $variantId
+     *
      * @return void
      */
     public function testCreateUpdateActions(string $path, bool $staged = true, int $variantId = 1)
@@ -102,6 +110,7 @@ class SetSKUTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks the instance of the builder.
+     *
      * @return void
      */
     public function testInstance()

@@ -7,8 +7,8 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\ShoppingList;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\ShoppingLists\Command\ShoppingListAddLineItemAction;
-use function is_array;
 use function array_key_exists;
+use function is_array;
 
 /**
  * Adds a line item to the shopping list.
@@ -26,11 +26,14 @@ class AddLineItem extends ShoppingListActionBuilder
     /**
      * Creates the update actions for the given class and data.
      *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @param array $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

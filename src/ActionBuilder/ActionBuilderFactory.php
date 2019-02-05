@@ -12,16 +12,17 @@ use ReflectionException;
 
 /**
  * Provides action builders for the source object and its metadata.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder
  * @subpackage ActionBuilder
  * @todo Add caching for field/class; Add Events!
- * @version $id$
  */
 class ActionBuilderFactory implements ActionBuilderFactoryInterface
 {
     /**
      * Where are builder classes?
+     *
      * @var array
      */
     const CLASS_PATHS = [
@@ -30,18 +31,21 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
 
     /**
      * The caching pool.
+     *
      * @var CacheItemPoolInterface
      */
     private $cacheItemPool = null;
 
     /**
      * Where are builder classes?
+     *
      * @var array
      */
     private $classPaths = [];
 
     /**
      * ActionBuilderFactory constructor.
+     *
      * @param CacheItemPoolInterface $cacheItemPool
      */
     public function __construct(CacheItemPoolInterface $cacheItemPool)
@@ -53,9 +57,11 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
 
     /**
      * Gets the action builders for the given object and its field name.
+     *
      * @param ClassMetadataInterface $classMetadata
      * @param string $fieldPath The hierarchical path of the fields.
      * @param object $sourceObject
+     *
      * @return ActionBuilderInterface[]
      */
     public function getActionBuilders(ClassMetadataInterface $classMetadata, string $fieldPath, $sourceObject): array
@@ -63,7 +69,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
         $sourceClass = $classMetadata->getActionsFrom();
 
         $allBuilders = array_map(function (string $builderClass): ActionBuilderInterface {
-            return new $builderClass;
+            return new $builderClass();
         }, $this->loadActionBuilders());
 
         $foundBuilders = array_filter($allBuilders, function (ActionBuilderInterface $builder) use (
@@ -95,6 +101,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
 
     /**
      * Where are builder classes?
+     *
      * @return array
      */
     public function getClassPaths(): array
@@ -104,6 +111,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
 
     /**
      * Loads the action builders from cache or directly out of the file system.
+     *
      * @return array
      */
     private function loadActionBuilders():array
@@ -163,6 +171,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
 
     /**
      * @param CacheItemPoolInterface $cacheItemPool
+     *
      * @return ActionBuilderFactory
      */
     private function setCacheItemPool(CacheItemPoolInterface $cacheItemPool): ActionBuilderFactory
@@ -174,7 +183,9 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
 
     /**
      * Where are builder classes?
+     *
      * @param array $classPaths
+     *
      * @return ActionBuilderFactory
      */
     public function setClassPaths(array $classPaths): ActionBuilderFactory

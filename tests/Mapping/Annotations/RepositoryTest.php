@@ -7,11 +7,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class RepositoryTest
+ *
  * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Mapping\Annotations
  * @subpackage Mapping\Annotations
- * @version $id$
  */
 class RepositoryTest extends TestCase
 {
@@ -19,12 +19,14 @@ class RepositoryTest extends TestCase
 
     /**
      * The tested class.
+     *
      * @var Repository
      */
     protected $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -34,6 +36,7 @@ class RepositoryTest extends TestCase
 
     /**
      * Checks the property of the annotation.
+     *
      * @return void
      */
     public function testClass()
@@ -49,6 +52,7 @@ class RepositoryTest extends TestCase
 
     /**
      * Checks the declaration for the annotation.
+     *
      * @return void
      */
     public function testAnnotationDeclaration()
@@ -58,6 +62,7 @@ class RepositoryTest extends TestCase
 
     /**
      * Checks if the target declaration is as required.
+     *
      * @return void
      */
     public function testTargetAnnotation()

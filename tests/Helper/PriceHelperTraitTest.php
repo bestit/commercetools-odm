@@ -4,6 +4,7 @@ namespace BestIt\CommercetoolsODM\Tests\Helper;
 
 use BestIt\CommercetoolsODM\Helper\PriceHelperTrait;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 
 /**
  * Test for price helper trait.
@@ -15,13 +16,14 @@ class PriceHelperTraitTest extends TestCase
 {
     /**
      * Test that function return correct price.
+     *
      * @return void
      */
     public function testGetCorrectPriceTier()
     {
         $fixture = $this->getMockForTrait(PriceHelperTrait::class);
 
-        $method = (new \ReflectionObject($fixture))->getMethod('getCorrectPrice');
+        $method = (new ReflectionObject($fixture))->getMethod('getCorrectPrice');
         $method->setAccessible(true);
 
         $currencyCode = 'EUR';

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: bjoern.lange
@@ -14,22 +15,24 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class NotFoundExceptionTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Exception
  * @subpackage Exception
- * @version $id$
  */
 class NotFoundExceptionTest extends TestCase
 {
     /**
      * The tested class.
+     *
      * @var NotFoundException
      */
     private $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -39,6 +42,7 @@ class NotFoundExceptionTest extends TestCase
 
     /**
      * Tests the instance.
+     *
      * @return void
      */
     public function testInstance()

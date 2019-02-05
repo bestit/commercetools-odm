@@ -31,6 +31,7 @@ class ChangeAttributeLabel extends ProductTypeActionBuilder
      * @param array $changedData
      * @param array $oldData
      * @param ProductType $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

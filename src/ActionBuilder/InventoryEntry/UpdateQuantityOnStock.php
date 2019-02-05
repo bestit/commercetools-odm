@@ -23,11 +23,13 @@ class UpdateQuantityOnStock extends InventoryEntryActionBuilder
 
     /**
      * Creates the update actions for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(
@@ -37,6 +39,6 @@ class UpdateQuantityOnStock extends InventoryEntryActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        return [InventoryChangeQuantityAction::ofQuantity((int)$changedValue)];
+        return [InventoryChangeQuantityAction::ofQuantity((int) $changedValue)];
     }
 }

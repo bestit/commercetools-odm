@@ -11,12 +11,19 @@ use Commercetools\Core\Request\ProductTypes\Command\ProductTypeChangeIsSearchabl
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
+/**
+ * Tests ChangeSearchableForAttr
+ *
+ * @author blange <bjoern.lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
+ */
 class ChangeSearchableForAttrTest extends TestCase
 {
     use SupportTestTrait;
 
     /**
      * The test class.
+     *
      * @var ChangeSearchableForAttr|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -26,6 +33,7 @@ class ChangeSearchableForAttrTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -44,6 +52,7 @@ class ChangeSearchableForAttrTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -53,6 +62,7 @@ class ChangeSearchableForAttrTest extends TestCase
 
     /**
      * Checks if the update is ignored, if there is no old attribute matching the requested settings.
+     *
      * @return void
      */
     public function testCreateUpdateActionsOnNew()
@@ -73,6 +83,7 @@ class ChangeSearchableForAttrTest extends TestCase
 
     /**
      * Checks if the update action is rendered correctly, on an old entry.
+     *
      * @return void
      */
     public function testCreateUpdateActionsOnOld()
@@ -102,6 +113,7 @@ class ChangeSearchableForAttrTest extends TestCase
 
     /**
      * Checks the instance type for the action builder.
+     *
      * @return void
      */
     public function testType()

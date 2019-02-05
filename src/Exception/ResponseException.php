@@ -7,10 +7,10 @@ use Exception;
 
 /**
  * Exception class for response errors.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Exception
  * @subpackage Exception
- * @version $id$
  */
 class ResponseException extends Exception
 {
@@ -18,7 +18,9 @@ class ResponseException extends Exception
 
     /**
      * Constructs and returns an exception from the given response.
+     *
      * @param ErrorResponse $response
+     *
      * @return ResponseException
      */
     public static function fromResponse(ErrorResponse $response): ResponseException

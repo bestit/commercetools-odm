@@ -28,8 +28,8 @@
         "psr/log": "^1.0@dev"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^2.6",
-        "phpunit/phpunit": "^5.5"
+        "phpunit/phpunit": "^5.5 || 6.0",
+        "bestit/php_codesniffer": "^1.2"
     },
     "license": "MIT",
     "authors": [
@@ -38,5 +38,5 @@
             "email": "lange@bestit-online.de"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "beta"
 }

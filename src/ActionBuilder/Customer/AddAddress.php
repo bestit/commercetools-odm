@@ -11,6 +11,7 @@ use Commercetools\Core\Request\Customers\Command\CustomerAddAddressAction;
 
 /**
  * Adds an address.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
  */
@@ -18,11 +19,15 @@ class AddAddress extends AddressActionBuilder
 {
     /**
      * Creates the update actions for the given class and data.
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @param array $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

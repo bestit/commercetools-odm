@@ -3,11 +3,11 @@
 namespace BestIt\CommercetoolsODM\Model;
 
 /**
- * the repository for product projections.
+ * The repository for product projections.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Model
  * @subpackage Model
- * @version $id$
  */
 class ProductProjectionRepository extends DefaultRepository implements ByKeySearchRepositoryInterface
 {

@@ -8,21 +8,23 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetTaxCategoryAction;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Checks if the tax category is set.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  * @subpackage ActionBuilder\Product
- * @version $id$
  */
-class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
+class SetTaxCategoryTest extends TestCase
 {
     use SupportTestTrait;
 
     /**
      * The test class.
+     *
      * @var SetTaxCategory|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -32,6 +34,7 @@ class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -46,6 +49,7 @@ class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -55,6 +59,7 @@ class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks if the tax category can be removed.
+     *
      * @return void
      */
     public function testCreateUpdateActionsEmpty()
@@ -75,6 +80,7 @@ class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks if the tax category can be changed.
+     *
      * @return void
      */
     public function testCreateUpdateActionsFilled()
@@ -97,6 +103,7 @@ class SetTaxCategoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks the instance of the builder.
+     *
      * @return void
      */
     public function testInstance()

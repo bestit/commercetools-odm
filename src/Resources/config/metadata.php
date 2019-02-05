@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:ignoreFile
+
 use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
 
 return [

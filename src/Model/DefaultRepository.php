@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace BestIt\CommercetoolsODM\Model;
 
 use BadMethodCallException;
+use BestIt\CTAsyncPool\PoolAwareTrait;
+use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\ResponseException;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
@@ -14,8 +16,6 @@ use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use BestIt\CommercetoolsODM\RepositoryAwareInterface;
-use BestIt\CTAsyncPool\PoolAwareTrait;
-use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client\Adapter\Guzzle6Promise;
 use Commercetools\Core\Model\Channel\ChannelReference;
@@ -40,7 +40,7 @@ use function sprintf;
  * The default repository for this commercetools package.
  *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Model
  */
 class DefaultRepository implements ByKeySearchRepositoryInterface
 {
@@ -106,6 +106,7 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
      * the methods.
      *
      * @param ClientRequestInterface $request
+     *
      * @return void
      */
     protected function addExpandsToRequest(ClientRequestInterface $request)
@@ -119,7 +120,9 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Should the expand cache be cleared after the query.
+     *
      * @param bool $newStatus The new status.
+     *
      * @return bool The old status.
      */
     public function clearExpandAfterQuery(bool $newStatus = false): bool
@@ -135,10 +138,12 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Creates the find query with the given criteria.
+     *
      * @param array $criteria
      * @param array $orderBy
      * @param int $limit
      * @param int $offset
+     *
      * @return ClientRequestInterface
      */
     private function createFindByQuery(
@@ -199,9 +204,11 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Returns a simple query.
+     *
      * @param string $objectClass
      * @param string $queryType
-     * @param array ...$parameters
+     * @param mixed $parameters
+     *
      * @return ClientRequestInterface
      */
     protected function createSimpleQuery(
@@ -235,7 +242,8 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
      *
      * @param mixed $id The identifier.
      * @throws ResponseException
-     * @return object The found object.
+     *
+     * @return mixed The found object.
      */
     public function find($id)
     {
@@ -273,8 +281,10 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Finds all objects in the repository.
-     * @return array The objects.
+     *
      * @todo Should not be used for to large result sets.
+     *
+     * @return array The objects.
      */
     public function findAll(): array
     {
@@ -306,12 +316,14 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Finds an object by its primary key / identifier.
-     * @deprecated Don't use the callback param anymore. Use chaining!
+     *
+     * @todo Not tested.
+     *
      * @param mixed $id The identifier.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
+     *
      * @return ApiResponseInterface
-     * @todo Not tested.
      */
     public function findAsync($id, callable $onResolve = null, callable $onReject = null): ApiResponseInterface
     {
@@ -349,13 +361,18 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
      * Optionally sorting and limiting details can be passed. An implementation may throw
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
+     * @throws ResponseException
+     * @throws UnexpectedValueException
+     *
      * @param array $criteria
      * @param array|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
+     *
      * @return array The objects.
-     * @throws UnexpectedValueException
-     * @throws ResponseException
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
@@ -376,13 +393,14 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
      * Optionally sorting and limiting details can be passed. An implementation may throw
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
-     * @deprecated Don't use the callback param anymore. Use chaining!
+     *
      * @param array $criteria
      * @param array $orderBy
      * @param int $limit
      * @param int $offset
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
+     *
      * @return ApiResponseInterface
      */
     public function findByAsync(
@@ -400,7 +418,9 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Finds a single object by a set of criteria.
+     *
      * @param array $criteria The criteria.
+     *
      * @return mixed The object.
      */
     public function findOneBy(array $criteria)
@@ -412,10 +432,11 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Finds a single object by a set of criteria.
-     * @deprecated Don't use the callback param anymore. Use chaining!
+     *
      * @param array $criteria The criteria.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
+     *
      * @return ApiResponseInterface
      */
     public function findOneByAsync(
@@ -428,6 +449,7 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Returns the class name of the object managed by the repository.
+     *
      * @return string
      */
     public function getClassName(): string
@@ -437,6 +459,7 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Returns the elements which should be expanded.
+     *
      * @return array
      */
     public function getExpands(): array
@@ -456,7 +479,9 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Returns the collection as an array with the ids as keys.
+     *
      * @param Collection $rawDocuments
+     *
      * @return array
      */
     private function getObjectsFromCollection(Collection $rawDocuments): array
@@ -482,7 +507,9 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Processes the given query.
+     *
      * @param ClientRequestInterface $request
+     *
      * @return array<mixed|ApiResponseInterface|ClientRequestInterface> The mapped response, the raw response, the
      *         request.
      */
@@ -499,17 +526,20 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Processes the given query async.
+     *
+     * @throws BadMethodCallException
+     *
      * @param ClientRequestInterface $request
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
+     *
      * @return ApiResponseInterface
-     * @throws BadMethodCallException
      */
     protected function processQueryAsync(
         ClientRequestInterface $request,
         callable $onResolve = null,
         callable $onReject = null
-    ) {
+    ): ApiResponseInterface {
         if (!$pool = $this->getPool()) {
             throw new BadMethodCallException('Missing async request pool');
         }
@@ -522,6 +552,7 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
      *
      * @param mixed $model The saving model.
      * @param bool $withFlush Should the document manager flush the buffer?
+     *
      * @return mixed The "saved" model.
      */
     public function save($model, bool $withFlush = false)
@@ -539,8 +570,10 @@ class DefaultRepository implements ByKeySearchRepositoryInterface
 
     /**
      * Set the elements which should be expanded.
+     *
      * @param array $expands
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
+     *
      * @return ObjectRepository
      */
     public function setExpands(array $expands, bool $clearAfterwards = false): ObjectRepository

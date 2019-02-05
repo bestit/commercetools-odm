@@ -22,7 +22,9 @@ class FilterManagerAwareTraitTest extends TestCase
     private $fixture = null;
 
     /**
-     * {@inheritdoc}
+     * Sets up the test.
+     *
+     * @return void
      */
     protected function setUp()
     {

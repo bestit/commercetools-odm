@@ -13,33 +13,41 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Helps providing a test client for mocking requests and responses.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests
  * @subpackage Tests
- * @version $id$
  */
 trait TestClientTrait
 {
     /**
      * The cache for the client request history.
+     *
      * @var ArrayObject|null
      */
     private $requestCache = null;
 
     /**
      * Returns a partial mock.
-     * @param $originalClassName
+     *
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
+     * @param string $originalClassName
      * @param array $methods
+     *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
     abstract protected function createPartialMock($originalClassName, array $methods);
 
     /**
      * Returns a client with mocked responses.
-     * @param array ...$responses
+     *
+     * @param mixed $responses
+     *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getClientWithResponses(...$responses)
+    protected function getClientWithResponses(...$responses): PHPUnit_Framework_MockObject_MockObject
     {
         foreach ($responses as &$response) {
             if (is_callable($response)) {
@@ -54,6 +62,7 @@ trait TestClientTrait
 
     /**
      * Returns the cache for the client request history.
+     *
      * @return ArrayObject
      */
     public function getRequestCache(): ArrayObject
@@ -67,10 +76,12 @@ trait TestClientTrait
 
     /**
      * Ceates a test client with the given responses.
+     *
      * @param array $responses
+     *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getTestClient(array $responses)
+    protected function getTestClient(array $responses): PHPUnit_Framework_MockObject_MockObject
     {
         $authMock = $this->createPartialMock(Manager::class, ['getToken']);
         $authMock
@@ -78,6 +89,7 @@ trait TestClientTrait
             ->will($this->returnValue(new Token(uniqid())));
 
         $client = $this->createPartialMock(Client::class, ['getOauthManager']);
+
         $client
             ->method('getOauthManager')
             ->will($this->returnValue($authMock));
@@ -97,7 +109,10 @@ trait TestClientTrait
 
     /**
      * Sets the cache for the client request history.
+     *
      * @param ArrayObject $requestCache
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
+     *
      * @return $this
      */
     public function setRequestCache(ArrayObject $requestCache)

@@ -14,7 +14,7 @@ use function uniqid;
 
 /**
  * Checks if elements can be removed from the shopping list.
- * 
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ShoppingList
  */
@@ -27,6 +27,7 @@ class RemoveLineItemTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array

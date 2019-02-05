@@ -22,12 +22,13 @@ namespace BestIt\CommercetoolsODM\Mapping\Annotations;
 
 /**
  * The EntityListeners annotation specifies the callback listener classes to be used for an entity or mapped superclass.
+ *
  * The EntityListeners annotation may be applied to an entity class or mapped superclass.
  *
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
- * @since   2.4
- *
  * @Annotation
+ * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @package BestIt\CommercetoolsODM\Mapping\Annotations
+ * @since 2.4
  * @Target("CLASS")
  */
 class EntityListeners implements Annotation
@@ -37,5 +38,5 @@ class EntityListeners implements Annotation
      *
      * @var array<string>
      */
-    public $value = array();
+    public $value = [];
 }

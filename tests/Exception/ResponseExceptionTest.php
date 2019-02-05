@@ -10,16 +10,24 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Tests ResponseException
+ *
+ * @author blange <bjoern.lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM\Tests\Exception
+ */
 class ResponseExceptionTest extends TestCase
 {
     /**
      * The tested class.
+     *
      * @var ResponseException
      */
     private $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -29,6 +37,7 @@ class ResponseExceptionTest extends TestCase
 
     /**
      * Checks the building method.
+     *
      * @return void
      */
     public function testFromResponse()
@@ -64,6 +73,7 @@ class ResponseExceptionTest extends TestCase
 
     /**
      * Tests the instance.
+     *
      * @return void
      */
     public function testInstance()
@@ -73,6 +83,7 @@ class ResponseExceptionTest extends TestCase
 
     /**
      * Checks if the required traits are used.
+     *
      * @return void
      */
     public function testTraits()

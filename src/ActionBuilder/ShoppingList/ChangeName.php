@@ -29,6 +29,7 @@ class ChangeName extends ShoppingListActionBuilder
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return ShoppingListChangeNameAction[]
      */
     public function createUpdateActions(

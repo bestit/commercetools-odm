@@ -16,11 +16,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests SetCustomField.
+ *
  * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class SetCustomFieldTest extends TestCase
 {
@@ -28,6 +28,7 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var SetCustomField|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -37,6 +38,7 @@ class SetCustomFieldTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -50,6 +52,7 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -59,6 +62,7 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks if a simple action is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsDatetime()
@@ -83,6 +87,7 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks if a simple action is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsNull()
@@ -107,6 +112,7 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks if a simple action is created.
+     *
      * @return void
      */
     public function testCreateUpdateActionsScalar()
@@ -131,6 +137,7 @@ class SetCustomFieldTest extends TestCase
 
     /**
      * Checks the instance.
+     *
      * @return void
      */
     public function testInstance()

@@ -23,6 +23,7 @@ trait MetadataFactoryAwareTrait
      * Gets the metadata factory used to gather the metadata of classes.
      *
      * This getter exists to enforce types.
+     *
      * @return ClassMetadataFactory
      */
     public function getMetadataFactory(): ClassMetadataFactory
@@ -34,6 +35,7 @@ trait MetadataFactoryAwareTrait
      * Sets the metadata factory used to gather the metadata of classes.
      *
      * @param ClassMetadataFactory $metadataFactory The used factory.
+     *
      * @return $this
      */
     public function setMetadataFactory(ClassMetadataFactory $metadataFactory): self

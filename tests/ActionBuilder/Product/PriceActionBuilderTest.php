@@ -11,11 +11,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests PriceActionBuilder.
+ *
  * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  * @subpackage ActionBuilder\Product
- * @version $id$
  */
 class PriceActionBuilderTest extends TestCase
 {
@@ -23,6 +23,7 @@ class PriceActionBuilderTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var PriceActionBuilder|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -32,8 +33,10 @@ class PriceActionBuilderTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
-     * @return array
+     *
      * @todo Add the other variants.
+     *
+     * @return array
      */
     public function getSupportAssertions(): array
     {
@@ -47,6 +50,7 @@ class PriceActionBuilderTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -56,6 +60,7 @@ class PriceActionBuilderTest extends TestCase
 
     /**
      * Checks the constant for this class.
+     *
      * @return void
      */
     public function testConstants()
@@ -65,6 +70,7 @@ class PriceActionBuilderTest extends TestCase
 
     /**
      * Checks the instance of the builder.
+     *
      * @return void
      */
     public function testInstance()

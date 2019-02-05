@@ -7,12 +7,14 @@ namespace BestIt\CommercetoolsODM\Helper;
 /**
  * Helper to get correct price tier.
  *
+ * @author tkellner <tim.kellner@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Helper
  */
 trait PriceHelperTrait
 {
     /**
      * Get correct price tier.
+     *
      * @param array $price Product price. Represents an array of a commercetools price object.
      * @param int $quantity Chosed quantity.
      *

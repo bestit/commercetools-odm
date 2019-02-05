@@ -46,6 +46,7 @@ class SetAttributesTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -81,8 +82,10 @@ class SetAttributesTest extends TestCase
      * Checks if the master variant attributes can be changed.
      *
      * @dataProvider getCatalogs
+     *
      * @param string $container
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActionsForVariant(string $container, bool $staged = false)
@@ -139,8 +142,10 @@ class SetAttributesTest extends TestCase
      * Checks if the master variant attributes can be changed.
      *
      * @dataProvider getCatalogs
+     *
      * @param string $container
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActionsForMasterVariant(string $container, bool $staged = false)
@@ -190,8 +195,10 @@ class SetAttributesTest extends TestCase
      * Checks an attribute can be added to the master variant attributes.
      *
      * @dataProvider getCatalogs
+     *
      * @param string $container
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActionsForMasterVariantAddAttr(string $container, bool $staged = false)
@@ -256,8 +263,10 @@ class SetAttributesTest extends TestCase
      * Checks if an array attribute is merged correctly.
      *
      * @dataProvider getCatalogs
+     *
      * @param string $container
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActionsForMasterVariantArrayMerge(string $container, bool $staged = false)
@@ -340,8 +349,10 @@ class SetAttributesTest extends TestCase
      * Checks if a nested master variant attribute and its difference to arrays can be changed.
      *
      * @dataProvider getCatalogs
+     *
      * @param string $container
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActionsForMasterVariantNestedAttr(string $container, bool $staged = false)
@@ -458,8 +469,10 @@ class SetAttributesTest extends TestCase
      * Checks if variant attributes can be changed.
      *
      * @dataProvider getCatalogs
+     *
      * @param string $container
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActionsForVariantAttributes(string $container, bool $staged = false)

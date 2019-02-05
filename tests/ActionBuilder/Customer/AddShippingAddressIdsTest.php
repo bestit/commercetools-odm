@@ -2,8 +2,8 @@
 
 namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType;
 
-use BestIt\CommercetoolsODM\ActionBuilder\Customer\CustomerActionBuilder;
 use BestIt\CommercetoolsODM\ActionBuilder\Customer\AddShippingAddressIds;
+use BestIt\CommercetoolsODM\ActionBuilder\Customer\CustomerActionBuilder;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Common\AddressCollection;
@@ -14,11 +14,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests AddShippingAddressIds.
+ *
  * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class AddShippingAddressIdsTest extends TestCase
 {
@@ -26,6 +26,7 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var AddShippingAddressIds|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -35,6 +36,7 @@ class AddShippingAddressIdsTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -48,6 +50,7 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -57,6 +60,7 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * Checks if new addresses are added.
+     *
      * @return void
      */
     public function testCreateUpdateActionsIgnoreOldAddresses()
@@ -81,6 +85,7 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * Checks if new addresses are added.
+     *
      * @return void
      */
     public function testCreateUpdateActionsAddOnlyNewAddresses()
@@ -119,6 +124,7 @@ class AddShippingAddressIdsTest extends TestCase
 
     /**
      * Checks the instance.
+     *
      * @return void
      */
     public function testInstance()

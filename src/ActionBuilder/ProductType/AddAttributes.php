@@ -10,26 +10,29 @@ use Commercetools\Core\Request\ProductTypes\Command\ProductTypeAddAttributeDefin
 
 /**
  * Builds the action to add an attribute to a product type.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class AddAttributes extends ProductTypeActionBuilder
 {
     /**
      * The field name.
+     *
      * @var string
      */
     protected $fieldName = 'attributes';
 
     /**
      * Creates the update action for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param ProductType $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

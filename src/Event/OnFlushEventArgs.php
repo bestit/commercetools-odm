@@ -1,23 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Event;
 
+use BestIt\CommercetoolsODM\UnitOfWorkInterface;
 use Doctrine\Common\EventArgs;
 
+/**
+ * Event which is emitted in the flush of the unit of work.
+ *
+ * @author blange <bjoern.lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM\Event
+ */
 class OnFlushEventArgs extends EventArgs
 {
-    private $documentManager;
+    /**
+     * The used unit of work.
+     *
+     * @var UnitOfWorkInterface
+     */
+    private $unitOfWork;
 
-    public function __construct($documentManager)
+    /**
+     * OnFlushEventArgs constructor.
+     *
+     * @param UnitOfWorkInterface $unitOfWork
+     */
+    public function __construct(UnitOfWorkInterface $unitOfWork)
     {
-        $this->documentManager = $documentManager;
+        $this->unitOfWork = $unitOfWork;
     }
 
     /**
-     * @return \Doctrine\ODM\CouchDB\DocumentManager
+     * Returns the used unit of work.
+     *
+     * @return UnitOfWorkInterface
      */
-    public function getDocumentManager()
+    public function getUnitOfWork(): UnitOfWorkInterface
     {
-        return $this->documentManager;
+        return $this->unitOfWork;
     }
 }

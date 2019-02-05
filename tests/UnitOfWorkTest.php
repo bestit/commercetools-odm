@@ -30,8 +30,8 @@ use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Common\LocalizedString;
 use Commercetools\Core\Model\Common\Money;
-use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\CustomObject\CustomObject;
+use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\Order\Order;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductCatalogData;
@@ -67,32 +67,38 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * The used document manager.
+     *
      * @var ActionBuilderProcessorInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $actionBuilderProcessor = null;
 
     /**
      * The used document manager.
+     *
      * @var DocumentManagerInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $documentManager = null;
 
     /**
      * The fixture.
+     *
      * @var UnitOfWork
      */
     protected $fixture = null;
 
     /**
      * The used document manager.
+     *
      * @var ListenersInvoker|PHPUnit_Framework_MockObject_MockObject
      */
     private $listenerInvoker = null;
 
     /**
      * Adds a mocked call for metadata for the given model.
+     *
      * @param string $model
      * @param bool|int $once If true then just once, if false then any, if integer the exact count.
+     *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
     private function getOneMockedMetadata(string $model, $once = true): PHPUnit_Framework_MockObject_MockObject
@@ -126,6 +132,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Returns the used traits.
+     *
      * @return array
      */
     public static function getUsedTraitNames(): array
@@ -141,9 +148,11 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Mocks an listener invoker call for the given object.
+     *
      * @param object $order
      * @param string $lifeCycleEventName
      * @param ClassMetadataInterface $orderMetadata
+     *
      * @return UnitOfWorkTest
      */
     private function mockAndCheckInvokerCall(
@@ -177,7 +186,9 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Prepares the removal of an order.
+     *
      * @param bool $success
+     *
      * @return Order
      */
     private function prepareRemovalOfOneOrder(bool $success = true, Order $order = null): Order
@@ -230,6 +241,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -246,6 +258,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks the default return for the count function.
+     *
      * @return void
      */
     public function testCountDefault()
@@ -255,6 +268,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks the default return for the count method.
+     *
      * @return void
      */
     public function testCountManagedObjectsDefault()
@@ -264,6 +278,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks the default return for the count method.
+     *
      * @return void
      */
     public function testCountRemovalsDefault()
@@ -273,6 +288,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if an array for a custom entity is parsed correctly.
+     *
      * @return void
      */
     public function testCreateDocumentParseCustomEntitiesArrayProperty()
@@ -327,6 +343,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if an array for a custom entity is parsed correctly even if its null.
+     *
      * @return void
      */
     public function testCreateDocumentParseCustomEntitiesArrayPropertyParseNull()
@@ -356,6 +373,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if an array for a custom entity is parsed correctly, even when its declared as set.
+     *
      * @return void
      */
     public function testCreateDocumentParseCustomEntitiesArrayPropertyWithSetDeclaration()
@@ -410,8 +428,10 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks that a product draft is created correctly.
-     * @return void
+     *
      * @todo Check more values.
+     *
+     * @return void
      */
     public function testCreateNewRequestForProduct()
     {
@@ -476,6 +496,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks that an registered object is returned.
+     *
      * @return void
      */
     public function testDetach()
@@ -492,6 +513,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * The deferred detach should remove the entity on flush, even if there is no change.
+     *
      * @return void
      */
     public function testDetachDeferredNoChange()
@@ -524,6 +546,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks that the "empty" detach does not trigger any error.
+     *
      * @return void
      */
     public function testDetachEmpty()
@@ -584,6 +607,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if the changes are extracted correctly.
+     *
      * @return void
      */
     public function testExtractChangesFullWithOrder()
@@ -643,6 +667,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if the changes are extracted correctly.
+     *
      * @return void
      */
     public function testExtractChangesFullWithProduct()
@@ -898,6 +923,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks the correct class instance.
+     *
      * @return void
      */
     public function testInstance()
@@ -907,6 +933,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if a managed object is registered correctly.
+     *
      * @return Order The registered order.
      */
     public function testRegisterAsManaged(): Order
@@ -954,6 +981,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if a managed object is registered correctly.
+     *
      * @return void
      */
     public function testRegisterAsManagedNew()
@@ -997,6 +1025,8 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if the remove is handled correctly.
+     *
+     * @return void
      */
     public function testScheduleRemove()
     {
@@ -1039,6 +1069,8 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if the not-found remove is handled correctly.
+     *
+     * @return void
      */
     public function testScheduleRemoveFailNotFound()
     {
@@ -1083,8 +1115,11 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if the remove is handled correctly, even if the order is registered before.
+     *
      * @depends testRegisterAsManaged
      * @param Order $order
+     *
+     * @return void
      */
     public function testScheduleRemovePrevManaged(Order $order)
     {
@@ -1137,6 +1172,7 @@ class UnitOfWorkTest extends TestCase
      * Checks if the new object is saved.
      *
      * @param bool $withDetach Is the detach used?
+     *
      * @return void
      */
     public function testScheduleSaveNew(bool $withDetach = false)
@@ -1268,6 +1304,7 @@ class UnitOfWorkTest extends TestCase
 
     /**
      * Checks if the new object is saved but detached afterwards.
+     *
      * @return void
      */
     public function testScheduleSaveNewWithDetach()

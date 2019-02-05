@@ -6,6 +6,7 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
 
 /**
  * Entity for Product Types.
+ *
  * @author lange <lange@bestit-online.de>
  * @Commercetools\DraftClass("Commercetools\Core\Model\ProductType\ProductTypeDraft")
  * @Commercetools\Entity(requestMap=@Commercetools\RequestMap(
@@ -20,16 +21,17 @@ use BestIt\CommercetoolsODM\Mapping\Annotations as Commercetools;
  *     updateByKey="ProductTypeUpdateByKeyRequest"
  * ))
  * @Commercetools\Repository("BestIt\CommercetoolsODM\Model\ProductTypeRepository")
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Entity
  * @subpackage Entity
- * @version $id$
  */
 class ProductType
 {
-    use BaseEntityTrait, EntityWithKeyTrait;
+    use BaseEntityTrait;
+    use EntityWithKeyTrait;
 
     /**
      * The description for the type.
+     *
      * @Commercetools\Field(type="string")
      * @var string
      */
@@ -37,6 +39,7 @@ class ProductType
 
     /**
      * The name for the type.
+     *
      * @Commercetools\Field(type="string")
      * @var string
      */
@@ -44,6 +47,7 @@ class ProductType
 
     /**
      * Adds the attribute definition of there is a new one on update.
+     *
      * @Commercetools\Update(
      *     class="Commercetools\Core\Request\ProductTypes\Command\ProductTypeAddAttributeDefinitionAction",
      *     method="ofAttribute",
@@ -52,6 +56,7 @@ class ProductType
      * @param mixed $newValue
      * @param mixed $oldValue
      * @param string $actionClass
+     *
      * @return array|AbstractAction|void
      */
     public function addAttributeDefinitionOnUpdate($newValue, $oldValue, string $actionClass)
@@ -61,6 +66,7 @@ class ProductType
 
     /**
      * Returns the description for the type.
+     *
      * @return string
      */
     public function getDescription(): string
@@ -70,6 +76,7 @@ class ProductType
 
     /**
      * Returns the name for the type.
+     *
      * @return string
      */
     public function getName(): string
@@ -79,7 +86,9 @@ class ProductType
 
     /**
      * Sets the description for the type.
+     *
      * @param string $description
+     *
      * @return ProductType
      */
     public function setDescription(string $description): ProductType
@@ -91,7 +100,9 @@ class ProductType
 
     /**
      * Sets the name for the type.
+     *
      * @param string $name
+     *
      * @return ProductType
      */
     public function setName(string $name): ProductType

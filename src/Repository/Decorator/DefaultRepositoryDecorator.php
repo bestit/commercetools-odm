@@ -10,14 +10,14 @@ use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Exception;
+use UnexpectedValueException;
 use function func_get_args;
 
 /**
  * Decorator for the default repository.
  *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM\Repository
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Repository\Decorator
  */
 class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
 {
@@ -40,6 +40,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * Should the expand cache be cleared after the query.
      *
      * @param bool $newStatus The new status.
+     *
      * @return bool The old status.
      */
     public function clearExpandAfterQuery(bool $newStatus = false): bool
@@ -50,7 +51,8 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
     /**
      * Apply the filters with the given names.
      *
-     * @param string[] ...$filters
+     * @param string[] $filters
+     *
      * @return ObjectRepository
      */
     public function filter(string... $filters): ObjectRepository
@@ -62,6 +64,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * Finds an object by its primary key / identifier.
      *
      * @param mixed $id The identifier.
+     *
      * @return object|null The object.
      */
     public function find($id)
@@ -74,7 +77,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      *
      * @return array The objects.
      */
-    public function findAll()
+    public function findAll(): array
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
@@ -82,12 +85,12 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
     /**
      * Finds an object by its primary key / identifier.
      *
+     * @throws Exception If there is something wrong.
+     *
      * @param mixed $id The identifier.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
      *
-     * @deprecated Don't use the callback param anymore. Use chaining!
-     * @throws Exception If there is something wrong.
      * @return ApiResponseInterface
      */
     public function findAsync($id, callable $onResolve = null, callable $onReject = null): ApiResponseInterface
@@ -102,16 +105,17 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
      *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     * @throws UnexpectedValueException
+     *
      * @param array $criteria
      * @param array|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
      *
      * @return array The objects.
-     *
-     * @throws \UnexpectedValueException
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
@@ -122,6 +126,8 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * Optionally sorting and limiting details can be passed. An implementation may throw an UnexpectedValueException
      * if certain values of the sorting or limiting details are not supported.
      *
+     * @throws Exception If there is something wrong.
+     *
      * @param array $criteria
      * @param array $orderBy
      * @param int $limit
@@ -129,8 +135,6 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
      *
-     * @deprecated Don't use the callback param anymore. Use chaining!
-     * @throws Exception If there is something wrong.
      * @return ApiResponseInterface
      */
     public function findByAsync(
@@ -148,8 +152,9 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * Finds an object by its user defined key.
      *
      * @param string $key
-     * @return mixed|void
      * @throws APIException If there is something wrong.
+     *
+     * @return mixed|void
      */
     public function findByKey(string $key)
     {
@@ -160,10 +165,10 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * Finds an object by its user defined key.
      *
      * @param string $key
-     * @return mixed|void
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
+     *
+     * @return mixed|void
      */
     public function findByKeyAsync(string $key, callable $onResolve = null, callable $onReject = null)
     {
@@ -174,6 +179,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * Finds a single object by a set of criteria.
      *
      * @param array $criteria The criteria.
+     *
      * @return object|null The object.
      */
     public function findOneBy(array $criteria)
@@ -184,12 +190,12 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
     /**
      * Finds a single object by a set of criteria.
      *
+     * @throws Exception If there is something wrong.
+     *
      * @param array $criteria The criteria.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
      *
-     * @deprecated Don't use the callback param anymore. Use chaining!
-     * @throws Exception If there is something wrong.
      * @return ApiResponseInterface
      */
     public function findOneByAsync(
@@ -205,7 +211,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      *
      * @return string
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
@@ -255,6 +261,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      *
      * @param mixed $model The saving model.
      * @param bool $withFlush Should the document manager flush the buffer?
+     *
      * @return mixed The "saved" model.
      */
     public function save($model, bool $withFlush = false)
@@ -267,6 +274,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      *
      * @param array $expands The identifiers of the types.
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
+     *
      * @return ObjectRepository
      */
     public function setExpands(array $expands, bool $clearAfterwards = false): ObjectRepository
@@ -278,6 +286,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * Sets the wrapped repository.
      *
      * @param ObjectRepository $wrapped The original repository.
+     *
      * @return $this
      */
     private function setWrapped(ObjectRepository $wrapped): self

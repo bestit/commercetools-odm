@@ -29,6 +29,7 @@ class ChangeSlug extends ShoppingListActionBuilder
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return ShoppingListSetSlugAction[]
      */
     public function createUpdateActions(

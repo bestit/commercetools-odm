@@ -6,19 +6,21 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 
 /**
  * Processes the action builders for a changed object.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder
  * @subpackage ActionBuilder
- * @version $id$
  */
 interface ActionBuilderProcessorInterface
 {
     /**
      * Creates the update action for the gievn class and data.
+     *
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param object $sourceObject
+     *
      * @return ActionBuilderInterface[]
      */
     public function createUpdateActions(

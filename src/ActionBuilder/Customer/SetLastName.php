@@ -8,26 +8,29 @@ use Commercetools\Core\Request\Customers\Command\CustomerSetLastNameAction;
 
 /**
  * Sets the last name on the customer.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
  * @subpackage ActionBuilder\Customer
- * @version $id$
  */
 class SetLastName extends CustomerActionBuilder
 {
     /**
      * The field name.
+     *
      * @var string
      */
     protected $fieldName = 'lastName';
 
     /**
      * Creates the update actions for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

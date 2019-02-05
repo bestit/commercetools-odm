@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
+use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Repository\CartRepository;
 use BestIt\CommercetoolsODM\UnitOfWorkInterface;
-use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client;
 use Commercetools\Core\Model\Cart\Cart;
@@ -41,6 +41,8 @@ class CartRepositoryTest extends TestCase
 
     /**
      * Test the recalculate cart function.
+     *
+     * @return void
      */
     public function testRecalculateCartWithSuccess()
     {
@@ -118,6 +120,8 @@ class CartRepositoryTest extends TestCase
 
     /**
      * Test the exception of the recalculate cart function.
+     *
+     * @return void
      */
     public function testRecalculateCartWithoutSuccess()
     {

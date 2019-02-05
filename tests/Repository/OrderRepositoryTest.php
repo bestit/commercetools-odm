@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
+use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\ResponseException;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
@@ -10,7 +11,6 @@ use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use BestIt\CommercetoolsODM\Repository\OrderRepository;
 use BestIt\CommercetoolsODM\Repository\OrderRepositoryInterface;
 use BestIt\CommercetoolsODM\UnitOfWorkInterface;
-use BestIt\CTAsyncPool\PoolInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\Order\Order;
@@ -21,9 +21,10 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class OrderRepositoryTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Repository
  * @subpackage Repository
  */
 class OrderRepositoryTest extends TestCase
@@ -32,12 +33,14 @@ class OrderRepositoryTest extends TestCase
 
     /**
      * The tested class.
+     *
      * @var OrderRepositoryInterface
      */
     protected $fixture = null;
 
     /**
      * Returns the class name for the repository.
+     *
      * @return string
      */
     protected function getRepositoryClass(): string
@@ -47,6 +50,7 @@ class OrderRepositoryTest extends TestCase
 
     /**
      * Checks if a cart is created.
+     *
      * @return void
      */
     public function testCreateFromCart()
@@ -112,6 +116,7 @@ class OrderRepositoryTest extends TestCase
 
     /**
      * Test the create order from cart function with an error response from processQuery
+     *
      * @return void
      */
     public function testCreateOrderFromCartWithException()
@@ -172,6 +177,7 @@ class OrderRepositoryTest extends TestCase
 
     /**
      * Checks the used interfaces.
+     *
      * @return void
      */
     public function testInterfaces()
@@ -181,6 +187,7 @@ class OrderRepositoryTest extends TestCase
 
     /**
      * Checks the parent class.
+     *
      * @return void
      */
     public function testParent()
@@ -190,7 +197,10 @@ class OrderRepositoryTest extends TestCase
 
     /**
      * Checks if the order will be saved.
+     *
      * @param bool $direct
+     *
+     * @return void
      */
     public function testSave(bool $direct = true)
     {
@@ -210,6 +220,7 @@ class OrderRepositoryTest extends TestCase
 
     /**
      * Checks if the save is not flushed.
+     *
      * @return void
      */
     public function testSaveIndirect()

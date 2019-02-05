@@ -16,18 +16,20 @@ use InvalidArgumentException;
 
 /**
  * Class CustomerRepository
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Repository
  * @subpackage Repository
- * @version $id$
  */
 class CustomerRepository extends DefaultRepository
 {
     /**
      * Returns the value of the customer token.
+     *
      * @param string $email
-     * @return string
      * @throws ResponseException
+     *
+     * @return string
      */
     public function createPasswordTokenByMail(string $email): string
     {
@@ -43,9 +45,11 @@ class CustomerRepository extends DefaultRepository
 
     /**
      * Finds the customer by its password token.
+     *
      * @param string $token
-     * @return Customer|null
      * @throws ResponseException
+     *
+     * @return Customer|null
      */
     public function findByPasswordToken(string $token)
     {
@@ -78,14 +82,15 @@ class CustomerRepository extends DefaultRepository
     /**
      * Updates the password of the user with the given user id
      *
+     * @throws ResponseException
+     * @throws InvalidArgumentException
+     *
      * @param string $customerId
      * @param int $customerVersion
      * @param string $currentPassword
      * @param string $newPassword
      *
      * @return Customer|null
-     * @throws InvalidArgumentException
-     * @throws ResponseException
      */
     public function updateOnlyPassword(
         string $customerId,

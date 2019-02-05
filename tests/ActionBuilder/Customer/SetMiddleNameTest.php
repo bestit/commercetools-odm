@@ -12,11 +12,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class SetMiddleNameTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class SetMiddleNameTest extends TestCase
 {
@@ -24,6 +24,7 @@ class SetMiddleNameTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var SetMiddleName|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -33,6 +34,7 @@ class SetMiddleNameTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -46,6 +48,7 @@ class SetMiddleNameTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -55,6 +58,8 @@ class SetMiddleNameTest extends TestCase
 
     /**
      * Checks if the action is created correctly.
+     *
+     * @return void
      */
     public function testCreateUpdateActions()
     {

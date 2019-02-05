@@ -35,6 +35,7 @@ trait RepositoryAwareTrait
      * Sets the used repository.
      *
      * @param ObjectRepository $repository The used repository.
+     *
      * @return $this
      */
     public function setRepository(ObjectRepository $repository): self

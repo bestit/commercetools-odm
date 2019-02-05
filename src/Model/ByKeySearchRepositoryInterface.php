@@ -19,8 +19,9 @@ interface ByKeySearchRepositoryInterface extends ObjectRepository
      * Finds an object by its user defined key.
      *
      * @param string $key
-     * @return mixed|void
      * @throws APIException If there is something wrong.
+     *
+     * @return mixed|void
      */
     public function findByKey(string $key);
 
@@ -28,10 +29,10 @@ interface ByKeySearchRepositoryInterface extends ObjectRepository
      * Finds an object by its user defined key.
      *
      * @param string $key
-     * @return mixed|void
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
+     *
+     * @return mixed|void
      */
     public function findByKeyAsync(string $key, callable $onResolve = null, callable $onReject = null);
 }

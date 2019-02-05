@@ -12,11 +12,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class ChangeSlugTest
+ *
  * @author blange <lange@bestit-online.de>
  * @cstegory Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Product
  * @subpackage ActionBuilder\Product
- * @version $id$
  */
 class ChangeSlugTest extends TestCase
 {
@@ -24,12 +24,14 @@ class ChangeSlugTest extends TestCase
 
     /**
      * The tested class.
+     *
      * @var ChangeSlug
      */
     protected $fixture = null;
 
     /**
      * Returns assertions for the create call.
+     *
      * @return array
      */
     public function getCreateAssertions(): array
@@ -45,6 +47,7 @@ class ChangeSlugTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -62,7 +65,8 @@ class ChangeSlugTest extends TestCase
 
     /**
      * Sets up the test.
-     * @reteurn void
+     *
+     * @return void
      */
     protected function setUp()
     {
@@ -71,9 +75,12 @@ class ChangeSlugTest extends TestCase
 
     /**
      * Checks if the action is rendered correctly.
+     *
      * @dataProvider getCreateAssertions
+     *
      * @param string $path
      * @param bool $staged
+     *
      * @return void
      */
     public function testCreateUpdateActions(string $path, bool $staged = true)
@@ -126,6 +133,7 @@ class ChangeSlugTest extends TestCase
 
     /**
      * Checks the instance type.
+     *
      * @return void
      */
     public function testInstance()

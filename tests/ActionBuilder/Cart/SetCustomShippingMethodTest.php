@@ -44,9 +44,11 @@ class SetCustomShippingMethodTest extends TestCase
     }
 
     /**
-     * {@inheritdoc}
+     * Sets up the test.
+     *
+     * @return void
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->fixture = new SetCustomShippingMethod();
     }

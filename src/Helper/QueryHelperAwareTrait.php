@@ -33,6 +33,7 @@ trait QueryHelperAwareTrait
      * Sets the common query helper for commercetools.
      *
      * @param QueryHelper $queryHelper
+     *
      * @return $this
      */
     public function setQueryHelper(QueryHelper $queryHelper): self

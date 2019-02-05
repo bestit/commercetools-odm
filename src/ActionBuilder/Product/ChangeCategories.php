@@ -12,6 +12,7 @@ use Commercetools\Core\Request\Products\Command\ProductRemoveFromCategoryAction;
 
 /**
  * Action Builder to change the categories of an product.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  */
@@ -19,17 +20,20 @@ class ChangeCategories extends ProductActionBuilder
 {
     /**
      * A PCRE to match the hierarchical field path without delimiter.
+     *
      * @var string
      */
     protected $complexFieldFilter = '^masterData/(current|staged)/categories$';
 
     /**
      * Creates the update actions for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

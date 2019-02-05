@@ -15,9 +15,11 @@ use Commercetools\Core\Request\Carts\Command\CartAddLineItemAction;
 
 /**
  * Builds the action to add cart item
+ *
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Cart
+ *
  * @author blange <lange@bestit-online.de>
  * @author chowanski <chowanski@bestit-online.de>
- * @package BestIt\CommercetoolsODM\ActionBuilder\Cart
  */
 class AddLineItem extends CartActionBuilder
 {
@@ -25,18 +27,21 @@ class AddLineItem extends CartActionBuilder
 
     /**
      * A PCRE to match the hierarchical field path without delimiter.
+     *
      * @var string
      */
     protected $complexFieldFilter = '^lineItems/[^/]+';
 
     /**
      * Creates the update action for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Cart $sourceObject
      * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

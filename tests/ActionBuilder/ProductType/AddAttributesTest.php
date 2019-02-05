@@ -15,11 +15,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests AddAttributes.
+ *
  * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class AddAttributesTest extends TestCase
 {
@@ -27,6 +27,7 @@ class AddAttributesTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var AddAttributes|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -36,6 +37,7 @@ class AddAttributesTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -49,6 +51,7 @@ class AddAttributesTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -58,6 +61,7 @@ class AddAttributesTest extends TestCase
 
     /**
      * Checks the default return for the creation method.
+     *
      * @return void
      */
     public function testCreateUpdateActionsEmpty()
@@ -78,6 +82,7 @@ class AddAttributesTest extends TestCase
 
     /**
      * Checks the default return for the creation method.
+     *
      * @return void
      */
     public function testCreateUpdateActionsFilled()
@@ -114,6 +119,7 @@ class AddAttributesTest extends TestCase
 
     /**
      * Checks the instance type for the action builder.
+     *
      * @return void
      */
     public function testType()

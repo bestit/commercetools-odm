@@ -24,6 +24,7 @@ class SetCustomShippingMethod extends CartActionBuilder
 
     /**
      * A PCRE to match the hierarchical field path without delimiter.
+     *
      * @var string
      */
     protected $complexFieldFilter = 'shippingInfo/(.*)$';

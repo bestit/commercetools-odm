@@ -15,10 +15,10 @@ use Psr\Log\NullLogger;
 
 /**
  * Class UnitOfWorkFactoryTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests
  */
 class UnitOfWorkFactoryTest extends TestCase
 {
@@ -26,12 +26,14 @@ class UnitOfWorkFactoryTest extends TestCase
 
     /**
      * The tested class.
+     *
      * @var UnitOfWorkFactoryInterface
      */
     protected $fixture = null;
 
     /**
      * Returns the names of the used traits.
+     *
      * @return array
      */
     protected function getUsedTraitNames(): array
@@ -41,6 +43,8 @@ class UnitOfWorkFactoryTest extends TestCase
 
     /**
      * Sets up the test.
+     *
+     * @return void
      */
     protected function setUp()
     {
@@ -53,6 +57,8 @@ class UnitOfWorkFactoryTest extends TestCase
 
     /**
      * Checks the return value of the getter.
+     *
+     * @return void
      */
     public function testGetUnitOfWorkNoLogger()
     {
@@ -63,6 +69,8 @@ class UnitOfWorkFactoryTest extends TestCase
 
     /**
      * Checks the return value of the getter.
+     *
+     * @return void
      */
     public function testGetUnitOfWorkWithLogger()
     {
@@ -75,6 +83,7 @@ class UnitOfWorkFactoryTest extends TestCase
 
     /**
      * Checks the interface.
+     *
      * @return void
      */
     public function testInstance()

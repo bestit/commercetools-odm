@@ -11,6 +11,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests AddressActionBuilder.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Customer
  */
@@ -18,12 +19,14 @@ class AddressActionBuilderTest extends TestCase
 {
     /**
      * The test class.
+     *
      * @var AddressActionBuilder|PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $fixture;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     protected function setUp()
@@ -33,6 +36,7 @@ class AddressActionBuilderTest extends TestCase
 
     /**
      * Checks the instance of the builder.
+     *
      * @return void
      */
     public function testInstance()

@@ -11,6 +11,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests ActionBuilderAbstract.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder
  */
@@ -18,12 +19,14 @@ class ActionBuilderAbstractTest extends TestCase
 {
     /**
      * The test class.
+     *
      * @var ActionBuilderAbstract|PHPUnit_Framework_MockObject_MockObject|null
      */
     private $fixture;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     protected function setUp()
@@ -33,6 +36,7 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks the setter and getters for the last found match.
+     *
      * @return void
      */
     public function testGetAndSetLastFoundMatch()
@@ -50,6 +54,7 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks the priority getter.
+     *
      * @return void
      */
     public function testGetPriorityDefault()
@@ -59,6 +64,7 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks the instance of the abstract class.
+     *
      * @return void
      */
     public function testInstance()
@@ -68,6 +74,7 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks the handling of the stackable parameter.
+     *
      * @return void
      */
     public function testIsStackable()
@@ -81,6 +88,7 @@ class ActionBuilderAbstractTest extends TestCase
 
     /**
      * Checks if the correct default value is returned.
+     *
      * @return void
      */
     public function testSupportDefault()

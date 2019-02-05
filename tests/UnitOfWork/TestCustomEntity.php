@@ -7,16 +7,17 @@ use Commercetools\Core\Model\Common\Address;
 
 /**
  * Class TestCustomEntity
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\UnitOfWork
  * @subpackage UnitOfWork
- * @version $id$
  */
 class TestCustomEntity
 {
     /**
      * The email of the user.
+     *
      * @Commercetools\Field(type="array",collection="Commercetools\Core\Model\Common\AddressCollection")
      * @var Address[]
      */
@@ -24,6 +25,7 @@ class TestCustomEntity
 
     /**
      * Returns the addresses of this user.
+     *
      * @return Address[]
      */
     public function getAddresses(): array
@@ -33,7 +35,9 @@ class TestCustomEntity
 
     /**
      * Sets the addresses of this user.
+     *
      * @param Address[] $addresses
+     *
      * @return TestCustomEntity
      */
     public function setAddresses(array $addresses): TestCustomEntity

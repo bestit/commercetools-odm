@@ -9,6 +9,7 @@ use Commercetools\Core\Response\ApiResponseInterface;
 use Exception;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
+use UnexpectedValueException;
 
 /**
  * Caches the fetch requests for the given amount of time.
@@ -31,34 +32,35 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
     /**
      * @var int The lifetime for the cache in seconds.
      */
-    private $cacheTTL;
+    private $cacheTtl;
 
     /**
      * CachedDefaultRepositoryDecorator constructor.
      *
      * @param CacheItemPoolInterface $cacheItemPool
      * @param ObjectRepository $objectRepository
-     * @param int $cacheTTL The lifetime for the cache in seconds.
+     * @param int $cacheTtl The lifetime for the cache in seconds.
      */
     public function __construct(
         CacheItemPoolInterface $cacheItemPool,
         ObjectRepository $objectRepository,
-        int $cacheTTL =
-        self::DEFAULT_CACHE_LIFETIME
+        int $cacheTtl = self::DEFAULT_CACHE_LIFETIME
     ) {
         parent::__construct($objectRepository);
 
-        $this->cacheTTL = $cacheTTL;
+        $this->cacheTtl = $cacheTtl;
         $this->cacheItemPool = $cacheItemPool;
     }
 
     /**
      * Decorates the call to the original repository with a cached proxy.
      *
+     * @throws InvalidArgumentException
+     *
      * @param array $arguments The arguments to call the original repo.
      * @param string $function The function used as part of the cache key.
+     *
      * @return mixed
-     * @throws InvalidArgumentException
      */
     private function decorateCallWithCache(array $arguments, string $function)
     {
@@ -68,7 +70,7 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
             $this->cacheItemPool->save(
                 $cacheHit
                     ->set(parent::{$function}(...$arguments))
-                    ->expiresAfter($this->cacheTTL)
+                    ->expiresAfter($this->cacheTtl)
             );
         }
 
@@ -78,7 +80,8 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
     /**
      * Apply the filters with the given names.
      *
-     * @param string[] ...$filters
+     * @param string[] $filters
+     *
      * @return ObjectRepository
      */
     public function filter(string... $filters): ObjectRepository
@@ -90,8 +93,9 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
      * Finds an object by its primary key / identifier.
      *
      * @param mixed $id The identifier.
-     * @return object|null The object.
      * @throws InvalidArgumentException
+     *
+     * @return object|null The object.
      */
     public function find($id)
     {
@@ -101,10 +105,11 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
     /**
      * Finds all objects in the repository.
      *
-     * @return array The objects.
      * @throws InvalidArgumentException
+     *
+     * @return array The objects.
      */
-    public function findAll()
+    public function findAll(): array
     {
         return $this->decorateCallWithCache(func_get_args(), __FUNCTION__);
     }
@@ -112,12 +117,12 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
     /**
      * Finds an object by its primary key / identifier.
      *
+     * @throws Exception If there is something wrong.
+     *
      * @param mixed $id The identifier.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
      *
-     * @deprecated Don't use the callback param anymore. Use chaining!
-     * @throws Exception If there is something wrong.
      * @return ApiResponseInterface
      */
     public function findAsync($id, callable $onResolve = null, callable $onReject = null): ApiResponseInterface
@@ -132,16 +137,17 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
      *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     * @throws UnexpectedValueException
+     *
      * @param array $criteria
      * @param array|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
      *
      * @return array The objects.
-     *
-     * @throws \UnexpectedValueException
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
         return $this->decorateCallWithCache(func_get_args(), __FUNCTION__);
     }
@@ -152,6 +158,8 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
      * Optionally sorting and limiting details can be passed. An implementation may throw an UnexpectedValueException
      * if certain values of the sorting or limiting details are not supported.
      *
+     * @throws Exception If there is something wrong.
+     *
      * @param array $criteria
      * @param array $orderBy
      * @param int $limit
@@ -159,8 +167,6 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
      *
-     * @deprecated Don't use the callback param anymore. Use chaining!
-     * @throws Exception If there is something wrong.
      * @return ApiResponseInterface
      */
     public function findByAsync(
@@ -178,8 +184,9 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
      * Finds an object by its user defined key.
      *
      * @param string $key
-     * @return mixed|void
      * @throws APIExceptiona If there is something wrong.
+     *
+     * @return mixed|void
      */
     public function findByKey(string $key)
     {
@@ -190,10 +197,10 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
      * Finds an object by its user defined key.
      *
      * @param string $key
-     * @return mixed|void
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
+     *
+     * @return mixed|void
      */
     public function findByKeyAsync(string $key, callable $onResolve = null, callable $onReject = null)
     {
@@ -204,6 +211,7 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
      * Finds a single object by a set of criteria.
      *
      * @param array $criteria The criteria.
+     *
      * @return object|null The object.
      */
     public function findOneBy(array $criteria)
@@ -214,12 +222,12 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
     /**
      * Finds a single object by a set of criteria.
      *
+     * @throws Exception If there is something wrong.
+     *
      * @param array $criteria The criteria.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
      *
-     * @deprecated Don't use the callback param anymore. Use chaining!
-     * @throws Exception If there is something wrong.
      * @return ApiResponseInterface
      */
     public function findOneByAsync(
@@ -233,8 +241,10 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
     /**
      * Returns the cache key for the given arguments and internal markers.
      *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @param string $function
-     * @param mixed[] ...$arguments
+     * @param mixed[] $arguments
      *
      * @return string
      */

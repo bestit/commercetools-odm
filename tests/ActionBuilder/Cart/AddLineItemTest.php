@@ -16,9 +16,11 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests AddLineItem
+ *
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Cart
+ *
  * @author blange <lange@bestit-online.de>
  * @author chowanski <michel.chowanski@bestit-online.de>
- * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Cart
  */
 class AddLineItemTest extends TestCase
 {
@@ -26,6 +28,7 @@ class AddLineItemTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var AddLineItem|PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $fixture;
@@ -34,6 +37,7 @@ class AddLineItemTest extends TestCase
      * Creates the actions array with the given cart object data.
      *
      * @param array $value The cart object data.
+     *
      * @return CartAddLineItemAction[]
      */
     private function createAndTestSingleAddAction(array $value): array
@@ -61,6 +65,7 @@ class AddLineItemTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -75,6 +80,7 @@ class AddLineItemTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -84,6 +90,7 @@ class AddLineItemTest extends TestCase
 
     /**
      * Checks if a action contains optional channel
+     *
      * @return void
      */
     public function testAddChannelById()
@@ -110,6 +117,7 @@ class AddLineItemTest extends TestCase
 
     /**
      * Checks if a action contains optional channel
+     *
      * @return void
      */
     public function testAddChannelByKey()
@@ -136,6 +144,7 @@ class AddLineItemTest extends TestCase
 
     /**
      * Checks if the actions contains the external price.
+     *
      * @return void
      */
     public function testAddExternalPrice()
@@ -175,6 +184,7 @@ class AddLineItemTest extends TestCase
 
     /**
      * Checks if a simple action is created.
+     *
      * @return void
      */
     public function testCreateAddActions()
@@ -210,6 +220,7 @@ class AddLineItemTest extends TestCase
 
     /**
      * Checks if a no action will created if missing product id (= no new product)
+     *
      * @return void
      */
     public function testMissingProductId()

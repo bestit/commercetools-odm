@@ -33,6 +33,7 @@ trait DocumentManagerAwareTrait
      * Sets the used document manager.
      *
      * @param DocumentManagerInterface $documentManager The used document manager.
+     *
      * @return $this
      */
     public function setDocumentManager(DocumentManagerInterface $documentManager): self

@@ -4,10 +4,10 @@ namespace BestIt\CommercetoolsODM\Tests;
 
 /**
  * Makes it easier to test traits.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests
  * @subpackage Tests
- * @version $id$
  */
 trait TestTraitsTrait
 {
@@ -15,18 +15,21 @@ trait TestTraitsTrait
 
     /**
      * The tested class.
+     *
      * @var null|mixed
      */
     protected $fixture = null;
 
     /**
      * Returns the names of the used traits.
+     *
      * @return array
      */
     abstract protected function getUsedTraitNames(): array;
 
     /**
      * Checks the used traits.
+     *
      * @return void
      */
     public function testUsedTraits()

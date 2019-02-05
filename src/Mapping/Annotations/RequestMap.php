@@ -6,17 +6,18 @@ use Doctrine\Common\Annotations\Annotation\Required;
 
 /**
  * Maps the default requests for entities to its special request classes.
+ *
  * @Annotation
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Mapping\Annotations
  * @subpackage Mapping\Annotations
  * @Target("ANNOTATION")
- * @version $id$
  */
 class RequestMap implements Annotation
 {
     /**
      * Create-Request.
+     *
      * @Required
      * @var string
      */
@@ -24,18 +25,21 @@ class RequestMap implements Annotation
 
     /**
      * Namespace for the request classes.
+     *
      * @var string
      */
     public $defaultNamespace = '';
 
     /**
      * Delete request by the user defined key and container.
+     *
      * @var string
      */
     public $deleteByContainerAndKey = '';
 
     /**
      * Delete-Request using the id. The request is used by default.
+     *
      * @Required
      * @var string
      */
@@ -43,18 +47,21 @@ class RequestMap implements Annotation
 
     /**
      * Delete-Request using the user defined key.
+     *
      * @var string
      */
     public $deleteByKey = '';
 
     /**
      * Get Request using a user defined key and container.
+     *
      * @var string
      */
     public $findByContainerAndKey = '';
 
     /**
      * Get-Request using the id. The request is used by default.
+     *
      * @Required
      * @var string
      */
@@ -62,18 +69,21 @@ class RequestMap implements Annotation
 
     /**
      * Get-Request using the user defined key.
+     *
      * @var string
      */
     public $findByKey = '';
 
     /**
      * Get-Request using the customer id.
+     *
      * @var string
      */
     public $findByCustomerId = '';
 
     /**
      * Class to request every entity.
+     *
      * @Required
      * @var string
      */
@@ -81,6 +91,7 @@ class RequestMap implements Annotation
 
     /**
      * Update-Request using the id. The request is used by default.
+     *
      * @Required
      * @var string
      */
@@ -88,6 +99,7 @@ class RequestMap implements Annotation
 
     /**
      * Update-Request using the user defined key.
+     *
      * @var string
      */
     public $updateByKey = '';
@@ -96,6 +108,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the name of the create class.
+     *
      * @return string
      */
     public function getCreate(): string
@@ -105,6 +118,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Namespace for the request classes.
+     *
      * @return string
      */
     public function getDefaultNamespace(): string
@@ -116,6 +130,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Delete request by the user defined key and container.
+     *
      * @return string
      */
     public function getDeleteByContainerAndKey(): string
@@ -125,6 +140,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Delete-Request using the id. The request is used by default.
+     *
      * @return string
      */
     public function getDeleteById(): string
@@ -134,6 +150,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Delete-Request using the user defined key.
+     *
      * @return string
      */
     public function getDeleteByKey(): string
@@ -143,6 +160,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Get Request using a user defined key and container.
+     *
      * @return string
      */
     public function getFindByContainerAndKey(): string
@@ -152,6 +170,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Get-Request using the customer id.
+     *
      * @return string
      */
     public function getFindByCustomerId(): string
@@ -161,6 +180,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Get-Request using the id. The request is used by default.
+     *
      * @return string
      */
     public function getFindById(): string
@@ -170,6 +190,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Get-Request using the user defined key.
+     *
      * @return string
      */
     public function getFindByKey(): string
@@ -179,6 +200,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Class to request every entity.
+     *
      * @return string
      */
     public function getQuery(): string
@@ -188,6 +210,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Update-Request using the id. The request is used by default.
+     *
      * @return string
      */
     public function getUpdateById(): string
@@ -197,6 +220,7 @@ class RequestMap implements Annotation
 
     /**
      * Returns the Update-Request using the user defined key.
+     *
      * @return string
      */
     public function getUpdateByKey(): string
@@ -208,7 +232,9 @@ class RequestMap implements Annotation
     //region Setter
     /**
      * Sets the Create-Request.
+     *
      * @param string $create
+     *
      * @return RequestMap
      */
     public function setCreate(string $create): RequestMap
@@ -220,7 +246,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Namespace for the request classes.
+     *
      * @param string $defaultNamespace
+     *
      * @return RequestMap
      */
     public function setDefaultNamespace(string $defaultNamespace): RequestMap
@@ -232,7 +260,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the delete request by the user defined key and container.
+     *
      * @param string $deleteByContainerAndKey
+     *
      * @return RequestMap
      */
     public function setDeleteByContainerAndKey(string $deleteByContainerAndKey): RequestMap
@@ -244,7 +274,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Delete-Request using the id. The request is used by default.
+     *
      * @param string $deleteById
+     *
      * @return RequestMap
      */
     public function setDeleteById(string $deleteById): RequestMap
@@ -256,7 +288,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Delete-Request using the user defined key.
+     *
      * @param string $deleteByKey
+     *
      * @return RequestMap
      */
     public function setDeleteByKey(string $deleteByKey): RequestMap
@@ -268,7 +302,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Get Request using a user defined key and container.
+     *
      * @param string $findByContainerAndKey
+     *
      * @return RequestMap
      */
     public function setFindByContainerAndKey(string $findByContainerAndKey): RequestMap
@@ -280,7 +316,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Get-Request using the customer id.
+     *
      * @param string $findByCustomerId
+     *
      * @return RequestMap
      */
     public function setFindByCustomerId(string $findByCustomerId): RequestMap
@@ -292,7 +330,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Get-Request using the id. The request is used by default.
+     *
      * @param string $findById
+     *
      * @return RequestMap
      */
     public function setFindById(string $findById): RequestMap
@@ -304,7 +344,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Get-Request using the user defined key.
+     *
      * @param string $findByKey
+     *
      * @return RequestMap
      */
     public function setFindByKey(string $findByKey): RequestMap
@@ -316,7 +358,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Class to request every entity.
+     *
      * @param string $query
+     *
      * @return RequestMap
      */
     public function setQuery(string $query): RequestMap
@@ -328,7 +372,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Update-Request using the id. The request is used by default.
+     *
      * @param string $updateById
+     *
      * @return RequestMap
      */
     public function setUpdateById(string $updateById): RequestMap
@@ -340,7 +386,9 @@ class RequestMap implements Annotation
 
     /**
      * Sets the Update-Request using the user defined key.
+     *
      * @param string $updateByKey
+     *
      * @return RequestMap
      */
     public function setUpdateByKey(string $updateByKey): RequestMap

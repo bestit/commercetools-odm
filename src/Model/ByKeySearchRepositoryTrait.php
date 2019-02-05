@@ -10,25 +10,29 @@ use Commercetools\Core\Response\ApiResponseInterface;
 
 /**
  * Added an additional find api to the respository.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Model
  * @subpackage Model
- * @version $id$
  */
 trait ByKeySearchRepositoryTrait
 {
     /**
      * Adds the expanded fields to the request.
+     *
      * @param ClientRequestInterface $request
+     *
      * @return void
      */
     abstract protected function addExpandsToRequest(ClientRequestInterface $request);
 
     /**
      * Returns a simple query.
+     *
      * @param string $objectClass
      * @param string $queryType
-     * @param array ...$parameters
+     * @param mixed $parameters
+     *
      * @return ClientRequestInterface
      */
     abstract protected function createSimpleQuery(
@@ -39,9 +43,11 @@ trait ByKeySearchRepositoryTrait
 
     /**
      * Finds an object by its user defined key.
+     *
      * @param string $key
-     * @return mixed|void
      * @throws ResponseException
+     *
+     * @return mixed|void
      */
     public function findByKey(string $key)
     {
@@ -77,12 +83,14 @@ trait ByKeySearchRepositoryTrait
 
     /**
      * Finds an object by its user defined key.
+     *
+     * @todo Not tested. Readd the expand api.
+     *
      * @param string $key
-     * @return mixed|void
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
-     * @todo Not tested. Readd the expand api.
+     *
+     * @return mixed|void
      */
     public function findByKeyAsync(string $key, callable $onResolve = null, callable $onReject = null)
     {
@@ -103,13 +111,16 @@ trait ByKeySearchRepositoryTrait
 
     /**
      * Returns the used document manager.
+     *
      * @return DocumentManagerInterface
      */
     abstract public function getDocumentManager(): DocumentManagerInterface;
 
     /**
      * Processes the given query.
+     *
      * @param ClientRequestInterface $request
+     *
      * @return array<mixed|ApiResponseInterface|ClientRequestInterface> The mapped response, the raw response, the
      *         request.
      */
@@ -117,14 +128,16 @@ trait ByKeySearchRepositoryTrait
 
     /**
      * Processes the given query async.
+     *
      * @param ClientRequestInterface $request
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
-     * @return void
+     *
+     * @return ApiResponseInterface
      */
     abstract protected function processQueryAsync(
         ClientRequestInterface $request,
         callable $onResolve = null,
         callable $onReject = null
-    );
+    ): ApiResponseInterface;
 }

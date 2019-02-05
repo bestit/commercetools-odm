@@ -18,9 +18,10 @@ use function sprintf;
 /**
  * Paginator for object repositories.
  *
+ * @package BestIt\CommercetoolsODM\Pagination
+ *
  * @author blange <bjoern.lange@bestit-online.de>
  * @author Tim Kellner <tim.kellner@bestit-online.de>
- * @package BestIt\CommercetoolsODM\Pagination
  */
 class FindByPaginator implements IteratorAggregate, LoggerAwareInterface
 {

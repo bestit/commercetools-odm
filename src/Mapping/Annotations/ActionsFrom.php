@@ -6,17 +6,18 @@ use Doctrine\Common\Annotations\Annotation\Required;
 
 /**
  * Annotation to get actions from another model.
+ *
  * @Annotation
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Mapping\Annotations
  * @subpackage Mapping\Annotations
  * @Target("CLASS")
- * @version $id$
  */
 class ActionsFrom implements Annotation
 {
     /**
      * The required class name.
+     *
      * @Required
      * @var string
      */
@@ -24,6 +25,7 @@ class ActionsFrom implements Annotation
 
     /**
      * Returns the class name for the extended model.
+     *
      * @return string
      */
     public function getModelClass(): string
@@ -33,7 +35,9 @@ class ActionsFrom implements Annotation
 
     /**
      * Sets the class name for the extended model.
+     *
      * @param string $value
+     *
      * @return ActionsFrom
      */
     public function setModelClass(string $value): ActionsFrom

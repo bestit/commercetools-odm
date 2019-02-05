@@ -18,8 +18,7 @@ use function uniqid;
  * Checks the default repository decorator.
  *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM\Tests\Repository
- * @version $id$
+ * @package BestIt\CommercetoolsODM\Tests\Repository\Decorator
  */
 class DefaultRepositoryDecoratorTest extends TestCase
 {
@@ -37,6 +36,7 @@ class DefaultRepositoryDecoratorTest extends TestCase
      * Returns the function name from the given test function name.
      *
      * @param string $function The test class function name.
+     *
      * @return string
      */
     private function extractOriginalRepoMethodName(string $function): string
@@ -50,6 +50,8 @@ class DefaultRepositoryDecoratorTest extends TestCase
      * @param string $method The mocked method.
      * @param array $arguments The arguments for the method call of the original method.
      * @param mixed $return
+     *
+     * @return void
      */
     private function mockOriginalRepoMethod(string $method, array $arguments = [], $return = null)
     {

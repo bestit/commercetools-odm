@@ -8,7 +8,7 @@ use BestIt\CommercetoolsODM\Exception\FilterException;
  * FilterManager for collecting and executing filters
  *
  * @author Michel Chowanski <chowanski@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Filter
  */
 class FilterManager implements FilterManagerInterface
 {
@@ -20,7 +20,11 @@ class FilterManager implements FilterManagerInterface
     private $filters = [];
 
     /**
-     * {@inheritdoc}
+     * Adds a filter to this manager.
+     *
+     * @param FilterInterface $filter
+     *
+     * @return void
      */
     public function add(FilterInterface $filter)
     {
@@ -28,7 +32,14 @@ class FilterManager implements FilterManagerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Applies the filter to the given request.
+     *
+     * @throws FilterException
+     *
+     * @param string $key
+     * @param mixed $request
+     *
+     * @return void
      */
     public function apply(string $key, $request)
     {

@@ -4,10 +4,10 @@ namespace BestIt\CommercetoolsODM\Exception;
 
 /**
  * Exception class for conflicts.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Exception
  * @subpackage Exception
- * @version $id$
  */
 class ConflictException extends ResponseException
 {

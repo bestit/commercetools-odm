@@ -28,6 +28,7 @@ class SetLineItemQuantity extends ShoppingListActionBuilder
      * @param array $oldData
      * @param ShoppingList $sourceObject
      * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
+     *
      * @return ShoppingListChangeLineItemQuantityAction[]
      */
     public function createUpdateActions(

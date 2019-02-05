@@ -30,23 +30,26 @@ use ReflectionMethod;
 
 /**
  * Loads the annotations for a persisting class.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Mapping\Driver
  * @subpackage Mapping\Driver
- * @version $id$
  */
 class AnnotationDriver extends BasicDriver
 {
     /**
      * Which annotation entities are used for this driver.
+     *
      * @var array
      */
     protected $entityAnnotationClasses = [Entity::class => true];
 
     /**
      * Loads the class annotations for this metadata
+     *
      * @param SpecialClassMetadataInterface $metadata
      * @param ReflectionClass $classReflection
+     *
      * @return AnnotationDriver
      */
     private function loadClassAnnotations(
@@ -56,7 +59,12 @@ class AnnotationDriver extends BasicDriver
         $reader = $this->getReader();
         $classAnntations = $reader->getClassAnnotations($classReflection);
 
-        array_walk($classAnntations, function (Annotation $classAnnotation) use ($classReflection, $metadata, $reader) {
+        array_walk($classAnntations, function ($classAnnotation) use ($classReflection, $metadata, $reader) {
+            // We only care for our own annotations
+            if (!($classAnnotation instanceof Annotation)) {
+                return;
+            }
+
             if ($classAnnotation instanceof Entity) {
                 if ($map = $classAnnotation->getRequestMap()) {
                     $metadata->setRequestClassMap($map);
@@ -114,8 +122,12 @@ class AnnotationDriver extends BasicDriver
 
     /**
      * Loads the metadata for the specified class into the provided container.
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @param string $className
      * @param OrignalClassMetadataInterface $metadata
+     *
      * @return void
      */
     public function loadMetadataForClass($className, OrignalClassMetadataInterface $metadata)
@@ -133,9 +145,11 @@ class AnnotationDriver extends BasicDriver
 
     /**
      * Loads the mappings on the properties.
+     *
      * @param SpecialClassMetadataInterface $metadata
-     * @return AnnotationDriver
      * @throws MappingException
+     *
+     * @return AnnotationDriver
      */
     private function loadFieldMappings(SpecialClassMetadataInterface $metadata):AnnotationDriver
     {

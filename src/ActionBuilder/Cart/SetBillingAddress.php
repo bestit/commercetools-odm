@@ -18,7 +18,9 @@ use Commercetools\Core\Request\Carts\Command\CartSetBillingAddressAction;
 class SetBillingAddress extends CartActionBuilder
 {
     /**
-     * @inheritdoc
+     * Field name for the billing address.
+     *
+     * @var string
      */
     protected $fieldName = 'billingAddress';
 

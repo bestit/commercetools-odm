@@ -16,6 +16,7 @@ use Commercetools\Core\Response\ErrorResponse;
 
 /**
  * Repository for orders.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Repository
  */
@@ -23,8 +24,10 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
 {
     /**
      * Creates an order from a cart.
+     *
      * @param Cart $cart
      * @throws ResponseException
+     *
      * @return Order
      */
     public function createFromCart(Cart $cart): Order
@@ -52,8 +55,10 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
 
     /**
      * Removes the given order.
+     *
      * @param Order $order The order.
      * @param bool $direct Should the deletion be deleted directly with a doc manager flush?
+     *
      * @return void
      */
     public function deleteOrder(Order $order, bool $direct = true)
@@ -68,9 +73,11 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
 
     /**
      * Imports the given order.
+     *
      * @param Order $importableOrder
-     * @return Order
      * @throws ResponseException
+     *
+     * @return Order
      */
     public function import(Order $importableOrder): Order
     {

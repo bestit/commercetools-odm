@@ -14,18 +14,21 @@ final class Events
 {
     /**
      * Conflict event.
+     *
      * @var string
      */
     const ON_CONFLICT = 'onConflict';
 
     /**
      * Event for the flush event.
+     *
      * @var string
      */
     const ON_FLUSH = 'onFlush';
 
     /**
      * Event before the persisting in the unit of work.
+     *
      * @var string
      */
     const PRE_PERSIST = 'prePersist';
@@ -38,12 +41,14 @@ final class Events
 
     /**
      * Event for the update preparation.
+     *
      * @var string
      */
     const PRE_UPDATE = 'preUpdate';
 
     /**
      * Event after the detach.
+     *
      * @var string
      */
     const POST_DETACH = 'postDetach';
@@ -55,18 +60,21 @@ final class Events
 
     /**
      * Event after the removal.
+     *
      * @var string
      */
     const POST_REMOVE = 'postRemove';
 
     /**
      * Event after the update.
+     *
      * @var string
      */
     const POST_PERSIST = 'postPersist';
 
     /**
      * Event after the load.
+     *
      * @var string
      */
     const POST_LOAD = 'postLoad';

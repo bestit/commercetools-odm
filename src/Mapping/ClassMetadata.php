@@ -10,99 +10,114 @@ use ReflectionClass;
 
 /**
  * Encapsulates the processed the annotations of an import entity.
+ *
  * @author lange <lange@bestit-online.de>
- * @package Bh\ImportMappingBundle
+ * @package BestIt\CommercetoolsODM\Mapping
  * @subpackage Mapping
- * @version $id$
  */
 class ClassMetadata implements ClassMetadataInterface
 {
     /**
      * The model class from which the actions are used.
+     *
      * @var string
      */
     private $actionsFrom = '';
 
     /**
      * Matches the custom type fields to their type.
+     *
      * @var array
      */
     private $customTypeFields = [];
 
     /**
      * The draft class for inserting the row.
+     *
      * @var string
      */
     private $draft = '';
 
     /**
      * Maps the field names to their relevant annotations.
+     *
      * @var JoinNodes[]|DataNode[]
      */
     private $fieldMappings = [];
 
     /**
      * The field names of this object.
+     *
      * @var array
      */
     private $fieldNames = [];
 
     /**
      * The field name of the document identifier.
+     *
      * @var string
      */
     private $identifier = '';
 
     /**
      * Is this a standard commercetools model?
+     *
      * @var bool
      */
-    private $isCTStandardModel = true;
+    private $isCtStandardModel = true;
 
     /**
      * The field name for the user-defined identifier.
+     *
      * @var string
      */
     private $key = '';
 
     /**
      * The lifecycle events of the persistent class.
+     *
      * @var array
      */
     private $lifecycleEvents = [];
 
     /**
      * The fully-qualified class name of this persistent class.
+     *
      * @var string
      */
     private $name = '';
 
     /**
      * The reflection for the persistent class.
+     *
      * @var null|ReflectionClass
      */
     protected $reflectionClass = null;
 
     /**
      * The repository defined by the persistent class.
+     *
      * @var string
      */
     protected $repository = '';
 
     /**
      * The request map for the source class if there is one.
+     *
      * @var RequestMap
      */
     private $requestClassMap = null;
 
     /**
      * The name of the version field.
+     *
      * @var string
      */
     private $version = '';
 
     /**
      * ClassMetadata constructor.
+     *
      * @param string $name
      */
     public function __construct(string $name)
@@ -114,8 +129,10 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Adds a lifecycle event callback for the persistent class.
+     *
      * @param string $eventName
      * @param string $callbackName
+     *
      * @return ClassMetadataInterface
      */
     public function addLifecycleEvent(string $eventName, string $callbackName): ClassMetadataInterface
@@ -131,13 +148,9 @@ class ClassMetadata implements ClassMetadataInterface
         return $this;
     }
 
-    public function addUpdateCallback(string $field = '', string $method = '')
-    {
-        // TODO
-    }
-
     /**
      * Returns the model class from which the actions are used.
+     *
      * @return string
      */
     public function getActionsFrom(): string
@@ -147,10 +160,13 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns the target field of the owning side of the association.
+     *
      * @param string $assocName
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @return string
      */
-    public function getAssociationMappedByTargetField($assocName)
+    public function getAssociationMappedByTargetField($assocName): string
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
@@ -159,35 +175,42 @@ class ClassMetadata implements ClassMetadataInterface
      * Returns a numerically indexed list of association names of this persistent class.
      *
      * This array includes identifier associations if present on this class.
+     *
      * @return array
      */
-    public function getAssociationNames()
+    public function getAssociationNames(): array
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
      * Returns the target class name of the given association.
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
      * @param string $assocName
+     *
      * @return string
      */
-    public function getAssociationTargetClass($assocName)
+    public function getAssociationTargetClass($assocName): string
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
      * Returns the custom type key for the given field or an empty string, if there is no type declared.
+     *
      * @param string $fieldName
+     *
      * @return string
      */
     public function getCustomType(string $fieldName): string
     {
-        return (string)@ $this->getCustomTypeFields()[$fieldName];
+        return (string) @ $this->getCustomTypeFields()[$fieldName];
     }
 
     /**
      * Returns the Matching of the custom type fields to their type.
+     *
      * @return array
      */
     public function getCustomTypeFields(): array
@@ -197,6 +220,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns the draft class for inserting the row.
+     *
      * @return string
      */
     public function getDraft(): string
@@ -206,6 +230,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns the field mappings.
+     *
      * @return JoinNodes[]|DataNode[]
      */
     public function getFieldMappings(): array
@@ -217,6 +242,7 @@ class ClassMetadata implements ClassMetadataInterface
      * A numerically indexed list of field names of this persistent class.
      *
      * This array includes identifier fields if present on this class.
+     *
      * @return array
      */
     public function getFieldNames(): array
@@ -233,6 +259,7 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * Todo original api seems buggy and requires to return an array, but this is not the way, this method is used
      * today.
+     *
      * @return string
      */
     public function getIdentifier(): string
@@ -242,9 +269,10 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns an array of identifier field names numerically indexed.
+     *
      * @return array
      */
-    public function getIdentifierFieldNames()
+    public function getIdentifierFieldNames(): array
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
@@ -253,16 +281,19 @@ class ClassMetadata implements ClassMetadataInterface
      * Returns the identifier of this object as an array with field name as key.
      *
      * Has to return an empty array if no identifier isset.
+     *
      * @param object $object
+     *
      * @return array
      */
-    public function getIdentifierValues($object)
+    public function getIdentifierValues($object): array
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
      * Returns the field name for the user-defined identifier.
+     *
      * @return string
      */
     public function getKey(): string
@@ -272,7 +303,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns the lifecycle events of the persistent class.
+     *
      * @param string $eventName
+     *
      * @return array
      */
     public function getLifecycleEvents(string $eventName = ''): array
@@ -282,6 +315,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Gets the fully-qualified class name of this persistent class.
+     *
      * @return string
      */
     public function getName(): string
@@ -291,16 +325,19 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns a new instance for the persistent class.
-     * @param array ...$args
+     *
+     * @param array $args
+     *
      * @return mixed
      */
-    public function getNewInstance(...$args)
+    public function getNewInstance(array ...$args)
     {
         return $this->getReflectionClass()->newInstance(...$args);
     }
 
     /**
      * Gets the ReflectionClass instance for this mapped class.
+     *
      * @return ReflectionClass
      */
     public function getReflectionClass(): ReflectionClass
@@ -314,6 +351,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns the repository defined by the persistent class.
+     *
      * @return string
      */
     public function getRepository(): string
@@ -323,6 +361,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns the RequestMap if there is one.
+     *
      * @return RequestMap|void
      */
     public function getRequestClassMap()
@@ -335,9 +374,12 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * This type names can be implementation specific but should at least include the php types:
      * integer, string, boolean, float/double, datetime.
+     *
      * @param string $fieldName
-     * @return string
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
      * @todo Exception
+     *
+     * @return string
      */
     public function getTypeOfField($fieldName): string
     {
@@ -353,6 +395,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns the name of the version field.
+     *
      * @return string
      */
     public function getVersion(): string
@@ -362,30 +405,38 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Checks if the given field is a mapped association for this class.
+     *
      * @param string $fieldName
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @return boolean
      */
-    public function hasAssociation($fieldName)
+    public function hasAssociation($fieldName): bool
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
      * Checks if the given field is a mapped property for this class.
+     *
      * @param string $fieldName
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @return boolean
      */
-    public function hasField($fieldName)
+    public function hasField($fieldName): bool
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
      * Checks if there is a public getter for the given field name.
+     *
      * @param string $fieldName
+     *
      * @return bool
      */
-    public function hasGetter(string $fieldName)
+    public function hasGetter(string $fieldName): bool
     {
         $method = 'get' . ucfirst($fieldName);
         $reflection = $this->getReflectionClass();
@@ -395,7 +446,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Has the persistent class events for the given event name.
+     *
      * @param string $eventName
+     *
      * @return bool
      */
     public function hasLifecycleEvents(string $eventName): bool
@@ -405,10 +458,12 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Checks if there is a public setter for the given field name.
+     *
      * @param string $fieldName
+     *
      * @return bool
      */
-    public function hasSetter(string $fieldName)
+    public function hasSetter(string $fieldName): bool
     {
         $method = 'set' . ucfirst($fieldName);
         $reflection = $this->getReflectionClass();
@@ -418,7 +473,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Is this field ignored if the data is empty.
+     *
      * @param string $fieldName
+     *
      * @return bool
      */
     public function ignoreFieldOnEmpty(string $fieldName): bool
@@ -435,25 +492,30 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Checks if the association is the inverse side of a bidirectional association.
+     *
      * @param string $assocName
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @return boolean
      */
-    public function isAssociationInverseSide($assocName)
+    public function isAssociationInverseSide($assocName): bool
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
      * Is this persistent class a commercetools standard model?
+     *
      * @param bool $status The new status.
+     *
      * @return bool The old status.
      */
     public function isCTStandardModel(bool $status = true): bool
     {
-        $oldStatus = $this->isCTStandardModel;
+        $oldStatus = $this->isCtStandardModel;
 
         if (func_num_args()) {
-            $this->isCTStandardModel = $status;
+            $this->isCtStandardModel = $status;
         }
 
         return $oldStatus;
@@ -461,17 +523,22 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Checks if the given field is a mapped collection valued association for this class.
+     *
      * @param string $fieldName
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @return boolean
      */
-    public function isCollectionValuedAssociation($fieldName)
+    public function isCollectionValuedAssociation($fieldName): bool
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
      * Returns if the given field name is a custom type field of the persistent class for this metadata.
+     *
      * @param string $fieldName
+     *
      * @return bool
      */
     public function isCustomTypeField(string $fieldName): bool
@@ -481,7 +548,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Is the given field read only?
+     *
      * @param string $fieldName
+     *
      * @return bool
      */
     public function isFieldReadOnly(string $fieldName): bool
@@ -498,7 +567,10 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Checks if the given field name is a mapped identifier for this class.
+     *
      * @param string $fieldName
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @return bool
      */
     public function isIdentifier($fieldName): bool
@@ -508,17 +580,22 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Checks if the given field is a mapped single valued association for this class.
+     *
      * @param string $fieldName
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @return boolean
      */
-    public function isSingleValuedAssociation($fieldName)
+    public function isSingleValuedAssociation($fieldName): bool
     {
         throw new BadMethodCallException('Implement ' . __METHOD__);
     }
 
     /**
      * Returns true if the given field name is used for the commercetools version.
+     *
      * @param string $fieldName
+     *
      * @return bool
      */
     public function isVersion(string $fieldName): bool
@@ -528,6 +605,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Loads the field names for this object.
+     *
      * @return void
      */
     private function loadFieldNames()
@@ -539,7 +617,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the model class from which the actions are used.
+     *
      * @param string $actionsFrom
+     *
      * @return ClassMetadataInterface
      */
     public function setActionsFrom(string $actionsFrom): ClassMetadataInterface
@@ -550,7 +630,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the matching of the custom type fields to their type.
+     *
      * @param array $customTypeFields
+     *
      * @return ClassMetadataInterface
      */
     public function setCustomTypeFields(array $customTypeFields): ClassMetadataInterface
@@ -562,7 +644,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the draft class for inserting the row.
+     *
      * @param string $draft
+     *
      * @return ClassMetadataInterface
      */
     public function setDraft(string $draft): ClassMetadataInterface
@@ -574,7 +658,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the field mappings for persistent class of this object.
+     *
      * @param Field[] $fieldMappings
+     *
      * @return ClassMetadataInterface
      */
     public function setFieldMappings(array $fieldMappings): ClassMetadataInterface
@@ -586,7 +672,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the field names.
+     *
      * @param array $fieldNames
+     *
      * @return ClassMetadata
      */
     private function setFieldNames(array $fieldNames): ClassMetadata
@@ -598,7 +686,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the mapped identifier field of this class.
+     *
      * @param string $identifier
+     *
      * @return ClassMetadataInterface
      */
     public function setIdentifier(string $identifier): ClassMetadataInterface
@@ -610,7 +700,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the field name for the user-defined identifier.
+     *
      * @param string $key
+     *
      * @return ClassMetadataInterface
      */
     public function setKey(string $key): ClassMetadataInterface
@@ -621,7 +713,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the lifecycle events of the persistent class.
+     *
      * @param array $lifecycleEvents
+     *
      * @return ClassMetadataInterface
      */
     public function setLifecycleEvents(array $lifecycleEvents): ClassMetadataInterface
@@ -633,7 +727,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the fully-qualified class name of this persistent class.
+     *
      * @param string $name
+     *
      * @return ClassMetadata
      */
     protected function setName(string $name): ClassMetadata
@@ -645,7 +741,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the reflection class.
+     *
      * @param null|ReflectionClass $reflectionClass
+     *
      * @return ClassMetadata
      */
     public function setReflectionClass(ReflectionClass $reflectionClass): ClassMetadata
@@ -657,7 +755,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the repository defined by the persistent class.
+     *
      * @param string $repository
+     *
      * @return ClassMetadataInterface
      */
     public function setRepository(string $repository): ClassMetadataInterface
@@ -669,7 +769,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the request map for the source class if there is one.
+     *
      * @param RequestMap $requestMap
+     *
      * @return ClassMetadataInterface
      */
     public function setRequestClassMap(RequestMap $requestMap): ClassMetadataInterface
@@ -681,7 +783,9 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Sets the name of the version field.
+     *
      * @param string $version
+     *
      * @return ClassMetadataInterface
      */
     public function setVersion(string $version): ClassMetadataInterface

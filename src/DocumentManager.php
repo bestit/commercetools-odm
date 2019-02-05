@@ -25,6 +25,7 @@ use function sprintf;
 
 /**
  * Basic manager for the commercetools processes.
+ *
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  * @todo Add api for multiple clients.
@@ -38,24 +39,28 @@ class DocumentManager implements DocumentManagerInterface
 
     /**
      * The repository factory.
+     *
      * @var RepositoryFactoryInterface
      */
     private $repositoryFactory;
 
     /**
      * The unit of work for this manager.
+     *
      * @var UnitOfWorkInterface
      */
     private $unitOfWork;
 
     /**
      * The factory for the unit of work.
+     *
      * @var UnitOfWorkFactoryInterface
      */
     private $unitOfWorkFactory;
 
     /**
      * DocumentManager constructor.
+     *
      * @param ClassMetadataFactory $metadataFactory
      * @param Client $client
      * @param QueryHelper $queryHelper
@@ -84,6 +89,7 @@ class DocumentManager implements DocumentManagerInterface
      * by this ObjectManager become detached.
      *
      * @param string|null $objectName if given, only objects of this type will get detached.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
      *
      * @return void
      */
@@ -93,7 +99,9 @@ class DocumentManager implements DocumentManagerInterface
 
     /**
      * Checks if the $document is part of the current UnitOfWork and therefore managed.
+     *
      * @param object $document
+     *
      * @return bool
      */
     public function contains($document): bool
@@ -103,11 +111,14 @@ class DocumentManager implements DocumentManagerInterface
 
     /**
      * Returns a request class for fetching/updating/deleting documents using the request map of the given class name.
+     *
+     * @throws InvalidArgumentException
+     *
      * @param string $className
      * @param string $requestType
-     * @param array $args The optional arguments.
+     * @param mixed $args The optional arguments.
+     *
      * @return AbstractCreateRequest|AbstractUpdateRequest|AbstractDeleteRequest|AbstractApiRequest
-     * @throws InvalidArgumentException
      */
     public function createRequest(string $className, string $requestType = self::REQUEST_TYPE_QUERY, ...$args)
     {
@@ -134,7 +145,9 @@ class DocumentManager implements DocumentManagerInterface
 
     /**
      * Detaches the given object after flush.
+     *
      * @param object $object
+     *
      * @return void
      */
     public function detachDeferred($object)
@@ -147,10 +160,13 @@ class DocumentManager implements DocumentManagerInterface
      *
      * This is just a convenient shortcut for getRepository($className)->find($id).
      *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
+     *
      * @param string $className The class name of the object to find.
      * @param mixed $id The identity of the object to find.
      *
-     * @return object The found object.
+     * @return mixed The found object.
      */
     public function find($className, $id)
     {
@@ -161,6 +177,7 @@ class DocumentManager implements DocumentManagerInterface
      * Flushes all changes to objects that have been queued up to now to the database.
      * This effectively synchronizes the in-memory state of managed objects with the
      * database.
+     *
      * @return void
      */
     public function flush()
@@ -173,9 +190,12 @@ class DocumentManager implements DocumentManagerInterface
      *
      * The class name must be the fully-qualified class name without a leading backslash
      * (as it is returned by get_class($obj)).
+     *
      * @param string $className
-     * @return ClassMetadata
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
      * @todo Create a setter and lazy loading for this.
+     *
+     * @return ClassMetadata
      */
     public function getClassMetadata($className): ClassMetadata
     {
@@ -184,7 +204,10 @@ class DocumentManager implements DocumentManagerInterface
 
     /**
      * Gets the repository for a class.
+     *
      * @param string $className
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     *
      * @return ObjectRepository
      */
     public function getRepository($className): ObjectRepository
@@ -197,6 +220,7 @@ class DocumentManager implements DocumentManagerInterface
      *
      * @param string $className The class name for which the request is fetched.
      * @param string $requestType The type of the request or the request class name it self.
+     *
      * @return string
      */
     public function getRequestClass(string $className, string $requestType): string
@@ -264,7 +288,8 @@ class DocumentManager implements DocumentManagerInterface
      * of this ObjectManager and returns the managed copy of the object.
      * The object passed to merge will not become associated/managed with this ObjectManager.
      *
-     * @param object $object
+     * @param mixed $object
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
      *
      * @return object
      */
@@ -282,7 +307,9 @@ class DocumentManager implements DocumentManagerInterface
      *
      * NOTE: The persist operation always considers objects that are not yet known to
      * this ObjectManager as NEW. Do not pass detached objects to the persist operation.
+     *
      * @param object $object The instance to make managed and persistent.
+     *
      * @return void
      */
     public function persist($object)
@@ -308,7 +335,9 @@ class DocumentManager implements DocumentManagerInterface
      * Removes an object instance.
      *
      * A removed object will be removed from the database as a result of the flush operation.
+     *
      * @param object $object The object instance to remove.
+     *
      * @return void
      */
     public function remove($object)
@@ -318,7 +347,9 @@ class DocumentManager implements DocumentManagerInterface
 
     /**
      * Sets the unit of work for this manager.
+     *
      * @param UnitOfWorkInterface $unitOfWork
+     *
      * @return DocumentManager
      */
     protected function setUnitOfWork(UnitOfWorkInterface $unitOfWork): DocumentManager

@@ -22,9 +22,9 @@ use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Common\PriceDraft;
 use Commercetools\Core\Model\Common\PriceDraftCollection;
 use Commercetools\Core\Model\Common\Resource;
-use Commercetools\Core\Model\Customer\CustomerSigninResult;
 use Commercetools\Core\Model\CustomField\CustomFieldObject;
 use Commercetools\Core\Model\CustomField\FieldContainer;
+use Commercetools\Core\Model\Customer\CustomerSigninResult;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductDraft;
 use Commercetools\Core\Model\Product\ProductVariant;
@@ -40,11 +40,12 @@ use InvalidArgumentException;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use RuntimeException;
 use SplObjectStorage;
 use Traversable;
+use function Funct\Strings\upperCaseFirst;
 use function array_walk;
 use function count;
-use function Funct\Strings\upperCaseFirst;
 use function get_class;
 use function is_string;
 use function memory_get_usage;
@@ -66,61 +67,71 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Maps containers and keys to ids.
+     *
      * @var array
      */
     protected $containerKeyMap = [];
 
     /**
      * Maps customer ids.
+     *
      * @var array
      */
     protected $customerIdMap = [];
 
     /**
      * Which objects should be detached after flush.
+     *
      * @var SplObjectStorage
      */
     private $detachQueue = null;
 
     /**
      * Matches object ids to commercetools ids.
+     *
      * @var array
      */
     protected $documentIdentifiers = [];
 
     /**
      * The used document manager for this unit of work.
+     *
      * @var void|DocumentManagerInterface
      */
     private $documentManager = null;
 
     /**
      * The versions of documents.
+     *
      * @var array
      */
     protected $documentRevisions = [];
 
     /**
      * The states for given object ids.
-     * @var array
+     *
      * @todo Rename var.
+     * @var array
      */
     protected $documentState = [];
 
     /**
      * Maps documents to ids.
+     *
      * @var array
      */
     protected $identityMap = [];
 
     /**
      * Maps keys to ids.
+     *
      * @var array
      */
     protected $keyMap = [];
 
     /**
      * Saves the completely new documents.
+     *
      * @var array
      */
     protected $newDocuments = [];
@@ -133,6 +144,7 @@ class UnitOfWork implements UnitOfWorkInterface
      * Internal note: Note that PHPs "copy-on-write" behavior helps a lot with memory usage.
      *                A value will only really be copied if the value in the entity is modified
      *                by the user.
+     *
      * @todo Add API.
      * @var array
      */
@@ -140,12 +152,14 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Which objects should be removed? (The keys are the spl_object_hashes)
+     *
      * @var object[]
      */
     protected $scheduledRemovals = [];
 
     /**
      * UnitOfWork constructor.
+     *
      * @param ActionBuilderProcessorInterface $actionBuilderProcessor
      * @param DocumentManagerInterface $documentManager
      * @param EventManager $eventManager
@@ -168,10 +182,12 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Adds the removal requests to the request batch.
-     * @return UnitOfWork
+     *
      * @todo Check for needed usage of version.
+     *
+     * @return UnitOfWork
      */
-    private function addRemovalsToRequestBatch()
+    private function addRemovalsToRequestBatch(): self
     {
         array_walk($this->scheduledRemovals, function ($document, string $id) {
             $request = $this->getDocumentManager()->createRequest(
@@ -192,6 +208,8 @@ class UnitOfWork implements UnitOfWorkInterface
      *
      * @param object $document
      * @param array $visited
+     *
+     * @return void
      */
     private function cascadeDetach($document, array &$visited)
     {
@@ -199,12 +217,14 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Cascades the save into the documents childs.
+     *
      * @param ClassMetadataInterface $class
      * @param object $document
      * @param array $visited
+     *
      * @return UnitOfWork
      */
-    private function cascadeScheduleInsert(ClassMetadataInterface $class, $document, array &$visited)
+    private function cascadeScheduleInsert(ClassMetadataInterface $class, $document, array &$visited): self
     {
         // TODO
 
@@ -213,6 +233,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Cleanes the file queue.
+     *
      * @return void
      */
     private function cleanQueue()
@@ -227,10 +248,13 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Creates the update action for the given object if there is a change in the data.
+     *
+     * @todo Topmost array should be used as a whole.
+     *
      * @param ClassMetadataInterface $metadata
      * @param object $object
+     *
      * @return ClientRequestInterface|null
-     * @todo Topmost array should be used as a whole.
      */
     private function computeChangedObject(ClassMetadataInterface $metadata, $object)
     {
@@ -255,6 +279,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Iterates through the entities and creates their update / creation actions if needed.
+     *
      * @return void
      */
     private function computeChangedObjects()
@@ -295,7 +320,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns true if the unit of work contains the given document.
+     *
      * @param  object $document
+     *
      * @return bool
      */
     public function contains($document): bool
@@ -307,6 +334,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the count of managed entities.
+     *
      * @return int
      */
     public function count(): int
@@ -316,6 +344,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the count of managed objects.
+     *
      * @return int
      */
     public function countManagedObjects(): int
@@ -325,6 +354,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the count for new objects.
+     *
      * @return int
      */
     public function countNewObjects(): int
@@ -334,6 +364,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the count of scheduled removals.
+     *
      * @return int
      */
     public function countRemovals(): int
@@ -343,10 +374,12 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Creates a document and registers it as managed.
+     *
      * @param string $className
      * @param mixed $responseObject The mapped Response from commercetools.
      * @param array $hints
      * @param mixed $sourceDocument The source document.
+     *
      * @return mixed The document matching to $className.
      */
     public function createDocument(string $className, $responseObject, array $hints = [], $sourceDocument = null)
@@ -407,9 +440,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Creates the draft for a new request.
+     *
      * @param ClassMetadataInterface $metadata
      * @param object $object The source object.
      * @param array $fields
+     *
      * @return JsonObject
      */
     private function createDraftObjectForNewRequest(
@@ -432,8 +467,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the create query for the given document.
+     *
      * @param ClassMetadataInterface $metadata
      * @param mixed $object
+     *
      * @return ClientRequestInterface
      */
     private function createNewRequest(ClassMetadataInterface $metadata, $object): ClientRequestInterface
@@ -535,7 +572,10 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * Detaches a document from the persistence management.
      * It's persistence will no longer be managed by Doctrine.
+     *
      * @param object $object The document to detach.
+     *
+     * @return void
      */
     public function detach($object)
     {
@@ -545,7 +585,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Detaches the given object after flush.
+     *
      * @param object $object
+     *
      * @return void
      */
     public function detachDeferred($object)
@@ -555,8 +597,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Executes a detach operation on the given entity.
+     *
      * @param object $object
      * @param array $visited
+     *
+     * @return void
      */
     private function doDetach($object, array &$visited)
     {
@@ -582,8 +627,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Schedules the removal of the given object.
+     *
      * @param mixed $object
      * @param array $visited
+     *
+     * @return void
      */
     private function doScheduleRemove($object, array &$visited)
     {
@@ -606,8 +654,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Queues the entity for saving or throws an exception if there is something wrong.
+     *
      * @param mixed $entity
      * @param array $visited
+     *
+     * @return void
      */
     private function doScheduleSave($entity, array &$visited)
     {
@@ -632,7 +683,7 @@ class UnitOfWork implements UnitOfWorkInterface
                     $this->documentState[$oid] = self::STATE_MANAGED;
                     break;
                 case self::STATE_DETACHED:
-                    throw new InvalidArgumentException("Detached document passed to persist().");
+                    throw new InvalidArgumentException('Detached document passed to persist().');
                     break;
             }
 
@@ -642,9 +693,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Extracts the changes of the two arrays.
+     *
      * @param array $newData
      * @param array|string|mixed $oldData
      * @param string $parentKey The hierarchy key for the parent of the checked data.
+     *
      * @return array
      */
     private function extractChanges(array $newData, $oldData, string $parentKey = ''): array
@@ -671,7 +724,7 @@ class UnitOfWork implements UnitOfWorkInterface
             } else {
                 if ((!array_key_exists($key, $oldData)) || (($value !== $oldData[$key]) &&
                         // Sometimes the sdk parses an int to float.
-                        (!is_numeric($value) || ((float)$value !== (float)$oldData[$key])))
+                        (!is_numeric($value) || ((float) $value !== (float) $oldData[$key])))
                 ) {
                     $changedData[$key] = $value;
                 }
@@ -695,11 +748,13 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Uses the getter of the sourceTarget to fetch the field names of the metadata.
+     *
      * @param object $sourceTarget
      * @param ClassMetadataInterface $metadata
+     *
      * @return array
      */
-    private function extractData($sourceTarget, ClassMetadataInterface $metadata = null)
+    private function extractData($sourceTarget, ClassMetadataInterface $metadata = null): array
     {
         $return = [];
 
@@ -728,8 +783,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Commits every change to commercetools.
-     * @return void
+     *
      * @todo Add the detach queue for ignored objects
+     *
+     * @return void
      */
     public function flush()
     {
@@ -755,7 +812,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the metadata for the given class.
+     *
      * @param string|object $class
+     *
      * @return ClassMetadataInterface
      */
     protected function getClassMetadata($class): ClassMetadataInterface
@@ -765,6 +824,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the queue for detaching after flush.
+     *
      * @return SplObjectStorage
      */
     private function getDetachQueue(): SplObjectStorage
@@ -774,6 +834,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the used document manager.
+     *
      * @return DocumentManagerInterface|void
      */
     public function getDocumentManager()
@@ -783,11 +844,13 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Get the state of a document.
-     * @param  object $document
-     * @return int
+     *
+     * @param object $document
      * @todo Split for Key and ID. Catch the exception of the commercetools process?
+     *
+     * @return int
      */
-    protected function getDocumentState($document)
+    protected function getDocumentState($document): int
     {
         /** @var ClassMetadataInterface $class */
         $class = $this->getClassMetadata($className = get_class($document));
@@ -829,7 +892,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns a key for the given object.
+     *
      * @param object $object
+     *
      * @return string
      */
     private function getKeyForObject($object): string
@@ -839,6 +904,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the used logger.
+     *
      * @return LoggerInterface
      */
     private function getLogger(): LoggerInterface
@@ -852,7 +918,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Returns the cached original data for the given document.
+     *
      * @param mixed $document
+     *
      * @return array
      */
     private function getOriginalData($document): array
@@ -862,8 +930,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Throws an error matching the response.
+     *
      * @param ApiResponseInterface $response
      * @throws Exception\APIException
+     *
      * @return bool If this is no error response.
      */
     private function handleErrorResponse(ApiResponseInterface $response): bool
@@ -903,7 +973,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Checks if the given array is an associative one or has other array childs.
+     *
      * @param array $array
+     *
      * @return bool
      */
     private function hasNestedArray(array $array): bool
@@ -922,8 +994,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * We should not deep iterate into simple value arrays, so check, if the given value array is "the end".
+     *
      * @param string $key
      * @param array $value
+     *
      * @return bool
      */
     private function isSimpleAttributeArray(string $key, array $value): bool
@@ -935,9 +1009,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Parses the found value with the data from the field declaration.
+     *
      * @param string $field
      * @param ClassMetadataInterface $metadata
      * @param mixed $value
+     *
      * @return bool|DateTime|int|string
      */
     private function parseFoundFieldValue(string $field, ClassMetadataInterface $metadata, $value)
@@ -951,7 +1027,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 }
 
                 if (!is_array($returnValue = $value)) {
-                    $returnValue = $value instanceof Traversable ? iterator_to_array($value) : (array)$value;
+                    $returnValue = $value instanceof Traversable ? iterator_to_array($value) : (array) $value;
                 }
 
                 // clean up.
@@ -964,7 +1040,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 break;
 
             case 'boolean':
-                $returnValue = (bool)$value;
+                $returnValue = (bool) $value;
                 break;
 
             case 'dateTime':
@@ -972,11 +1048,11 @@ class UnitOfWork implements UnitOfWorkInterface
                 break;
 
             case 'int':
-                $returnValue = (int)$value;
+                $returnValue = (int) $value;
                 break;
 
             case 'string':
-                $returnValue = (string)$value;
+                $returnValue = (string) $value;
                 break;
 
             default:
@@ -988,9 +1064,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Parses the data of the given object to create a cart draft
+     *
      * @param ClassMetadataInterface $metadata
      * @param object $object The source object.
      * @param array $fields
+     *
      * @return array
      */
     private function parseValuesForCartDraft(ClassMetadataInterface $metadata, $object, array $fields): array
@@ -1009,12 +1087,15 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Parses the data of the given object to create a value array for the draft of the object.
+     *
+     * @todo To hard coupled with the standard object.
+     * @todo Not completely tested.
+     *
      * @param ClassMetadataInterface $metadata
      * @param Product $product The source object.
      * @param array $fields
+     *
      * @return array
-     * @todo To hard coupled with the standard object.
-     * @todo Not completely tested.
      */
     private function parseValuesForProductDraft(
         ClassMetadataInterface $metadata,
@@ -1022,7 +1103,7 @@ class UnitOfWork implements UnitOfWorkInterface
         array $fields
     ): array {
         $values = [
-            'key' => (string)$product->getKey(),
+            'key' => (string) $product->getKey(),
             'productType' => $product->getProductType(),
             'state' => $product->getState(),
             'taxCategory' => $product->getTaxCategory(),
@@ -1031,7 +1112,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
         if ($productData = $product->getMasterData()) {
             $values += [
-                'publish' => (bool)$productData->getPublished()
+                'publish' => (bool) $productData->getPublished()
             ];
 
             $projection = $productData->getStaged();
@@ -1046,7 +1127,8 @@ class UnitOfWork implements UnitOfWorkInterface
                 'slug',
             ];
 
-            if (count($projection->getSearchKeywords())) {
+            $searchKeywords = $projection->getSearchKeywords();
+            if ($searchKeywords && count($searchKeywords)) {
                 $valueNames[] = 'searchKeywords';
             }
 
@@ -1068,7 +1150,7 @@ class UnitOfWork implements UnitOfWorkInterface
                             'attributes' => $variant->getAttributes(),
                             'images' => $variant->getImages(),
                             'key' => $variant->getKey(),
-                            'sku' => (string)$variant->getSku()
+                            'sku' => (string) $variant->getSku()
                         ]
                     )
                 );
@@ -1112,9 +1194,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Parses the data of the given object to create a value array for the draft of the object.
+     *
      * @param ClassMetadataInterface $metadata
      * @param object $object The source object.
      * @param array $fields
+     *
      * @return array
      */
     private function parseValuesForSimpleDraft(ClassMetadataInterface $metadata, $object, array $fields): array
@@ -1149,7 +1233,9 @@ class UnitOfWork implements UnitOfWorkInterface
      *
      * This method is either called through `DocumentManager#persist()` or during `DocumentManager#flush()`,
      * when persistence by reachability is applied.
+     *
      * @param mixed $document
+     *
      * @return UnitOfWork
      */
     protected function persistNew($document): UnitOfWork
@@ -1168,7 +1254,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Processed the deferred detach for the given object.
-     * @param $object
+     *
+     * @param mixed $object
+     *
+     * @return void
      */
     private function processDeferredDetach($object)
     {
@@ -1179,9 +1268,13 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Processes the delete response of an object.
+     *
+     * @throws APIException
+     *
      * @param string $objectId The object identifier.
      * @param ApiResponseInterface $response
-     * @throws APIException
+     *
+     * @return void
      */
     private function processDeleteResponse(string $objectId, ApiResponseInterface $response)
     {
@@ -1199,9 +1292,13 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Processes the normal persisting response of an object.
+     *
+     * @throws APIException
+     *
      * @param string $objectId
      * @param ApiResponseInterface $response
-     * @throws APIException
+     *
+     * @return void
      */
     private function processPersistResponse(string $objectId, ApiResponseInterface $response)
     {
@@ -1243,8 +1340,11 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Processes the responses from the batch.
+     *
      * @param ApiResponseInterface[] $batchResponses
      * @throws Exception\APIException
+     *
+     * @return void
      */
     private function processResponsesFromBatch(array $batchResponses)
     {
@@ -1290,7 +1390,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $metadata = $this->getClassMetadata($object);
 
         if (!$overwrite) {
-            throw new \RuntimeException('Not yet implemented');
+            throw new RuntimeException('Not yet implemented');
         }
 
         foreach ($metadata->getFieldNames() as $fieldName) {
@@ -1312,6 +1412,7 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param object $document
      * @param string|int $identifier
      * @param mixed|null $revision
+     *
      * @return UnitOfWorkInterface
      */
     public function registerAsManaged($document, string $identifier = '', $revision = null): UnitOfWorkInterface
@@ -1322,7 +1423,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $this->documentRevisions[$oid] = $revision;
 
         if ($identifier) {
-            $this->documentIdentifiers[$oid] = (string)$identifier;
+            $this->documentIdentifiers[$oid] = (string) $identifier;
             $this->identityMap[$identifier] = $document;
 
             $this->setOriginalData($document);
@@ -1346,9 +1447,10 @@ class UnitOfWork implements UnitOfWorkInterface
      * document from the persistence management of Doctrine.
      *
      * @ignore
-     * @param object $document
-     * @return bool
+     * @param mixed $document
      * @todo Add key/container clear.
+     *
+     * @return void
      */
     private function removeFromIdentityMap($document)
     {
@@ -1367,7 +1469,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Removes the object from the commercetools database.
+     *
      * @param mixed $object
+     *
      * @return UnitOfWorkInterface
      */
     public function scheduleRemove($object): UnitOfWorkInterface
@@ -1381,7 +1485,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Puts the given object in the save queue.
+     *
      * @param mixed $entity
+     *
      * @return UnitOfWorkInterface
      */
     public function scheduleSave($entity): UnitOfWorkInterface
@@ -1395,7 +1501,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Sets the queue for the objects which should be detached after flush.
+     *
      * @param SplObjectStorage $detachQueue
+     *
      * @return UnitOfWork
      */
     private function setDetachQueue(SplObjectStorage $detachQueue): UnitOfWork
@@ -1407,7 +1515,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Sets the used document manager.
+     *
      * @param DocumentManagerInterface $documentManager
+     *
      * @return UnitOfWork
      */
     protected function setDocumentManager(DocumentManagerInterface $documentManager): UnitOfWork
@@ -1419,8 +1529,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Caches the original data for the given data object based in the field mapping of the metadata.
+     *
      * @param mixed $dataObject
      * @param ClassMetadataInterface|void $metadata
+     *
      * @return UnitOfWork
      */
     private function setOriginalData(
@@ -1434,8 +1546,10 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Tries to find a managed object by its key and container.
+     *
      * @param string $container
      * @param string $key
+     *
      * @return mixed|void
      */
     public function tryGetByContainerAndKey(string $container, string $key)
@@ -1452,7 +1566,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Tries to find an document with the given customer identifier in the identity map of this UnitOfWork.
+     *
      * @param string $id The document customer id to look for.
+     *
      * @return mixed Returns the document with the specified identifier if it exists in
      *               this UnitOfWork, void otherwise.
      */
@@ -1471,6 +1587,7 @@ class UnitOfWork implements UnitOfWorkInterface
      * Tries to find an document with the given identifier in the identity map of this UnitOfWork.
      *
      * @param mixed $id The document identifier to look for.
+     *
      * @return mixed Returns the document with the specified identifier if it exists in
      *               this UnitOfWork, void otherwise.
      */
@@ -1481,7 +1598,9 @@ class UnitOfWork implements UnitOfWorkInterface
 
     /**
      * Tries to find an document with the given identifier in the identity map of this UnitOfWork.
+     *
      * @param string $key The document key to look for.
+     *
      * @return mixed Returns the document with the specified identifier if it exists in
      *               this UnitOfWork, void otherwise.
      */
@@ -1499,10 +1618,12 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * There is no public working and safe api to update a ct object with the data of another one, so use own mapping.
      *
+     * @todo Refactor to mapper.
+     *
      * @param mixed $document The working object.
      * @param JsonObject $mappedResponse The ct response.
+     *
      * @return mixed
-     * @todo Refactor to mapper.
      */
     private function updateWorkingObjectWithResponse($document, JsonObject $mappedResponse)
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: bjoern.lange
@@ -14,22 +15,24 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class APIExceptionTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\Exception
  * @subpackage Exception
- * @version $id$
  */
 class APIExceptionTest extends TestCase
 {
     /**
      * The tested class.
+     *
      * @var APIException
      */
     private $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -39,6 +42,7 @@ class APIExceptionTest extends TestCase
 
     /**
      * Tests the instance.
+     *
      * @return void
      */
     public function testInstance()

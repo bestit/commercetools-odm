@@ -6,21 +6,30 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Request\ProductTypes\Command\ProductTypeRemoveAttributeDefinitionAction;
 
+/**
+ * ActionBuilder for product types to remove attributes.
+ *
+ * @author blange <bjoern.lange@bestit-online.de>
+ * @package BestIt\CommercetoolsODM\ActionBuilder\ProductType
+ */
 class RemoveAttributes extends ProductTypeActionBuilder
 {
     /**
      * The field name.
+     *
      * @var string
      */
     protected $fieldName = 'attributes';
 
     /**
      * Creates the update action for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param ProductType $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

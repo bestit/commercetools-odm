@@ -8,26 +8,29 @@ use Commercetools\Core\Request\Customers\Command\CustomerAddShippingAddressActio
 
 /**
  * Adds an shipping address id.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
  * @subpackage ActionBuilder\Customer
- * @version $id$
  */
 class AddShippingAddressIds extends CustomerActionBuilder
 {
     /**
      * The field for the customer.
+     *
      * @var string
      */
     protected $fieldName = 'shippingAddressIds';
 
     /**
      * Creates the update actions for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Customer $sourceObject
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

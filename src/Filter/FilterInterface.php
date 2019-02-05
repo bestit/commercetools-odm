@@ -6,7 +6,7 @@ namespace BestIt\CommercetoolsODM\Filter;
  * Interface FilterInterface
  *
  * @author Michel Chowanski <chowanski@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Filter
  */
 interface FilterInterface
 {

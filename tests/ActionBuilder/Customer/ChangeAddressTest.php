@@ -15,6 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Test the ChangeAddress-Builder.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  */
@@ -24,6 +25,7 @@ class ChangeAddressTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var ChangeAddress|PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $fixture;
@@ -33,6 +35,7 @@ class ChangeAddressTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -48,6 +51,7 @@ class ChangeAddressTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     protected function setUp()
@@ -57,6 +61,7 @@ class ChangeAddressTest extends TestCase
 
     /**
      * Checks if new addresses are not added.
+     *
      * @return void
      */
     public function testCreateUpdateActionsIgnoreNewAddress()
@@ -82,6 +87,7 @@ class ChangeAddressTest extends TestCase
 
     /**
      * Checks if removed addresses are not added.
+     *
      * @return void
      */
     public function testCreateUpdateActionsIgnoreRemovedAddress()
@@ -107,6 +113,7 @@ class ChangeAddressTest extends TestCase
 
     /**
      * Checks if the address is changed but the old address id is used.
+     *
      * @return void
      */
     public function testCreateUpdateActionsWithChangedAddressIdOfNewAddress()
@@ -136,6 +143,7 @@ class ChangeAddressTest extends TestCase
 
     /**
      * Checks if the address is changed but the old address id is used.
+     *
      * @return void
      */
     public function testCreateUpdateActionsWithChangedAddressIdOfOldAddress()
@@ -165,6 +173,7 @@ class ChangeAddressTest extends TestCase
 
     /**
      * Checks the instance.
+     *
      * @return void
      */
     public function testInstance()

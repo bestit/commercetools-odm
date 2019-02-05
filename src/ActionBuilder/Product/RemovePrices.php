@@ -10,6 +10,7 @@ use Commercetools\Core\Request\Products\Command\ProductRemovePriceAction;
 
 /**
  * Creates the actions to remove prices.
+ *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Product
  */
@@ -17,13 +18,16 @@ class RemovePrices extends PriceActionBuilder
 {
     /**
      * Creates the update actions for the given class and data.
+     *
+     * @todo Add Variants.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Product $sourceObject
+     *
      * @return AbstractAction[]
-     * @todo Add Variants.
      */
     public function createUpdateActions(
         $changedValue,

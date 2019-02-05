@@ -9,22 +9,24 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests CartActionBuilder.
+ *
  * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Cart
  * @subpackage ActionBuilder\Cart
- * @version $id$
  */
 class CartActionBuilderTest extends TestCase
 {
     /**
      * The test class.
+     *
      * @var CartActionBuilder|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -34,6 +36,7 @@ class CartActionBuilderTest extends TestCase
 
     /**
      * Checks the instance of the builder.
+     *
      * @return void
      */
     public function testInstance()

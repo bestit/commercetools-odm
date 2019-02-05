@@ -4,22 +4,26 @@ namespace BestIt\CommercetoolsODM\Tests;
 
 /**
  * Helps checking the usage of traits.
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests
  * @subpackage Tests
- * @version $id$
  */
 trait TraitAssertTrait
 {
     /**
      * Asserts that a haystack contains a needle.
+     *
+     * @since Method available since Release 2.1.0
+     *
      * @param mixed $needle
      * @param mixed $haystack
      * @param string $message
      * @param bool $ignoreCase
      * @param bool $checkForObjectIdentity
      * @param bool $checkForNonObjectIdentity
-     * @since Method available since Release 2.1.0
+     *
+     * @return void
      */
     abstract public static function assertContains(
         $needle,
@@ -32,11 +36,13 @@ trait TraitAssertTrait
 
     /**
      * Checks if the trait is used.
+     *
      * @param string $traitName
-     * @param $object
+     * @param mixed $object
+     *
      * @return mixed
      */
-    static public function assertTraitUsage(string $traitName, $object)
+    public static function assertTraitUsage(string $traitName, $object)
     {
         return static::assertContains($traitName, class_uses($object));
     }

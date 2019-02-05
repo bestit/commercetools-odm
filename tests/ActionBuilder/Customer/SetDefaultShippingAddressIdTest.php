@@ -9,16 +9,16 @@ use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Customer\Customer;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Customers\Command\CustomerSetDefaultShippingAddressAction;
-use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class SetDefaultShippingAddressIdTest
+ *
  * @author blange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  * @subpackage ActionBuilder\ProductType
- * @version $id$
  */
 class SetDefaultShippingAddressIdTest extends TestCase
 {
@@ -26,6 +26,7 @@ class SetDefaultShippingAddressIdTest extends TestCase
 
     /**
      * The test class.
+     *
      * @var SetDefaultShippingAddressId|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
@@ -35,6 +36,7 @@ class SetDefaultShippingAddressIdTest extends TestCase
      *
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
+     *
      * @return array
      */
     public function getSupportAssertions(): array
@@ -48,6 +50,7 @@ class SetDefaultShippingAddressIdTest extends TestCase
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -58,6 +61,7 @@ class SetDefaultShippingAddressIdTest extends TestCase
 
     /**
      * Checks if a simple action is created.
+     *
      * @return void
      */
     public function testCreateUpdateActions()
@@ -79,6 +83,7 @@ class SetDefaultShippingAddressIdTest extends TestCase
 
     /**
      * Checks the instance.
+     *
      * @return void
      */
     public function testInstance()

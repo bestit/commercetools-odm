@@ -12,13 +12,14 @@ use Commercetools\Core\Request\Project\ProjectGetRequest;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use Exception;
+use UnexpectedValueException;
 
 /**
  * Class ProjectRepository
+ *
  * @author blange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Repository
  * @subpackage Repository
- * @version $id$
  */
 class ProjectRepository extends DefaultRepository implements ProjectRepositoryInterface
 {
@@ -36,6 +37,7 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
 
     /**
      * Finds all objects in the repository.
+     *
      * @return Project[] The objects.
      */
     public function findAll(): array
@@ -45,12 +47,14 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
 
     /**
      * Finds an object by its primary key / identifier.
+     *
+     * @throws Exception If there is something wrong.
+     *
      * @param mixed $id The identifier.
-     * @deprecated Don't use the callback param anymore. Use chaining!
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
+     *
      * @return ApiResponseInterface
-     * @throws Exception If there is something wrong.
      */
     public function findAsync($id, callable $onResolve = null, callable $onReject = null): ApiResponseInterface
     {
@@ -64,16 +68,17 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
      *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     * @throws UnexpectedValueException
+     *
      * @param array $criteria
      * @param array|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
      *
      * @return array The objects.
-     *
-     * @throws \UnexpectedValueException
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
         throw new BadMethodCallException('Method not supported for projects.');
     }
@@ -84,15 +89,17 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
      * Optionally sorting and limiting details can be passed. An implementation may throw
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
-     * @deprecated Don't use the callback param anymore. Use chaining!
+     *
+     * @throws Exception If there is something wrong.
+     *
      * @param array $criteria
      * @param array $orderBy
      * @param int $limit
      * @param int $offset
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
+     *
      * @return ApiResponseInterface
-     * @throws Exception If there is something wrong.
      */
     public function findByAsync(
         array $criteria,
@@ -119,12 +126,14 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
 
     /**
      * Finds a single object by a set of criteria.
-     * @deprecated Don't use the callback param anymore. Use chaining!
+     *
+     * @throws Exception If there is something wrong.
+     *
      * @param array $criteria The criteria.
      * @param callable|void $onResolve Callback on the successful response.
      * @param callable|void $onReject Callback for an error.
+     *
      * @return ApiResponseInterface
-     * @throws Exception If there is something wrong.
      */
     public function findOneByAsync(
         array $criteria,
@@ -136,6 +145,7 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
 
     /**
      * Returns the elements which should be expanded.
+     *
      * @return array
      */
     public function getExpands(): array
@@ -145,8 +155,10 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
 
     /**
      * Returns the info for the actual projcet.
-     * @return Project
+     *
      * @throws ResponseException
+     *
+     * @return Project
      */
     public function getInfoForActualProject(): Project
     {
@@ -163,8 +175,10 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
 
     /**
      * Set the elements which should be expanded.
+     *
      * @param array $expands
      * @param bool $clearAfterwards Should the expand cache be cleared after the query.
+     *
      * @return ObjectRepository
      */
     public function setExpands(array $expands, bool $clearAfterwards = false): ObjectRepository

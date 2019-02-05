@@ -14,9 +14,10 @@ use function iterator_to_array;
 /**
  * Tests for the FindByPaginator.
  *
+ * @package BestIt\CommercetoolsODM\Tests\Pagination
+ *
  * @author blange <bjoern.lange@bestit-online.de>
  * @author Tim Kellner <tim.kellner@bestit-online.de>
- * @package BestIt\CommercetoolsODM\Tests\Pagination
  */
 class FindByPaginatorTest extends TestCase
 {

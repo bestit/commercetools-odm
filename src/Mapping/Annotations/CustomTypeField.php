@@ -6,17 +6,18 @@ use Doctrine\Common\Annotations\Annotation\Required;
 
 /**
  * Maps a normal property to a custom type field for commercetools.
+ *
  * @Annotation
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Mapping\Annotations
  * @subpackage Mapping\Annotations
  * @Target("PROPERTY")
- * @version $id$
  */
 class CustomTypeField implements Annotation
 {
     /**
      * The type key for this custom type field.
+     *
      * @Required
      * @var string
      */
@@ -24,9 +25,10 @@ class CustomTypeField implements Annotation
 
     /**
      * Returns the type key for this custom type field.
+     *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->value;
     }

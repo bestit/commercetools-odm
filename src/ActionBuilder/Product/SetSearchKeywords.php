@@ -87,10 +87,10 @@ class SetSearchKeywords extends ProductActionBuilder
     private function hasRealTextChange(array $changedValue): bool
     {
         // Has every language ...
-        return (bool)array_filter($changedValue, function ($langSearchKeywords): bool {
+        return (bool) array_filter($changedValue, function ($langSearchKeywords): bool {
             // ... real search keywords changes with a text change
             return is_array($langSearchKeywords) &&
-                (bool)array_filter($langSearchKeywords, function ($searchKeyword): bool {
+                (bool) array_filter($langSearchKeywords, function ($searchKeyword): bool {
                     return is_array($searchKeyword) && @$searchKeyword['text'];
                 });
         });

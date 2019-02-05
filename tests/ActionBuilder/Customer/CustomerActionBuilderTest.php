@@ -9,22 +9,24 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests CustomerActionBuilder.
+ *
  * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Customer
  * @subpackage ActionBuilder\Customer
- * @version $id$
  */
 class CustomerActionBuilderTest extends TestCase
 {
     /**
      * The test class.
+     *
      * @var CustomerActionBuilder|PHPUnit_Framework_MockObject_MockObject
      */
     protected $fixture = null;
 
     /**
      * Sets up the test.
+     *
      * @return void
      */
     public function setUp()
@@ -34,6 +36,7 @@ class CustomerActionBuilderTest extends TestCase
 
     /**
      * Checks the instance of the builder.
+     *
      * @return void
      */
     public function testInstance()

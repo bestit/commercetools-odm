@@ -25,7 +25,9 @@ class FilterManagerTest extends TestCase
     private $fixture;
 
     /**
-     * {@inheritdoc}
+     * Sets up the test.
+     *
+     * @return void
      */
     protected function setUp()
     {

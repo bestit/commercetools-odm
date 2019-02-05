@@ -4,15 +4,16 @@ namespace BestIt\CommercetoolsODM\Entity;
 
 /**
  * The basic entity with the default propertiers version and id.
+ *
  * @author lange <lange@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\Entity
  * @subpackage Entity
- * @version $id$
  */
 trait BaseEntityTrait
 {
     /**
      * The Id of this document.
+     *
      * @Commercetools\Field(type="string")
      * @Commercetools\Id
      * @var string
@@ -21,6 +22,7 @@ trait BaseEntityTrait
 
     /**
      * The version of this document.
+     *
      * @Commercetools\Field(type="int")
      * @Commercetools\Version
      * @var int
@@ -29,6 +31,7 @@ trait BaseEntityTrait
 
     /**
      * Returns the id of this document.
+     *
      * @return string
      */
     public function getId(): string
@@ -38,6 +41,7 @@ trait BaseEntityTrait
 
     /**
      * Returns the version of this document.
+     *
      * @return int
      */
     public function getVersion(): int
@@ -47,7 +51,9 @@ trait BaseEntityTrait
 
     /**
      * Sets the ID of this document.
+     *
      * @param string $id
+     *
      * @return ProductType
      */
     public function setId(string $id): ProductType
@@ -59,7 +65,9 @@ trait BaseEntityTrait
 
     /**
      * Sets the version of this document.
+     *
      * @param int $version
+     *
      * @return ProductType
      */
     public function setVersion(int $version): ProductType

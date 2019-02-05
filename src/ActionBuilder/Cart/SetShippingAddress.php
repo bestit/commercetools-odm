@@ -11,26 +11,30 @@ use Commercetools\Core\Request\Carts\Command\CartSetShippingAddressAction;
 
 /**
  * Builds the action to change cart shipping address
+ *
  * @author chowanski <chowanski@bestit-online.de>
- * @package BestIt\CommercetoolsODM
+ * @package BestIt\CommercetoolsODM\ActionBuilder\Cart
  * @subpackage ActionBuilder\Cart
- * @version $id$
  */
 class SetShippingAddress extends CartActionBuilder
 {
     /**
-     * @inheritdoc
+     * The field name for this builder.
+     *
+     * @var string
      */
     protected $fieldName = 'shippingAddress';
 
     /**
      * Creates the update action for the given class and data.
+     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
      * @param Cart $sourceObject
      * @param string $subFieldName If you work on attributes etc. this is the name of the specific attribute.
+     *
      * @return AbstractAction[]
      */
     public function createUpdateActions(

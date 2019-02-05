@@ -28,6 +28,7 @@ class ChangeKey extends ShoppingListActionBuilder
      * @param array $changedData
      * @param array $oldData
      * @param mixed $sourceObject
+     *
      * @return ShoppingListSetKeyAction[]
      */
     public function createUpdateActions(
