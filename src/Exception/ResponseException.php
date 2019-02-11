@@ -27,8 +27,6 @@ class ResponseException extends Exception
     {
         $exception = new static($response->getMessage(), $response->getStatusCode());
 
-        return $exception
-            ->setCorrelationId($response->getCorrelationId())
-            ->setResponse($response);
+        return $exception->setResponse($response);
     }
 }

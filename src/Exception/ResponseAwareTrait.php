@@ -17,9 +17,9 @@ trait ResponseAwareTrait
     /**
      * The correlation id for the request.
      *
-     * @var string
+     * @var string|null
      */
-    private $correlationId = '';
+    private $correlationId;
 
     /**
      * The response.
@@ -31,9 +31,9 @@ trait ResponseAwareTrait
     /**
      * Returns the correlation id for the request.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCorrelationId(): string
+    public function getCorrelationId()
     {
         return $this->correlationId;
     }
@@ -74,6 +74,12 @@ trait ResponseAwareTrait
     public function setResponse(ErrorResponse $response)
     {
         $this->response = $response;
+
+        $correlationId = $response->getCorrelationId();
+
+        if ($correlationId) {
+            $this->setCorrelationId($correlationId);
+        }
 
         return $this;
     }
