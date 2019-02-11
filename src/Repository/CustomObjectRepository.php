@@ -3,6 +3,8 @@
 namespace BestIt\CommercetoolsODM\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Exception\APIException;
+use BestIt\CommercetoolsODM\Exception\ResponseException;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
 
 /**
@@ -19,6 +21,9 @@ class CustomObjectRepository extends DefaultRepository
      *
      * @param string $container
      * @param string $key
+     *
+     * @throws APIException
+     * @throws ResponseException
      *
      * @return mixed
      */
