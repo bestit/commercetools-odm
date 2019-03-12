@@ -27,7 +27,7 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
     /**
      * Adds the given image to the variant of the product.
      *
-     * @throws ResponseException
+     * @throws ResponseException If the image upload did not work correctly.
      *
      * @param SplFileInfo $fileInfo
      * @param Product $product
@@ -37,11 +37,20 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
      */
     public function addImageToProduct(SplFileInfo $fileInfo, Product $product, int $variantId = 1): Product
     {
-        $documentManager = $this->getDocumentManager();
+        $this->logger->debug(
+            'Tries to upload an image to a product.',
+            $logContext = [
+                'imagePath' => $fileInfo->getRealPath(),
+                'imageSize' => $fileInfo->getSize(),
+                'productId' => $product->getId(),
+                'productKey' => $product->getKey(),
+                'variantId' => 1,
+            ]
+        );
 
         $request = ProductImageUploadRequest::ofIdVariantIdAndFile(
             $product->getId(),
-            // Staged because it exists everytime!
+            // Staged because this enforces that it exists in every scope of ct.
             $variantId,
             new UploadedFile(
                 $fileInfo->getRealPath(),
@@ -56,10 +65,17 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
         list($updatedProduct, $imgResponse) = $this->processQuery($request);
 
         if ($imgResponse->isError()) {
+            $this->logger->error(
+                'Upload of an image for a product failed.',
+                $logContext + ['error' => $imgResponse->getMessage()]
+            );
+
             throw APIException::fromResponse($imgResponse);
         }
 
-        $documentManager->refresh($product, $updatedProduct);
+        $this->logger->info('Uploaded an image to a product.', $logContext);
+
+        $this->getDocumentManager()->refresh($product, $updatedProduct);
 
         return $product;
     }

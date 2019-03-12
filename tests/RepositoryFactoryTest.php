@@ -4,28 +4,50 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests;
 
-use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Filter\FilterManager;
+use BestIt\CommercetoolsODM\Helper\FilterManagerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use BestIt\CommercetoolsODM\RepositoryFactory;
+use BestIt\CommercetoolsODM\RepositoryFactoryInterface;
+use BestIt\CTAsyncPool\PoolAwareTrait;
+use BestIt\CTAsyncPool\PoolInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use function uniqid;
 
 /**
  * Tests the factory for the repositories.
  *
- * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests
  */
 class RepositoryFactoryTest extends TestCase
 {
+    use TestTraitsTrait;
+
     /**
-     * @var RepositoryFactory The tested class.
+     * The tested class.
+     *
+     * @var RepositoryFactory
      */
-    private $fixture;
+    protected $fixture;
+
+    /**
+     * Returns the names of the used traits.
+     *
+     * @return array
+     */
+    protected function getUsedTraitNames(): array
+    {
+        return [
+            FilterManagerAwareTrait::class,
+            LoggerAwareTrait::class,
+            PoolAwareTrait::class,
+        ];
+    }
 
     /**
      * Sets up the test.
@@ -71,5 +93,16 @@ class RepositoryFactoryTest extends TestCase
         );
 
         static::assertSame($repo1, $this->fixture->getRepository($documentManager, $className));
+    }
+
+    /**
+     * Checks the required interfaces.
+     *
+     * @return void
+     */
+    public function testInterfaces()
+    {
+        static::assertInstanceOf(LoggerAwareInterface::class, $this->fixture);
+        static::assertInstanceOf(RepositoryFactoryInterface::class, $this->fixture);
     }
 }

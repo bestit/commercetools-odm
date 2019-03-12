@@ -7,6 +7,8 @@
         <exclude name="BestIt.DocTags.DisallowedConstantTags.TagNotAllowed" />
         <exclude name="BestIt.DocTags.DisallowedMethodTags.TagNotAllowed" />
         <exclude name="BestIt.DocTags.DisallowedPropertyTags.TagNotAllowed" />
+        <exclude name="BestIt.Formatting.AlphabeticallySortedUses.IncorrectlyOrderedUses" />
+        <exclude name="BestIt.DocTags.RequiredClassTags.TagOccurrenceMinAuthor" />
         <exclude name="BestIt.DocTags.RequiredMethodTags.TagOccurrenceMinReturn" />
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing" />
     </rule>

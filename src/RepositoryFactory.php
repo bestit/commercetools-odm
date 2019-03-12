@@ -11,6 +11,9 @@ use BestIt\CommercetoolsODM\Helper\FilterManagerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Factory to provide the system with repositories.
@@ -18,10 +21,11 @@ use Doctrine\Common\Persistence\ObjectRepository;
  * @author lange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM
  */
-class RepositoryFactory implements RepositoryFactoryInterface
+class RepositoryFactory implements LoggerAwareInterface, RepositoryFactoryInterface
 {
-    use PoolAwareTrait;
     use FilterManagerAwareTrait;
+    use LoggerAwareTrait;
+    use PoolAwareTrait;
 
     /**
      * @var string The default repository for this factory.
@@ -41,6 +45,8 @@ class RepositoryFactory implements RepositoryFactoryInterface
      */
     public function __construct(FilterManagerInterface $filterManager, PoolInterface $pool = null)
     {
+        $this->logger = new NullLogger();
+
         $this->setFilterManager($filterManager);
 
         if ($pool) {
@@ -66,13 +72,17 @@ class RepositoryFactory implements RepositoryFactoryInterface
                 $repository = $tmp;
             }
 
-            $this->cachedRepos[$className] = new $repository(
+            $this->cachedRepos[$className] = $repository = new $repository(
                 $metadata,
                 $documentManager,
                 $documentManager->getQueryHelper(),
                 $this->getFilterManager(),
                 $this->getPool()
             );
+
+            if ($repository instanceof LoggerAwareInterface) {
+                $repository->setLogger($this->logger);
+            }
         }
 
         return $this->cachedRepos[$className];
