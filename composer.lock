@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "61845854a66b8c66d6a4a075bfa3bbc3",
+    "content-hash": "7efc16c28b90ffd0c4ab47f6b5435861",
     "packages": [
         {
             "name": "bestit/commercetools-async-pool",
@@ -1909,6 +1909,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2016-11-19T09:07:46+00:00"
         },
         {
@@ -2557,7 +2558,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -2639,7 +2640,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.0",
-        "ext-intl": "^1.1"
+        "ext-intl": "^1.1",
+        "ext-fileinfo": "*"
     },
     "platform-dev": []
 }

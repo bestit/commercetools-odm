@@ -15,6 +15,7 @@ use Commercetools\Core\Request\Products\ProductImageUploadRequest;
 use Commercetools\Core\Response\ErrorResponse;
 use GuzzleHttp\Psr7\UploadedFile;
 use SplFileInfo;
+use function mime_content_type;
 
 /**
  * The repository for products.
@@ -56,7 +57,8 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
                 $fileInfo->getRealPath(),
                 $fileInfo->getSize(),
                 UPLOAD_ERR_OK,
-                $fileInfo->getBasename()
+                $fileInfo->getBasename(),
+                mime_content_type($fileInfo->getRealPath())
             )
         );
 
