@@ -69,10 +69,16 @@ class SetLineItemQuantityTest extends TestCase
             $oldData,
             $sourceObject
         );
-        
+
+        // Test needed price change action exists before quantity change
         self::assertArrayHasKey(0, $actions);
         self::assertSame($lineItemId, $actions[0]->get('lineItemId'));
-        self::assertSame($quantity, $actions[0]->get('quantity'));
         self::assertEquals($priceValue->toArray(), $actions[0]->get('externalPrice')->toArray());
+
+        // Test correct quantity and price change
+        self::assertArrayHasKey(1, $actions);
+        self::assertSame($lineItemId, $actions[1]->get('lineItemId'));
+        self::assertSame($quantity, $actions[1]->get('quantity'));
+        self::assertEquals($priceValue->toArray(), $actions[1]->get('externalPrice')->toArray());
     }
 }
