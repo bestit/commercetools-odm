@@ -9,6 +9,7 @@ use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\Cart\LineItem;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Carts\Command\CartChangeLineItemQuantityAction;
+use Commercetools\Core\Request\Carts\Command\CartSetLineItemPriceAction;
 
 /**
  * Builds the action to change cart item quantity
@@ -72,6 +73,16 @@ class SetLineItemQuantity extends CartActionBuilder
         if (defined('Commercetools\Core\Model\Cart\LineItem::PRICE_MODE_EXTERNAL_PRICE')
             && $lineItem->getPriceMode() === LineItem::PRICE_MODE_EXTERNAL_PRICE
         ) {
+            // Fix for https://jira.commercetools.com/servicedesk/customer/portal/1/SUPPORT-5132
+            // Action must set BEFORE the quantity change action
+            $actions[] = CartSetLineItemPriceAction::fromArray([
+                'lineItemId' => $lineItemId,
+                'externalPrice' => $this->getCorrectPrice(
+                    $lineItem->getPrice()->toArray(),
+                    $changedValue['quantity']
+                )
+            ]);
+
             $changeLineItemQuantityAction['externalPrice'] = $this->getCorrectPrice(
                 $lineItem->getPrice()->toArray(),
                 $changedValue['quantity']
