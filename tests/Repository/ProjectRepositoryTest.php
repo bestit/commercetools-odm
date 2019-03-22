@@ -1,37 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
-use BestIt\CTAsyncPool\PoolInterface;
-use BestIt\CommercetoolsODM\DocumentManagerInterface;
-use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
-use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
-use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryTrait;
-use BestIt\CommercetoolsODM\Repository\ObjectRepository;
-use BestIt\CommercetoolsODM\Repository\ProductTypeRepository;
 use BestIt\CommercetoolsODM\Repository\ProjectRepository;
 use BestIt\CommercetoolsODM\Repository\ProjectRepositoryInterface;
-use BestIt\CommercetoolsODM\Tests\TestTraitsTrait;
-use Commercetools\Commons\Helper\QueryHelper;
-use Commercetools\Core\Model\ProductType\ProductType;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
+use function uniqid;
 
 /**
  * Class ProjectRepositoryTest
  *
- * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\Repository
- * @subpackage Repository
  */
 class ProjectRepositoryTest extends TestCase
 {
-    use TestRepositoryTrait;
+    use TestRepositoryTrait {
+        TestRepositoryTrait::testInterfaces as testInterfacesInTrait;
+    }
 
     /**
      * The tested class.
      *
-     * @var ProjectRepository
+     * @var ProjectRepository|null
      */
     protected $fixture = null;
 
@@ -46,13 +38,32 @@ class ProjectRepositoryTest extends TestCase
     }
 
     /**
+     * Checks if the expand value can be changed without an exception.
+     *
+     * This update was missing in the commit bc6a665267566e86f0ee81562eed6e417a8b6d18.
+     *
+     * @return void
+     */
+    public function testGetAndSetExpandsWithoutException()
+    {
+        static::assertSame([], $this->fixture->getExpands(), 'The default return should be empty.');
+
+        $this->fixture->setExpands($expands = [uniqid()]);
+
+        static::assertSame(
+            $expands,
+            $this->fixture->getExpands(),
+            'The return should contain the assigned array.'
+        );
+    }
+
+    /**
      * Checks the class interfaces.
      *
      * @return void
      */
     public function testInterfaces()
     {
-        static::assertInstanceOf(ObjectRepository::class, $this->fixture);
         static::assertInstanceOf(ProjectRepositoryInterface::class, $this->fixture);
     }
 }

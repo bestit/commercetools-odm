@@ -3,10 +3,8 @@
 namespace BestIt\CommercetoolsODM\Repository;
 
 use BadMethodCallException;
-use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\APIException;
 use BestIt\CommercetoolsODM\Exception\ResponseException;
-use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use Commercetools\Core\Model\Project\Project;
 use Commercetools\Core\Request\Project\ProjectGetRequest;
 use Commercetools\Core\Response\ApiResponseInterface;
@@ -17,9 +15,7 @@ use UnexpectedValueException;
 /**
  * Class ProjectRepository
  *
- * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Repository
- * @subpackage Repository
  */
 class ProjectRepository extends DefaultRepository implements ProjectRepositoryInterface
 {
@@ -144,16 +140,6 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
     }
 
     /**
-     * Returns the elements which should be expanded.
-     *
-     * @return array
-     */
-    public function getExpands(): array
-    {
-        throw new BadMethodCallException('Method not supported for projects.');
-    }
-
-    /**
      * Returns the info for the actual projcet.
      *
      * @throws ResponseException
@@ -183,6 +169,11 @@ class ProjectRepository extends DefaultRepository implements ProjectRepositoryIn
      */
     public function setExpands(array $expands, bool $clearAfterwards = false): ObjectRepository
     {
-        throw new BadMethodCallException('Method not supported for projects.');
+        $this->logger->warning(
+            'This repository does not support the expands api.',
+            ['repository' => static::class]
+        );
+
+        return parent::setExpands($expands, $clearAfterwards);
     }
 }
