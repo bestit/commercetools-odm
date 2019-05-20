@@ -22,9 +22,9 @@ use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Common\PriceDraft;
 use Commercetools\Core\Model\Common\PriceDraftCollection;
 use Commercetools\Core\Model\Common\Resource;
+use Commercetools\Core\Model\Customer\CustomerSigninResult;
 use Commercetools\Core\Model\CustomField\CustomFieldObject;
 use Commercetools\Core\Model\CustomField\FieldContainer;
-use Commercetools\Core\Model\Customer\CustomerSigninResult;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductDraft;
 use Commercetools\Core\Model\Product\ProductVariant;
@@ -43,10 +43,13 @@ use Psr\Log\NullLogger;
 use RuntimeException;
 use SplObjectStorage;
 use Traversable;
-use function Funct\Strings\upperCaseFirst;
+use function array_pad;
 use function array_walk;
 use function count;
+use function Funct\Strings\upperCaseFirst;
 use function get_class;
+use function is_array;
+use function is_scalar;
 use function is_string;
 use function memory_get_usage;
 use function method_exists;
@@ -702,7 +705,7 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function extractChanges(array $newData, $oldData, string $parentKey = ''): array
     {
-        if (is_string($oldData)) {
+        if (is_scalar($oldData)) {
             return $newData;
         }
 
@@ -710,23 +713,25 @@ class UnitOfWork implements UnitOfWorkInterface
 
         foreach ($newData as $key => $value) {
             // We use the name attribute to check for a nested set, because we do not have something else.
-            if (is_array($value) && $this->hasNestedArray($value)) {
-                $changedSubData = $this->extractChanges(
-                    $value,
-                    $oldData[$key] ?? [],
-                    ltrim($parentKey . '/' . $key, '/')
-                );
+            $isValueArray = is_array($value);
+            $oldDataHasKey = array_key_exists($key, $oldData);
+            $oldValue = $oldDataHasKey ? $oldData[$key] : [];
+
+            if ($isValueArray && $this->hasNestedArray($value)) {
+                $changedSubData = $this->extractChanges($value, $oldValue, ltrim($parentKey . '/' . $key, '/'));
 
                 // We think that an empty value can be ignored, except if we want to _add_ a new value.
-                if ($changedSubData || !array_key_exists($key, $oldData)) {
+                if ($changedSubData || !$oldDataHasKey) {
                     $changedData[$key] = $changedSubData;
                 }
-            } else {
-                if ((!array_key_exists($key, $oldData)) || (($value !== $oldData[$key]) &&
-                        // Sometimes the sdk parses an int to float.
-                        (!is_numeric($value) || ((float) $value !== (float) $oldData[$key])))
-                ) {
+            } else if ((!$oldDataHasKey) || ($value !== $oldValue)) {
+                // Sometimes the sdk parses an int to float.
+                if (!is_numeric($value) || ((float) $value !== (float) $oldValue)) {
                     $changedData[$key] = $value;
+
+                    if ($isValueArray && is_array($oldValue) && (count($value) < count($oldValue))) {
+                        $changedData[$key] = array_pad($changedData[$key], count($oldValue), null);
+                    }
                 }
             }
 

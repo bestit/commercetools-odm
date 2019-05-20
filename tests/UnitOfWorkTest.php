@@ -674,7 +674,7 @@ class UnitOfWorkTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $metadata = $this->getOneMockedMetadata($className = Product::class, false);
+        $this->getOneMockedMetadata($className = Product::class, false);
 
         /** @var Product $product */
         $this->fixture->registerAsManaged(
@@ -874,13 +874,13 @@ class UnitOfWorkTest extends TestCase
                                         'value' => $newAddedArray
                                     ],
                                     [
-                                        'value' => [1,2,3],
+                                        'value' => [1,2,3,],
                                     ],
                                     [
-                                        'value' => [2,3],
+                                        'value' => [2,3, null,],
                                     ],
                                     [
-                                        'value' => [],
+                                        'value' => [null,null,],
                                     ],
                                     5 => [
                                         'value' => 1.5

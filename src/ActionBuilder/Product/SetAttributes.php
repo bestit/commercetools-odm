@@ -9,11 +9,11 @@ use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
-use function Funct\Strings\upperCaseFirst;
 use function array_filter;
 use function array_key_exists;
 use function count;
 use function current;
+use function Funct\Strings\upperCaseFirst;
 use function is_array;
 use function ksort;
 
@@ -26,7 +26,9 @@ use function ksort;
 class SetAttributes extends ProductActionBuilder
 {
     /**
-     * @var string A PCRE to match the hierarchical field path without delimiter.
+     * A PCRE to match the hierarchical field path without delimiter.
+     *
+     * @var string
      */
     protected $complexFieldFilter = '^masterData/(current|staged)/(masterVariant|variants)/([\d]*)/?attributes$';
 
@@ -35,7 +37,7 @@ class SetAttributes extends ProductActionBuilder
      *
      * @todo Check if the name of the attr matches the oldattr if you just use the attrindex.
      *
-     * @param mixed $changedValue
+     * @param mixed|array $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
@@ -50,70 +52,45 @@ class SetAttributes extends ProductActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
-        list(, $productCatalogContainer, $variantContainer, $variantIndex) = $this->getLastFoundMatch();
-
         $actions = [];
-        $oldProductCatalogData = $oldData['masterData'][$productCatalogContainer];
-        $variants = $sourceObject->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getVariants();
+
+        list($oldAttrs, $variantId) = $this->getAttributesAndIdOfVariant($oldData);
 
         foreach ($changedValue as $attrIndex => $attr) {
-            if ($variantContainer === 'masterVariant') {
-                $oldAttrs = $oldProductCatalogData['masterVariant']['attributes'];
-                $variantId = 1;
-            } else {
-                $oldAttrs = $oldProductCatalogData[$variantContainer][$variantIndex]['attributes'];
-                $variantId = $oldProductCatalogData[$variantContainer][$variantIndex]['id'];
-            }
-
-            /** @var ProductSetAttributeAction|ProductSetAttributeInAllVariantsAction $action */
-            if ($variants && count($variants)) {
-                $action = ProductSetAttributeAction::ofVariantIdAndName(
-                    $variantId,
-                    $attr['name'] ?? $oldAttrs[$attrIndex]['name']
-                );
-            } else {
-                // Workaround against "variant duplication" error on a single master variant with no attr constraint
-                $action = ProductSetAttributeInAllVariantsAction::ofName(
-                    $attr['name'] ?? $oldAttrs[$attrIndex]['name']
-                );
-            }
-
-            $action->setStaged($productCatalogContainer === 'staged');
+            $action = $this->startAction($sourceObject, $variantId, $attr, $oldAttrs, $attrIndex);
 
             if ($attr && isset($attr['value'])) {
-                $attrValue = $attr['value'];
-
-                // TODO: Refactor this and enable more levels.
-                // We can only check for the name/value structure for a nested attribute, because the attribute
-                // definition must not be set every time.
-                if ((is_array($attrValue)) && (is_array(@$oldAttrs[$attrIndex]['value']))) {
-                    $isNested = $this->isNestedAttribute($oldAttrs[$attrIndex]);
-
-                    if ($isNested) {
-                        foreach ($attrValue as $subIndex => &$attrSubValue) {
-                            if (!@$attrSubValue['name']) {
-                                $attrSubValue['name'] = $oldAttrs[$attrIndex]['value'][$subIndex]['name'];
-                            }
-                        }
-                    }
-
-                    $attrValue = $attrValue + $oldAttrs[$attrIndex]['value'];
-
-                    $attrValue = array_filter($attrValue, function ($attrSubValue) {
-                        return $attrSubValue !== null;
-                    });
-
-                    ksort($attrValue);
-                }
-
-                $action->setValue($attrValue);
+                $action->setValue($this->loadActionValue($attr, $oldAttrs, $attrIndex));
             }
 
             $actions[] = $action;
         }
 
         return $actions;
+    }
+
+    /**
+     * Returns the attributes and the id of the changed variant.
+     *
+     * @param array $oldData
+     *
+     * @return array The first value is the old attribute collection and the second value is the variant id.
+     */
+    private function getAttributesAndIdOfVariant(array $oldData): array
+    {
+        // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
+        list(, $productCatalogContainer, $variantContainer, $variantIndex) = $this->getLastFoundMatch();
+
+        $oldProductCatalogData = $oldData['masterData'][$productCatalogContainer];
+        if ($variantContainer === 'masterVariant') {
+            $oldAttrs = $oldProductCatalogData['masterVariant']['attributes'];
+            $variantId = 1;
+        } else {
+            $oldAttrs = $oldProductCatalogData[$variantContainer][$variantIndex]['attributes'];
+            $variantId = $oldProductCatalogData[$variantContainer][$variantIndex]['id'];
+        }
+
+        return [$oldAttrs, $variantId];
     }
 
     /**
@@ -136,5 +113,75 @@ class SetAttributes extends ProductActionBuilder
         }
 
         return $isNested;
+    }
+
+    /**
+     * Loads the action value based on the old data of the variant.
+     *
+     * @param array $attr
+     * @param array $oldAttrs
+     * @param int $attrIndex
+     *
+     * @return array|mixed
+     */
+    private function loadActionValue(array $attr, array $oldAttrs, int $attrIndex)
+    {
+        $attrValue = $attr['value'];
+
+        // TODO: Refactor this and enable more levels.
+        // We can only check for the name/value structure for a nested attribute, because the attribute
+        // definition must not be set every time.
+        if ((is_array($attrValue)) && (is_array(@$oldAttrs[$attrIndex]['value']))) {
+            if ($this->isNestedAttribute($oldAttrs[$attrIndex])) {
+                foreach ($attrValue as $subIndex => &$attrSubValue) {
+                    if (!@$attrSubValue['name']) {
+                        $attrSubValue['name'] = $oldAttrs[$attrIndex]['value'][$subIndex]['name'];
+                    }
+                }
+            }
+
+            $attrValue = $attrValue + $oldAttrs[$attrIndex]['value'];
+
+            $attrValue = array_filter($attrValue, function ($attrSubValue) {
+                return $attrSubValue !== null;
+            });
+
+            ksort($attrValue);
+        }
+
+        return $attrValue;
+    }
+
+    /**
+     * Starts the change action for this variant.
+     *
+     * @param Product $product
+     * @param int $variantId
+     * @param array $attr
+     * @param array $oldVarAttrs
+     * @param int $attrIndex
+     *
+     * @return ProductSetAttributeAction|ProductSetAttributeInAllVariantsAction
+     */
+    private function startAction(Product $product, int $variantId, array $attr, array $oldVarAttrs, int $attrIndex)
+    {
+        // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
+        list(, $productCatalogContainer) = $this->getLastFoundMatch();
+
+        $variants = $product->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getVariants();
+
+        if ($variants && count($variants)) {
+            $action = ProductSetAttributeAction::ofVariantIdAndName(
+                $variantId,
+                $attr['name'] ?? $oldVarAttrs[$attrIndex]['name']
+            );
+        } else {
+            // Workaround against "variant duplication" error on a single master variant with no attr constraint
+            $action = ProductSetAttributeInAllVariantsAction::ofName(
+                $attr['name'] ?? $oldVarAttrs[$attrIndex]['name']
+            );
+        }
+
+        return $action->setStaged($productCatalogContainer === 'staged');
     }
 }

@@ -160,6 +160,8 @@ Die USB-Schnittstelle an der Rückseite des Gerätes bietet die Möglichkeit, So
                                             'name' => 'bonusPrograms',
                                             'value' =>
                                                 [
+                                                    '123456',
+                                                    '34567890',
                                                 ],
                                         ],
                                     19 =>
@@ -948,6 +950,8 @@ Die USB-Schnittstelle an der Rückseite des Gerätes bietet die Möglichkeit, So
                                             'name' => 'bonusPrograms',
                                             'value' =>
                                                 [
+                                                    '123456',
+                                                    '34567890',
                                                 ],
                                         ],
                                     19 =>

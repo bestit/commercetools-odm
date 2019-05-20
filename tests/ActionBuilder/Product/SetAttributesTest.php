@@ -346,6 +346,65 @@ class SetAttributesTest extends TestCase
     }
 
     /**
+     * Checks if a simple array is overwritten correctly.
+     *
+     * @dataProvider getCatalogs
+     *
+     * @param string $container
+     * @param bool $staged
+     *
+     * @return void
+     */
+    public function testCreateUpdateActionsForMasterVariantArrayOverwriteSimple(string $container, bool $staged = false)
+    {
+        $this->fixture->supports("masterData/{$container}/masterVariant/attributes", Product::class);
+
+        $actions = $this->fixture->createUpdateActions(
+            [
+                18 => [
+                    'value' => [
+                        'abcdef',
+                        null,
+                    ],
+                ],
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [
+                'attributes' => [
+                    18 => [
+                        'value' => [
+                            'abcdef',
+                            null
+                        ],
+                    ],
+                ],
+            ],
+            include realpath(__DIR__ . '/_mocks/attributes/old_data_for_array_merge.php'),
+            Product::fromArray(['masterData' => [$container => []]])
+        );
+
+        static::assertCount(1, $actions, 'Wrong action count.');
+
+        /** @var $action1 ProductSetAttributeInAllVariantsAction */
+        static::assertInstanceOf(
+            ProductSetAttributeInAllVariantsAction::class,
+            $action1 = $actions[0],
+            'Wrong instance. (1)'
+        );
+
+        static::assertSame('bonusPrograms', $action1->getName(), 'Wrong name. (1)');
+        static::assertSame($staged, $action1->getStaged(), 'Staged wrongly set. (1)');
+
+        static::assertSame(
+            [
+                'abcdef',
+            ],
+            $action1->getValue(),
+            'Wrong value. (1)'
+        );
+    }
+
+    /**
      * Checks if a nested master variant attribute and its difference to arrays can be changed.
      *
      * @dataProvider getCatalogs
