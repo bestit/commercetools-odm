@@ -17,6 +17,7 @@ use Commercetools\Core\Request\Carts\CartUpdateRequest;
 use Commercetools\Core\Request\Carts\Command\CartRecalculateAction;
 use Commercetools\Core\Response\ApiResponseInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -134,6 +135,9 @@ class CartRepositoryTest extends TestCase
             $this->createMock(PoolInterface::class)
         );
 
+        $logger = $this->createMock(LoggerInterface::class);
+        $fixture->setLogger($logger);
+
         $id = (string) random_int(1000, 9999);
         $version = random_int(1000, 9999);
 
@@ -181,6 +185,10 @@ class CartRepositoryTest extends TestCase
                     return $result;
                 }
             );
+
+        $logger
+            ->expects(static::once())
+            ->method('error');
 
         $this->expectException(RuntimeException::class);
         $fixture->recalculateCart($cart);
