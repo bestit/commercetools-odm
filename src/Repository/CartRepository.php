@@ -94,7 +94,14 @@ class CartRepository extends DefaultRepository
         list($response) = $this->processQuery($request);
 
         if (!$response instanceof Cart) {
-            throw new RuntimeException('Invalid response.');
+            $this->logger->error('Unexpected response for cart recalculation', [
+                'cartId' => $id,
+                'version' => $version,
+                'updateProductData' => $updateProductData,
+                'response' => $response
+            ]);
+
+            throw new RuntimeException('Unexpected response for cart recalculation');
         }
 
         $this->getDocumentManager()->getUnitOfWork()->registerAsManaged(
