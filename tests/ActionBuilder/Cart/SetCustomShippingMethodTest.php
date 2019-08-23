@@ -132,6 +132,94 @@ class SetCustomShippingMethodTest extends TestCase
     }
 
     /**
+     * Checks if a action will created without shipping info property
+     *
+     * @return void
+     */
+    public function testBuildActionWithoutShippingInfo()
+    {
+        $cart = new Cart();
+
+        $changedData = [
+            'shippingMethodState' => 'IsCustomShippingMethod',
+            'shippingMethodName' => 'Foobar',
+            'shippingRate' => [
+                'price' => [
+                    'centAmount' => 599,
+                    'currency' => 'EUR'
+                ]
+            ],
+            'taxCategory' => [
+                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65'
+            ],
+        ];
+
+        $oldData = [];
+
+        /** @var CartAddLineItemAction[] $actions */
+        $actions = $this->fixture->createUpdateActions(
+            uniqid(),
+            static::createMock(ClassMetadataInterface::class),
+            $changedData,
+            $oldData,
+            $cart
+        );
+
+        $action = CartSetCustomShippingMethodAction::of();
+        $action->setShippingMethodName($changedData['shippingMethodName']);
+        $action->setShippingRate(ShippingRate::fromArray($changedData['shippingRate']));
+        $action->setTaxCategory(TaxCategoryReference::ofId($changedData['taxCategory']['id']));
+
+        static::assertCount(1, $actions);
+        static::assertEquals($action, $actions[0]);
+    }
+
+    /**
+     * Checks if a action will created without content in shipping info
+     *
+     * @return void
+     */
+    public function testBuildActionWithoutShippingInfoContent()
+    {
+        $cart = new Cart();
+
+        $changedData = [
+            'shippingMethodState' => 'IsCustomShippingMethod',
+            'shippingMethodName' => 'Foobar',
+            'shippingRate' => [
+                'price' => [
+                    'centAmount' => 599,
+                    'currency' => 'EUR'
+                ]
+            ],
+            'taxCategory' => [
+                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65'
+            ],
+        ];
+
+        $oldData = [
+            'shippingInfo' => []
+        ];
+
+        /** @var CartAddLineItemAction[] $actions */
+        $actions = $this->fixture->createUpdateActions(
+            uniqid(),
+            static::createMock(ClassMetadataInterface::class),
+            $changedData,
+            $oldData,
+            $cart
+        );
+
+        $action = CartSetCustomShippingMethodAction::of();
+        $action->setShippingMethodName($changedData['shippingMethodName']);
+        $action->setShippingRate(ShippingRate::fromArray($changedData['shippingRate']));
+        $action->setTaxCategory(TaxCategoryReference::ofId($changedData['taxCategory']['id']));
+
+        static::assertCount(1, $actions);
+        static::assertEquals($action, $actions[0]);
+    }
+
+    /**
      * Checks if a action will created with merged old data
      *
      * @return void

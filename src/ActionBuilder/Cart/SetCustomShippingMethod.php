@@ -52,11 +52,12 @@ class SetCustomShippingMethod extends CartActionBuilder
         $actions = [];
 
         if (($state = $changedData['shippingMethodState'] ?? null) === static::IS_CUSTOM) {
-            $origin = $oldData['shippingInfo'];
+            $origin = $oldData['shippingInfo'] ?? [];
+
             $info = [
-                'shippingMethodName' => $changedData['shippingMethodName'] ?? $origin['shippingMethodName'],
-                'shippingRate' => array_replace_recursive($origin['shippingRate'], $changedData['shippingRate'] ?? []),
-                'taxCategory' => array_replace_recursive($origin['taxCategory'], $changedData['taxCategory'] ?? []),
+                'shippingMethodName' => $changedData['shippingMethodName'] ?? $origin['shippingMethodName'] ?? '',
+                'shippingRate' => array_replace_recursive($origin['shippingRate'] ?? [], $changedData['shippingRate'] ?? []),
+                'taxCategory' => array_replace_recursive($origin['taxCategory'] ?? [], $changedData['taxCategory'] ?? []),
             ];
 
             $action = CartSetCustomShippingMethodAction::of();
