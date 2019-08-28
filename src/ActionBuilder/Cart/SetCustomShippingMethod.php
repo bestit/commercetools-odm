@@ -60,6 +60,10 @@ class SetCustomShippingMethod extends CartActionBuilder
                 'taxCategory' => array_replace_recursive($origin['taxCategory'] ?? [], $changedData['taxCategory'] ?? []),
             ];
 
+            if (!isset($info['shippingRate']['price']['centAmount'])) {
+                $info['shippingRate']['price']['centAmount'] = 0;
+            }
+
             $action = CartSetCustomShippingMethodAction::of();
             $action->setShippingMethodName($info['shippingMethodName']);
             $action->setShippingRate(ShippingRate::fromArray($info['shippingRate']));
