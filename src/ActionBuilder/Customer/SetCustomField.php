@@ -49,6 +49,10 @@ class SetCustomField extends CustomerActionBuilder
             $changedValue = new DateTimeDecorator($changedValue);
         }
 
+        if (is_array($changedValue)) {
+            $changedValue = array_filter($changedValue);
+        }
+
         $action = SetCustomFieldAction::ofName($field);
 
         if ($changedValue !== null) {
