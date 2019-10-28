@@ -1,6 +1,6 @@
 <?php
 
-namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType;
+namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Customer;
 
 use BestIt\CommercetoolsODM\ActionBuilder\Customer\CustomerActionBuilder;
 use BestIt\CommercetoolsODM\ActionBuilder\Customer\SetCustomField;
@@ -20,7 +20,7 @@ use PHPUnit_Framework_MockObject_MockObject;
  * @author lange <lange@bestit-online.de>
  * @category Tests
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
- * @subpackage ActionBuilder\ProductType
+ * @subpackage ActionBuilder\Customer
  */
 class SetCustomFieldTest extends TestCase
 {
@@ -133,6 +133,33 @@ class SetCustomFieldTest extends TestCase
         $this->assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
         $this->assertSame($field, $actions[0]->getName());
         $this->assertSame($value, $actions[0]->getValue());
+    }
+
+    /**
+     * Checks if a simple action is created.
+     *
+     * @return void
+     */
+    public function testCreateUpdateActionsArray()
+    {
+        $customer = new Customer();
+
+        $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
+
+        $actions = $this->fixture->createUpdateActions(
+            [$value1 = uniqid(), null, $value2 = uniqid()],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            $customer
+        );
+
+        static::assertCount(1, $actions);
+        static::assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
+        static::assertSame($field, $actions[0]->getName());
+
+        // Keys should be kept to avoid damaged associative array's
+        static::assertSame([0 => $value1, 2 => $value2], $actions[0]->getValue());
     }
 
     /**
