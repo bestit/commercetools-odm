@@ -8,11 +8,13 @@ use BestIt\CommercetoolsODM\Event\ListenersInvoker;
 use BestIt\CommercetoolsODM\Event\OnFlushEventArgs;
 use BestIt\CommercetoolsODM\Exception\APIException;
 use BestIt\CommercetoolsODM\Exception\ConflictException;
+use BestIt\CommercetoolsODM\Exception\ConnectException;
 use BestIt\CommercetoolsODM\Exception\NotFoundException;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
+use Commercetools\Core\Error\ApiException as CtApiException;
 use Commercetools\Core\Model\Cart\CartDraft;
 use Commercetools\Core\Model\Common\AbstractJsonDeserializeObject;
 use Commercetools\Core\Model\Common\AssetDraft;
@@ -806,8 +808,14 @@ class UnitOfWork implements UnitOfWorkInterface
             ['memory' => memory_get_usage(true) / 1024 / 1024]
         );
 
-        if ($batchResponses = $this->getClient()->executeBatch()) {
-            $this->processResponsesFromBatch($batchResponses);
+        try {
+            if ($batchResponses = $this->getClient()->executeBatch()) {
+                $this->processResponsesFromBatch($batchResponses);
+            }
+        } catch (CtApiException $exception) {
+            if (stripos($exception->getMessage(), 'Error completing request') !== false) {
+                throw new ConnectException($exception->getMessage(), $exception->getCode(), $exception);
+            }
         }
 
         $this->cleanQueue();

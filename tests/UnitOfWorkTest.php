@@ -13,6 +13,7 @@ use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Event\LifecycleEventArgs;
 use BestIt\CommercetoolsODM\Event\ListenersInvoker;
 use BestIt\CommercetoolsODM\Events;
+use BestIt\CommercetoolsODM\Exception\ConnectException as OdmConnectException;
 use BestIt\CommercetoolsODM\Exception\NotFoundException;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
@@ -46,9 +47,11 @@ use Commercetools\Core\Request\Orders\OrderDeleteRequest;
 use Commercetools\Core\Request\ProductTypes\ProductTypeCreateRequest;
 use DateTime;
 use Doctrine\Common\EventManager;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
+use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerAwareTrait;
 use ReflectionClass;
 use RuntimeException;
@@ -1101,6 +1104,32 @@ class UnitOfWorkTest extends TestCase
                         __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_notfound_response.json'
                     )
                 );
+            }
+        ));
+
+        $this->fixture->flush();
+
+        static::assertSame(
+            0,
+            $this->fixture->countRemovals(),
+            'The object should be removed.'
+        );
+    }
+
+    /**
+     * Checks if correct exception will be thrown for connection errors
+     *
+     * @return void
+     */
+    public function testConnectionError()
+    {
+        $this->expectException(OdmConnectException::class);
+
+        $this->prepareRemovalOfOneOrder(false);
+
+        $this->fixture->setClient($this->getClientWithResponses(
+            function () {
+                return new ConnectException('foo', $this->createMock(RequestInterface::class));
             }
         ));
 
