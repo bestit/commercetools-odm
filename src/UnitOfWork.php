@@ -726,14 +726,13 @@ class UnitOfWork implements UnitOfWorkInterface
                 if ($changedSubData || !$oldDataHasKey) {
                     $changedData[$key] = $changedSubData;
                 }
-            } else if ((!$oldDataHasKey) || ($value !== $oldValue)) {
-                // Sometimes the sdk parses an int to float.
-                if (!is_numeric($value) || ((float) $value !== (float) $oldValue)) {
-                    $changedData[$key] = $value;
 
-                    if ($isValueArray && is_array($oldValue) && (count($value) < count($oldValue))) {
-                        $changedData[$key] = array_pad($changedData[$key], count($oldValue), null);
-                    }
+            // Sometimes the sdk parses an int to float.
+            } else if ((!$oldDataHasKey) || (($value !== $oldValue) && (!is_numeric($value) || ((float) $value !== (float) $oldValue)))) { // phpcs:ignore
+                $changedData[$key] = $value;
+
+                if ($isValueArray && is_array($oldValue) && (count($value) < count($oldValue))) {
+                    $changedData[$key] = array_pad($changedData[$key], count($oldValue), null);
                 }
             }
 
