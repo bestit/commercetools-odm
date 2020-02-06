@@ -146,6 +146,20 @@ return [
             ->setUpdateByKey(\Commercetools\Core\Request\ShoppingLists\ShoppingListUpdateByKeyRequest::class),
     ],
 
+    \Commercetools\Core\Model\Subscription\Subscription::class => [
+        'draft' => \Commercetools\Core\Model\Subscription\SubscriptionDraft::class,
+        'repository' => \BestIt\CommercetoolsODM\Model\DefaultRepository::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Subscriptions\SubscriptionCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Subscriptions\SubscriptionDeleteRequest::class)
+            ->setDeleteByKey(\Commercetools\Core\Request\Subscriptions\SubscriptionDeleteByKeyRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Subscriptions\SubscriptionByIdGetRequest::class)
+            ->setFindByKey(\Commercetools\Core\Request\Subscriptions\SubscriptionByKeyGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Subscriptions\SubscriptionQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Subscriptions\SubscriptionUpdateRequest::class)
+            ->setUpdateByKey(\Commercetools\Core\Request\Subscriptions\SubscriptionUpdateByKeyRequest::class),
+    ],
+
     \Commercetools\Core\Model\Zone\Zone::class => [
         'draft' => \Commercetools\Core\Model\Zone\ZoneDraft::class,
         'requestClassMap' => (new RequestMap())
