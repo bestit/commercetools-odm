@@ -6,6 +6,7 @@ use ArrayObject;
 use Commercetools\Core\Client;
 use Commercetools\Core\Client\OAuth\Manager;
 use Commercetools\Core\Client\OAuth\Token;
+use Commercetools\Core\Config;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -83,12 +84,20 @@ trait TestClientTrait
      */
     protected function getTestClient(array $responses): PHPUnit_Framework_MockObject_MockObject
     {
+        $config = Config::fromArray([
+            'clientId' => uniqid(),
+            'clientSecret' => uniqid(),
+            'project' => uniqid()
+        ]);
+
         $authMock = $this->createPartialMock(Manager::class, ['getToken']);
+        $authMock->setConfig($config);
         $authMock
             ->method('getToken')
             ->will($this->returnValue(new Token(uniqid())));
 
         $client = $this->createPartialMock(Client::class, ['getOauthManager']);
+        $client->setConfig($config);
 
         $client
             ->method('getOauthManager')

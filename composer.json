@@ -21,7 +21,7 @@
         "php": "^7.0",
         "ext-intl": "^1.1",
         "commercetools/commons": "^0.2",
-        "commercetools/php-sdk": "^1.4 || ^2.0",
+        "commercetools/php-sdk": "^2.6",
         "doctrine/common": "^2.6",
         "funct/funct": "^1.0",
         "bestit/commercetools-async-pool": "^2 || ^3",
