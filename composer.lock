@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "887c882055144b7eebde1e3bce53a1ff",
+    "content-hash": "cce1db2fd01fdf9d6baf8ffacdc84d9d",
     "packages": [
         {
             "name": "bestit/commercetools-async-pool",
@@ -2687,7 +2687,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.0",
-        "ext-intl": "^1.1",
+        "ext-intl": "*",
         "ext-fileinfo": "*"
     },
     "platform-dev": []

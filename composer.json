@@ -19,7 +19,7 @@
     "type": "lib",
     "require": {
         "php": "^7.0",
-        "ext-intl": "^1.1",
+        "ext-intl": "*",
         "commercetools/commons": "^0.2",
         "commercetools/php-sdk": "^2.6",
         "doctrine/common": "^2.6",
