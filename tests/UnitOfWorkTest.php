@@ -15,6 +15,7 @@ use BestIt\CommercetoolsODM\Event\ListenersInvoker;
 use BestIt\CommercetoolsODM\Events;
 use BestIt\CommercetoolsODM\Exception\ConnectException as OdmConnectException;
 use BestIt\CommercetoolsODM\Exception\NotFoundException;
+use BestIt\CommercetoolsODM\Exception\RemoveCategoryException;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Field;
@@ -23,6 +24,7 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\UnitOfWork\TestCustomEntity;
 use BestIt\CommercetoolsODM\UnitOfWork;
 use BestIt\CommercetoolsODM\UnitOfWorkInterface;
+use Commercetools\Core\Client;
 use Commercetools\Core\Model\Cart\LineItem;
 use Commercetools\Core\Model\Category\CategoryReference;
 use Commercetools\Core\Model\Common\Address;
@@ -43,8 +45,10 @@ use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Model\ProductType\ProductTypeDraft;
 use Commercetools\Core\Model\ProductType\ProductTypeReference;
 use Commercetools\Core\Model\TaxCategory\TaxCategoryReference;
+use Commercetools\Core\Request\ClientRequestInterface;
 use Commercetools\Core\Request\Orders\OrderDeleteRequest;
 use Commercetools\Core\Request\ProductTypes\ProductTypeCreateRequest;
+use Commercetools\Core\Response\ErrorResponse;
 use DateTime;
 use Doctrine\Common\EventManager;
 use GuzzleHttp\Exception\ConnectException;
@@ -52,6 +56,7 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareTrait;
 use ReflectionClass;
 use RuntimeException;
@@ -1132,6 +1137,39 @@ class UnitOfWorkTest extends TestCase
                 return new ConnectException('foo', $this->createMock(RequestInterface::class));
             }
         ));
+
+        $this->fixture->flush();
+
+        static::assertSame(
+            0,
+            $this->fixture->countRemovals(),
+            'The object should be removed.'
+        );
+    }
+
+    /**
+     * Checks if correct exception will be thrown for remove category errors
+     *
+     * @return void
+     */
+    public function testRemoveCategoryError()
+    {
+        $this->expectException(RemoveCategoryException::class);
+
+        $this->prepareRemovalOfOneOrder(false);
+
+        $client = $this->createMock(Client::class);
+        $this->fixture->setClient($client);
+
+        $response = $this->createMock(ErrorResponse::class);
+        $response->method('getRequest')->willReturn($this->createMock(ClientRequestInterface::class));
+        $response->method('getResponse')->willReturn($this->createMock(ResponseInterface::class));
+        $response->method('getMessage')->willReturn('Cannot remove from category foobar');
+        $response->method('getStatusCode')->willReturn(400);
+
+        $client
+            ->method('executeBatch')
+            ->willReturn([$response]);
 
         $this->fixture->flush();
 

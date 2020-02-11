@@ -10,6 +10,7 @@ use BestIt\CommercetoolsODM\Exception\APIException;
 use BestIt\CommercetoolsODM\Exception\ConflictException;
 use BestIt\CommercetoolsODM\Exception\ConnectException;
 use BestIt\CommercetoolsODM\Exception\NotFoundException;
+use BestIt\CommercetoolsODM\Exception\RemoveCategoryException;
 use BestIt\CommercetoolsODM\Helper\EventManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\ListenerInvokerAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
@@ -952,8 +953,13 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         if ($response instanceof ErrorResponse) {
             $status = $response->getStatusCode();
+            $message = $response->getMessage();
 
             switch (true) {
+                case stripos($message, 'Cannot remove from category') !== false:
+                    $class = RemoveCategoryException::class;
+                    break;
+
                 case $status === 404:
                     $class = NotFoundException::class;
                     break;
