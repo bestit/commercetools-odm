@@ -23,6 +23,7 @@ return [
             ->setCreate(\Commercetools\Core\Request\Categories\CategoryCreateRequest::class)
             ->setDeleteById(\Commercetools\Core\Request\Categories\CategoryDeleteRequest::class)
             ->setFindById(\Commercetools\Core\Request\Categories\CategoryByIdGetRequest::class)
+            ->setFindByKey(\Commercetools\Core\Request\Categories\CategoryByKeyGetRequest::class)
             ->setQuery(\Commercetools\Core\Request\Categories\CategoryQueryRequest::class)
             ->setUpdateById(\Commercetools\Core\Request\Categories\CategoryUpdateRequest::class)
     ],

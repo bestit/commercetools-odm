@@ -1,26 +1,24 @@
 <?php
 
-namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Customer;
+declare(strict_types=1);
 
-use BestIt\CommercetoolsODM\ActionBuilder\Customer\CustomerActionBuilder;
-use BestIt\CommercetoolsODM\ActionBuilder\Customer\SetCustomField;
+namespace BestIt\CommercetoolsODM\Tests\ActionBuilder\Category;
+
+use BestIt\CommercetoolsODM\ActionBuilder\Category\CategoryActionBuilder;
+use BestIt\CommercetoolsODM\ActionBuilder\Category\SetCustomField;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
-use Commercetools\Core\Model\Common\DateTimeDecorator;
-use Commercetools\Core\Model\Customer\Customer;
-use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Category\Category;
 use Commercetools\Core\Request\CustomField\Command\SetCustomFieldAction;
-use DateTime;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Tests SetCustomField.
  *
- * @author lange <lange@bestit-online.de>
  * @category Tests
- * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Customer
- * @subpackage ActionBuilder\Customer
+ * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\Category
+ * @subpackage ActionBuilder\Category
  */
 class SetCustomFieldTest extends TestCase
 {
@@ -34,23 +32,6 @@ class SetCustomFieldTest extends TestCase
     protected $fixture = null;
 
     /**
-     * Returns an array with the assertions for the support method.
-     *
-     * The First Element is the field path, the second element is the reference class and the optional third value
-     * indicates the return value of the support method.
-     *
-     * @return array
-     */
-    public function getSupportAssertions(): array
-    {
-        return [
-            ['custom/fields/bob', Customer::class, true],
-            ['custom/bob/', Customer::class],
-            ['custom/fields/bob', Product::class],
-        ];
-    }
-
-    /**
      * Sets up the test.
      *
      * @return void
@@ -61,28 +42,44 @@ class SetCustomFieldTest extends TestCase
     }
 
     /**
+     * Returns an array with the assertions for the support method.
+     *
+     * The First Element is the field path, the second element is the reference class and the optional third value
+     * indicates the return value of the support method.
+     *
+     * @return array
+     */
+    public function getSupportAssertions(): array
+    {
+        return [
+            ['custom/fields/bob', Category::class, true],
+            ['custom/bob/', Category::class, false],
+        ];
+    }
+
+    /**
      * Checks if a simple action is created.
      *
      * @return void
      */
-    public function testCreateUpdateActionsDatetime()
+    public function testCreateUpdateActionsString()
     {
-        $customer = new Customer();
+        $category = new Category();
 
         $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
 
         $actions = $this->fixture->createUpdateActions(
-            $value = new DateTime(),
+            $value = 'some value',
             $this->createMock(ClassMetadataInterface::class),
             [],
             [],
-            $customer
+            $category
         );
 
         $this->assertCount(1, $actions);
         $this->assertInstanceOf(SetCustomFieldAction::class, $actions[0]);
         $this->assertSame($field, $actions[0]->getName());
-        $this->assertInstanceOf(DateTimeDecorator::class, $actions[0]->getValue());
+        $this->assertSame($value, $actions[0]->getValue());
     }
 
     /**
@@ -92,7 +89,7 @@ class SetCustomFieldTest extends TestCase
      */
     public function testCreateUpdateActionsNull()
     {
-        $customer = new Customer();
+        $category = new Category();
 
         $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
 
@@ -101,7 +98,7 @@ class SetCustomFieldTest extends TestCase
             $this->createMock(ClassMetadataInterface::class),
             [],
             [],
-            $customer
+            $category
         );
 
         $this->assertCount(1, $actions);
@@ -117,7 +114,7 @@ class SetCustomFieldTest extends TestCase
      */
     public function testCreateUpdateActionsScalar()
     {
-        $customer = new Customer();
+        $category = new Category();
 
         $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
 
@@ -126,7 +123,7 @@ class SetCustomFieldTest extends TestCase
             $this->createMock(ClassMetadataInterface::class),
             [],
             [],
-            $customer
+            $category
         );
 
         $this->assertCount(1, $actions);
@@ -142,7 +139,7 @@ class SetCustomFieldTest extends TestCase
      */
     public function testCreateUpdateActionsArray()
     {
-        $customer = new Customer();
+        $category = new Category();
 
         $this->fixture->setLastFoundMatch([uniqid(), $field = uniqid()]);
 
@@ -151,7 +148,7 @@ class SetCustomFieldTest extends TestCase
             $this->createMock(ClassMetadataInterface::class),
             [],
             [],
-            $customer
+            $category
         );
 
         static::assertCount(1, $actions);
@@ -169,6 +166,6 @@ class SetCustomFieldTest extends TestCase
      */
     public function testInstance()
     {
-        $this->assertInstanceOf(CustomerActionBuilder::class, $this->fixture);
+        $this->assertInstanceOf(CategoryActionBuilder::class, $this->fixture);
     }
 }

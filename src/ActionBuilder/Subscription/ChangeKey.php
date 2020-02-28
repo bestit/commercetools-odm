@@ -9,7 +9,7 @@ use Commercetools\Core\Request\Subscriptions\Command\SubscriptionSetKeyAction;
 
 /**
  * Reacts on the change of the key field and creates the update action.
- * 
+ *
  * @author Michel Chowanski <michel.chowanski@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Subscription
  */
