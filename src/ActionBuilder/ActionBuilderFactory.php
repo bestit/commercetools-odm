@@ -60,7 +60,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
      *
      * @param ClassMetadataInterface $classMetadata
      * @param string $fieldPath The hierarchical path of the fields.
-     * @param object $sourceObject
+     * @param mixed $sourceObject
      *
      * @return ActionBuilderInterface[]
      */
@@ -109,7 +109,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
      *
      * @return array
      */
-    private function loadActionBuilders():array
+    private function loadActionBuilders(): array
     {
         $cachePool = $this->getCacheItemPool();
         $cacheHit = $cachePool->getItem($cacheKey = sha1(__METHOD__));
@@ -120,7 +120,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
 
             array_walk(
                 $classPaths,
-                function (string $path, string $namespace) use (&$allBuilders, $cacheHit) {
+                function (string $path, string $namespace) use (&$allBuilders) {
                     $path = realpath($path);
 
                     if ($path) {

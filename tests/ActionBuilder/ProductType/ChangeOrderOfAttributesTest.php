@@ -231,6 +231,11 @@ class ChangeOrderOfAttributesTest extends TestCase
         static::assertInstanceOf(ProductTypeActionBuilder::class, $this->fixture);
     }
 
+    /**
+     * Checks if the priority is called.
+     *
+     * @return void
+     */
     public function testPriority()
     {
         static::assertEquals(-255, (new ChangeOrderOfAttributes())->getPriority());

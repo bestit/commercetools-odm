@@ -40,7 +40,7 @@ $repository = $documentManager->getRepository(\Commercetools\Core\Model\Product\
 
 // Fetch it from the database or create a new instance.
 /** @var \Commercetools\Core\Model\Product\Product $product */
-$product = $repository->findByKey($xml->AARTNR) ??
+$product = $repository->findByKey($key) ??
     $documentManager->getClassMetadata(\Commercetools\Core\Model\Product\Product::class)->getNewInstance();
 
 // Do your work.
@@ -50,7 +50,10 @@ if (!$product->getId()) {
         // ....
 }
 
-// ... more work
+// You get automatic but simple 409 conflict resolution if you use  this callback. If not, 409s lead to an exception. 
+$documentManager->modify($product, function(\Commercetools\Core\Model\Product\Product $product) {
+    $product->setKey('new-key');
+});
 
 // Persist the changes
 $documentManager->persist($product);

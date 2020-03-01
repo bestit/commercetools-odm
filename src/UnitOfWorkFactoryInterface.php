@@ -19,5 +19,5 @@ interface UnitOfWorkFactoryInterface extends LoggerAwareInterface
      *
      * @return UnitOfWorkInterface
      */
-    public function getUnitOfWork(DocumentManagerInterface $documentManager) : UnitOfWorkInterface;
+    public function getUnitOfWork(DocumentManagerInterface $documentManager): UnitOfWorkInterface;
 }

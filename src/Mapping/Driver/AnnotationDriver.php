@@ -151,7 +151,7 @@ class AnnotationDriver extends BasicDriver
      *
      * @return AnnotationDriver
      */
-    private function loadFieldMappings(SpecialClassMetadataInterface $metadata):AnnotationDriver
+    private function loadFieldMappings(SpecialClassMetadataInterface $metadata): AnnotationDriver
     {
         $customTypeFields = [];
         $reader = $this->getReader();

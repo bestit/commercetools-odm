@@ -100,7 +100,7 @@ class DocumentManager implements DocumentManagerInterface
     /**
      * Checks if the $document is part of the current UnitOfWork and therefore managed.
      *
-     * @param object $document
+     * @param mixed $document
      *
      * @return bool
      */
@@ -134,7 +134,7 @@ class DocumentManager implements DocumentManagerInterface
      * Objects which previously referenced the detached object will continue to
      * reference it.
      *
-     * @param object $object The object to detach.
+     * @param mixed $object The object to detach.
      *
      * @return void
      */
@@ -146,7 +146,7 @@ class DocumentManager implements DocumentManagerInterface
     /**
      * Detaches the given object after flush.
      *
-     * @param object $object
+     * @param mixed $object
      *
      * @return void
      */
@@ -160,11 +160,11 @@ class DocumentManager implements DocumentManagerInterface
      *
      * This is just a convenient shortcut for getRepository($className)->find($id).
      *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
-     *
      * @param string $className The class name of the object to find.
      * @param mixed $id The identity of the object to find.
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
      *
      * @return mixed The found object.
      */
@@ -217,6 +217,8 @@ class DocumentManager implements DocumentManagerInterface
 
     /**
      * Returns the full qualified class name for the given request type.
+     *
+     * @todo Remove out of this class!
      *
      * @param string $className The class name for which the request is fetched.
      * @param string $requestType The type of the request or the request class name it self.
@@ -275,7 +277,7 @@ class DocumentManager implements DocumentManagerInterface
      *
      * This method is a no-op for other objects.
      *
-     * @param object $obj
+     * @param mixed $obj
      *
      * @return void
      */
@@ -301,6 +303,19 @@ class DocumentManager implements DocumentManagerInterface
     }
 
     /**
+     * This method uses a callback to modify the given object to get conflict resolution in case of a 409 error.
+     *
+     * @param mixed $object
+     * @param callable $change The callback is called with the given object.
+     *
+     * @return mixed Returns the changed object.
+     */
+    public function modify($object, callable $change)
+    {
+        return $this->getUnitOfWork()->modify($object, $change);
+    }
+
+    /**
      * Tells the ObjectManager to make an instance managed and persistent.
      *
      * The object will be entered into the database as a result of the flush operation.
@@ -308,7 +323,7 @@ class DocumentManager implements DocumentManagerInterface
      * NOTE: The persist operation always considers objects that are not yet known to
      * this ObjectManager as NEW. Do not pass detached objects to the persist operation.
      *
-     * @param object $object The instance to make managed and persistent.
+     * @param mixed $object The instance to make managed and persistent.
      *
      * @return void
      */
@@ -321,9 +336,9 @@ class DocumentManager implements DocumentManagerInterface
      * Refreshes the persistent state of an object from the database,
      * overriding any local changes that have not yet been persisted.
      *
-     * @param object $object The object to refresh.
-     * @param object $overwrite Commercetools returns a representation of the objectfor many update actions, so use
-     * this respons directly.
+     * @param mixed $object The object to refresh.
+     * @param mixed $overwrite Commercetools returns a representation of the object for many update actions, so use
+     * this responds directly.
      * @return void
      */
     public function refresh($object, $overwrite = null)
@@ -336,7 +351,7 @@ class DocumentManager implements DocumentManagerInterface
      *
      * A removed object will be removed from the database as a result of the flush operation.
      *
-     * @param object $object The object instance to remove.
+     * @param mixed $object The object instance to remove.
      *
      * @return void
      */

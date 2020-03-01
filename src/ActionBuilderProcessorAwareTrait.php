@@ -15,9 +15,9 @@ trait ActionBuilderProcessorAwareTrait
     /**
      * The processor to build update actions.
      *
-     * @var ActionBuilderProcessorInterface
+     * @var ActionBuilderProcessorInterface|null
      */
-    private $actionBuilderProcessor = null;
+    private $actionBuilderProcessor;
 
     /**
      * Returns the processor to build update actions.
