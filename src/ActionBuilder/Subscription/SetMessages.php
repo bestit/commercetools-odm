@@ -11,7 +11,7 @@ use Commercetools\Core\Request\Subscriptions\Command\SubscriptionSetMessagesActi
 
 /**
  * Reacts on the change of the messages field and creates the update action.
- * 
+ *
  * @author Michel Chowanski <michel.chowanski@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Subscription
  */

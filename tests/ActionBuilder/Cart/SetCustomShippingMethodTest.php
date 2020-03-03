@@ -258,12 +258,13 @@ class SetCustomShippingMethodTest extends TestCase
         $action->setShippingMethodName($changedData['shippingMethodName']);
         $action->setShippingRate(
             ShippingRate::fromArray(
-            [
-                'price' => [
-                    'centAmount' => 0,
-                    'currency' => 'EUR',
+                [
+                    'price' => [
+                        'centAmount' => 0,
+                        'currency' => 'EUR',
+                    ]
                 ]
-            ])
+            )
         );
         $action->setTaxCategory(TaxCategoryReference::ofId($changedData['taxCategory']['id']));
 
