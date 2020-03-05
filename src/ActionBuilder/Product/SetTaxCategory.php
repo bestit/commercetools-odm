@@ -26,8 +26,6 @@ class SetTaxCategory extends ProductActionBuilder
     /**
      * Creates the update actions for the given class and data.
      *
-     * @todo The documentation does not tell of the staged param in the action. what does that mean?
-     *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
@@ -35,6 +33,8 @@ class SetTaxCategory extends ProductActionBuilder
      * @param mixed $sourceObject
      *
      * @return AbstractAction[]
+     * @todo The documentation does not tell of the staged param in the action. what does that mean?
+     *
      */
     public function createUpdateActions(
         $changedValue,
@@ -42,13 +42,19 @@ class SetTaxCategory extends ProductActionBuilder
         array $changedData,
         array $oldData,
         $sourceObject
-    ): array {
+    ): array
+    {
         $action = new ProductSetTaxCategoryAction();
 
         if ($changedValue) {
-            $action->setTaxCategory(TaxCategoryReference::ofId($changedValue['id']));
+            if (isset($changedValue['id']) && $changedValue['id'] !== null) {
+                $action->setTaxCategory(TaxCategoryReference::ofId($changedValue['id']));
+            } else {
+                if (isset($changedValue['key']) && $changedValue['key'] !== null) {
+                    $action->setTaxCategory(TaxCategoryReference::ofKey($changedValue['key']));
+                }
+            }
         }
-
         return [$action];
     }
 }
