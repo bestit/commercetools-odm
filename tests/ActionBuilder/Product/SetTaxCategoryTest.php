@@ -79,15 +79,15 @@ class SetTaxCategoryTest extends TestCase
     }
 
     /**
-     * Checks if the tax category can be changed.
+     * Checks if the tax category can be changed with an id.
      *
      * @return void
      */
-    public function testCreateUpdateActionsFilled()
+    public function testCreateUpdateActionsFilledWithAnId()
     {
         $actions = $this->fixture->createUpdateActions(
             [
-                'id' => $taxCategoryId = uniqid()
+                'id' => $taxCategoryId = uniqid(),
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -99,6 +99,29 @@ class SetTaxCategoryTest extends TestCase
         static::assertCount(1, $actions);
         static::assertInstanceOf(ProductSetTaxCategoryAction::class, $action = $actions[0]);
         static::assertSame($taxCategoryId, $action->getTaxCategory()->getId());
+    }
+
+    /**
+     * Checks if the tax category can be changed with a key.
+     *
+     * @return void
+     */
+    public function testCreateUpdateActionsFilledWithAKey()
+    {
+        $actions = $this->fixture->createUpdateActions(
+            [
+                'key' => $taxCategoryKey = uniqid(),
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            new Product()
+        );
+
+        /** @var $action ProductSetTaxCategoryAction */
+        static::assertCount(1, $actions);
+        static::assertInstanceOf(ProductSetTaxCategoryAction::class, $action = $actions[0]);
+        static::assertSame($taxCategoryKey, $action->getTaxCategory()->getKey());
     }
 
     /**
