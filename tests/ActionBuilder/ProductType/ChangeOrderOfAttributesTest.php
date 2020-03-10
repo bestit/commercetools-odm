@@ -92,7 +92,7 @@ class ChangeOrderOfAttributesTest extends TestCase
             $productType
         );
 
-        static::assertCount(0, $actions);
+        static::assertCount(1, $actions);
     }
 
     /**
@@ -130,7 +130,7 @@ class ChangeOrderOfAttributesTest extends TestCase
             $productType
         );
 
-        static::assertCount(0, $actions);
+        static::assertCount(1, $actions);
     }
 
     /**
@@ -180,6 +180,48 @@ class ChangeOrderOfAttributesTest extends TestCase
     }
 
     /**
+     * Test attribute array has no sort changes
+     *
+     * @return void
+     */
+    public function testNoChanges()
+    {
+        $productType = new ProductType([
+            'attributes' => [
+                [
+                    'name' => $attributeName1 = uniqid(),
+                    'type' => ['name' => 'text']
+                ],
+                [
+                    'name' => $attributeName2 = uniqid(),
+                    'type' => ['name' => 'text']
+                ]
+            ]
+        ]);
+
+        $actions = $this->fixture->createUpdateActions(
+            [],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'attributes' => [
+                    [
+                        'name' => $attributeName1,
+                        'type' => ['name' => 'text']
+                    ],
+                    [
+                        'name' => $attributeName2,
+                        'type' => ['name' => 'text']
+                    ]
+                ]
+            ],
+            $productType
+        );
+
+        static::assertCount(0, $actions);
+    }
+
+    /**
      * Checks the instance of the builder.
      *
      * @return void
@@ -187,5 +229,10 @@ class ChangeOrderOfAttributesTest extends TestCase
     public function testInstance()
     {
         static::assertInstanceOf(ProductTypeActionBuilder::class, $this->fixture);
+    }
+
+    public function testPriority()
+    {
+        static::assertEquals(-255, (new ChangeOrderOfAttributes())->getPriority());
     }
 }

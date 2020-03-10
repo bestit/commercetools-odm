@@ -79,11 +79,6 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
             return $builder->supports($fieldPath, $sourceClass);
         });
 
-        // TODO Test
-        usort($foundBuilders, function (ActionBuilderInterface $builder1, ActionBuilderInterface $builder2) {
-            return $builder1->getPriority() <=> $builder2->getPriority();
-        });
-
         $nonStackableBuilders = array_filter($foundBuilders, function (ActionBuilderInterface $builder) {
             return !$builder->isStackable();
         });
