@@ -180,7 +180,7 @@ class ChangeLocalizedEnumValuesTest extends TestCase
 
         $this->fixture->setLastFoundMatch([uniqid(), 0]);
         $actions = $this->fixture->createUpdateActions(
-            [$changedValue],
+            [$changedValue, ['label' => 'FOO'], ['key' => 'BAR']],
             $this->createMock(ClassMetadataInterface::class),
             [],
             $oldData,

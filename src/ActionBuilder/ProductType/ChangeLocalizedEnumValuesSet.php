@@ -102,6 +102,14 @@ class ChangeLocalizedEnumValuesSet extends ChangeLocalizedEnumValues
 
         $oldValues = $this->collectOldValues($oldAttribute);
 
+        // We don't need values which hasn't a key or label
+        // Has key: Updated or added field
+        // Has no key: Deleted field (which will be collected without this value)
+        // Has no label: Item has no relevant changes
+        $changedValue = array_filter($changedValue, function ($value) {
+            return isset($value['key'], $value['label']);
+        });
+
         $actions = array_merge(
             $this->addedValues($changedValue, $oldValues, $attribute['name']),
             $this->updatedValues($changedValue, $oldValues, $attribute['name']),

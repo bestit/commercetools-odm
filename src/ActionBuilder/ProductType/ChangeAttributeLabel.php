@@ -21,7 +21,7 @@ class ChangeAttributeLabel extends ProductTypeActionBuilder
     /**
      * @var string The field name.
      */
-    protected $complexFieldFilter = '^attributes\/(\w+)\/label$';
+    protected $fieldName = 'attributes';
 
     /**
      * Creates the update actions for the given class and data.
@@ -41,15 +41,25 @@ class ChangeAttributeLabel extends ProductTypeActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        list(, $attrIndex) = $this->getLastFoundMatch();
+        $oldLabels = [];
+        foreach ($oldData['attributes'] as $attribute) {
+            $oldLabels[$attribute['name']] = $attribute['label'];
+        }
 
         $actions = [];
+        foreach ($sourceObject->getAttributes()->toArray() as $attribute) {
+            $attributeName = $attribute['name'];
 
-        if ((@$oldData['attributes'][$attrIndex]) && ($def = $sourceObject->getAttributes()->getAt($attrIndex))) {
-            $actions[] = ProductTypeChangeLabelAction::ofAttributeNameAndLabel(
-                $def->getName(),
-                LocalizedString::fromArray(array_filter($changedValue))
-            );
+            if (!array_key_exists($attributeName, $oldLabels)) {
+                continue;
+            }
+
+            if ($attribute['label'] != $oldLabels[$attributeName]) {
+                $actions[] = ProductTypeChangeLabelAction::ofAttributeNameAndLabel(
+                    $attributeName,
+                    LocalizedString::fromArray(array_filter($attribute['label']))
+                );
+            }
         }
 
         return $actions;

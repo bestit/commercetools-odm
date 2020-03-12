@@ -43,16 +43,23 @@ class ChangeOrderOfAttributes extends ProductTypeActionBuilder
         $oldOrder = array_column($oldData['attributes'], 'name');
         $newOrder = array_column($sourceObject->getAttributes()->toArray(), 'name');
 
-        $hasNewValues = count(array_diff($newOrder, $oldOrder)) > 0;
-        $hasDeletedValues = count(array_diff($oldOrder, $newOrder)) > 0;
-
         // If amount and values same but not the order
-        if (!$hasNewValues && !$hasDeletedValues && $oldOrder !== $newOrder) {
+        if ($oldOrder !== $newOrder) {
             return [new ProductTypeChangeAttributeOrderByNameAction([
                 'attributeNames' => $newOrder
             ])];
         }
 
         return [];
+    }
+
+    /**
+     * Must be the last action in our request (so all added and removed attributes are done)
+     *
+     * @return int
+     */
+    public function getPriority(): int
+    {
+        return -255;
     }
 }
