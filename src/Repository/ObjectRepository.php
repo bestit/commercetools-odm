@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Exception\ResponseException;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Doctrine\Common\Persistence\ObjectRepository as BasicInterface;
 use Exception;
@@ -24,6 +25,18 @@ interface ObjectRepository extends BasicInterface
      * @return bool The old status.
      */
     public function clearExpandAfterQuery(bool $newStatus = false): bool;
+
+    /**
+     * Finds and creates the object but with an optional registration in the unit of work.
+     *
+     * @throws ResponseException
+     *
+     * @param mixed $id
+     * @param bool $withRegistration
+     *
+     * @return mixed
+     */
+    public function findAndCreateObject($id, bool $withRegistration = true);
 
     /**
      * Finds an object by its primary key / identifier.
@@ -129,5 +142,5 @@ interface ObjectRepository extends BasicInterface
      *
      * @return ObjectRepository
      */
-    public function filter(string... $filters): ObjectRepository;
+    public function filter(string ...$filters): ObjectRepository;
 }

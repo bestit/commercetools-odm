@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BestIt\CommercetoolsODM\Tests;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderProcessorInterface;
@@ -27,9 +29,9 @@ class UnitOfWorkFactoryTest extends TestCase
     /**
      * The tested class.
      *
-     * @var UnitOfWorkFactoryInterface
+     * @var UnitOfWorkFactoryInterface|null
      */
-    protected $fixture = null;
+    protected $fixture;
 
     /**
      * Returns the names of the used traits.

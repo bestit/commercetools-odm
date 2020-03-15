@@ -5,7 +5,7 @@ namespace BestIt\CommercetoolsODM\Mapping;
 use BadMethodCallException;
 use BestIt\CommercetoolsODM\Mapping\Annotations\Field;
 use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
-use Commercetools\Core\Model\Common\JSONObject;
+use Commercetools\Core\Model\Common\JsonObject;
 use ReflectionClass;
 
 /**
@@ -124,7 +124,7 @@ class ClassMetadata implements ClassMetadataInterface
     {
         $this
             ->setName($name)
-            ->isCTStandardModel(is_a($name, JSONObject::class, true));
+            ->isCTStandardModel(is_a($name, JsonObject::class, true));
     }
 
     /**
@@ -282,7 +282,7 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * Has to return an empty array if no identifier isset.
      *
-     * @param object $object
+     * @param mixed $object
      *
      * @return array
      */

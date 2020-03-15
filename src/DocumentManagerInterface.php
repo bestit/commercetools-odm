@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM;
 
+use Closure;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client;
 use Commercetools\Core\Request\AbstractApiRequest;
@@ -11,6 +12,7 @@ use Commercetools\Core\Request\AbstractCreateRequest;
 use Commercetools\Core\Request\AbstractDeleteRequest;
 use Commercetools\Core\Request\AbstractUpdateRequest;
 use Doctrine\Common\Persistence\ObjectManager;
+use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 
 /**
@@ -55,24 +57,28 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
      * @var string
      */
     const REQUEST_TYPE_FIND_BY_CONTAINER_AND_KEY = 'FindByContainerAndKey';
+
     /**
      * Key to request the request-class for finding by customer id.
      *
      * @var string
      */
     const REQUEST_TYPE_FIND_BY_CUSTOMER_ID = 'FindByCustomerId';
+
     /**
      * Key to request the request-class for finding by id.
      *
      * @var string
      */
     const REQUEST_TYPE_FIND_BY_ID = 'FindById';
+
     /**
      * Key to request the request-class for finding by key.
      *
      * @var string
      */
     const REQUEST_TYPE_FIND_BY_KEY = 'FindByKey';
+
     /**
      * Key to request the request-class for simple querying.
      *
@@ -97,7 +103,7 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
     /**
      * Returns a request class for fetching/updating/deleting documents using the request map of the given class name.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @param string $className
      * @param string $requestType
@@ -110,7 +116,7 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
     /**
      * Detaches the given object after flush.
      *
-     * @param object $object
+     * @param mixed $object
      *
      * @return void
      */
@@ -148,12 +154,23 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
     public function getUnitOfWork(): UnitOfWorkInterface;
 
     /**
+     * This method uses a callback to modify the given object to get conflict resolution in case of a 409 error.
+     *
+     * @param mixed $object
+     * @param callable $change The callback is called with the given object.
+     *
+     * @return mixed Returns the changed object.
+     */
+    public function modify($object, callable $change);
+
+    /**
      * Refreshes the persistent state of an object from the database,
      * overriding any local changes that have not yet been persisted.
      *
-     * @param object $object The object to refresh.
-     * @param object $overwrite Commercetools returns a representation of the objectfor many update actions, so use
-     * this respons directly.
+     * @param mixed $object The object to refresh.
+     * @param mixed $overwrite Commercetools returns a representation of the object for many update actions, so use
+     *                          this response directly.
+     *
      * @return void
      */
     public function refresh($object, $overwrite = null);

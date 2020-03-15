@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM\Tests;
 
 use ArrayObject;
+use BestIt\CommercetoolsODM\Tests\Constraints\IsWrappedResourceResponse;
 use Commercetools\Core\Client;
 use Commercetools\Core\Client\OAuth\Manager;
 use Commercetools\Core\Client\OAuth\Token;
@@ -11,6 +12,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use PHPUnit_Framework_MockObject_MockObject;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Helps providing a test client for mocking requests and responses.
@@ -31,11 +33,11 @@ trait TestClientTrait
     /**
      * Returns a partial mock.
      *
-     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-     *
      * @param string $originalClassName
      * @param array $methods
+     *
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
      *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
@@ -114,6 +116,18 @@ trait TestClientTrait
         $client->getOauthManager()->getHttpClient(['handler' => $handlerStack]);
 
         return $client;
+    }
+
+    /**
+     * Returns the constraint which checks if the given response was wrapped by commercetools.
+     *
+     * @param ResponseInterface $requiredResponse
+     *
+     * @return IsWrappedResourceResponse
+     */
+    protected static function isWrappedResponse(ResponseInterface $requiredResponse): IsWrappedResourceResponse
+    {
+        return new IsWrappedResourceResponse($requiredResponse);
     }
 
     /**

@@ -244,7 +244,7 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
     /**
      * {@inheritdoc}
      */
-    public function filter(string... $filters): ObjectRepository
+    public function filter(string ...$filters): ObjectRepository
     {
         $this->filters = $filters;
 
@@ -256,41 +256,13 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
      *
      * @param mixed $id The identifier.
      * @throws ResponseException
+     * @todo Check if it gets registered in the uow
      *
      * @return mixed The found object.
      */
     public function find($id)
     {
-        /** @var DocumentManagerInterface $documentManager */
-        $documentManager = $this->documentManager;
-        $uow = $documentManager->getUnitOfWork();
-
-        $document = $uow->tryGetById($id);
-
-        if (!$document) {
-            $request = $this->createSimpleQuery(
-                $this->getClassName(),
-                DocumentManagerInterface::REQUEST_TYPE_FIND_BY_ID,
-                $id
-            );
-
-            /** @var ApiResponseInterface $rawResponse */
-            list ($response, $rawResponse) = $this->processQuery($request);
-
-            if ($rawResponse->getStatusCode() !== 404) {
-                if ($rawResponse->isError()) {
-                    throw ResponseException::fromResponse($rawResponse);
-                }
-
-                $document = $uow->createDocument($this->getClassName(), $response, []);
-
-                if ($document instanceof RepositoryAwareInterface) {
-                    $document->setRepository($this);
-                }
-            }
-        }
-
-        return $document;
+        return $this->findAndCreateObject($id);
     }
 
     /**
@@ -326,6 +298,48 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
         }
 
         return $documents;
+    }
+
+    /**
+     * Finds and creates the object but with an optional registration in the unit of work.
+     *
+     * @throws ResponseException
+     *
+     * @param mixed $id
+     * @param bool $withRegistration
+     *
+     * @return mixed
+     */
+    public function findAndCreateObject($id, bool $withRegistration = true)
+    {
+        $uow = $this->getDocumentManager()->getUnitOfWork();
+
+        $document = $withRegistration ? $uow->tryGetById($id) : null;
+
+        if (!$document) {
+            $request = $this->createSimpleQuery(
+                $this->getClassName(),
+                DocumentManagerInterface::REQUEST_TYPE_FIND_BY_ID,
+                $id
+            );
+
+            /** @var ApiResponseInterface $rawResponse */
+            list($response, $rawResponse) = $this->processQuery($request);
+
+            if ($rawResponse->getStatusCode() !== 404) {
+                if ($rawResponse->isError()) {
+                    throw ResponseException::fromResponse($rawResponse);
+                }
+
+                $document = $uow->createDocument($this->getClassName(), $response, [], $withRegistration);
+
+                if ($document instanceof RepositoryAwareInterface) {
+                    $document->setRepository($this);
+                }
+            }
+        }
+
+        return $document;
     }
 
     /**

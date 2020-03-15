@@ -18,7 +18,7 @@ interface ActionBuilderFactoryInterface
      *
      * @param ClassMetadataInterface $classMetadata
      * @param string $fieldPath The hierarchical path of the fields.
-     * @param object $sourceObject
+     * @param mixed $sourceObject
      *
      * @return ActionBuilderInterface[]
      */

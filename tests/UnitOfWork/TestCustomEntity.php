@@ -24,6 +24,15 @@ class TestCustomEntity
     protected $addresses = [];
 
     /**
+     * A test id.
+     *
+     * @Commercetools\Field(type="string")
+     * @Commercetools\Id()
+     * @var string|null
+     */
+    private $id;
+
+    /**
      * Returns the addresses of this user.
      *
      * @return Address[]
@@ -31,6 +40,16 @@ class TestCustomEntity
     public function getAddresses(): array
     {
         return $this->addresses;
+    }
+
+    /**
+     * Returns the id oft his object.
+     *
+     * @return string|null
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -43,6 +62,20 @@ class TestCustomEntity
     public function setAddresses(array $addresses): TestCustomEntity
     {
         $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    /**
+     * Sets the id of the object.
+     *
+     * @param string $id
+     *
+     * @return TestCustomEntity
+     */
+    public function setId(string $id): TestCustomEntity
+    {
+        $this->id = $id;
 
         return $this;
     }
