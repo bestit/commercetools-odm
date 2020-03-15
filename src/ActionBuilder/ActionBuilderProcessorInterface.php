@@ -19,7 +19,7 @@ interface ActionBuilderProcessorInterface
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
-     * @param object $sourceObject
+     * @param mixed $sourceObject
      *
      * @return ActionBuilderInterface[]
      */
@@ -28,5 +28,5 @@ interface ActionBuilderProcessorInterface
         array $changedData,
         array $oldData,
         $sourceObject
-    ) : array;
+    ): array;
 }

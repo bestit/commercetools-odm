@@ -6,6 +6,7 @@ namespace BestIt\CommercetoolsODM\Repository\Decorator;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\APIException;
+use BestIt\CommercetoolsODM\Exception\ResponseException;
 use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Response\ApiResponseInterface;
@@ -22,7 +23,9 @@ use function func_get_args;
 class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
 {
     /**
-     * @var ObjectRepository The wrapped repository.
+     * The wrapped repository.
+     *
+     * @var ObjectRepository
      */
     private $wrapped;
 
@@ -55,7 +58,7 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      *
      * @return ObjectRepository
      */
-    public function filter(string... $filters): ObjectRepository
+    public function filter(string ...$filters): ObjectRepository
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }
@@ -78,6 +81,21 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * @return array The objects.
      */
     public function findAll(): array
+    {
+        return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
+    }
+
+    /**
+     * Finds and creates the object but with an optional registration in the unit of work.
+     *
+     * @throws ResponseException
+     *
+     * @param mixed $id
+     * @param bool $withRegistration
+     *
+     * @return mixed
+     */
+    public function findAndCreateObject($id, bool $withRegistration = true)
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }

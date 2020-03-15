@@ -17,8 +17,8 @@ interface RepositoryAwareInterface
     /**
      * Sets the used repository on the object.
      *
-     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
      * @param ObjectRepository $repository
+     * @phpcsSuppress BestIt.TypeHints.ReturnTypeDeclaration.MissingReturnTypeHint
      *
      * @return RepositoryAwareInterface
      */
