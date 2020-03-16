@@ -3,6 +3,8 @@
 namespace BestIt\CommercetoolsODM\ActionBuilder;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use function call_user_func_array;
+use function krsort;
 
 /**
  * Processes the action builders for a changed object.
@@ -48,10 +50,12 @@ class ActionBuilderComposite implements ActionBuilderProcessorInterface
     ): array {
         $actions = $this->createUpdateActionsRecursively($metadata, $changedData, $oldData, $sourceObject, '');
 
-        // We will merge all prioritize array actions into one big array.
-        // Actions with the highest priority will be first, lowest will be last
-        krsort($actions);
-        $actions = call_user_func_array('array_merge', $actions);
+        if ($actions) {
+            // We will merge all prioritize array actions into one big array.
+            // Actions with the highest priority will be first, lowest will be last
+            krsort($actions);
+            $actions = call_user_func_array('array_merge', $actions);
+        }
 
         return $actions;
     }
