@@ -11,6 +11,9 @@ use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Request\ProductTypes\Command\ProductTypeChangeAttributeOrderByNameAction;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
+use function assert;
+use function class_exists;
+use function uniqid;
 
 /**
  * Test for change order of attributes action builder
@@ -93,6 +96,52 @@ class ChangeOrderOfAttributesTest extends TestCase
         );
 
         static::assertCount(1, $actions);
+    }
+
+    /**
+     * Checks that no actions are rendered if the relevant action is missing.
+     *
+     * @return void
+     */
+    public function testNoErrorWrongSDKVersion()
+    {
+        if (class_exists(ProductTypeChangeAttributeOrderByNameAction::class, true)) {
+            self::markTestSkipped('This test is not needed because the class exists.');
+        }
+
+        $productType = new ProductType([
+            'attributes' => [
+                [
+                    'name' => $attributeName2 = 'second-attr',
+                    'type' => ['name' => 'text']
+                ],
+                [
+                    'name' => $attributeName1 = 'first-attr',
+                    'type' => ['name' => 'text']
+                ]
+            ]
+        ]);
+
+        $actions = $this->fixture->createUpdateActions(
+            [],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'attributes' => [
+                    [
+                        'name' => $attributeName1,
+                        'type' => ['name' => 'text']
+                    ],
+                    [
+                        'name' => $attributeName2,
+                        'type' => ['name' => 'text']
+                    ]
+                ]
+            ],
+            $productType
+        );
+
+        static::assertSame([], $actions);
     }
 
     /**

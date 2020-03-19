@@ -8,6 +8,8 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\ProductType\ProductType;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\ProductTypes\Command\ProductTypeChangeAttributeOrderByNameAction;
+use function array_column;
+use function class_exists;
 
 /**
  * ActionBuilder to change order of attributes
@@ -40,17 +42,21 @@ class ChangeOrderOfAttributes extends ProductTypeActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        $oldOrder = array_column($oldData['attributes'], 'name');
-        $newOrder = array_column($sourceObject->getAttributes()->toArray(), 'name');
+        $actions = [];
 
-        // If amount and values same but not the order
-        if ($oldOrder !== $newOrder) {
-            return [new ProductTypeChangeAttributeOrderByNameAction([
-                'attributeNames' => $newOrder
-            ])];
+        if (class_exists(ProductTypeChangeAttributeOrderByNameAction::class, true)) {
+            $oldOrder = array_column($oldData['attributes'], 'name');
+            $newOrder = array_column($sourceObject->getAttributes()->toArray(), 'name');
+
+            // If amount and values same but not the order
+            if ($oldOrder !== $newOrder) {
+                $actions[] = new ProductTypeChangeAttributeOrderByNameAction([
+                    'attributeNames' => $newOrder
+                ]);
+            }
         }
 
-        return [];
+        return $actions;
     }
 
     /**
