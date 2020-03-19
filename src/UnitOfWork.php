@@ -346,7 +346,11 @@ class UnitOfWork implements UnitOfWorkInterface
                     );
 
                     // The responses are marked for the given identifier.
-                    $client->addBatchRequest($this->computeChangedObject($object)->setIdentifier($id));
+                    $updateRequest = $this->computeChangedObject($object);
+
+                    if ($updateRequest instanceof ClientRequestInterface) {
+                        $client->addBatchRequest($updateRequest->setIdentifier($id));
+                    }
                 } else {
                     //We can remove it now, if there are no changed but a deferred detach.
                     $this->processDeferredDetach($object);
@@ -409,9 +413,9 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param mixed $object
      * @todo Topmost array should be used as a whole.
      *
-     * @return ClientRequestInterface
+     * @return ClientRequestInterface|null
      */
-    private function computeChangedObject($object): ClientRequestInterface
+    private function computeChangedObject($object)
     {
         return $this->createUpdateRequest(
             $this->getChangeManager()->getChanges($object),
@@ -653,19 +657,44 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param mixed $document
      * @param ClassMetadataInterface|null $metadata
      *
-     * @return ClientRequestInterface
+     * @return ClientRequestInterface|null
      */
     private function createUpdateRequest(
         array $changedData,
         array $oldData,
         $document,
         ClassMetadataInterface $metadata = null
-    ): ClientRequestInterface {
+    ) {
         $documentClass = get_class($document);
 
         if (!$metadata) {
             /** @var ClassMetadataInterface $metadata */
             $metadata = $this->getClassMetadata($document);
+        }
+
+        $actions = $this->getActionBuilderProcessor()->createUpdateActions(
+            $metadata,
+            $changedData,
+            $oldData,
+            $document
+        );
+
+        // There are possible differences between the raw view on changes and the real usable changes. If there are no
+        // real usable changes then skip the request creation!
+        if (!$actions) {
+            $this->logger->debug(
+                'Skips the creation of the update request because there are no actions.',
+                [
+                    'actions' => $actions,
+                    'class' => get_class($document),
+                    'memory' => memory_get_usage(true) / 1024 / 1024,
+                    'objectId' => $document->getId(),
+                    'objectKey' => $this->getKeyForObject($document),
+                    'objectVersion' => $document->getVersion(),
+                ]
+            );
+
+            return null;
         }
 
         $requestClass = $this->getDocumentManager()->getRequestClass(
@@ -691,17 +720,11 @@ class UnitOfWork implements UnitOfWorkInterface
                 array_walk($expands, [$request, 'expand']);
             }
 
-            $actions = $this->getActionBuilderProcessor()->createUpdateActions(
-                $metadata,
-                $changedData,
-                $oldData,
-                $document
-            );
-
-            $this->getLogger()->debug(
+            $this->logger->debug(
                 'Created the update request.',
                 [
                     'actions' => $actions,
+                    'class' => get_class($document),
                     'memory' => memory_get_usage(true) / 1024 / 1024,
                     'objectId' => $document->getId(),
                     'objectKey' => $this->getKeyForObject($document),
@@ -844,10 +867,8 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         $this->getEventManager()->dispatchEvent(Events::ON_FLUSH, new OnFlushEventArgs($this));
 
-        $logger = $this->getLogger();
-
         while ($this->needsToFlush() && ($this->canRetry(true))) {
-            $logger->debug(
+            $this->logger->debug(
                 'Flushes the batch.',
                 [
                     'memory' => memory_get_usage(true) / 1024 / 1024,
@@ -858,7 +879,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
             $this->createAndExecuteBatch();
 
-            $logger->info(
+            $this->logger->info(
                 'Flushed the batch.',
                 [
                     'memory' => memory_get_usage(true) / 1024 / 1024,
@@ -956,20 +977,6 @@ class UnitOfWork implements UnitOfWorkInterface
     }
 
     /**
-     * Returns the used logger.
-     *
-     * @return LoggerInterface
-     */
-    private function getLogger(): LoggerInterface
-    {
-        if (!$this->logger) {
-            $this->setLogger(new NullLogger());
-        }
-
-        return $this->logger;
-    }
-
-    /**
      * Returns the used response handler.
      *
      * @return ResponseHandlerInterface
@@ -1063,7 +1070,7 @@ class UnitOfWork implements UnitOfWorkInterface
     {
         $handler = new ResponseHandlerComposite($this->getDocumentManager());
 
-        $handler->setLogger($this->getLogger());
+        $handler->setLogger($this->logger);
 
         return $handler;
     }
@@ -1386,10 +1393,9 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function processResponsesFromBatch(array $batchResponses)
     {
-        $logger = $this->getLogger();
         $responseHandler = $this->getResponseHandler();
 
-        $logger->debug(
+        $this->logger->debug(
             'Handling batch responses.',
             [
                 'memory' => memory_get_usage(true) / 1024 / 1024,
@@ -1399,7 +1405,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
         /** @var ApiResponseInterface $response */
         foreach ($batchResponses as $key => $response) {
-            $logger->debug(
+            $this->logger->debug(
                 'Got a batch response.',
                 [
                     'memory' => memory_get_usage(true) / 1024 / 1024,
@@ -1413,7 +1419,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 $responseHandler->handleResponse($response);
             } catch (Exception $exception) {
                 // Just debug level. You can make it to an error on higher layers.
-                $this->getLogger()->debug(
+                $this->logger->debug(
                     'Received an error and throws it as an exception.',
                     [
                         'exception' => $exception,

@@ -632,12 +632,6 @@ class UnitOfWorkTest extends TestCase
             false
         );
 
-        // Force the unit of work to skip the specific logic for the custom objects.
-        $this->documentManager
-            ->expects(static::once())
-            ->method('getRequestClass')
-            ->with(get_class($customObject), DocumentManagerInterface::REQUEST_TYPE_UPDATE_BY_ID);
-
         /** @var Order $customObject */
         $this->fixture->registerAsManaged(
             $customObject,
@@ -1414,7 +1408,7 @@ class UnitOfWorkTest extends TestCase
                 $oldData,
                 $type
             )
-            ->willReturn([]);
+            ->willReturn([uniqid()]);
 
         $errorResponse = new Response(
             409,
@@ -1472,6 +1466,50 @@ class UnitOfWorkTest extends TestCase
                 [$this->isWrappedResponse($successResponse)]
             );
 
+        $this->fixture->flush();
+    }
+
+    /**
+     * Checks if the request creation is ignored, if no update action could be rendered.
+     *
+     * @return void
+     */
+    public function testSkipUpdateWithoutActions()
+    {
+        $this->getOneMockedMetadata(
+            $customObject = CustomObject::fromArray($oldData = [
+                'container' => $container = uniqid(),
+                'key' => $key = uniqid(),
+                'value' => '[\"foobar\"]'
+            ]),
+            false
+        );
+
+        /** @var Order $customObject */
+        $this->fixture->registerAsManaged(
+            $customObject,
+            uniqid(),
+            5
+        );
+
+        $customObject->setValue($newValue = [['sku' => uniqid()]]);
+
+        $this->actionBuilderProcessor
+            ->method('createUpdateActions')
+            ->with(
+                $this->isInstanceOf(ClassMetadataInterface::class),
+                ['value' => $newValue],
+                $oldData,
+                $customObject
+            )
+            ->willReturn([]);
+
+        $this->documentManager
+            ->expects(static::never())
+            ->method('getRequestClass')
+            ->with(get_class($customObject), DocumentManagerInterface::REQUEST_TYPE_UPDATE_BY_ID);
+
+        $this->fixture->scheduleSave($customObject);
         $this->fixture->flush();
     }
 
