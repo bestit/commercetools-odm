@@ -350,8 +350,12 @@ class UnitOfWork implements UnitOfWorkInterface
 
                     if ($updateRequest instanceof ClientRequestInterface) {
                         $client->addBatchRequest($updateRequest->setIdentifier($id));
+                    } else {
+                        $this->invokeLifecycleEvents($object, Events::POST_PERSIST);
                     }
                 } else {
+                    $this->invokeLifecycleEvents($object, Events::POST_PERSIST);
+
                     //We can remove it now, if there are no changed but a deferred detach.
                     $this->processDeferredDetach($object);
                 }
@@ -888,6 +892,8 @@ class UnitOfWork implements UnitOfWorkInterface
                 ]
             );
         }
+
+        $this->flushRuns = 0;
     }
 
     /**

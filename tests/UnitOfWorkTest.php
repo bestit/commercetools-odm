@@ -204,25 +204,25 @@ class UnitOfWorkTest extends TestCase
     /**
      * Mocks an listener invoker call for the given object.
      *
-     * @param mixed $order
+     * @param mixed $model
      * @param string $lifeCycleEventName
-     * @param ClassMetadataInterface $orderMetadata
+     * @param ClassMetadataInterface $metadata
      * @param mixed $expected
      *
      * @return UnitOfWorkTest
      */
     private function mockAndCheckInvokerCall(
-        $order,
+        $model,
         string $lifeCycleEventName,
-        ClassMetadataInterface $orderMetadata,
+        ClassMetadataInterface $metadata,
         $expected = 'any'
     ): UnitOfWorkTest {
         $this->listenerInvoker
             ->expects(is_string($expected) ? $this->$expected() : $this->at($expected))
             ->method('invoke')
             ->with(
-                $this->callback(function (LifecycleEventArgs $eventArgs) use ($order) {
-                    static::assertSame($order, $eventArgs->getDocument(), 'Wrong object in event.');
+                $this->callback(function (LifecycleEventArgs $eventArgs) use ($model) {
+                    static::assertSame($model, $eventArgs->getDocument(), 'Wrong object in event.');
 
                     static::assertSame(
                         $this->documentManager,
@@ -233,8 +233,8 @@ class UnitOfWorkTest extends TestCase
                     return true;
                 }),
                 $lifeCycleEventName,
-                $order,
-                $orderMetadata
+                $model,
+                $metadata
             );
 
         return $this;
@@ -1467,6 +1467,11 @@ class UnitOfWorkTest extends TestCase
             );
 
         $this->fixture->flush();
+
+        static::assertTrue(
+            $this->fixture->canRetry(false),
+            'The flush retries should be reset after a full flush.'
+        );
     }
 
     /**
@@ -1476,7 +1481,7 @@ class UnitOfWorkTest extends TestCase
      */
     public function testSkipUpdateWithoutActions()
     {
-        $this->getOneMockedMetadata(
+        $metadata = $this->getOneMockedMetadata(
             $customObject = CustomObject::fromArray($oldData = [
                 'container' => $container = uniqid(),
                 'key' => $key = uniqid(),
@@ -1508,6 +1513,10 @@ class UnitOfWorkTest extends TestCase
             ->expects(static::never())
             ->method('getRequestClass')
             ->with(get_class($customObject), DocumentManagerInterface::REQUEST_TYPE_UPDATE_BY_ID);
+
+        $this
+            ->mockAndCheckInvokerCall($customObject, Events::PRE_PERSIST, $metadata, 0)
+            ->mockAndCheckInvokerCall($customObject, Events::POST_PERSIST, $metadata, 1);
 
         $this->fixture->scheduleSave($customObject);
         $this->fixture->flush();
