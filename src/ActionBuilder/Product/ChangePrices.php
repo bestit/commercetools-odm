@@ -47,6 +47,10 @@ class ChangePrices extends PriceActionBuilder
         foreach ($changedValue as $index => $priceArray) {
             $foundPrice = $variantPrices->getAt($index);
 
+            if ($foundPrice === null) {
+                continue;
+            }
+
             if ($priceId = $foundPrice->getId()) {
                 $actions[] = ProductChangePriceAction::ofPriceIdAndPrice(
                     $priceId,
