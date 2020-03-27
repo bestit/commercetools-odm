@@ -225,6 +225,7 @@ class ChangeLocalizedEnumValuesTest extends TestCase
                         'values' => [
                             ['key' => 'foo', 'label' => ['de' => 'bar']],
                             ['key' => 'denios', 'label' => ['de' => 'Denios']],
+                            ['key' => 999, 'label' => ['de' => 'foo']],
                         ]
                     ]
                 ],
@@ -245,7 +246,11 @@ class ChangeLocalizedEnumValuesTest extends TestCase
 
         static::assertCount(1, $actions);
         static::assertSame($attributeName, $action->getAttributeName());
-        static::assertEquals(['foo'], $action->getKeys());
+        static::assertEquals(['foo', '999'], $action->getKeys());
+
+        foreach ($action->getKeys() as $key) {
+            static::assertInternalType('string', $key, "Key {$key} is not a string");
+        }
     }
 
     /**

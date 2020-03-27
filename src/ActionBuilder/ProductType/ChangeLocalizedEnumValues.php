@@ -133,6 +133,7 @@ class ChangeLocalizedEnumValues extends ProductTypeActionBuilder
 
         $allCurrentKeys = array_column($attribute['type']['values'], 'key');
         $removedKeys = array_values(array_diff(array_keys($oldValues), $allCurrentKeys));
+        $removedKeys = array_map('strval', $removedKeys);
 
         if (count($removedKeys) > 0) {
             $actions[] = ProductTypeRemoveEnumValuesAction::fromArray([
