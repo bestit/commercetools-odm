@@ -19,7 +19,7 @@ use PHPUnit_Framework_MockObject_MockObject;
  * @author Michel Chowanski <michel.chowanski@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Tests\ActionBuilder\ProductType
  */
-class ChangeLocalizedEnumValuesSetSetTest extends TestCase
+class ChangeLocalizedEnumValuesSetTest extends TestCase
 {
     use SupportTestTrait;
 
@@ -242,6 +242,7 @@ class ChangeLocalizedEnumValuesSetSetTest extends TestCase
                             'values' => [
                                 ['key' => 'foo', 'label' => ['de' => 'bar']],
                                 ['key' => 'denios', 'label' => ['de' => 'Denios']],
+                                ['key' => 999, 'label' => ['de' => 'foo']],
                             ]
                         ]
                     ]
@@ -263,7 +264,11 @@ class ChangeLocalizedEnumValuesSetSetTest extends TestCase
 
         static::assertCount(1, $actions);
         static::assertSame($attributeName, $action->getAttributeName());
-        static::assertEquals(['foo'], $action->getKeys());
+        static::assertEquals(['foo', '999'], $action->getKeys());
+
+        foreach ($action->getKeys() as $key) {
+            static::assertInternalType('string', $key, "Key {$key} is not a string");
+        }
     }
 
     /**
