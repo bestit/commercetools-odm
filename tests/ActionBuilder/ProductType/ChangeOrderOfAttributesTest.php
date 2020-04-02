@@ -95,7 +95,7 @@ class ChangeOrderOfAttributesTest extends TestCase
             $productType
         );
 
-        static::assertCount(1, $actions);
+        static::assertCount(0, $actions);
     }
 
     /**
@@ -179,7 +179,7 @@ class ChangeOrderOfAttributesTest extends TestCase
             $productType
         );
 
-        static::assertCount(1, $actions);
+        static::assertCount(0, $actions);
     }
 
     /**

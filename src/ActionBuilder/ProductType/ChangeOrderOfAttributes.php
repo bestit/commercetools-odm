@@ -42,21 +42,33 @@ class ChangeOrderOfAttributes extends ProductTypeActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        $actions = [];
+        if (!class_exists(ProductTypeChangeAttributeOrderByNameAction::class, true)) {
+            return [];
+        }
 
-        if (class_exists(ProductTypeChangeAttributeOrderByNameAction::class, true)) {
-            $oldOrder = array_column($oldData['attributes'], 'name');
-            $newOrder = array_column($sourceObject->getAttributes()->toArray(), 'name');
+        $oldOrder = array_column($oldData['attributes'], 'name');
+        $newOrder = array_column($sourceObject->getAttributes()->toArray(), 'name');
 
-            // If amount and values same but not the order
-            if ($oldOrder !== $newOrder) {
-                $actions[] = new ProductTypeChangeAttributeOrderByNameAction([
+        $oldOrder = $this->filterRemovedValues($oldOrder, $newOrder);
+
+        if ($oldOrder === $newOrder) {
+            return [];
+        }
+
+        foreach ($newOrder as $index => $new) {
+            // Added values are not relevant if they're added to the end
+            if (!isset($oldOrder[$index])) {
+                continue;
+            }
+
+            if ($oldOrder[$index] !== $new) {
+                return [new ProductTypeChangeAttributeOrderByNameAction([
                     'attributeNames' => $newOrder
-                ]);
+                ])];
             }
         }
 
-        return $actions;
+        return [];
     }
 
     /**
@@ -67,5 +79,20 @@ class ChangeOrderOfAttributes extends ProductTypeActionBuilder
     public function getPriority(): int
     {
         return -255;
+    }
+
+    /**
+     * Filters out values from the old attributes that are not in the new attributes without changing the order.
+     *
+     * @param array $oldOrder
+     * @param array $newOrder
+     *
+     * @return array
+     */
+    private function filterRemovedValues(array $oldOrder, array $newOrder): array
+    {
+        return array_values(array_filter($oldOrder, static function ($item) use ($oldOrder, $newOrder) {
+            return !in_array($item, array_diff($oldOrder, $newOrder), true);
+        }));
     }
 }
