@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests\Pagination;
 
+use function array_merge;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Pagination\FindByPaginator;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
@@ -43,9 +44,9 @@ class FindByPaginatorTest extends TestCase
         $repository
             ->method('findBy')
             ->withConsecutive(
-                [$baseCriteria = ['TEST = TEST']],
-                [['TEST = TEST', 'id > "A3"']],
-                [['TEST = TEST', 'id > "B6"']]
+                [$baseCriteria = ['TEST = TEST'], array_merge(['id' => 'ASC'], $sorting = ['orderHint' => 'ASC'])],
+                [['TEST = TEST', 'id > "A3"'], array_merge(['id' => 'ASC'], $sorting = ['orderHint' => 'ASC'])],
+                [['TEST = TEST', 'id > "B6"'], array_merge(['id' => 'ASC'], $sorting = ['orderHint' => 'ASC'])]
             )
             ->willReturnOnConsecutiveCalls(
                 [
@@ -84,7 +85,7 @@ class FindByPaginatorTest extends TestCase
                 ->method('detach');
         }
 
-        $elements = iterator_to_array($fixture->getIterator($baseCriteria));
+        $elements = iterator_to_array($fixture->getIterator($baseCriteria, $sorting));
 
         self::assertCount(8, $elements);
         self::assertSame($element1, $elements[0]);

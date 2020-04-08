@@ -79,9 +79,10 @@ class FindByPaginator implements IteratorAggregate, LoggerAwareInterface
      *
      * @param array $baseCriteria
      *
+     * @param array $sorting
      * @return Traversable
      */
-    public function getIterator(array $baseCriteria = []): Traversable
+    public function getIterator(array $baseCriteria = [], array $sorting = []): Traversable
     {
         $documentManager = $this->repository->getDocumentManager();
         $lastId = '';
@@ -94,7 +95,12 @@ class FindByPaginator implements IteratorAggregate, LoggerAwareInterface
             }
 
             /** @var Resource[] $elements */
-            $elements = $this->repository->findBy($criteria, static::DEFAULT_SORTING, $this->pageSize);
+            $elements = $this->repository->findBy(
+                $criteria,
+                array_merge(static::DEFAULT_SORTING, $sorting),
+                $this->pageSize
+            );
+
             $count = count($elements);
 
             foreach ($elements as $element) {
