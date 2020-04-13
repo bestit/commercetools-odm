@@ -5,7 +5,8 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\PriceDraft;
 use Commercetools\Core\Model\Product\Product;
-use Commercetools\Core\Model\Product\ProductVariant;
+use Commercetools\Core\Model\Product\ProductData;
+use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductChangePriceAction;
 
 /**
@@ -19,8 +20,6 @@ class ChangePrices extends PriceActionBuilder
 {
     /**
      * Creates the update actions for the given class and data.
-     *
-     * @todo Add Variants.
      *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
@@ -37,11 +36,23 @@ class ChangePrices extends PriceActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        list(, $dataId, $variantId) = $this->getLastFoundMatch();
+        list(, $dataId, $variantType, $variantId) = $this->getLastFoundMatch();
 
-        /** @var ProductVariant $variant */
+        if ($variantType === 'masterVariant') {
+            $variantId = 1;
+        } else {
+            $variantId += 2;
+        }
+
         $actions = [];
-        $variant = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}()->getMasterVariant();
+        /** @var ProductData $productData */
+        $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
+        $variant = $productData->getVariantById($variantId);
+
+        if ($variant === null) {
+            return $actions;
+        }
+
         $variantPrices = $variant->getPrices();
 
         foreach ($changedValue as $index => $priceArray) {

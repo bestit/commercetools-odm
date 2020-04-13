@@ -7,6 +7,8 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductVariant;
+use Commercetools\Core\Model\Product\ProductVariantCollection;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
 use function array_filter;
@@ -54,7 +56,13 @@ class SetAttributes extends ProductActionBuilder
     ): array {
         $actions = [];
 
-        list($oldAttrs, $variantId) = $this->getAttributesAndIdOfVariant($oldData);
+        $variantData = $this->getAttributesAndIdOfVariant($oldData);
+
+        if ($variantData === null) {
+            return $actions;
+        }
+
+        list($oldAttrs, $variantId) = $variantData;
 
         foreach ($changedValue as $attrIndex => $attr) {
             $action = $this->startAction($sourceObject, $variantId, $attr, $oldAttrs, $attrIndex);
@@ -72,11 +80,11 @@ class SetAttributes extends ProductActionBuilder
     /**
      * Returns the attributes and the id of the changed variant.
      *
-     * @param array $oldData
+     * @param array|null $oldData
      *
-     * @return array The first value is the old attribute collection and the second value is the variant id.
+     * @return array|null The first value is the old attribute collection and the second value is the variant id.
      */
-    private function getAttributesAndIdOfVariant(array $oldData): array
+    private function getAttributesAndIdOfVariant(array $oldData)
     {
         // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
         list(, $productCatalogContainer, $variantContainer, $variantIndex) = $this->getLastFoundMatch();
@@ -85,10 +93,19 @@ class SetAttributes extends ProductActionBuilder
         if ($variantContainer === 'masterVariant') {
             $oldAttrs = $oldProductCatalogData['masterVariant']['attributes'];
             $variantId = 1;
-        } else {
-            $oldAttrs = $oldProductCatalogData[$variantContainer][$variantIndex]['attributes'];
-            $variantId = $oldProductCatalogData[$variantContainer][$variantIndex]['id'];
+
+            return [$oldAttrs, $variantId];
         }
+
+        $variant = $oldProductCatalogData[$variantContainer][$variantIndex] ?? null;
+
+        // When a new variant is being added, no attributes should be set in here
+        if ($variant === null) {
+            return null;
+        }
+
+        $oldAttrs = $variant['attributes'];
+        $variantId = $variant['id'];
 
         return [$oldAttrs, $variantId];
     }
@@ -169,19 +186,49 @@ class SetAttributes extends ProductActionBuilder
         list(, $productCatalogContainer) = $this->getLastFoundMatch();
 
         $variants = $product->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getVariants();
+        $attributeName = $attr['name'] ?? $oldVarAttrs[$attrIndex]['name'];
 
-        if ($variants && count($variants)) {
+        if ($variants && count($variants) && !$this->valueIsSameForAllVariants($attributeName, $variants)) {
             $action = ProductSetAttributeAction::ofVariantIdAndName(
                 $variantId,
-                $attr['name'] ?? $oldVarAttrs[$attrIndex]['name']
+                $attributeName
             );
         } else {
             // Workaround against "variant duplication" error on a single master variant with no attr constraint
             $action = ProductSetAttributeInAllVariantsAction::ofName(
-                $attr['name'] ?? $oldVarAttrs[$attrIndex]['name']
+                $attributeName
             );
         }
 
         return $action->setStaged($productCatalogContainer === 'staged');
+    }
+
+    /**
+     * Checks if the given attribute has the same value in all variants.
+     *
+     * @param string $attributeName
+     * @param ProductVariant[]|ProductVariantCollection $variants
+     *
+     * @return bool
+     */
+    private function valueIsSameForAllVariants(string $attributeName, ProductVariantCollection $variants): bool
+    {
+        $previousValue = null;
+
+        foreach ($variants as $variant) {
+            $attribute = $variant->getAttributes()->getByName($attributeName);
+
+            if (!$attribute instanceof Attribute) {
+                continue;
+            }
+
+            if ($previousValue !== null && $attribute->getValue() !== $previousValue) {
+                return false;
+            }
+
+            $previousValue = $attribute->getValue();
+        }
+
+        return true;
     }
 }

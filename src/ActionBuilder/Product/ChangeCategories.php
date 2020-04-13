@@ -59,8 +59,13 @@ class ChangeCategories extends ProductActionBuilder
             }
 
             if (!is_null($categoryData)) {
-                $actions[] = ProductAddToCategoryAction::ofCategory(CategoryReference::ofId($categoryData['id']))
-                    ->setStaged($isStaging);
+                if (!isset($categoryData['id']) || $categoryData['id'] === null) {
+                    $actions[] = ProductAddToCategoryAction::ofCategory(CategoryReference::ofTypeAndKey(CategoryReference::TYPE_CATEGORY, $categoryData['key']))
+                        ->setStaged($isStaging);
+                } else {
+                    $actions[] = ProductAddToCategoryAction::ofCategory(CategoryReference::ofId($categoryData['id']))
+                        ->setStaged($isStaging);
+                }
             }
         }
 

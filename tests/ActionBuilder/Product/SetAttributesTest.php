@@ -117,9 +117,32 @@ class SetAttributesTest extends TestCase
                     ]
                 ]
             ],
-            Product::fromArray(['masterData' => [$container => ['variants' => [
-                ['id' => 2]
-            ]]]])
+            Product::fromArray([
+                'masterData' => [
+                    $container => [
+                        'variants' => [
+                            [
+                                'id' => 2,
+                                'attributes' => [
+                                    [
+                                        'name' => $attrName,
+                                        'value' => uniqid()
+                                    ]
+                                ],
+                            ],
+                            [
+                                'id' => 5,
+                                'attributes' => [
+                                    [
+                                        'name' => $attrName,
+                                        'value' => uniqid()
+                                    ]
+                                ],
+                            ]
+                        ]
+                    ]
+                ]
+            ])
         );
 
         static::assertCount(1, $actions, 'Wrong action count.');
@@ -137,6 +160,86 @@ class SetAttributesTest extends TestCase
         static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
     }
 
+    /**
+     * Checks if the master variant attributes can be changed.
+     *
+     * @dataProvider getCatalogs
+     *
+     * @param string $container
+     * @param bool $staged
+     *
+     * @return void
+     */
+    public function testUpdateForSameAttributeValueInAllVariants(string $container, bool $staged = false)
+    {
+        $this->fixture->supports("masterData/{$container}/variants/0/attributes", Product::class);
+
+        $actions = $this->fixture->createUpdateActions(
+            [
+                [
+                    'value' => $mockedValue = uniqid()
+                ]
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'masterData' => [
+                    $container => [
+                        'variants' => [
+                            [
+                                'id' => 2,
+                                'attributes' => [
+                                    [
+                                        'name' => $attrName = 'manufacturer',
+                                        'value' => $attrVal = uniqid(),
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            Product::fromArray([
+                'masterData' => [
+                    $container => [
+                        'variants' => [
+                            [
+                                'id' => 2,
+                                'attributes' => [
+                                    [
+                                        'name' => $attrName,
+                                        'value' => $attrVal,
+                                    ]
+                                ],
+                            ],
+                            [
+                                'id' => 5,
+                                'attributes' => [
+                                    [
+                                        'name' => $attrName,
+                                        'value' => $attrVal,
+                                    ]
+                                ],
+                            ]
+                        ]
+                    ]
+                ]
+            ])
+        );
+
+        static::assertCount(1, $actions, 'Wrong action count.');
+
+        /** @var $action ProductSetAttributeInAllVariantsAction */
+        static::assertInstanceOf(
+            ProductSetAttributeInAllVariantsAction::class,
+            $action = $actions[0],
+            'Wrong instance.'
+        );
+
+        static::assertSame($attrName, $action->getName(), 'Wrong name.');
+        static::assertSame($mockedValue, $action->getValue(), 'Wrong value');
+        static::assertSame($staged, $action->getStaged(), 'Staged wrongly set.');
+    }
 
     /**
      * Checks if the master variant attributes can be changed.

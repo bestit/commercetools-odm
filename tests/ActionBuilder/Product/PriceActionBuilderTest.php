@@ -34,17 +34,18 @@ class PriceActionBuilderTest extends TestCase
      * The First Element is the field path, the second element is the reference class and the optional third value
      * indicates the return value of the support method.
      *
-     * @todo Add the other variants.
-     *
      * @return array
      */
     public function getSupportAssertions(): array
     {
         return [
             ['masterData/current/masterVariant/prices', Product::class, true],
+            ['masterData/current/variants/0/prices', Product::class, true],
             ['masterData/staged/masterVariant/prices', Product::class, true],
+            ['masterData/staged/variants/0/prices', Product::class, true],
             ['masterData/current/masterVariant/prices/0', Product::class],
             ['masterData/staging/masterVariant/prices/0', Product::class],
+            ['masterData/staged/variants/4/prices/1', Product::class],
         ];
     }
 

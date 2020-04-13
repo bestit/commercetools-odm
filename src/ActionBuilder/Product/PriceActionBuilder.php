@@ -17,5 +17,5 @@ abstract class PriceActionBuilder extends ProductActionBuilder
      *
      * @var string
      */
-    protected $complexFieldFilter = '^masterData/(current|staged)/(masterVariant)/prices$';
+    protected $complexFieldFilter = '^masterData/(current|staged)/(masterVariant|variants)/([\d]*)/?prices$';
 }

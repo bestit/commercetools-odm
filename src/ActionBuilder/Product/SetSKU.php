@@ -3,6 +3,8 @@
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductVariant;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductSetSkuAction;
 
@@ -29,7 +31,7 @@ class SetSKU extends ProductActionBuilder
      * @param ClassMetadataInterface $metadata
      * @param array $changedData
      * @param array $oldData
-     * @param mixed $sourceObject
+     * @param Product $sourceObject
      *
      * @return AbstractAction[]
      */
@@ -43,10 +45,36 @@ class SetSKU extends ProductActionBuilder
         // TODO don't forget, masterVariant is id 1 but this $variantId is the numeric index in the variants array!
         list(, $dataContainer, , $variantId) = $this->getLastFoundMatch();
 
+        $variantId = trim($variantId) !== '' ? $variantId + 2 : 1;
+
+        if ($variantId !== 1 && $this->variantDoesNotExist($sourceObject, $variantId)) {
+            return [];
+        }
+
         return [
-            ProductSetSkuAction::ofVariantId(trim($variantId) !== '' ? $variantId + 2 : 1)
+            ProductSetSkuAction::ofVariantId($variantId)
                 ->setSku($changedValue)
                 ->setStaged($dataContainer === 'staged')
         ];
+    }
+
+    /**
+     * @param Product $product
+     * @param int $variantId
+     *
+     * @return bool
+     */
+    private function variantDoesNotExist(Product $product, int $variantId): bool
+    {
+        $variants = $product->getMasterData()->getCurrent()->getVariants();
+
+        /** @var ProductVariant $variant */
+        foreach ($variants as $variant) {
+            if ($variant->getId() === $variantId) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

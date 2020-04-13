@@ -97,7 +97,17 @@ class SetSKUTest extends TestCase
             $this->createMock(ClassMetadataInterface::class),
             [],
             [],
-            new Product()
+            new Product([
+                'masterData' => [
+                    'current' => [
+                        'variants' => [
+                            [
+                                'id' => $variantId,
+                            ],
+                        ],
+                    ],
+                ],
+            ])
         );
 
         /** @var $action ProductSetSkuAction */
@@ -106,6 +116,40 @@ class SetSKUTest extends TestCase
         static::assertSame($sku, $action->getSku(), 'Wrong sku.');
         static::assertSame($staged, $action->getStaged(), 'Wrong staged status.');
         static::assertSame($variantId, $action->getVariantId(), 'Wrong variant id.');
+    }
+
+    /**
+     * Checks if the action is rendered correctly.
+     *
+     * @return void
+     */
+    public function testSetSkuActionIsNotReturnedIfTheVariantDoesNotExist()
+    {
+        $variantId = 5;
+
+        $this->fixture->setLastFoundMatch([
+            'masterData',
+            'current',
+            'variants',
+            $variantId
+        ]);
+
+        $actions = $this->fixture->createUpdateActions(
+            $sku = uniqid(),
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            new Product([
+                'masterData' => [
+                    'current' => [
+                        'variants' => [
+                        ],
+                    ],
+                ],
+            ])
+        );
+
+        static::assertEmpty($actions, 'Wrong action count.');
     }
 
     /**
