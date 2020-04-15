@@ -3,8 +3,8 @@
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
-use Commercetools\Core\Model\Common\PriceCollection;
 use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductData;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductRemovePriceAction;
 
@@ -18,8 +18,6 @@ class RemovePrices extends PriceActionBuilder
 {
     /**
      * Creates the update actions for the given class and data.
-     *
-     * @todo Add Variants.
      *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
@@ -36,15 +34,33 @@ class RemovePrices extends PriceActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        list(, $dataId, $variantId) = $this->getLastFoundMatch();
+        list(, $dataId, $variantType, $variantId) = $this->getLastFoundMatch();
 
-        $actions = [];
-        $variant = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}()->getMasterVariant();
+        if ($variantType === 'masterVariant') {
+            $variantId = 1;
+        } else {
+            $variantId += 2;
+        }
 
-        /** @var PriceCollection $variantPrices */
+        /** @var ProductData $productData */
+        $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
+        $variant = $productData->getVariantById($variantId);
+
+        if ($variant === null) {
+            return [];
+        }
+
         $variantPrices = $variant->getPrices();
 
-        foreach ($oldData['masterData'][$dataId]['masterVariant']['prices'] as $priceArray) {
+        $actions = [];
+
+        if ($variantType === 'masterVariant') {
+            $oldPrices = $oldData['masterData'][$dataId][$variantType]['prices'];
+        } else {
+            $oldPrices = $oldData['masterData'][$dataId][$variantType][$variantId - 2]['prices'];
+        }
+
+        foreach ($oldPrices as $priceArray) {
             if ($priceArray && ($priceId = $priceArray['id']) && (!$variantPrices->getById($priceId))) {
                 $actions[] = ProductRemovePriceAction::ofPriceId($priceId);
             }

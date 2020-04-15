@@ -7,7 +7,8 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\PriceDraft;
 use Commercetools\Core\Model\Product\Product;
-use Commercetools\Core\Model\Product\ProductVariant;
+use Commercetools\Core\Model\Product\ProductData;
+use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductAddPriceAction;
 
 /**
@@ -20,8 +21,6 @@ class AddPrices extends PriceActionBuilder
 {
     /**
      * Creates the update actions for the given class and data.
-     *
-     * @todo Add Variants.
      *
      * @param mixed $changedValue
      * @param ClassMetadataInterface $metadata
@@ -38,24 +37,38 @@ class AddPrices extends PriceActionBuilder
         array $oldData,
         $sourceObject
     ): array {
+        $match = $this->getLastFoundMatch();
+
+        if (!$match || !is_array($changedValue)) {
+            return [];
+        }
+
+        list(, $dataId, $variantType, $variantId) = $this->getLastFoundMatch();
+
+        if ($variantType === 'masterVariant') {
+            $variantId = 1;
+        } else {
+            $variantId += 2;
+        }
+
+        /** @var ProductData $productData */
+        $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
+        $variant = $productData->getVariantById($variantId);
+
+        if ($variant === null) {
+            return [];
+        }
+
+        $variantPrices = $variant->getPrices();
+
         $actions = [];
 
-        if ($match = $this->getLastFoundMatch()) {
-            list(, $dataId, $variantId) = $match;
-
-            if ($changedValue) {
-                /** @var ProductVariant $variant */
-                $variant = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}()->getMasterVariant();
-                $variantPrices = $variant->getPrices();
-
-                foreach ($changedValue as $index => $priceArray) {
-                    if ($priceArray && !$variantPrices->getAt($index)->getId()) {
-                        $actions[] = ProductAddPriceAction::ofVariantIdAndPrice(
-                            $variant->getId(),
-                            PriceDraft::fromArray($priceArray)
-                        )->setStaged($dataId === 'staged');
-                    }
-                }
+        foreach ($changedValue as $index => $priceArray) {
+            if ($priceArray && !$variantPrices->getAt($index)->getId()) {
+                $actions[] = ProductAddPriceAction::ofVariantIdAndPrice(
+                    $variant->getId(),
+                    PriceDraft::fromArray($priceArray)
+                )->setStaged($dataId === 'staged');
             }
         }
 

@@ -13,6 +13,7 @@ use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductCatalogData;
 use Commercetools\Core\Model\Product\ProductData;
 use Commercetools\Core\Model\Product\ProductVariant;
+use Commercetools\Core\Model\Product\ProductVariantCollection;
 use Commercetools\Core\Request\Products\Command\ProductAddPriceAction;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
@@ -43,6 +44,63 @@ class AddPricesTest extends TestCase
     }
 
     /**
+     * Checks the return for the action builder if there is an added price for a variant.
+     *
+     * @return void
+     */
+    public function testCreateUpdateActionsWithChangesForAVariant()
+    {
+        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'variants', 0]);
+
+        $product = new Product();
+
+        $product
+            ->setMasterData(new ProductCatalogData())
+            ->getMasterData()
+            ->setStaged(new ProductData())
+            ->getStaged()
+            ->setMasterVariant(new ProductVariant())
+            ->setVariants($variants = new ProductVariantCollection())
+            ->getMasterVariant();
+
+        $prices = new PriceCollection();
+
+        $prices->add(Price::fromArray([
+            'id' => $oldId = uniqid()
+        ]));
+
+        $prices->add(Price::fromArray([
+            'country' => $country = uniqid()
+        ]));
+
+        $variant = new ProductVariant();
+
+        $variant
+            ->setId(2)
+            ->setSku($sku = 'sku')
+            ->setPrices($prices);
+
+        $variants->setAt(2, $variant);
+
+        $actions = $this->fixture->createUpdateActions(
+            [
+                ['id' => $oldId],
+                ['country' => $country],
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            $product
+        );
+
+        /** @var ProductAddPriceAction $action */
+        static::assertCount(1, $actions, 'Wrong action count.');
+        static::assertInstanceOf(ProductAddPriceAction::class, $action = $actions[0], 'Wrong action type.');
+        static::assertSame(2, $action->getVariantId(), 'Wrong variant id.');
+        static::assertSame($country, $action->getPrice()->getCountry(), 'Wrong country.');
+    }
+
+    /**
      * Checks the default return for the action builder.
      *
      * @return void
@@ -65,7 +123,7 @@ class AddPricesTest extends TestCase
      */
     public function testCreateUpdateActionsIgnoreNullChanges()
     {
-        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant']);
+        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant', '']);
 
         $product = new Product();
 
@@ -76,7 +134,7 @@ class AddPricesTest extends TestCase
             ->getStaged()
             ->setMasterVariant(new ProductVariant())
             ->getMasterVariant()
-            ->setId($variantId = mt_rand(1, 10000))
+            ->setId(1)
             ->setPrices($prices = new PriceCollection());
 
         $prices->add(Price::fromArray([
@@ -109,7 +167,7 @@ class AddPricesTest extends TestCase
      */
     public function testCreateUpdateActionsNoChanges()
     {
-        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant']);
+        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant', '']);
 
         $product = new Product();
 
@@ -120,6 +178,7 @@ class AddPricesTest extends TestCase
             ->getStaged()
             ->setMasterVariant(new ProductVariant())
             ->getMasterVariant()
+            ->setId(1)
             ->setPrices($prices = new PriceCollection());
 
         $prices->add(Price::fromArray([
@@ -144,25 +203,7 @@ class AddPricesTest extends TestCase
      */
     public function testCreateUpdateActionsNoPrices()
     {
-        $this->fixture->setLastFoundMatch([uniqid(), 'staging', 'masterVariant']);
-
-        static::assertSame([], $this->fixture->createUpdateActions(
-            [],
-            $this->createMock(ClassMetadataInterface::class),
-            [],
-            [],
-            new Product()
-        ));
-    }
-
-    /**
-     * Checks the return for the action builder if there is an added price.
-     *
-     * @return void
-     */
-    public function testCreateUpdateActionsWithChanges()
-    {
-        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant']);
+        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant', '']);
 
         $product = new Product();
 
@@ -173,7 +214,37 @@ class AddPricesTest extends TestCase
             ->getStaged()
             ->setMasterVariant(new ProductVariant())
             ->getMasterVariant()
-            ->setId($variantId = mt_rand(1, 10000))
+            ->setId(1)
+            ->setPrices($prices = new PriceCollection());
+
+        static::assertSame([], $this->fixture->createUpdateActions(
+            [],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            $product
+        ));
+    }
+
+    /**
+     * Checks the return for the action builder if there is an added price.
+     *
+     * @return void
+     */
+    public function testCreateUpdateActionsWithChanges()
+    {
+        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant', '']);
+
+        $product = new Product();
+
+        $product
+            ->setMasterData(new ProductCatalogData())
+            ->getMasterData()
+            ->setStaged(new ProductData())
+            ->getStaged()
+            ->setMasterVariant(new ProductVariant())
+            ->getMasterVariant()
+            ->setId(1)
             ->setPrices($prices = new PriceCollection());
 
         $prices->add(Price::fromArray([
@@ -198,8 +269,73 @@ class AddPricesTest extends TestCase
         /** @var ProductAddPriceAction $action */
         static::assertCount(1, $actions, 'Wrong action count.');
         static::assertInstanceOf(ProductAddPriceAction::class, $action = $actions[0], 'Wrong action type.');
-        static::assertSame($variantId, $action->getVariantId(), 'Wrong variant id.');
+        static::assertSame(1, $action->getVariantId(), 'Wrong variant id.');
         static::assertSame($country, $action->getPrice()->getCountry(), 'Wrong country.');
+    }
+
+    /**
+     * @return void
+     */
+    public function testNoActionsAreReturnedIfThereIsNoLastFoundMatch()
+    {
+        $this->fixture->setLastFoundMatch([]);
+
+        $actions = $this->fixture->createUpdateActions(
+            [],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            new Product()
+        );
+
+        static::assertEmpty($actions, 'Wrong action count.');
+    }
+
+    /**
+     * @return void
+     */
+    public function testNoActionsAreReturnedIfTheInputIsInvalid()
+    {
+        $this->fixture->setLastFoundMatch(['match']);
+
+        $actions = $this->fixture->createUpdateActions(
+            'invalid',
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            new Product()
+        );
+
+        static::assertEmpty($actions, 'Wrong action count.');
+    }
+
+    /**
+     * @return void
+     */
+    public function testNoActionsAreReturnedIfTheVariantCouldNotBeFound()
+    {
+        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'masterVariant', '']);
+
+        $product = new Product();
+
+        $product
+            ->setMasterData(new ProductCatalogData())
+            ->getMasterData()
+            ->setStaged(new ProductData())
+            ->getStaged()
+            ->setMasterVariant(new ProductVariant())
+            ->setVariants(new ProductVariantCollection())
+            ->getMasterVariant();
+
+        $actions = $this->fixture->createUpdateActions(
+            'invalid',
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            $product
+        );
+
+        static::assertEmpty($actions, 'Wrong action count.');
     }
 
     /**

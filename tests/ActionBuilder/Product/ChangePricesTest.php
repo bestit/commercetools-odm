@@ -52,7 +52,9 @@ class ChangePricesTest extends TestCase
         $product = Product::fromArray([
             'masterData' => [
                 'staged' => [
-                    'masterVariant' => [],
+                    'masterVariant' => [
+                        'id' => 1,
+                    ],
                 ],
             ],
         ]);
@@ -63,10 +65,46 @@ class ChangePricesTest extends TestCase
             '',
             'staged',
             'masterVariant',
+            '',
         ]);
 
         $changePriceActions = $this->fixture->createUpdateActions(
             [$index => []],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [],
+            $product
+        );
+
+        $this->assertEmpty($changePriceActions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testItReturnsNothingIfTheVariantCouldNotBeFound()
+    {
+        $this->fixture->setLastFoundMatch([
+            '',
+            'staged',
+            'variants',
+            0,
+        ]);
+
+        $product = Product::fromArray([
+            'masterData' => [
+                'staged' => [
+                    'masterVariant' => [
+                        'id' => 1,
+                    ],
+                    'variants' => [],
+                ],
+            ],
+        ]);
+
+
+        $changePriceActions = $this->fixture->createUpdateActions(
+            [],
             $this->createMock(ClassMetadataInterface::class),
             [],
             [],

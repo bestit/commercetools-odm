@@ -208,6 +208,63 @@ class ChangeCategoriesTest extends TestCase
     }
 
     /**
+     * Checks if new ones are added using keys.
+     *
+     * @dataProvider getCreateAssertions
+     *
+     * @param string $path
+     * @param bool $staged
+     *
+     * @return void
+     */
+    public function testCreateUpdateActionsWithoutOldDataAndKeys(string $path, bool $staged = true)
+    {
+        $this->fixture->supports($path, Product::class);
+
+        $checkCats = [];
+        $actions = $this->fixture->createUpdateActions(
+            [
+                [
+                    'id' => null,
+                    'key' => $checkCats[] = uniqid(),
+                ],
+                null,
+                [
+                    'key' => $checkCats[] = uniqid(),
+                ]
+            ],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'masterData' => [
+                    $staged ? 'staged' : 'current' => [
+                        'categories' => []
+                    ]
+                ]
+            ],
+            new Product()
+        );
+
+        static::assertCount(2, $actions, 'Wrong action count.');
+
+        foreach ($checkCats as $index => $checkCatKey) {
+            static::assertInstanceOf(
+                ProductAddToCategoryAction::class,
+                $actions[$index],
+                'Wrong instance for ' . $checkCatKey
+            );
+
+            static::assertSame(
+                $checkCatKey,
+                $actions[$index]->getCategory()->getKey(),
+                'Wrong id for ' . $checkCatKey
+            );
+
+            static::assertSame($staged, $actions[$index]->getStaged(), 'Wrong staged for ' . $checkCatKey);
+        }
+    }
+
+    /**
      * Checks the instance type.
      *
      * @return void

@@ -44,6 +44,10 @@ class AddAssets extends ProductActionBuilder
     ): array {
         $variantId = $this->loadOldAssetsVariantIndex($oldData);
 
+        if ($variantId === null) {
+            return [];
+        }
+
         $actions = [];
 
         foreach ($changedValue as $assetIndex => $asset) {
@@ -63,14 +67,16 @@ class AddAssets extends ProductActionBuilder
      *
      * @param array $oldData
      *
-     * @return int
+     * @return int|null
      */
-    private function loadOldAssetsVariantIndex(array $oldData): int
+    private function loadOldAssetsVariantIndex(array $oldData)
     {
         list(, $productCatalogContainer, $variantContainer, $variantIndex) = $this->getLastFoundMatch();
 
-        return $variantContainer === 'masterVariant'
-            ? 1
-            : $oldData['masterData'][$productCatalogContainer][$variantContainer][$variantIndex]['id'];
+        if ($variantContainer === 'masterVariant') {
+            return 1;
+        }
+
+        return $oldData['masterData'][$productCatalogContainer][$variantContainer][$variantIndex]['id'] ?? null;
     }
 }

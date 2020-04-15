@@ -140,4 +140,28 @@ class AddAssetsTest extends TestCase
 
         static::assertSame($asset2, $action->get('asset')->toArray(), 'Wrong asset (2).');
     }
+
+    /**
+     * @return void
+     */
+    public function testActionIsNotCalledForNewVariantsWhichDontHaveAnId()
+    {
+        $this->fixture->setLastFoundMatch([uniqid(), 'current', 'variants', null]);
+
+        $actions = $this->fixture->createUpdateActions(
+            [],
+            $this->createMock(ClassMetadataInterface::class),
+            [],
+            [
+                'masterData' => [
+                    'current' => [
+                        'variants' => [],
+                    ],
+                ],
+            ],
+            new Product()
+        );
+
+        $this->assertEmpty($actions);
+    }
 }
