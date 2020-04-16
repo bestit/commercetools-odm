@@ -12,6 +12,8 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
  */
 abstract class PriceActionBuilder extends ProductActionBuilder
 {
+    use VariantIdFinderTrait;
+
     /**
      * A PCRE to match the hierarchical field path without delimiter.
      *

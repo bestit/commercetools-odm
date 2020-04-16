@@ -34,12 +34,12 @@ class RemovePrices extends PriceActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        list(, $dataId, $variantType, $variantId) = $this->getLastFoundMatch();
+        list(, $dataId, $variantType, $variantIndex) = $this->getLastFoundMatch();
 
         if ($variantType === 'masterVariant') {
             $variantId = 1;
         } else {
-            $variantId += 2;
+            $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantIndex);
         }
 
         /** @var ProductData $productData */
@@ -55,9 +55,9 @@ class RemovePrices extends PriceActionBuilder
         $actions = [];
 
         if ($variantType === 'masterVariant') {
-            $oldPrices = $oldData['masterData'][$dataId][$variantType]['prices'];
+            $oldPrices = $oldData['masterData'][$dataId][$variantType]['prices'] ?? [];
         } else {
-            $oldPrices = $oldData['masterData'][$dataId][$variantType][$variantId - 2]['prices'];
+            $oldPrices = $oldData['masterData'][$dataId][$variantType][$variantIndex]['prices'] ?? [];
         }
 
         foreach ($oldPrices as $priceArray) {

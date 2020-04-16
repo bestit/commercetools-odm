@@ -48,7 +48,11 @@ class AddPrices extends PriceActionBuilder
         if ($variantType === 'masterVariant') {
             $variantId = 1;
         } else {
-            $variantId += 2;
+            $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantId);
+        }
+
+        if ($variantId === null) {
+            return [];
         }
 
         /** @var ProductData $productData */

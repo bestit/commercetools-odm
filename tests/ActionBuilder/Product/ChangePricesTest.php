@@ -88,12 +88,18 @@ class ChangePricesTest extends TestCase
             '',
             'staged',
             'variants',
-            0,
+            $variantIndex = 0,
         ]);
 
         $product = Product::fromArray([
             'masterData' => [
                 'staged' => [
+                    'masterVariant' => [
+                        'id' => 1,
+                    ],
+                    'variants' => [],
+                ],
+                'current' => [
                     'masterVariant' => [
                         'id' => 1,
                     ],
