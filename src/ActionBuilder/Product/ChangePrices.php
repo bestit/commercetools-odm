@@ -72,4 +72,14 @@ class ChangePrices extends PriceActionBuilder
 
         return $actions;
     }
+
+    /**
+     * Must be called before remove prices & before remove variants.
+     *
+     * @return int
+     */
+    public function getPriority(): int
+    {
+        return 3;
+    }
 }

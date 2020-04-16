@@ -47,6 +47,19 @@ class RemoveVariants extends ProductActionBuilder
     }
 
     /**
+     * At which order should this builder be executed? Highest happens first.
+     *
+     * Must be before add variant/set sku action so we don't run into conflicts when removing & adding a new
+     * variant at the same time
+     *
+     * @return int
+     */
+    public function getPriority(): int
+    {
+        return 1;
+    }
+
+    /**
      * @param array $changedValue
      * @param Product $sourceObject
      *
