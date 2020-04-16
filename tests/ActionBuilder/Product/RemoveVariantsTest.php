@@ -127,4 +127,12 @@ class RemoveVariantsTest extends TestCase
     {
         static::assertInstanceOf(RemoveVariants::class, $this->fixture);
     }
+
+    /**
+     * @return void
+     */
+    public function testPriorityIs1()
+    {
+        $this->assertSame(1, $this->fixture->getPriority());
+    }
 }

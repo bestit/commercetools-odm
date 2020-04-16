@@ -113,4 +113,12 @@ class ChangePricesTest extends TestCase
 
         $this->assertEmpty($changePriceActions);
     }
+
+    /**
+     * @return void
+     */
+    public function testPriorityIs3()
+    {
+        $this->assertSame(3, $this->fixture->getPriority());
+    }
 }

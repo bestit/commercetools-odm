@@ -68,4 +68,14 @@ class RemovePrices extends PriceActionBuilder
 
         return $actions;
     }
+
+    /**
+     * Remove prices should be called after change prices.
+     *
+     * @return int
+     */
+    public function getPriority(): int
+    {
+        return 2;
+    }
 }
