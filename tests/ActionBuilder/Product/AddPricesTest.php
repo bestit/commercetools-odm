@@ -50,7 +50,9 @@ class AddPricesTest extends TestCase
      */
     public function testCreateUpdateActionsWithChangesForAVariant()
     {
-        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'variants', 0]);
+        $this->fixture->setLastFoundMatch([uniqid(), 'staged', 'variants', $variantIndex = 0]);
+
+        $variantId = 2;
 
         $product = new Product();
 
@@ -62,6 +64,10 @@ class AddPricesTest extends TestCase
             ->setMasterVariant(new ProductVariant())
             ->setVariants($variants = new ProductVariantCollection())
             ->getMasterVariant();
+
+        $product
+            ->getMasterData()
+            ->setCurrent($product->getMasterData()->getStaged());
 
         $prices = new PriceCollection();
 
@@ -76,11 +82,11 @@ class AddPricesTest extends TestCase
         $variant = new ProductVariant();
 
         $variant
-            ->setId(2)
+            ->setId($variantId)
             ->setSku($sku = 'sku')
             ->setPrices($prices);
 
-        $variants->setAt(2, $variant);
+        $variants->setAt($variantIndex, $variant);
 
         $actions = $this->fixture->createUpdateActions(
             [
@@ -96,7 +102,7 @@ class AddPricesTest extends TestCase
         /** @var ProductAddPriceAction $action */
         static::assertCount(1, $actions, 'Wrong action count.');
         static::assertInstanceOf(ProductAddPriceAction::class, $action = $actions[0], 'Wrong action type.');
-        static::assertSame(2, $action->getVariantId(), 'Wrong variant id.');
+        static::assertSame($variantId, $action->getVariantId(), 'Wrong variant id.');
         static::assertSame($country, $action->getPrice()->getCountry(), 'Wrong country.');
     }
 

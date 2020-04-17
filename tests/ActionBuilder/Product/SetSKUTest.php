@@ -37,10 +37,10 @@ class SetSKUTest extends TestCase
     public function getCreateAssertions(): array
     {
         return [
-            ['masterData/current/masterVariant/sku', false, 1],
-            ['masterData/staged/masterVariant/sku'],
-            ['masterData/current/variants/0/sku', false, 2],
-            ['masterData/current/variants/5/sku', false, 7],
+            ['masterData/current/masterVariant/sku', '', false, 1],
+            ['masterData/staged/masterVariant/sku', ''],
+            ['masterData/current/variants/0/sku', 0, false, 2],
+            ['masterData/current/variants/5/sku', 5, false, 7],
         ];
     }
 
@@ -83,12 +83,13 @@ class SetSKUTest extends TestCase
      * @dataProvider getCreateAssertions
      *
      * @param string $path
+     * @param string|int $variantIndex
      * @param bool $staged
      * @param int $variantId
      *
      * @return void
      */
-    public function testCreateUpdateActions(string $path, bool $staged = true, int $variantId = 1)
+    public function testCreateUpdateActions(string $path, $variantIndex, bool $staged = true, int $variantId = 1)
     {
         $this->fixture->supports($path, Product::class);
 
@@ -101,7 +102,7 @@ class SetSKUTest extends TestCase
                 'masterData' => [
                     'current' => [
                         'variants' => [
-                            [
+                            $variantIndex => [
                                 'id' => $variantId,
                             ],
                         ],

@@ -41,7 +41,7 @@ class ChangePrices extends PriceActionBuilder
         if ($variantType === 'masterVariant') {
             $variantId = 1;
         } else {
-            $variantId += 2;
+            $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantId);
         }
 
         $actions = [];
