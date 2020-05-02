@@ -5,8 +5,11 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Customer;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\DateTimeDecorator;
 use Commercetools\Core\Model\Customer\Customer;
+use Commercetools\Core\Model\Type\TypeReference;
 use Commercetools\Core\Request\AbstractAction;
+use Commercetools\Core\Request\Customers\Command\CustomerSetCustomTypeAction;
 use Commercetools\Core\Request\CustomField\Command\SetCustomFieldAction;
+use Commercetools\Core\Request\CustomField\Command\SetCustomTypeAction;
 use DateTime;
 
 /**
@@ -59,6 +62,17 @@ class SetCustomField extends CustomerActionBuilder
             $action->setValue($changedValue);
         }
 
-        return [$action];
+        $actions = [];
+
+        if (!isset($oldData['custom']) && $field === 'businessPartner') {
+            $actions[] = CustomerSetCustomTypeAction::ofType(
+                TypeReference::ofKey('customer')
+            );
+        }
+
+        $actions[] = $action;
+
+        return $actions;
     }
 }
+
