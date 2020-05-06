@@ -9,6 +9,7 @@ use BestIt\CommercetoolsODM\Repository\Decorator\CachedDefaultRepositoryDecorato
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Response\ApiResponseInterface;
+use Generator;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 use Psr\Cache\CacheItemInterface;
@@ -170,6 +171,28 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
             $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
             $isCached,
             $return = [new Product(), new Product()],
+            []
+        );
+
+        static::assertSame($return, $this->fixture->$function());
+    }
+
+    /**
+     * Checks if the call to the original class is cached or not and called directly.
+     *
+     * @dataProvider getCacheMarkers
+     * @param bool $isCached
+     *
+     * @return void
+     */
+    public function testFindAllAsGenerator(bool $isCached)
+    {
+        $this->mockOriginalRepoMethod(
+            $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
+            $isCached,
+            $return = (function () {
+                yield 'test';
+            })(),
             []
         );
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
+use BestIt\CommercetoolsODM\Helper\GeneratorQueryHelper;
 use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
@@ -52,6 +53,7 @@ class CartRepositoryTest extends TestCase
             $this->createMock(ClassMetadataInterface::class),
             $documentManager = $this->createMock(DocumentManagerInterface::class),
             $this->createMock(QueryHelper::class),
+            $this->createMock(GeneratorQueryHelper::class),
             $this->createMock(FilterManagerInterface::class),
             $this->createMock(PoolInterface::class)
         );
@@ -131,6 +133,7 @@ class CartRepositoryTest extends TestCase
             $this->createMock(ClassMetadataInterface::class),
             $documentManager = $this->createMock(DocumentManagerInterface::class),
             $this->createMock(QueryHelper::class),
+            $this->createMock(GeneratorQueryHelper::class),
             $this->createMock(FilterManagerInterface::class),
             $this->createMock(PoolInterface::class)
         );

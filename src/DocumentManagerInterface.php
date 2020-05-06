@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM;
 
+use BestIt\CommercetoolsODM\Helper\GeneratorQueryHelper;
 use Closure;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client;
@@ -142,9 +143,18 @@ interface DocumentManagerInterface extends ObjectManager, LoggerAwareInterface
     /**
      * Returns the common query helper from commercetools.
      *
+     * @deprecated Use "getBestItQueryHelper" instead. Will be removed/replaced in 2.0
+     *
      * @return QueryHelper
      */
     public function getQueryHelper(): QueryHelper;
+
+    /**
+     * Returns the common query helper from commercetools.
+     *
+     * @return GeneratorQueryHelper
+     */
+    public function getGeneratorQueryHelper(): GeneratorQueryHelper;
 
     /**
      * Returns the unit of work for this manager.

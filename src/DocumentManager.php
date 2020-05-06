@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM;
 
+use BestIt\CommercetoolsODM\Helper\GeneratorQueryHelper;
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Commons\Helper\QueryHelper;
@@ -64,6 +65,7 @@ class DocumentManager implements DocumentManagerInterface
      * @param ClassMetadataFactory $metadataFactory
      * @param Client $client
      * @param QueryHelper $queryHelper
+     * @param GeneratorQueryHelper $generatorQueryHelper
      * @param RepositoryFactoryInterface $repositoryFactory
      * @param UnitOfWorkFactoryInterface $unitOfWorkFactory
      */
@@ -71,6 +73,7 @@ class DocumentManager implements DocumentManagerInterface
         ClassMetadataFactory $metadataFactory,
         Client $client,
         QueryHelper $queryHelper,
+        GeneratorQueryHelper $generatorQueryHelper,
         RepositoryFactoryInterface $repositoryFactory,
         UnitOfWorkFactoryInterface $unitOfWorkFactory
     ) {
@@ -78,6 +81,7 @@ class DocumentManager implements DocumentManagerInterface
             ->setClient($client)
             ->setMetadataFactory($metadataFactory)
             ->setQueryHelper($queryHelper)
+            ->setGeneratorQueryHelper($generatorQueryHelper)
             ->setLogger(new NullLogger());
 
         $this->repositoryFactory = $repositoryFactory;

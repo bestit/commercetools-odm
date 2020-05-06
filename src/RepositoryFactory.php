@@ -76,6 +76,7 @@ class RepositoryFactory implements LoggerAwareInterface, RepositoryFactoryInterf
                 $metadata,
                 $documentManager,
                 $documentManager->getQueryHelper(),
+                $documentManager->getGeneratorQueryHelper(),
                 $this->getFilterManager(),
                 $this->getPool()
             );

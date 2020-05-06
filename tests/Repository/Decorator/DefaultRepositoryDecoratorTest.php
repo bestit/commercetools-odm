@@ -142,6 +142,24 @@ class DefaultRepositoryDecoratorTest extends TestCase
      *
      * @return void
      */
+    public function testFindAllAsGenerator()
+    {
+        $this->mockOriginalRepoMethod(
+            $function = $this->extractOriginalRepoMethodName(__FUNCTION__),
+            [],
+            $return = (function () {
+                yield 'test';
+            })()
+        );
+
+        static::assertSame($return, $this->fixture->$function());
+    }
+
+    /**
+     * Checks if the call is delegated to the original class.
+     *
+     * @return void
+     */
     public function testFindAsync()
     {
         $this->mockOriginalRepoMethod(

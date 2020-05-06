@@ -10,6 +10,7 @@ use BestIt\CommercetoolsODM\Exception\ResponseException;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
 use BestIt\CommercetoolsODM\Helper\DocumentManagerAwareTrait;
 use BestIt\CommercetoolsODM\Helper\FilterManagerAwareTrait;
+use BestIt\CommercetoolsODM\Helper\GeneratorQueryHelper;
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
@@ -28,6 +29,7 @@ use Commercetools\Core\Request\Query\MultiParameter;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
 use Commercetools\Core\Response\ResourceResponse;
+use Generator;
 use GuzzleHttp\Promise\FulfilledPromise;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -89,6 +91,7 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
      * @param ClassMetadataInterface $metadata
      * @param DocumentManagerInterface $documentManager
      * @param QueryHelper $queryHelper
+     * @param GeneratorQueryHelper $generatorQueryHelper
      * @param FilterManagerInterface $filterManager
      * @param PoolInterface|null $pool
      */
@@ -96,12 +99,14 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
         ClassMetadataInterface $metadata,
         DocumentManagerInterface $documentManager,
         QueryHelper $queryHelper,
+        GeneratorQueryHelper $generatorQueryHelper,
         FilterManagerInterface $filterManager,
         PoolInterface $pool = null
     ) {
         $this
             ->setDocumentManager($documentManager)
             ->setQueryHelper($queryHelper)
+            ->setGeneratorQueryHelper($generatorQueryHelper)
             ->setFilterManager($filterManager);
 
         $this->logger = new NullLogger();
@@ -268,6 +273,8 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
     /**
      * Finds all objects in the repository.
      *
+     * @deprecated Use "findAllAsGenerator" instead. Will be removed/replaced in 2.0
+     *
      * @todo Should not be used for to large result sets.
      *
      * @return array The objects.
@@ -298,6 +305,36 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
         }
 
         return $documents;
+    }
+
+    /**
+     * Finds all objects in the repository.
+     *
+     * @return Generator
+     */
+    public function findAllAsGenerator(): Generator
+    {
+        $request = $this->createSimpleQuery(
+            $this->getClassName(),
+            DocumentManagerInterface::REQUEST_TYPE_QUERY
+        );
+
+        $rawDocuments = $this->getGeneratorQueryHelper()->getAll(
+            $this->documentManager->getClient(),
+            $request
+        );
+
+        $uow = $this->documentManager->getUnitOfWork();
+
+        foreach ($rawDocuments as $rawDocument) {
+            $document = $uow->createDocument($this->getClassName(), $rawDocument, []);
+
+            if ($document instanceof RepositoryAwareInterface) {
+                $document->setRepository($this);
+            }
+
+            yield $rawDocument->getId() => $document;
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ namespace BestIt\CommercetoolsODM\Tests;
 use BestIt\CommercetoolsODM\ClientAwareTrait;
 use BestIt\CommercetoolsODM\DocumentManager;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
+use BestIt\CommercetoolsODM\Helper\GeneratorQueryHelper;
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataFactory;
 use BestIt\CommercetoolsODM\MetadataFactoryAwareTrait;
@@ -99,6 +100,7 @@ class DocumentManagerTest extends TestCase
             $this->createMock(ClassMetadataFactory::class),
             $this->createMock(Client::class),
             $this->createMock(QueryHelper::class),
+            $this->createMock(GeneratorQueryHelper::class),
             $this->createMock(RepositoryFactoryInterface::class),
             $this->unitOfWorkFactory = $this->CreateMock(UnitOfWorkFactoryInterface::class)
         );

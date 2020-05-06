@@ -7,6 +7,7 @@ namespace BestIt\CommercetoolsODM\Repository\Decorator;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Exception;
+use Generator;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 use UnexpectedValueException;
@@ -110,6 +111,14 @@ class CachedDefaultRepositoryDecorator extends DefaultRepositoryDecorator
      * @return array The objects.
      */
     public function findAll(): array
+    {
+        return $this->decorateCallWithCache(func_get_args(), __FUNCTION__);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllAsGenerator(): Generator
     {
         return $this->decorateCallWithCache(func_get_args(), __FUNCTION__);
     }

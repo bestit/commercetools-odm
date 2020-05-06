@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Tests\Helper;
 
+use BestIt\CommercetoolsODM\Helper\GeneratorQueryHelper;
 use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use Commercetools\Commons\Helper\QueryHelper;
 use PHPUnit\Framework\TestCase;
@@ -47,5 +48,21 @@ class QueryHelperAwareTraitTest extends TestCase
         );
 
         static::assertSame($mock, $this->fixture->getQueryHelper(), 'Object not persisted.');
+    }
+
+    /**
+     * Checks the getter and setter.
+     *
+     * @return void
+     */
+    public function testSetAndGetGeneratorQueryHelper()
+    {
+        static::assertSame(
+            $this->fixture,
+            $this->fixture->setGeneratorQueryHelper($mock = static::createMock(GeneratorQueryHelper::class)),
+            'Fluent interface failed.'
+        );
+
+        static::assertSame($mock, $this->fixture->getGeneratorQueryHelper(), 'Object not persisted.');
     }
 }

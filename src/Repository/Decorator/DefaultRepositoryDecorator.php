@@ -11,6 +11,7 @@ use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
 use BestIt\CommercetoolsODM\Repository\ObjectRepository;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Exception;
+use Generator;
 use UnexpectedValueException;
 use function func_get_args;
 
@@ -81,6 +82,14 @@ class DefaultRepositoryDecorator implements ByKeySearchRepositoryInterface
      * @return array The objects.
      */
     public function findAll(): array
+    {
+        return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findAllAsGenerator(): Generator
     {
         return $this->getWrapped()->{__FUNCTION__}(...func_get_args());
     }

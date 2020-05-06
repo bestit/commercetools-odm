@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\Tests\Repository;
 
+use BestIt\CommercetoolsODM\Helper\GeneratorQueryHelper;
 use BestIt\CTAsyncPool\PoolInterface;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\ResponseException;
@@ -66,6 +67,7 @@ class OrderRepositoryTest extends TestCase
                 $metadata = static::createMock(ClassMetadataInterface::class),
                 $this->documentManager = static::createMock(DocumentManagerInterface::class),
                 static::createMock(QueryHelper::class),
+                static::createMock(GeneratorQueryHelper::class),
                 static::createMock(FilterManagerInterface::class),
                 static::createMock(PoolInterface::class)
             ])
@@ -133,6 +135,7 @@ class OrderRepositoryTest extends TestCase
                 $metadata = static::createMock(ClassMetadataInterface::class),
                 $this->documentManager = static::createMock(DocumentManagerInterface::class),
                 static::createMock(QueryHelper::class),
+                static::createMock(GeneratorQueryHelper::class),
                 static::createMock(FilterManagerInterface::class),
                 static::createMock(PoolInterface::class)
             ])

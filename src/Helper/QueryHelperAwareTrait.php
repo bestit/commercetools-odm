@@ -17,10 +17,17 @@ trait QueryHelperAwareTrait
     /**
      * @var QueryHelper|null The commons query helper.
      */
-    protected $queryHelper = null;
+    protected $queryHelper;
+
+    /**
+     * @var GeneratorQueryHelper|null The commons query helper.
+     */
+    protected $generatorQueryHelper;
 
     /**
      * Returns the common query helper for commercetools in a type safe way.
+     *
+     * @deprecated Use "getBestitQueryHelper" instead. Will be removed/replaced in 2.0
      *
      * @return QueryHelper
      */
@@ -32,6 +39,8 @@ trait QueryHelperAwareTrait
     /**
      * Sets the common query helper for commercetools.
      *
+     * @deprecated Use "setBestitQueryHelper" instead. Will be removed/replaced in 2.0
+     *
      * @param QueryHelper $queryHelper
      *
      * @return $this
@@ -39,6 +48,30 @@ trait QueryHelperAwareTrait
     public function setQueryHelper(QueryHelper $queryHelper): self
     {
         $this->queryHelper = $queryHelper;
+
+        return $this;
+    }
+
+    /**
+     * Returns the common query helper for commercetools in a type safe way.
+     *
+     * @return GeneratorQueryHelper
+     */
+    public function getGeneratorQueryHelper(): GeneratorQueryHelper
+    {
+        return $this->generatorQueryHelper;
+    }
+
+    /**
+     * Sets the common query helper.
+     *
+     * @param GeneratorQueryHelper $generatorQueryHelper
+     *
+     * @return $this
+     */
+    public function setGeneratorQueryHelper(GeneratorQueryHelper $generatorQueryHelper): self
+    {
+        $this->generatorQueryHelper = $generatorQueryHelper;
 
         return $this;
     }

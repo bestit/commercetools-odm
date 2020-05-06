@@ -44,6 +44,7 @@ class ServiceEntityRepository extends DefaultRepository
             $metadata,
             $documentManager,
             $documentManager->getQueryHelper(),
+            $documentManager->getGeneratorQueryHelper(),
             $this->getFilterManager()
         );
     }

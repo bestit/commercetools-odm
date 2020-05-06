@@ -5,6 +5,7 @@ namespace BestIt\CommercetoolsODM\Tests\Repository;
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\APIException;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
+use BestIt\CommercetoolsODM\Helper\GeneratorQueryHelper;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Repository\CustomerRepository;
 use BestIt\CommercetoolsODM\UnitOfWork;
@@ -74,6 +75,7 @@ class CustomerRepositoryTest extends TestCase
             $metaDataMock,
             $documentManagerMock,
             $this->createMock(QueryHelper::class),
+            $this->createMock(GeneratorQueryHelper::class),
             $this->createMock(FilterManagerInterface::class)
         );
 
@@ -120,6 +122,7 @@ class CustomerRepositoryTest extends TestCase
             $metaDataMock,
             $documentManagerMock,
             $this->createMock(QueryHelper::class),
+            $this->createMock(GeneratorQueryHelper::class),
             $this->createMock(FilterManagerInterface::class)
         );
 
@@ -170,6 +173,7 @@ class CustomerRepositoryTest extends TestCase
             $metaDataMock,
             $documentManagerMock,
             $this->createMock(QueryHelper::class),
+            $this->createMock(GeneratorQueryHelper::class),
             $this->createMock(FilterManagerInterface::class)
         );
 

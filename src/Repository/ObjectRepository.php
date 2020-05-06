@@ -7,6 +7,7 @@ use BestIt\CommercetoolsODM\Exception\ResponseException;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Doctrine\Common\Persistence\ObjectRepository as BasicInterface;
 use Exception;
+use Generator;
 
 /**
  * The API for the object repos.
@@ -37,6 +38,13 @@ interface ObjectRepository extends BasicInterface
      * @return mixed
      */
     public function findAndCreateObject($id, bool $withRegistration = true);
+
+    /**
+     * Finds all objects in the repository.
+     *
+     * @return Generator
+     */
+    public function findAllAsGenerator(): Generator;
 
     /**
      * Finds an object by its primary key / identifier.
