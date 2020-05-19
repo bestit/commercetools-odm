@@ -54,6 +54,7 @@ class ChangeCustomTypes extends CategoryActionBuilder
             $sourceObject->getCustom()->getFields()->toArray(),
             $changedValue['fields']
         );
+        $fields = array_filter($fields);
 
         foreach ($fields as $name => $value) {
             $container->set($name, $value);
