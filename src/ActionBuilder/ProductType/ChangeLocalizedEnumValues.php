@@ -178,7 +178,14 @@ class ChangeLocalizedEnumValues extends ProductTypeActionBuilder
         $actions = [];
 
         foreach ($changeValues as $item) {
-            if (array_key_exists($item['key'], $oldValues) && $oldValues[$item['key']] !== $item) {
+            if (!array_key_exists($item['key'], $oldValues)) {
+                continue;
+            }
+
+            asort($oldValues[$item['key']]);
+            asort($item);
+
+            if ($oldValues[$item['key']] !== $item) {
                 $actions[] = ProductTypeChangeLocalizedEnumLabelAction::fromArray([
                     'attributeName' => $attributeName,
                     'newValue' => $item
