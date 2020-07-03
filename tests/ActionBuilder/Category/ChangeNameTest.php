@@ -9,6 +9,7 @@ use BestIt\CommercetoolsODM\ActionBuilder\Category\ChangeName;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Category\Category;
+use Commercetools\Core\Model\Common\LocalizedString;
 use Commercetools\Core\Request\Categories\Command\CategoryChangeNameAction;
 use PHPUnit\Framework\TestCase;
 
@@ -64,11 +65,15 @@ class ChangeNameTest extends TestCase
      */
     public function testCreateUpdateActions()
     {
+        $category = new Category();
+        $category->setName(new LocalizedString([
+            'de' => $newGer = uniqid(),
+            'en' => $newEn = uniqid()
+        ]));
+
         $actions = $this->fixture->createUpdateActions(
             [
-                'de' => $newGer = uniqid(),
-                'fr' => null,
-                'en' => $newEn = uniqid()
+                'de' => $newGer,
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -79,7 +84,7 @@ class ChangeNameTest extends TestCase
                     'en' => uniqid(),
                 ],
             ],
-            new Category()
+            $category
         );
 
         static::assertCount(1, $actions, 'Wrong action count.');
