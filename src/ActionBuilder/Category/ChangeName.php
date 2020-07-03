@@ -47,9 +47,7 @@ class ChangeName extends CategoryActionBuilder
         }
 
         return [
-            CategoryChangeNameAction::ofName(
-                LocalizedString::fromArray($changedValue)
-            ),
+            CategoryChangeNameAction::ofName($sourceObject->getName()),
         ];
     }
 }
