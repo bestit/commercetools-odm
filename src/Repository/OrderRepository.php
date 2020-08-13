@@ -26,11 +26,13 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
      * Creates an order from a cart.
      *
      * @param Cart $cart
+     * @param string|null $orderNumber
+     *
      * @throws ResponseException
      *
      * @return Order
      */
-    public function createFromCart(Cart $cart): Order
+    public function createFromCart(Cart $cart, string $orderNumber = null): Order
     {
         $documentManager = $this->getDocumentManager();
 
@@ -40,6 +42,11 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
             $cart->getId(),
             $cart->getVersion()
         );
+
+        if ($orderNumber !== null) {
+            /** @var OrderCreateFromCartRequest $request */
+            $request->setOrderNumber($orderNumber);
+        }
 
         /** @var Order $order */
         list($order, $response) = $this->processQuery($request);

@@ -20,11 +20,11 @@ interface OrderRepositoryInterface extends ObjectRepository
      * Creates an order from a cart.
      *
      * @param Cart $cart
-     * @throws ResponseException
+     * @param string|null $orderNumber
      *
      * @return Order
      */
-    public function createFromCart(Cart $cart): Order;
+    public function createFromCart(Cart $cart, string $orderNumber = null): Order;
 
     /**
      * Removes the given order.
