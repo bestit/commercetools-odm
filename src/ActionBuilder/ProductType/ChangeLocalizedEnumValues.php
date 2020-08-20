@@ -41,7 +41,7 @@ class ChangeLocalizedEnumValues extends ProductTypeActionBuilder
             if (!array_key_exists($item['key'], $oldValues)) {
                 $actions[] = ProductTypeAddLocalizedEnumValueAction::fromArray([
                     'attributeName' => $attributeName,
-                    'value' => $item
+                    'value' => $item,
                 ]);
             }
         }
@@ -138,7 +138,7 @@ class ChangeLocalizedEnumValues extends ProductTypeActionBuilder
         if (count($removedKeys) > 0) {
             $actions[] = ProductTypeRemoveEnumValuesAction::fromArray([
                 'attributeName' => $attribute['name'],
-                'keys' => $removedKeys
+                'keys' => $removedKeys,
             ]);
         }
 
@@ -188,7 +188,7 @@ class ChangeLocalizedEnumValues extends ProductTypeActionBuilder
             if ($oldValues[$item['key']] !== $item) {
                 $actions[] = ProductTypeChangeLocalizedEnumLabelAction::fromArray([
                     'attributeName' => $attributeName,
-                    'newValue' => $item
+                    'newValue' => $item,
                 ]);
             }
         }

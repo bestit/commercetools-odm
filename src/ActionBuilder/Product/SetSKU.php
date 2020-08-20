@@ -54,7 +54,7 @@ class SetSKU extends ProductActionBuilder
         return [
             ProductSetSkuAction::ofVariantId($variantId)
                 ->setSku($changedValue)
-                ->setStaged($dataContainer === 'staged')
+                ->setStaged($dataContainer === 'staged'),
         ];
     }
 }

@@ -98,7 +98,7 @@ class CartRepository extends DefaultRepository
                 'cartId' => $id,
                 'version' => $version,
                 'updateProductData' => $updateProductData,
-                'response' => $response
+                'response' => $response,
             ]);
 
             throw new RuntimeException('Unexpected response for cart recalculation');

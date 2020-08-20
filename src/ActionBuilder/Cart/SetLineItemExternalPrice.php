@@ -77,7 +77,7 @@ class SetLineItemExternalPrice extends CartActionBuilder
                 'externalPrice' => $this->getCorrectPrice(
                     $lineItem->getPrice()->toArray(),
                     $lineItem->getQuantity()
-                )
+                ),
             ]);
         }
 

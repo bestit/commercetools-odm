@@ -208,7 +208,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $this->logger->debug(
             'Iterates thru the new documents for inserts.',
             [
-                'newObjectCount' => $this->countNewObjects()
+                'newObjectCount' => $this->countNewObjects(),
             ]
         );
 
@@ -261,7 +261,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $this->logger->debug(
             'Iterates thru the identity map for removals.',
             [
-                'allIds' => array_keys($this->identityMap)
+                'allIds' => array_keys($this->identityMap),
             ]
         );
 
@@ -273,7 +273,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 [
                     'class' => get_class($model),
                     'id' => $id,
-                    'isRemoved' => $isRemoved
+                    'isRemoved' => $isRemoved,
                 ]
             );
 
@@ -313,7 +313,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $this->logger->debug(
             'Iterates thru the identity map for updates.',
             [
-                'allIds' => array_keys($this->identityMap)
+                'allIds' => array_keys($this->identityMap),
             ]
         );
 
@@ -325,7 +325,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 [
                     'class' => get_class($object),
                     'id' => $id,
-                    'isManaged' => $isManaged
+                    'isManaged' => $isManaged,
                 ]
             );
 
@@ -341,7 +341,7 @@ class UnitOfWork implements UnitOfWorkInterface
                             'class' => get_class($object),
                             'id' => $id,
                             'isChanged' => $isChanged,
-                            'isManaged' => $isManaged
+                            'isManaged' => $isManaged,
                         ]
                     );
 
@@ -877,7 +877,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 [
                     'memory' => memory_get_usage(true) / 1024 / 1024,
                     'retryCount' => $this->retryCount,
-                    'run' => $this->flushRuns
+                    'run' => $this->flushRuns,
                 ]
             );
 
@@ -888,7 +888,7 @@ class UnitOfWork implements UnitOfWorkInterface
                 [
                     'memory' => memory_get_usage(true) / 1024 / 1024,
                     'retryCount' => $this->retryCount,
-                    'run' => $this->flushRuns
+                    'run' => $this->flushRuns,
                 ]
             );
         }
@@ -1229,7 +1229,7 @@ class UnitOfWork implements UnitOfWorkInterface
 
         if ($productData = $product->getMasterData()) {
             $values += [
-                'publish' => (bool) $productData->getPublished()
+                'publish' => (bool) $productData->getPublished(),
             ];
 
             $projection = $productData->getStaged();
@@ -1267,7 +1267,7 @@ class UnitOfWork implements UnitOfWorkInterface
                             'attributes' => $variant->getAttributes(),
                             'images' => $variant->getImages(),
                             'key' => $variant->getKey(),
-                            'sku' => (string) $variant->getSku()
+                            'sku' => (string) $variant->getSku(),
                         ]
                     )
                 );
@@ -1429,7 +1429,7 @@ class UnitOfWork implements UnitOfWorkInterface
                     'Received an error and throws it as an exception.',
                     [
                         'exception' => $exception,
-                        'memory' => memory_get_usage(true) / 1024 / 1024
+                        'memory' => memory_get_usage(true) / 1024 / 1024,
                     ]
                 );
 

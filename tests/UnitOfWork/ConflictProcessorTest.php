@@ -132,7 +132,7 @@ class ConflictProcessorTest extends TestCase
     protected function getUsedTraitNames(): array
     {
         return [
-            DocumentManagerAwareTrait::class
+            DocumentManagerAwareTrait::class,
         ];
     }
 }

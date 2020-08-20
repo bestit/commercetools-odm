@@ -31,31 +31,31 @@ class PriceHelperTraitTest extends TestCase
         $price = [
             'value' => [
                 'currencyCode' => $currencyCode,
-                'centAmount' => $centAmountDefault = 50000
+                'centAmount' => $centAmountDefault = 50000,
             ],
             'tiers' => [
                 [
                     'minimumQuantity' => $minimumQuantity1 = 10,
                     'value' => [
                         'currencyCode' => $currencyCode,
-                        'centAmount' => $centAmount1 = 40000
-                    ]
+                        'centAmount' => $centAmount1 = 40000,
+                    ],
                 ],
                 [
                     'minimumQuantity' => $minimumQuantity3 = 30,
                     'value' => [
                         'currencyCode' => $currencyCode,
-                        'centAmount' => $centAmount3 = 20000
-                    ]
+                        'centAmount' => $centAmount3 = 20000,
+                    ],
                 ],
                 [
                     'minimumQuantity' => $minimumQuantity2 = 20,
                     'value' => [
                         'currencyCode' => $currencyCode,
-                        'centAmount' => $centAmount2 = 30000
-                    ]
-                ]
-            ]
+                        'centAmount' => $centAmount2 = 30000,
+                    ],
+                ],
+            ],
         ];
 
         self::assertEquals(

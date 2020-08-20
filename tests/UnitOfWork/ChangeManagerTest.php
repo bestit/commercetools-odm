@@ -131,7 +131,7 @@ class ChangeManagerTest extends TestCase
             $customObject = CustomObject::fromArray($oldData = [
                 'container' => $container = uniqid(),
                 'key' => $key = uniqid(),
-                'value' => '[\"foobar\"]'
+                'value' => '[\"foobar\"]',
             ]),
             uniqid(),
             5
@@ -141,7 +141,7 @@ class ChangeManagerTest extends TestCase
 
         static::assertSame(
             [
-                'value' => $newValue
+                'value' => $newValue,
             ],
             $this->fixture->getChanges($customObject)
         );
@@ -176,7 +176,7 @@ class ChangeManagerTest extends TestCase
 
         static::assertSame(
             [
-                'addresses' => $newAddress
+                'addresses' => $newAddress,
             ],
             $this->fixture->getChanges($model)
         );
@@ -206,12 +206,12 @@ class ChangeManagerTest extends TestCase
             $order = Order::fromArray($oldData = [
                 'id' => $oldOrderId = uniqid(),
                 'billingAddress' => [
-                    'id' => $oldAddressId = uniqid()
+                    'id' => $oldAddressId = uniqid(),
                 ],
                 'lineItems' => $lineItems = [
                     ['id' => $lineItemId1 = uniqid()],
-                    ['id' => $lineItemId2 = uniqid()]
-                ]
+                    ['id' => $lineItemId2 = uniqid()],
+                ],
             ]),
             uniqid(),
             5
@@ -228,14 +228,14 @@ class ChangeManagerTest extends TestCase
             [
                 'id' => $newOrderId,
                 'billingAddress' => [
-                    'streetName' => $streeName
+                    'streetName' => $streeName,
                 ],
                 'lineItems' => [
                     2 => [
-                        'id' => $lineItemId3
+                        'id' => $lineItemId3,
                     ],
-                    0 => null
-                ]
+                    0 => null,
+                ],
             ],
             $this->fixture->getChanges($order)
         );
@@ -257,11 +257,11 @@ class ChangeManagerTest extends TestCase
                         'categories' => [
                             [
                                 'typeId' => 'category',
-                                'id' => $category1Id = uniqid()
+                                'id' => $category1Id = uniqid(),
                             ],
                             [
                                 'typeId' => 'category',
-                                'id' => $category2Id = uniqid()
+                                'id' => $category2Id = uniqid(),
                             ],
                         ],
                         'masterVariant' => [
@@ -269,38 +269,38 @@ class ChangeManagerTest extends TestCase
                             'attributes' => [
                                 [
                                     'name' => 'arrayAdd',
-                                    'value' => []
+                                    'value' => [],
                                 ],
                                 [
                                     'name' => 'arrayAddPartly',
-                                    'value' => [1]
+                                    'value' => [1],
                                 ],
                                 [
                                     'name' => 'arrayChange',
-                                    'value' => [1, 2, 3]
+                                    'value' => [1, 2, 3],
                                 ],
                                 [
                                     'name' => 'arrayEmpty',
                                     'value' => [
                                         uniqid(),
-                                        uniqid()
-                                    ]
+                                        uniqid(),
+                                    ],
                                 ],
                                 [
                                     'name' => 'date',
-                                    'value' => new DateTime()
+                                    'value' => new DateTime(),
                                 ],
                                 [
                                     'name' => 'float',
-                                    'value' => 1.1
+                                    'value' => 1.1,
                                 ],
                                 [
                                     'name' => 'floatInt',
-                                    'value' => (float) 1
+                                    'value' => (float) 1,
                                 ],
                                 [
                                     'name' => 'manufacturer',
-                                    'value' => uniqid()
+                                    'value' => uniqid(),
                                 ],
                                 [
                                     'name' => 'null',
@@ -316,7 +316,7 @@ class ChangeManagerTest extends TestCase
                                         [
                                             'name' => 'nestedString',
                                             'value' => uniqid(),
-                                        ]
+                                        ],
                                     ],
                                 ],
                                 [
@@ -327,10 +327,10 @@ class ChangeManagerTest extends TestCase
                                     'name' => 'price',
                                     'value' => [
                                         'currencyCode' => 'EUR',
-                                        'centAmount' => 10010
-                                    ]
-                                ]
-                            ]
+                                        'centAmount' => 10010,
+                                    ],
+                                ],
+                            ],
                         ],
                         'name' => ['de' => $oldGermanName = uniqid(), 'fr' => uniqid()],
                         'variants' => [
@@ -339,17 +339,17 @@ class ChangeManagerTest extends TestCase
                                 'attributes' => [
                                     [
                                         'name' => 'manufacturer',
-                                        'value' => uniqid()
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
+                                        'value' => uniqid(),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'taxCategory' => [
                     'typeId' => 'tax-category',
-                    'id' => uniqid()
-                ]
+                    'id' => uniqid(),
+                ],
             ]),
             uniqid(),
             5
@@ -432,14 +432,14 @@ class ChangeManagerTest extends TestCase
                         'categories' => [
                             2 => [
                                 'typeId' => 'category',
-                                'id' => $category3Id
+                                'id' => $category3Id,
                             ],
                             1 => null,
                         ],
                         'masterVariant' => [
                             'attributes' => [
                                 [
-                                    'value' => $newAddedArray
+                                    'value' => $newAddedArray,
                                 ],
                                 [
                                     'value' => [1, 2, 3,],
@@ -451,16 +451,16 @@ class ChangeManagerTest extends TestCase
                                     'value' => [null, null,],
                                 ],
                                 5 => [
-                                    'value' => 1.5
+                                    'value' => 1.5,
                                 ],
                                 11 => [
                                     'value' => [
-                                        'centAmount' => $newAmount
-                                    ]
+                                        'centAmount' => $newAmount,
+                                    ],
                                 ],
                                 [
                                     'name' => $newAttrName,
-                                    'value' => $newAttrValue
+                                    'value' => $newAttrValue,
                                 ],
                             ],
                         ],
@@ -472,7 +472,7 @@ class ChangeManagerTest extends TestCase
                             [
                                 'attributes' => [
                                     [
-                                        'value' => $newManId
+                                        'value' => $newManId,
                                     ],
                                 ],
                             ],

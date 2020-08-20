@@ -132,7 +132,7 @@ class SetSKUTest extends TestCase
             'masterData',
             'current',
             'variants',
-            $variantId
+            $variantId,
         ]);
 
         $actions = $this->fixture->createUpdateActions(

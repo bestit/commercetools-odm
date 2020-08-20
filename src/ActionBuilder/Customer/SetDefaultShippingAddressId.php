@@ -42,7 +42,7 @@ class SetDefaultShippingAddressId extends CustomerActionBuilder
         $sourceObject
     ): array {
         return [
-            (new CustomerSetDefaultShippingAddressAction())->setAddressId($changedValue)
+            (new CustomerSetDefaultShippingAddressAction())->setAddressId($changedValue),
         ];
     }
 }

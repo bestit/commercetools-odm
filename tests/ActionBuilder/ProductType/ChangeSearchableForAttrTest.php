@@ -97,9 +97,9 @@ class ChangeSearchableForAttrTest extends TestCase
             [
                 'attributes' => [
                     [
-                        'name' => $name = uniqid()
-                    ]
-                ]
+                        'name' => $name = uniqid(),
+                    ],
+                ],
             ],
             new ProductType()
         );

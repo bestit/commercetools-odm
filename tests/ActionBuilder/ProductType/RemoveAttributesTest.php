@@ -91,8 +91,8 @@ class RemoveAttributesTest extends TestCase
 
         $object->setAttributes(AttributeDefinitionCollection::fromArray([
             [
-                'name' => 'attr3'
-            ]
+                'name' => 'attr3',
+            ],
         ]));
 
         $actions = $this->fixture->createUpdateActions(
@@ -102,12 +102,12 @@ class RemoveAttributesTest extends TestCase
             [
                 'attributes' => [
                     [
-                        'name' => 'attr1'
+                        'name' => 'attr1',
                     ],
                     [
-                        'name' => 'attr3'
-                    ]
-                ]
+                        'name' => 'attr3',
+                    ],
+                ],
             ],
             $object
         );

@@ -197,7 +197,7 @@ class UnitOfWorkTest extends TestCase
             DocumentManagerAwareTrait::class,
             EventManagerAwareTrait::class,
             ListenerInvokerAwareTrait::class,
-            LoggerAwareTrait::class
+            LoggerAwareTrait::class,
         ];
     }
 
@@ -382,9 +382,9 @@ class UnitOfWorkTest extends TestCase
                         'apartment' => 'best it GmbH & Co. KG',
                         'phone' => '+49 2863 38362773',
                         'mobile' => '+49 160 91084976',
-                        'email' => 'lange@bestit-online.de'
-                    ]
-                ]
+                        'email' => 'lange@bestit-online.de',
+                    ],
+                ],
             ])
         );
 
@@ -467,9 +467,9 @@ class UnitOfWorkTest extends TestCase
                         'apartment' => 'best it GmbH & Co. KG',
                         'phone' => '+49 2863 38362773',
                         'mobile' => '+49 160 91084976',
-                        'email' => 'lange@bestit-online.de'
-                    ]
-                ]
+                        'email' => 'lange@bestit-online.de',
+                    ],
+                ],
             ])
         );
 
@@ -576,7 +576,7 @@ class UnitOfWorkTest extends TestCase
                 'customerId' => uniqid(),
                 'customerEmail' => 'test@example.com',
                 'id' => uniqid(),
-                'version' => 5
+                'version' => 5,
             ]),
             false
         );
@@ -627,7 +627,7 @@ class UnitOfWorkTest extends TestCase
             $customObject = CustomObject::fromArray($oldData = [
                 'container' => $container = uniqid(),
                 'key' => $key = uniqid(),
-                'value' => '[\"foobar\"]'
+                'value' => '[\"foobar\"]',
             ]),
             false
         );
@@ -669,12 +669,12 @@ class UnitOfWorkTest extends TestCase
             $order = Order::fromArray($oldData = [
                 'id' => $oldOrderId = uniqid(),
                 'billingAddress' => [
-                    'id' => $oldAddressId = uniqid()
+                    'id' => $oldAddressId = uniqid(),
                 ],
                 'lineItems' => $lineItems = [
                     ['id' => $lineItemId1 = uniqid()],
-                    ['id' => $lineItemId2 = uniqid()]
-                ]
+                    ['id' => $lineItemId2 = uniqid()],
+                ],
             ]),
             false
         );
@@ -703,12 +703,12 @@ class UnitOfWorkTest extends TestCase
                     'lineItems' => [
                         0 => null,
                         2 => [
-                            'id' => $lineItemId3
-                        ]
+                            'id' => $lineItemId3,
+                        ],
                     ],
                     'billingAddress' => [
-                        'streetName' => $streetName
-                    ]
+                        'streetName' => $streetName,
+                    ],
                 ],
                 $oldData,
                 $order
@@ -736,11 +736,11 @@ class UnitOfWorkTest extends TestCase
                         'categories' => [
                             [
                                 'typeId' => 'category',
-                                'id' => $category1Id = uniqid()
+                                'id' => $category1Id = uniqid(),
                             ],
                             [
                                 'typeId' => 'category',
-                                'id' => $category2Id = uniqid()
+                                'id' => $category2Id = uniqid(),
                             ],
                         ],
                         'masterVariant' => [
@@ -748,38 +748,38 @@ class UnitOfWorkTest extends TestCase
                             'attributes' => [
                                 [
                                     'name' => 'arrayAdd',
-                                    'value' => []
+                                    'value' => [],
                                 ],
                                 [
                                     'name' => 'arrayAddPartly',
-                                    'value' => [1]
+                                    'value' => [1],
                                 ],
                                 [
                                     'name' => 'arrayChange',
-                                    'value' => [1,2,3]
+                                    'value' => [1,2,3],
                                 ],
                                 [
                                     'name' => 'arrayEmpty',
                                     'value' => [
                                         uniqid(),
-                                        uniqid()
-                                    ]
+                                        uniqid(),
+                                    ],
                                 ],
                                 [
                                     'name' => 'date',
-                                    'value' => new DateTime()
+                                    'value' => new DateTime(),
                                 ],
                                 [
                                     'name' => 'float',
-                                    'value' => 1.1
+                                    'value' => 1.1,
                                 ],
                                 [
                                     'name' => 'floatInt',
-                                    'value' => (float) 1
+                                    'value' => (float) 1,
                                 ],
                                 [
                                     'name' => 'manufacturer',
-                                    'value' => uniqid()
+                                    'value' => uniqid(),
                                 ],
                                 [
                                     'name' => 'null',
@@ -795,7 +795,7 @@ class UnitOfWorkTest extends TestCase
                                         [
                                             'name' => 'nestedString',
                                             'value' => uniqid(),
-                                        ]
+                                        ],
                                     ],
                                 ],
                                 [
@@ -806,10 +806,10 @@ class UnitOfWorkTest extends TestCase
                                     'name' => 'price',
                                     'value' => [
                                         'currencyCode' => 'EUR',
-                                        'centAmount' => 10010
-                                    ]
-                                ]
-                            ]
+                                        'centAmount' => 10010,
+                                    ],
+                                ],
+                            ],
                         ],
                         'name' => ['de' => $oldGermanName = uniqid(), 'fr' => uniqid()],
                         'variants' => [
@@ -818,17 +818,17 @@ class UnitOfWorkTest extends TestCase
                                 'attributes' => [
                                     [
                                         'name' => 'manufacturer',
-                                        'value' => uniqid()
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
+                                        'value' => uniqid(),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'taxCategory' => [
                     'typeId' => 'tax-category',
-                    'id' => uniqid()
-                ]
+                    'id' => uniqid(),
+                ],
             ]),
             false
         );
@@ -922,13 +922,13 @@ class UnitOfWorkTest extends TestCase
                                 1 => null,
                                 2 => [
                                     'typeId' => 'category',
-                                    'id' => $category3Id
-                                ]
+                                    'id' => $category3Id,
+                                ],
                             ],
                             'masterVariant' => [
                                 'attributes' => [
                                     [
-                                        'value' => $newAddedArray
+                                        'value' => $newAddedArray,
                                     ],
                                     [
                                         'value' => [1,2,3,],
@@ -940,34 +940,34 @@ class UnitOfWorkTest extends TestCase
                                         'value' => [null,null,],
                                     ],
                                     5 => [
-                                        'value' => 1.5
+                                        'value' => 1.5,
                                     ],
                                     11 => [
                                         'value' => [
-                                            'centAmount' => $newAmount
-                                        ]
+                                            'centAmount' => $newAmount,
+                                        ],
                                     ],
                                     [
                                         'name' => $newAttrName,
-                                        'value' => $newAttrValue
-                                    ]
-                                ]
+                                        'value' => $newAttrValue,
+                                    ],
+                                ],
                             ],
                             'name' => [
                                 'en' => $newEnglishName,
-                                'fr' => null
+                                'fr' => null,
                             ],
                             'variants' => [
                                 [
                                     'attributes' => [
                                         [
-                                            'value' => $newManId
-                                        ]
-                                    ]
+                                            'value' => $newManId,
+                                        ],
+                                    ],
                                 ],
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
                 $oldData,
                 $product
@@ -1106,7 +1106,7 @@ class UnitOfWorkTest extends TestCase
                     'access-control-allow-origin' => '*',
                     'connection' => 'close',
                     'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
-                    'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS',
                 ],
                 file_get_contents(
                     __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_success_response.json'
@@ -1156,7 +1156,7 @@ class UnitOfWorkTest extends TestCase
                         'access-control-allow-origin' => '*',
                         'connection' => 'close',
                         'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
-                        'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                        'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS',
                     ],
                     file_get_contents(
                         __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_notfound_response.json'
@@ -1228,7 +1228,7 @@ class UnitOfWorkTest extends TestCase
                     'access-control-allow-origin' => '*',
                     'connection' => 'close',
                     'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
-                    'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS',
                 ],
                 file_get_contents(
                     __DIR__ . DIRECTORY_SEPARATOR . 'Resources/stubs/order_delete_success_response.json'
@@ -1261,7 +1261,7 @@ class UnitOfWorkTest extends TestCase
             'createdAt' => new DateTime(),
             'lastModifiedAt' => new DateTime(),
             'name' => $typeName = uniqid(),
-            'version' => uniqid()
+            'version' => uniqid(),
         ]);
 
         $typeMetadata = $this->getOneMockedMetadata($type, false);
@@ -1330,7 +1330,7 @@ class UnitOfWorkTest extends TestCase
                     'access-control-allow-origin' => '*',
                     'connection' => 'close',
                     'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
-                    'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS',
                 ],
                 file_get_contents(
                     __DIR__ . DIRECTORY_SEPARATOR .
@@ -1370,7 +1370,7 @@ class UnitOfWorkTest extends TestCase
                     'id' => $typeId = 'type-id',
                     'lastModifiedAt' => new DateTime(),
                     'name' => $oldName = 'old-name',
-                    'version' => $version = 1
+                    'version' => $version = 1,
                 ]
             ),
             $typeId,
@@ -1444,7 +1444,7 @@ class UnitOfWorkTest extends TestCase
                     'access-control-allow-origin' => '*',
                     'connection' => 'close',
                     'access-control-allow-headers' => 'Accept, Authorization, Content-Type, Origin, User-Agent',
-                    'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS'
+                    'access-control-allow-methods' => 'GET, POST, DELETE, OPTIONS',
                 ],
                 file_get_contents(
                     __DIR__ . DIRECTORY_SEPARATOR .
@@ -1485,7 +1485,7 @@ class UnitOfWorkTest extends TestCase
             $customObject = CustomObject::fromArray($oldData = [
                 'container' => $container = uniqid(),
                 'key' => $key = uniqid(),
-                'value' => '[\"foobar\"]'
+                'value' => '[\"foobar\"]',
             ]),
             false
         );

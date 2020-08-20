@@ -72,11 +72,11 @@ class AddPricesTest extends TestCase
         $prices = new PriceCollection();
 
         $prices->add(Price::fromArray([
-            'id' => $oldId = uniqid()
+            'id' => $oldId = uniqid(),
         ]));
 
         $prices->add(Price::fromArray([
-            'country' => $country = uniqid()
+            'country' => $country = uniqid(),
         ]));
 
         $variant = new ProductVariant();
@@ -144,11 +144,11 @@ class AddPricesTest extends TestCase
             ->setPrices($prices = new PriceCollection());
 
         $prices->add(Price::fromArray([
-            'id' => $oldId = uniqid()
+            'id' => $oldId = uniqid(),
         ]));
 
         $prices->add(Price::fromArray([
-            'country' => $country = uniqid()
+            'country' => $country = uniqid(),
         ]));
 
         $actions = $this->fixture->createUpdateActions(
@@ -188,12 +188,12 @@ class AddPricesTest extends TestCase
             ->setPrices($prices = new PriceCollection());
 
         $prices->add(Price::fromArray([
-            'id' => $oldId = uniqid()
+            'id' => $oldId = uniqid(),
         ]));
 
         static::assertSame([], $this->fixture->createUpdateActions(
             [
-                ['id' => $oldId]
+                ['id' => $oldId],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -254,11 +254,11 @@ class AddPricesTest extends TestCase
             ->setPrices($prices = new PriceCollection());
 
         $prices->add(Price::fromArray([
-            'id' => $oldId = uniqid()
+            'id' => $oldId = uniqid(),
         ]));
 
         $prices->add(Price::fromArray([
-            'country' => $country = uniqid()
+            'country' => $country = uniqid(),
         ]));
 
         $actions = $this->fixture->createUpdateActions(

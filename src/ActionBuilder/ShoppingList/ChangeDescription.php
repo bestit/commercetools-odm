@@ -43,7 +43,7 @@ class ChangeDescription extends ShoppingListActionBuilder
             ShoppingListSetDescriptionAction::ofDescription(LocalizedString::fromArray(array_filter(array_merge(
                 $oldData['description'] ?? [],
                 $changedValue
-            ))))
+            )))),
         ];
     }
 }

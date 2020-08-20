@@ -64,7 +64,7 @@ class ChangeDescriptionTest extends TestCase
             [
                 'de' => $newGer = uniqid(),
                 'fr' => null,
-                'en' => $newEn = uniqid()
+                'en' => $newEn = uniqid(),
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -72,8 +72,8 @@ class ChangeDescriptionTest extends TestCase
                 'description' => [
                     'de' => uniqid(),
                     'fr' => uniqid(),
-                    'en' => uniqid()
-                ]
+                    'en' => uniqid(),
+                ],
             ],
             new ShoppingList()
         );

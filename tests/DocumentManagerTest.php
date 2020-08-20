@@ -65,11 +65,11 @@ class DocumentManagerTest extends TestCase
                 true,
                 function (Product $product): array {
                     return [$product->getId(), $product->getVersion()];
-                }
+                },
             ],
             ['persist', 'scheduleSave'],
             ['refresh', 'refresh'],
-            ['remove', 'scheduleRemove']
+            ['remove', 'scheduleRemove'],
         ];
     }
 
@@ -84,7 +84,7 @@ class DocumentManagerTest extends TestCase
             ClientAwareTrait::class,
             LoggerAwareTrait::class,
             MetadataFactoryAwareTrait::class,
-            QueryHelperAwareTrait::class
+            QueryHelperAwareTrait::class,
         ];
     }
 

@@ -47,7 +47,7 @@ class ChangeName extends ProductActionBuilder
             ProductChangeNameAction::ofName(LocalizedString::fromArray(array_filter(array_merge(
                 $oldData['masterData'][$productCatalogData]['name'] ?? [],
                 $changedValue
-            ))))->setStaged($productCatalogData === 'staged')
+            ))))->setStaged($productCatalogData === 'staged'),
         ];
     }
 }

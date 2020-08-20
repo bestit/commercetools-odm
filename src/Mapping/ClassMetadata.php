@@ -186,8 +186,8 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * Returns the target class name of the given association.
      *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
      * @param string $assocName
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
      *
      * @return string
      */

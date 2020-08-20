@@ -91,7 +91,7 @@ class ChangeNameTest extends TestCase
             [
                 'de' => $newGer = uniqid(),
                 'fr' => null,
-                'en' => $newEn = uniqid()
+                'en' => $newEn = uniqid(),
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -101,10 +101,10 @@ class ChangeNameTest extends TestCase
                         'name' => [
                             'de' => uniqid(),
                             'fr' => uniqid(),
-                            'en' => uniqid()
-                        ]
-                    ]
-                ]
+                            'en' => uniqid(),
+                        ],
+                    ],
+                ],
             ],
             new Product()
         );

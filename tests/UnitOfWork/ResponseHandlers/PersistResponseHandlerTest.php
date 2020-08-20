@@ -139,7 +139,7 @@ class PersistResponseHandlerTest extends ResponseHandlerTestCase
     ) {
         $originalObject = Customer::fromArray([
             'id' => $objectId = uniqid(),
-            'version' => $version = 5
+            'version' => $version = 5,
         ]);
 
         list($response, $request) = $this->getMatchingResponse();
@@ -155,7 +155,7 @@ class PersistResponseHandlerTest extends ResponseHandlerTestCase
                 ->method('toObject')
                 ->willReturn($update = Customer::fromArray([
                     'id' => $updatedId = uniqid(),
-                    'version' => $updatedVersion = $version + 1
+                    'version' => $updatedVersion = $version + 1,
                 ]));
         } else {
             $response
@@ -166,7 +166,7 @@ class PersistResponseHandlerTest extends ResponseHandlerTestCase
             $signInResult->setCustomer(
                 $update = Customer::fromArray([
                     'id' => $updatedId = uniqid(),
-                    'version' => $updatedVersion = $version + 1
+                    'version' => $updatedVersion = $version + 1,
                 ])
             );
         }

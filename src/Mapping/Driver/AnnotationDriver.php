@@ -79,7 +79,7 @@ class AnnotationDriver extends BasicDriver
                     PostUpdate::class,
                     PreFlush::class,
                     PrePersist::class,
-                    PreUpdate::class
+                    PreUpdate::class,
                 ];
 
                 $reflectionMethods = $classReflection->getMethods(ReflectionMethod::IS_PUBLIC);

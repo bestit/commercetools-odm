@@ -25,9 +25,9 @@ class SetLineItemExternalPriceTest extends TestCase
     /**
      * Test that the created actions contains the correct external price.
      *
-     * @return void
-     *
      * @throws Exception
+     *
+     * @return void
      */
     public function testThatActionsContainsCorrectExternalPrice()
     {
@@ -38,7 +38,7 @@ class SetLineItemExternalPriceTest extends TestCase
         $fixture->setLastFoundMatch([0, 0]);
 
         $changedValue = [
-            'price' => random_int(1000, 9999)
+            'price' => random_int(1000, 9999),
         ];
 
         $metaData = $this->createMock(ClassMetadataInterface::class);

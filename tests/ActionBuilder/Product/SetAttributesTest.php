@@ -37,7 +37,7 @@ class SetAttributesTest extends TestCase
     {
         return [
             ['current'],
-            ['staged', true]
+            ['staged', true],
         ];
     }
 
@@ -95,8 +95,8 @@ class SetAttributesTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 [
-                    'value' => $mockedValue = uniqid()
-                ]
+                    'value' => $mockedValue = uniqid(),
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -109,13 +109,13 @@ class SetAttributesTest extends TestCase
                                 'attributes' => [
                                     [
                                         'name' => $attrName = 'manufacturer',
-                                        'value' => uniqid()
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                        'value' => uniqid(),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             Product::fromArray([
                 'masterData' => [
@@ -126,8 +126,8 @@ class SetAttributesTest extends TestCase
                                 'attributes' => [
                                     [
                                         'name' => $attrName,
-                                        'value' => uniqid()
-                                    ]
+                                        'value' => uniqid(),
+                                    ],
                                 ],
                             ],
                             [
@@ -135,13 +135,13 @@ class SetAttributesTest extends TestCase
                                 'attributes' => [
                                     [
                                         'name' => $attrName,
-                                        'value' => uniqid()
-                                    ]
+                                        'value' => uniqid(),
+                                    ],
                                 ],
-                            ]
-                        ]
-                    ]
-                ]
+                            ],
+                        ],
+                    ],
+                ],
             ])
         );
 
@@ -177,8 +177,8 @@ class SetAttributesTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 [
-                    'value' => $mockedValue = uniqid()
-                ]
+                    'value' => $mockedValue = uniqid(),
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -192,12 +192,12 @@ class SetAttributesTest extends TestCase
                                     [
                                         'name' => $attrName = 'manufacturer',
                                         'value' => $attrVal = uniqid(),
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             Product::fromArray([
                 'masterData' => [
@@ -209,7 +209,7 @@ class SetAttributesTest extends TestCase
                                     [
                                         'name' => $attrName,
                                         'value' => $attrVal,
-                                    ]
+                                    ],
                                 ],
                             ],
                             [
@@ -218,12 +218,12 @@ class SetAttributesTest extends TestCase
                                     [
                                         'name' => $attrName,
                                         'value' => $attrVal,
-                                    ]
+                                    ],
                                 ],
-                            ]
-                        ]
-                    ]
-                ]
+                            ],
+                        ],
+                    ],
+                ],
             ])
         );
 
@@ -258,8 +258,8 @@ class SetAttributesTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 [
-                    'value' => $mockedValue = uniqid()
-                ]
+                    'value' => $mockedValue = uniqid(),
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -270,12 +270,12 @@ class SetAttributesTest extends TestCase
                             'attributes' => [
                                 [
                                     'name' => $attrName = 'manufacturer',
-                                    'value' => uniqid()
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    'value' => uniqid(),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             Product::fromArray(['masterData' => [$container => []]])
         );
@@ -311,12 +311,12 @@ class SetAttributesTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 [
-                    'value' => $mockedValue1 = uniqid()
+                    'value' => $mockedValue1 = uniqid(),
                 ],
                 [
                     'name' => $attrName2 = uniqid(),
-                    'value' => $mockedValue2 = uniqid()
-                ]
+                    'value' => $mockedValue2 = uniqid(),
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -327,12 +327,12 @@ class SetAttributesTest extends TestCase
                             'attributes' => [
                                 [
                                     'name' => $attrName1 = 'manufacturer',
-                                    'value' => uniqid()
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    'value' => uniqid(),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             Product::fromArray(['masterData' => [$container => []]])
         );
@@ -383,7 +383,7 @@ class SetAttributesTest extends TestCase
                         7 => [
                             'de' => 'Polnisch',
                         ],
-                        null
+                        null,
                     ],
                 ],
             ],
@@ -395,7 +395,7 @@ class SetAttributesTest extends TestCase
                             7 => [
                                 'de' => 'Polnisch',
                             ],
-                            null
+                            null,
                         ],
                     ],
                 ],
@@ -441,7 +441,7 @@ class SetAttributesTest extends TestCase
                 ],
                 [
                     'de' => 'Polnisch',
-                ]
+                ],
             ],
             $action1->getValue(),
             'Wrong value. (1)'
@@ -477,7 +477,7 @@ class SetAttributesTest extends TestCase
                     18 => [
                         'value' => [
                             'abcdef',
-                            null
+                            null,
                         ],
                     ],
                 ],
@@ -524,23 +524,23 @@ class SetAttributesTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 [
-                    'value' => [null, null]
+                    'value' => [null, null],
                 ],
                 [
-                    'value' => [2, null]
+                    'value' => [2, null],
                 ],
                 [
                     'value' => [
                         1 => [
-                            'value' => 'new-value2'
+                            'value' => 'new-value2',
                         ],
                         // We add this value.
                         [
                             'name' => 'new-name3',
-                            'value' => 'new-value3'
+                            'value' => 'new-value3',
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -551,11 +551,11 @@ class SetAttributesTest extends TestCase
                             'attributes' => [
                                 [
                                     'name' => 'array1',
-                                    'value' => [uniqid(), uniqid()]
+                                    'value' => [uniqid(), uniqid()],
                                 ],
                                 [
                                     'name' => 'array2',
-                                    'value' => [1, 2]
+                                    'value' => [1, 2],
                                 ],
                                 [
                                     'name' => $attrName = 'nested',
@@ -563,19 +563,19 @@ class SetAttributesTest extends TestCase
                                         // attr 1 needs to be overtaken, because it is a nested attr.
                                         [
                                             'name' => 'name1',
-                                            'value' => 'value1'
+                                            'value' => 'value1',
                                         ],
                                         // We overwrite only the value here
                                         [
                                             'name' => 'name2',
-                                            'value' => uniqid()
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'value' => uniqid(),
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             Product::fromArray(['masterData' => [$container => []]])
         );
@@ -620,7 +620,7 @@ class SetAttributesTest extends TestCase
             [
                 ['name' => 'name1', 'value' => 'value1'],
                 ['value' => 'new-value2', 'name' => 'name2'],
-                ['name' => 'new-name3', 'value' => 'new-value3']
+                ['name' => 'new-name3', 'value' => 'new-value3'],
             ],
             $action3->getValue(),
             'Wrong value. (3)'
@@ -647,11 +647,11 @@ class SetAttributesTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 [
-                    'value' => $mockedValue1 = uniqid()
+                    'value' => $mockedValue1 = uniqid(),
                 ],
                 [
-                    null
-                ]
+                    null,
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -664,17 +664,17 @@ class SetAttributesTest extends TestCase
                                 'attributes' => [
                                     [
                                         'name' => $attrName1 = 'manufacturer',
-                                        'value' => uniqid()
+                                        'value' => uniqid(),
                                     ],
                                     [
                                         'name' => $attrName2 = 'manufacturer',
-                                        'value' => uniqid()
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                        'value' => uniqid(),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             Product::fromArray(['masterData' => [$container => []]])
         );

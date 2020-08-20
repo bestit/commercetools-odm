@@ -69,7 +69,7 @@ class SetDestinationTest extends TestCase
                 'accessKey' => $accessKey = uniqid(),
                 'accessSecret' => $accessSecret = uniqid(),
                 'queueUrl' => $queueUrl = uniqid(),
-                'region' => $region = uniqid()
+                'region' => $region = uniqid(),
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],

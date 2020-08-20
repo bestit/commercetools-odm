@@ -35,7 +35,7 @@ class SetLineItemQuantityTest extends TestCase
         $fixture->setLastFoundMatch([0, 0]);
 
         $changedValue = [
-            'quantity' => $quantity = random_int(1000, 9999)
+            'quantity' => $quantity = random_int(1000, 9999),
         ];
 
         $metaData = $this->createMock(ClassMetadataInterface::class);

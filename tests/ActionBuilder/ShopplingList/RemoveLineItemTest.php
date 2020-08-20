@@ -62,7 +62,7 @@ class RemoveLineItemTest extends TestCase
             [],
             [
                 'id' => $oldId = uniqid(),
-                'lineItems' => []
+                'lineItems' => [],
             ],
             ShoppingList::fromArray(['id' => $oldId, 'lineItems' => []])
         );
@@ -85,17 +85,17 @@ class RemoveLineItemTest extends TestCase
                 'id' => $oldId = uniqid(),
                 'lineItems' => [
                     [
-                        'id' => 'removed-id-1'
+                        'id' => 'removed-id-1',
                     ],
                     [
-                        'id' => 'removed-id-2'
-                    ]
-                ]
+                        'id' => 'removed-id-2',
+                    ],
+                ],
             ],
             ShoppingList::fromArray(['id' => $oldId, 'lineItems' => [
                 2 => [
-                    'id' => 'left-id'
-                ]
+                    'id' => 'left-id',
+                ],
             ]])
         );
 
@@ -125,17 +125,17 @@ class RemoveLineItemTest extends TestCase
                 'id' => $oldId = uniqid(),
                 'lineItems' => [
                     [
-                        'id' => 'removed-id-1'
+                        'id' => 'removed-id-1',
                     ],
                     [
-                        'id' => 'removed-id-2'
-                    ]
-                ]
+                        'id' => 'removed-id-2',
+                    ],
+                ],
             ],
             ShoppingList::fromArray(['id' => $oldId, 'lineItems' => [
                 [
-                    'id' => 'left-id'
-                ]
+                    'id' => 'left-id',
+                ],
             ]])
         );
 

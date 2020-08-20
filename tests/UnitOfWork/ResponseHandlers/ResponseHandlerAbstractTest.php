@@ -33,7 +33,7 @@ class ResponseHandlerAbstractTest extends ResponseHandlerTestCase
         $this->fixture = $this->getMockForAbstractClass(
             ResponseHandlerAbstract::class,
             [
-                $this->loadDocumentManager()
+                $this->loadDocumentManager(),
             ]
         );
     }

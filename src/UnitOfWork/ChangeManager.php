@@ -222,7 +222,7 @@ class ChangeManager implements ChangeManagerInterface
                 'memory' => memory_get_usage(true) / 1024 / 1024,
                 'newData' => $newData,
                 'objectKey' => $this->objectStates->getHash($model),
-                'oldData' => $oldData
+                'oldData' => $oldData,
             ]
         );
 

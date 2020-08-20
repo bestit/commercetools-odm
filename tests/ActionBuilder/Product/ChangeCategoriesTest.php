@@ -95,8 +95,8 @@ class ChangeCategoriesTest extends TestCase
                 ],
                 null,
                 [
-                    'id' => $newCatId2 = uniqid()
-                ]
+                    'id' => $newCatId2 = uniqid(),
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -115,10 +115,10 @@ class ChangeCategoriesTest extends TestCase
                             [
                                 'typeId' => 'category',
                                 'id' => $oldCatId3 = uniqid(),
-                            ]
-                        ]
-                    ]
-                ]
+                            ],
+                        ],
+                    ],
+                ],
             ],
             new Product()
         );
@@ -173,17 +173,17 @@ class ChangeCategoriesTest extends TestCase
                 ],
                 null,
                 [
-                    'id' => $checkCats[] = uniqid()
-                ]
+                    'id' => $checkCats[] = uniqid(),
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [
                     $staged ? 'staged' : 'current' => [
-                        'categories' => []
-                    ]
-                ]
+                        'categories' => [],
+                    ],
+                ],
             ],
             new Product()
         );
@@ -231,16 +231,16 @@ class ChangeCategoriesTest extends TestCase
                 null,
                 [
                     'key' => $checkCats[] = uniqid(),
-                ]
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'masterData' => [
                     $staged ? 'staged' : 'current' => [
-                        'categories' => []
-                    ]
-                ]
+                        'categories' => [],
+                    ],
+                ],
             ],
             new Product()
         );

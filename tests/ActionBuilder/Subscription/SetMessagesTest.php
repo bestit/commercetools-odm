@@ -66,12 +66,12 @@ class SetMessagesTest extends TestCase
             $messages = [
                 [
                     'resourceTypeId' => $productResource = 'product',
-                    'types' => $productTypes = ['ProductCreated', 'ProductDeleted']
+                    'types' => $productTypes = ['ProductCreated', 'ProductDeleted'],
                 ],
                 [
                     'resourceTypeId' => $cartResource = 'cart',
-                    'types' => $cartTypes = []
-                ]
+                    'types' => $cartTypes = [],
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],

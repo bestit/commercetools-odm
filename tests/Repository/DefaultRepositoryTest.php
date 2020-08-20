@@ -43,7 +43,7 @@ class DefaultRepositoryTest extends TestCase
             LoggerAwareTrait::class,
             QueryHelperAwareTrait::class,
             PoolAwareTrait::class,
-            FilterManagerAwareTrait::class
+            FilterManagerAwareTrait::class,
         ];
     }
 

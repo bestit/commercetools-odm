@@ -63,7 +63,7 @@ class ClassMetadataTest extends TestCase
             [ProductType::class],
             [ShippingMethod::class],
             [ShoppingList::class],
-            [Zone::class]
+            [Zone::class],
         ];
     }
 
@@ -150,7 +150,7 @@ class ClassMetadataTest extends TestCase
     public function testIgnoreFieldOnEmptyFalse()
     {
         $this->fixture->setFieldMappings([
-            ($fieldName = uniqid()) => $fieldObject = new Field()
+            ($fieldName = uniqid()) => $fieldObject = new Field(),
         ]);
 
         $this->assertFalse($this->fixture->ignoreFieldOnEmpty($fieldName));
@@ -164,7 +164,7 @@ class ClassMetadataTest extends TestCase
     public function testIgnoreFieldOnEmptyMissing()
     {
         $this->fixture->setFieldMappings([
-            ($fieldName = uniqid()) => $fieldObject = new Field()
+            ($fieldName = uniqid()) => $fieldObject = new Field(),
         ]);
 
         $this->assertFalse($this->fixture->ignoreFieldOnEmpty($fieldName . uniqid()));
@@ -178,7 +178,7 @@ class ClassMetadataTest extends TestCase
     public function testIgnoreFieldOnEmptyTrue()
     {
         $this->fixture->setFieldMappings([
-            ($fieldName = uniqid()) => $fieldObject = new Field()
+            ($fieldName = uniqid()) => $fieldObject = new Field(),
         ]);
 
         $fieldObject->ignoreOnEmpty = true;

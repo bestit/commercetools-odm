@@ -25,10 +25,10 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
     /**
      * Creates an order from a cart.
      *
+     * @throws ResponseException
+     *
      * @param Cart $cart
      * @param string|null $orderNumber
-     *
-     * @throws ResponseException
      *
      * @return Order
      */

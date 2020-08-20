@@ -51,16 +51,16 @@ class FindByPaginatorTest extends TestCase
                 [
                     $element1 = Customer::of()->setId('A1'),
                     $element2 = Customer::of()->setId('A2'),
-                    $element3 = Customer::of()->setId('A3')
+                    $element3 = Customer::of()->setId('A3'),
                 ],
                 [
                     $element4 = Customer::of()->setId('B4'),
                     $element5 = Customer::of()->setId('B5'),
-                    $element6 = Customer::of()->setId('B6')
+                    $element6 = Customer::of()->setId('B6'),
                 ],
                 [
                     $element7 = Customer::of()->setId('C7'),
-                    $element8 = Customer::of()->setId('C8')
+                    $element8 = Customer::of()->setId('C8'),
                 ]
             );
 

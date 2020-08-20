@@ -47,7 +47,7 @@ class ChangeSlug extends ProductActionBuilder
             ProductChangeSlugAction::ofSlug(LocalizedString::fromArray(array_filter(array_merge(
                 $oldData['masterData'][$productCatalogData]['slug'] ?? [],
                 $changedValue
-            ))))->setStaged($productCatalogData === 'staged')
+            ))))->setStaged($productCatalogData === 'staged'),
         ];
     }
 }

@@ -65,7 +65,7 @@ class AddLineItem extends CartActionBuilder
         $cartAddLineItemAction = [
             'productId' => $changedValue['productId'],
             'variantId' => $changedValue['variant']['id'],
-            'quantity' => $changedValue['quantity']
+            'quantity' => $changedValue['quantity'],
         ];
 
         if (array_key_exists('custom', $changedValue)) {

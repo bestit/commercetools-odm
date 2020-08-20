@@ -44,11 +44,11 @@ class SetSearchKeywordsTest extends TestCase
                 [
                     'de' => [
                         [
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
                 ],
-                []
+                [],
             ],
             // current value where only the tokenizer was "changed" but we need the text as well.
             [
@@ -56,11 +56,11 @@ class SetSearchKeywordsTest extends TestCase
                 [
                     'de' => [
                         [
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
                 ],
-                []
+                [],
             ],
             // staged correct value
             [
@@ -69,18 +69,18 @@ class SetSearchKeywordsTest extends TestCase
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
                 ],
                 [
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
-                ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
+                ],
             ],
             // current correct value
             [
@@ -89,18 +89,18 @@ class SetSearchKeywordsTest extends TestCase
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
                 ],
                 [
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
-                ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
+                ],
             ],
             // staged correct value, with deleted old values
             [
@@ -109,20 +109,20 @@ class SetSearchKeywordsTest extends TestCase
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
+                            'suggestTokenizer' => ['type' => 'whitespace'],
                         ],
                         null,
-                        null
+                        null,
                     ],
                 ],
                 [
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
-                ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
+                ],
             ],
             // current correct value, with deleted old values
             [
@@ -131,20 +131,20 @@ class SetSearchKeywordsTest extends TestCase
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
+                            'suggestTokenizer' => ['type' => 'whitespace'],
                         ],
                         null,
-                        null
+                        null,
                     ],
                 ],
                 [
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
-                ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
+                ],
             ],
             // staged correct value, with deleted languages
             [
@@ -153,20 +153,20 @@ class SetSearchKeywordsTest extends TestCase
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
                     ],
                     null,
-                    null
+                    null,
                 ],
                 [
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
-                ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
+                ],
             ],
             // current correct value, with deleted old values
             [
@@ -175,20 +175,20 @@ class SetSearchKeywordsTest extends TestCase
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
                     ],
                     null,
-                    null
+                    null,
                 ],
                 [
                     'de' => [
                         [
                             'text' => 'foobar',
-                            'suggestTokenizer' => ['type' => 'whitespace']
-                        ]
-                    ]
-                ]
+                            'suggestTokenizer' => ['type' => 'whitespace'],
+                        ],
+                    ],
+                ],
             ],
 
         ];

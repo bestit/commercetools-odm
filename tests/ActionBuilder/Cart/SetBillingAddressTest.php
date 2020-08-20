@@ -33,7 +33,7 @@ class SetBillingAddressTest extends TestCase
             ['billingAddress/city', Cart::class],
             ['billingAddress/country', Cart::class],
             ['billingAddress/company', Cart::class],
-            ['billingAddress/phone', Cart::class]
+            ['billingAddress/phone', Cart::class],
         ];
     }
 
@@ -58,10 +58,10 @@ class SetBillingAddressTest extends TestCase
             ['billingAddress'],
             $this->createMock(ClassMetadataInterface::class),
             [
-                'billingAddress' => $billingAddress = []
+                'billingAddress' => $billingAddress = [],
             ],
             [
-                'billingAddress' => []
+                'billingAddress' => [],
             ],
             $this->createMock(Cart::class)
         );

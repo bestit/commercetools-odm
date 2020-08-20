@@ -68,7 +68,7 @@ class ChangeNameTest extends TestCase
         $category = new Category();
         $category->setName(new LocalizedString([
             'de' => $newGer = uniqid(),
-            'en' => $newEn = uniqid()
+            'en' => $newEn = uniqid(),
         ]));
 
         $actions = $this->fixture->createUpdateActions(
