@@ -89,7 +89,7 @@ trait TestClientTrait
         $config = Config::fromArray([
             'clientId' => uniqid(),
             'clientSecret' => uniqid(),
-            'project' => uniqid()
+            'project' => uniqid(),
         ]);
 
         $authMock = $this->createPartialMock(Manager::class, ['getToken']);

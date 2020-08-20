@@ -26,7 +26,7 @@ class ActionBuilderFactory implements ActionBuilderFactoryInterface
      * @var array
      */
     const CLASS_PATHS = [
-        'BestIt\\CommercetoolsODM\\ActionBuilder\\' => __DIR__ . DIRECTORY_SEPARATOR
+        'BestIt\\CommercetoolsODM\\ActionBuilder\\' => __DIR__ . DIRECTORY_SEPARATOR,
     ];
 
     /**

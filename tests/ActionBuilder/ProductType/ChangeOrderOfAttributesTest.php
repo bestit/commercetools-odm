@@ -71,9 +71,9 @@ class ChangeOrderOfAttributesTest extends TestCase
             'attributes' => [
                 [
                     'name' => $attributeName1 = uniqid(),
-                    'type' => ['name' => 'text']
-                ]
-            ]
+                    'type' => ['name' => 'text'],
+                ],
+            ],
         ]);
 
         $actions = $this->fixture->createUpdateActions(
@@ -84,13 +84,13 @@ class ChangeOrderOfAttributesTest extends TestCase
                 'attributes' => [
                     [
                         'name' => $attributeName1,
-                        'type' => ['name' => 'text']
+                        'type' => ['name' => 'text'],
                     ],
                     [
                         'name' => $attributeName2 = uniqid(),
-                        'type' => ['name' => 'text']
-                    ]
-                ]
+                        'type' => ['name' => 'text'],
+                    ],
+                ],
             ],
             $productType
         );
@@ -113,13 +113,13 @@ class ChangeOrderOfAttributesTest extends TestCase
             'attributes' => [
                 [
                     'name' => $attributeName2 = 'second-attr',
-                    'type' => ['name' => 'text']
+                    'type' => ['name' => 'text'],
                 ],
                 [
                     'name' => $attributeName1 = 'first-attr',
-                    'type' => ['name' => 'text']
-                ]
-            ]
+                    'type' => ['name' => 'text'],
+                ],
+            ],
         ]);
 
         $actions = $this->fixture->createUpdateActions(
@@ -130,13 +130,13 @@ class ChangeOrderOfAttributesTest extends TestCase
                 'attributes' => [
                     [
                         'name' => $attributeName1,
-                        'type' => ['name' => 'text']
+                        'type' => ['name' => 'text'],
                     ],
                     [
                         'name' => $attributeName2,
-                        'type' => ['name' => 'text']
-                    ]
-                ]
+                        'type' => ['name' => 'text'],
+                    ],
+                ],
             ],
             $productType
         );
@@ -155,13 +155,13 @@ class ChangeOrderOfAttributesTest extends TestCase
             'attributes' => [
                 [
                     'name' => $attributeName1 = uniqid(),
-                    'type' => ['name' => 'text']
+                    'type' => ['name' => 'text'],
                 ],
                 [
                     'name' => $attributeName2 = uniqid(),
-                    'type' => ['name' => 'text']
-                ]
-            ]
+                    'type' => ['name' => 'text'],
+                ],
+            ],
         ]);
 
         $actions = $this->fixture->createUpdateActions(
@@ -172,9 +172,9 @@ class ChangeOrderOfAttributesTest extends TestCase
                 'attributes' => [
                     [
                         'name' => $attributeName1,
-                        'type' => ['name' => 'text']
-                    ]
-                ]
+                        'type' => ['name' => 'text'],
+                    ],
+                ],
             ],
             $productType
         );
@@ -193,13 +193,13 @@ class ChangeOrderOfAttributesTest extends TestCase
             'attributes' => [
                 [
                     'name' => $attributeName2 = uniqid(),
-                    'type' => ['name' => 'text']
+                    'type' => ['name' => 'text'],
                 ],
                 [
                     'name' => $attributeName1 = uniqid(),
-                    'type' => ['name' => 'text']
-                ]
-            ]
+                    'type' => ['name' => 'text'],
+                ],
+            ],
         ]);
 
         $actions = $this->fixture->createUpdateActions(
@@ -210,13 +210,13 @@ class ChangeOrderOfAttributesTest extends TestCase
                 'attributes' => [
                     [
                         'name' => $attributeName1,
-                        'type' => ['name' => 'text']
+                        'type' => ['name' => 'text'],
                     ],
                     [
                         'name' => $attributeName2,
-                        'type' => ['name' => 'text']
-                    ]
-                ]
+                        'type' => ['name' => 'text'],
+                    ],
+                ],
             ],
             $productType
         );
@@ -239,13 +239,13 @@ class ChangeOrderOfAttributesTest extends TestCase
             'attributes' => [
                 [
                     'name' => $attributeName1 = uniqid(),
-                    'type' => ['name' => 'text']
+                    'type' => ['name' => 'text'],
                 ],
                 [
                     'name' => $attributeName2 = uniqid(),
-                    'type' => ['name' => 'text']
-                ]
-            ]
+                    'type' => ['name' => 'text'],
+                ],
+            ],
         ]);
 
         $actions = $this->fixture->createUpdateActions(
@@ -256,13 +256,13 @@ class ChangeOrderOfAttributesTest extends TestCase
                 'attributes' => [
                     [
                         'name' => $attributeName1,
-                        'type' => ['name' => 'text']
+                        'type' => ['name' => 'text'],
                     ],
                     [
                         'name' => $attributeName2,
-                        'type' => ['name' => 'text']
-                    ]
-                ]
+                        'type' => ['name' => 'text'],
+                    ],
+                ],
             ],
             $productType
         );

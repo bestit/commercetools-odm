@@ -98,15 +98,15 @@ class AddLineItemTest extends TestCase
         $value = [
             'productId' => '444',
             'variant' => [
-                'id' => 1
+                'id' => 1,
             ],
             'quantity' => 2,
             'distributionChannel' => [
                 'id' => '7878',
             ],
             'supplyChannel' => [
-                'id' => '1111'
-            ]
+                'id' => '1111',
+            ],
         ];
 
         $actions = $this->createAndTestSingleAddAction($value);
@@ -125,15 +125,15 @@ class AddLineItemTest extends TestCase
         $value = [
             'productId' => '444',
             'variant' => [
-                'id' => 1
+                'id' => 1,
             ],
             'quantity' => 2,
             'distributionChannel' => [
                 'key' => '7878',
             ],
             'supplyChannel' => [
-                'key' => '1111'
-            ]
+                'key' => '1111',
+            ],
         ];
 
         $actions = $this->createAndTestSingleAddAction($value);
@@ -159,18 +159,18 @@ class AddLineItemTest extends TestCase
                         'value' => [
                             'currencyCode' => $currency,
                             'centAmount' => $centAmountTier = 40000,
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
                 'value' => [
                     'currencyCode' => $currency,
                     'centAmount' => $centAmountDefault = 50000,
-                ]
+                ],
             ],
             'priceMode' => 'ExternalPrice',
             'productId' => '444',
             'variant' => [
-                'id' => 1
+                'id' => 1,
             ],
             'quantity' => 20,
         ];
@@ -192,18 +192,18 @@ class AddLineItemTest extends TestCase
         $value = [
             'productId' => '444',
             'variant' => [
-                'id' => 1
+                'id' => 1,
             ],
             'quantity' => 2,
             'custom' => [
                 'type' => [
                     'typeId' => 'type',
-                    'key' => 'specific-key'
+                    'key' => 'specific-key',
                 ],
                 'fields' => [
-                    'fieldname' => 'fieldvalue'
-                ]
-            ]
+                    'fieldname' => 'fieldvalue',
+                ],
+            ],
         ];
 
         $actions = $this->createAndTestSingleAddAction($value);

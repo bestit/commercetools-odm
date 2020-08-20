@@ -64,7 +64,7 @@ class CachedDefaultRepositoryDecoratorTest extends TestCase
     {
         return [
             [false],
-            [true]
+            [true],
         ];
     }
 

@@ -38,7 +38,7 @@ class SetShippingMethodTest extends TestCase
         return [
             ['shippingInfo', Cart::class],
             ['shippingInfo/shippingMethod/id', Cart::class, true],
-            ['shippingInfo/shippingMethod', Cart::class]
+            ['shippingInfo/shippingMethod', Cart::class],
         ];
     }
 

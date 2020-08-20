@@ -42,7 +42,7 @@ class SetCustomTypeTest extends TestCase
         return [
             ['custom/fields/bob', Cart::class, false],
             ['custom', Cart::class, true],
-            ['lineItems/custom/fields/bob', Cart::class]
+            ['lineItems/custom/fields/bob', Cart::class],
         ];
     }
 
@@ -100,11 +100,11 @@ class SetCustomTypeTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
-                'paymentType' => 'invoice'
-            ]
+                'paymentType' => 'invoice',
+            ],
         ];
 
         $this->runAction($changedData);
@@ -120,12 +120,12 @@ class SetCustomTypeTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
                 'paymentType' => 'invoice',
-                'shippingType' => 'dhl'
-            ]
+                'shippingType' => 'dhl',
+            ],
         ];
 
         $this->runAction($changedData);
@@ -141,11 +141,11 @@ class SetCustomTypeTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
                 'fieldname' => 5,
-            ]
+            ],
         ];
 
         $this->runAction($changedData);
@@ -161,11 +161,11 @@ class SetCustomTypeTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
                 'fieldname' => 5.44,
-            ]
+            ],
         ];
 
         $this->runAction($changedData);
@@ -181,11 +181,11 @@ class SetCustomTypeTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
                 'fieldname' => new DateTime(),
-            ]
+            ],
         ];
 
         $this->runAction($changedData);

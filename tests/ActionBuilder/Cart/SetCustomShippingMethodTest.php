@@ -39,7 +39,7 @@ class SetCustomShippingMethodTest extends TestCase
         return [
             ['shippingInfo/foo', Cart::class, true],
             ['shippingInfo/shippingMethod/id', Cart::class, true],
-            ['shippingMethod/bob/', Cart::class]
+            ['shippingMethod/bob/', Cart::class],
         ];
     }
 
@@ -89,11 +89,11 @@ class SetCustomShippingMethodTest extends TestCase
             'shippingRate' => [
                 'price' => [
                     'centAmount' => 599,
-                    'currency' => 'EUR'
-                ]
+                    'currency' => 'EUR',
+                ],
             ],
             'taxCategory' => [
-                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65'
+                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65',
             ],
         ];
 
@@ -104,13 +104,13 @@ class SetCustomShippingMethodTest extends TestCase
                 'shippingRate' => [
                     'price' => [
                         'centAmount' => 745,
-                        'currency' => 'CHF'
-                    ]
+                        'currency' => 'CHF',
+                    ],
                 ],
                 'taxCategory' => [
-                    'id' => '9a3924fo-190b-4a9r-88ce-80ff585b7d65'
-                ]
-            ]
+                    'id' => '9a3924fo-190b-4a9r-88ce-80ff585b7d65',
+                ],
+            ],
         ];
 
         /** @var CartAddLineItemAction[] $actions */
@@ -146,11 +146,11 @@ class SetCustomShippingMethodTest extends TestCase
             'shippingRate' => [
                 'price' => [
                     'centAmount' => 599,
-                    'currency' => 'EUR'
-                ]
+                    'currency' => 'EUR',
+                ],
             ],
             'taxCategory' => [
-                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65'
+                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65',
             ],
         ];
 
@@ -189,16 +189,16 @@ class SetCustomShippingMethodTest extends TestCase
             'shippingRate' => [
                 'price' => [
                     'centAmount' => 599,
-                    'currency' => 'EUR'
-                ]
+                    'currency' => 'EUR',
+                ],
             ],
             'taxCategory' => [
-                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65'
+                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65',
             ],
         ];
 
         $oldData = [
-            'shippingInfo' => []
+            'shippingInfo' => [],
         ];
 
         /** @var CartAddLineItemAction[] $actions */
@@ -233,16 +233,16 @@ class SetCustomShippingMethodTest extends TestCase
             'shippingMethodName' => 'Foobar',
             'shippingRate' => [
                 'price' => [
-                    'currency' => 'EUR'
-                ]
+                    'currency' => 'EUR',
+                ],
             ],
             'taxCategory' => [
-                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65'
+                'id' => '4a3924af-190f-4f9d-88ce-80ff585b7d65',
             ],
         ];
 
         $oldData = [
-            'shippingInfo' => []
+            'shippingInfo' => [],
         ];
 
         /** @var CartAddLineItemAction[] $actions */
@@ -262,7 +262,7 @@ class SetCustomShippingMethodTest extends TestCase
                     'price' => [
                         'centAmount' => 0,
                         'currency' => 'EUR',
-                    ]
+                    ],
                 ]
             )
         );
@@ -286,8 +286,8 @@ class SetCustomShippingMethodTest extends TestCase
             'shippingMethodName' => 'Foobar',
             'shippingRate' => [
                 'price' => [
-                    'centAmount' => 599
-                ]
+                    'centAmount' => 599,
+                ],
             ],
         ];
 
@@ -298,13 +298,13 @@ class SetCustomShippingMethodTest extends TestCase
                 'shippingRate' => [
                     'price' => [
                         'centAmount' => 745,
-                        'currency' => 'CHF'
-                    ]
+                        'currency' => 'CHF',
+                    ],
                 ],
                 'taxCategory' => [
-                    'id' => '9a3924fo-190b-4a9r-88ce-80ff585b7d65'
-                ]
-            ]
+                    'id' => '9a3924fo-190b-4a9r-88ce-80ff585b7d65',
+                ],
+            ],
         ];
 
         /** @var CartAddLineItemAction[] $actions */
@@ -321,8 +321,8 @@ class SetCustomShippingMethodTest extends TestCase
         $action->setShippingRate(ShippingRate::fromArray([
             'price' => [
                 'centAmount' => 599,
-                'currency' => 'CHF'
-            ]
+                'currency' => 'CHF',
+            ],
         ]));
         $action->setTaxCategory(TaxCategoryReference::ofId('9a3924fo-190b-4a9r-88ce-80ff585b7d65'));
 

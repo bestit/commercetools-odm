@@ -41,7 +41,7 @@ class SetDefaultBillingAddressId extends CustomerActionBuilder
         $sourceObject
     ): array {
         return [
-            (new CustomerSetDefaultBillingAddressAction())->setAddressId($changedValue)
+            (new CustomerSetDefaultBillingAddressAction())->setAddressId($changedValue),
         ];
     }
 }

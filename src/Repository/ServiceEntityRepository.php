@@ -12,7 +12,7 @@ use BestIt\CommercetoolsODM\Model\DefaultRepository;
  * To use in your class, inject the "document manager" and "filter manager" service and call
  * the parent constructor. For example:
  *
- * class YourEntityRepository extends ServiceEntityRepository
+ * Class YourEntityRepository extends ServiceEntityRepository
  * {
  *     public function __construct(DocumentManagerInterface $documentManager, FilterManagerInterface $filterManager)
  *     {

@@ -87,7 +87,7 @@ class SetLineItemCustomTypeTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 'fields' => ['foo' => 'bar'],
-                'type' => ['key' => $key = 'foobar']
+                'type' => ['key' => $key = 'foobar'],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -118,7 +118,7 @@ class SetLineItemCustomTypeTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             [
                 'fields' => ['foo' => 'bar'],
-                'type' => ['key' => $key = 'foobar']
+                'type' => ['key' => $key = 'foobar'],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -144,7 +144,7 @@ class SetLineItemCustomTypeTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             [
-                'type' => ['key' => $key = 'foobar']
+                'type' => ['key' => $key = 'foobar'],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],

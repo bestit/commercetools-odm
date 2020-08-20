@@ -63,7 +63,7 @@ class ChangeOrderOfAttributes extends ProductTypeActionBuilder
 
             if ($oldOrder[$index] !== $new) {
                 return [new ProductTypeChangeAttributeOrderByNameAction([
-                    'attributeNames' => $newOrder
+                    'attributeNames' => $newOrder,
                 ])];
             }
         }

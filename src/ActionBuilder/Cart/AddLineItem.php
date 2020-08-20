@@ -53,14 +53,19 @@ class AddLineItem extends CartActionBuilder
         string $subFieldName = ''
     ): array {
         // Process only on new items
-        if (!isset($changedValue['productId']) || !$changedValue['productId']) {
+        if (
+            !isset($changedValue['productId']) ||
+            !$changedValue['productId'] ||
+            !isset($changedValue['variant']) ||
+            !isset($changedValue['variant']['id'])
+        ) {
             return [];
         }
 
         $cartAddLineItemAction = [
             'productId' => $changedValue['productId'],
             'variantId' => $changedValue['variant']['id'],
-            'quantity' => $changedValue['quantity']
+            'quantity' => $changedValue['quantity'],
         ];
 
         if (array_key_exists('custom', $changedValue)) {

@@ -42,7 +42,7 @@ class AddDelivery extends OrderActionBuilder
         $sourceObject
     ): array {
         return [
-            OrderAddDeliveryAction::fromArray($changedValue)
+            OrderAddDeliveryAction::fromArray($changedValue),
         ];
     }
 }

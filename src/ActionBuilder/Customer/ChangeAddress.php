@@ -49,7 +49,7 @@ class ChangeAddress extends AddressActionBuilder
                 CustomerChangeAddressAction::ofAddressIdAndAddress(
                     $changedValue['id'] ?? $oldData['addresses'][$addressIndex]['id'],
                     Address::fromArray($changedValue + $oldData['addresses'][$addressIndex])
-                )
+                ),
             ];
         }
 

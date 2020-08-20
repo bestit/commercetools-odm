@@ -71,16 +71,16 @@ class AddAddressTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             [
-                'company' => uniqid()
+                'company' => uniqid(),
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'addresses' => [
                     [
-                        'id' => uniqid()
-                    ]
-                ]
+                        'id' => uniqid(),
+                    ],
+                ],
             ],
             $customer
         );
@@ -106,9 +106,9 @@ class AddAddressTest extends TestCase
             [
                 'addresses' => [
                     [
-                        'id' => uniqid()
-                    ]
-                ]
+                        'id' => uniqid(),
+                    ],
+                ],
             ],
             $customer
         );
@@ -129,12 +129,12 @@ class AddAddressTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             $addressMock = [
-                'company' => uniqid()
+                'company' => uniqid(),
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
             [
-                'addresses' => []
+                'addresses' => [],
             ],
             $customer
         );

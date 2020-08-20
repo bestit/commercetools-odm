@@ -68,14 +68,14 @@ class ChangeLocalizedEnumValuesSetTest extends TestCase
             'attributes' => [
                 ['name' => 'Denios', 'type' => ['name' => 'set', 'elementType' => ['name' => 'lenum']]],
                 ['name' => 'Denios 2', 'type' => ['name' => 'set', 'elementType' => ['name' => 'enum']]],
-            ]
+            ],
         ]);
 
         $oldData = [
             'attributes' => [
                 ['type' => ['name' => 'set', 'elementType' => ['name' => 'lenum']]],
                 ['type' => ['name' => 'set', 'elementType' => ['name' => 'enum']]],
-            ]
+            ],
         ];
 
         $this->fixture->setLastFoundMatch([uniqid(), 1]);
@@ -108,11 +108,11 @@ class ChangeLocalizedEnumValuesSetTest extends TestCase
                             'values' => [
                                 $changedValue = ['key' => 'foo', 'label' => ['de' => 'bar']],
                                 ['key' => 'denios', 'label' => ['de' => 'Denios']],
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ]);
 
         $oldData = [
@@ -125,11 +125,11 @@ class ChangeLocalizedEnumValuesSetTest extends TestCase
                             'name' => 'lenum',
                             'values' => [
                                 ['key' => 'denios', 'label' => ['de' => 'Denios']],
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ];
 
         $this->fixture->setLastFoundMatch([uniqid(), 0]);
@@ -165,12 +165,12 @@ class ChangeLocalizedEnumValuesSetTest extends TestCase
                         'elementType' => [
                             'name' => 'lenum',
                             'values' => [
-                                $changedValue = ['key' => 'foo', 'label' => ['de' => 'bar']]
-                            ]
-                        ]
-                    ]
+                                $changedValue = ['key' => 'foo', 'label' => ['de' => 'bar']],
+                            ],
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ]);
 
         $oldData = [
@@ -183,11 +183,11 @@ class ChangeLocalizedEnumValuesSetTest extends TestCase
                             'name' => 'lenum',
                             'values' => [
                                 ['key' => 'foo', 'label' => ['de' => 'Denios']],
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ];
 
         $this->fixture->setLastFoundMatch([uniqid(), 0]);
@@ -224,11 +224,11 @@ class ChangeLocalizedEnumValuesSetTest extends TestCase
                             'name' => 'lenum',
                             'values' => [
                                 ['key' => 'denios', 'label' => ['de' => 'Denios']],
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ]);
 
         $oldData = [
@@ -243,11 +243,11 @@ class ChangeLocalizedEnumValuesSetTest extends TestCase
                                 ['key' => 'foo', 'label' => ['de' => 'bar']],
                                 ['key' => 'denios', 'label' => ['de' => 'Denios']],
                                 ['key' => 999, 'label' => ['de' => 'foo']],
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->fixture->setLastFoundMatch([uniqid(), 0]);

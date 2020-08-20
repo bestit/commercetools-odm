@@ -91,11 +91,11 @@ class AddAttributesTest extends TestCase
 
         $object->setAttributes(AttributeDefinitionCollection::fromArray([
             [
-                'name' => 'attr1'
+                'name' => 'attr1',
             ],
             [
-                'name' => 'attr3'
-            ]
+                'name' => 'attr3',
+            ],
         ]));
 
         $actions = $this->fixture->createUpdateActions(
@@ -105,9 +105,9 @@ class AddAttributesTest extends TestCase
             [
                 'attributes' => [
                     [
-                        'name' => 'attr1'
-                    ]
-                ]
+                        'name' => 'attr1',
+                    ],
+                ],
             ],
             $object
         );

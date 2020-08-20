@@ -44,7 +44,7 @@ class AddShippingAddressIdsTest extends TestCase
         return [
             ['shippingAddressIds', Customer::class, true],
             ['shippingAddressIds/1/', Customer::class],
-            ['shippingAddressId', Customer::class]
+            ['shippingAddressId', Customer::class],
         ];
     }
 
@@ -103,14 +103,14 @@ class AddShippingAddressIdsTest extends TestCase
             [
                 $newId1,
                 $newId2,
-                $oldId = uniqid('', true)
+                $oldId = uniqid('', true),
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
             [
                 'shippingAddressIds' => [
-                    $oldId
-                ]
+                    $oldId,
+                ],
             ],
             $customer
         );

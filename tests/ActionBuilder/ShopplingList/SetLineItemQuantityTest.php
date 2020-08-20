@@ -68,9 +68,9 @@ class SetLineItemQuantityTest extends TestCase
                 'lineItems' => [
                     [
                         'id' => 'id',
-                        'quantity' => 3
-                    ]
-                ]
+                        'quantity' => 3,
+                    ],
+                ],
             ],
             ShoppingList::fromArray($data)
         );

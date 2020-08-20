@@ -43,7 +43,7 @@ class ChangeSlug extends ShoppingListActionBuilder
             ShoppingListSetSlugAction::ofSlug(LocalizedString::fromArray(array_filter(array_merge(
                 $oldData['slug'] ?? [],
                 $changedValue
-            ))))
+            )))),
         ];
     }
 }

@@ -101,11 +101,11 @@ class ChangeCustomTypesTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
-                'paymentType' => 'invoice'
-            ]
+                'paymentType' => 'invoice',
+            ],
         ];
 
         $this->runAction($changedData);
@@ -121,12 +121,12 @@ class ChangeCustomTypesTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
                 'paymentType' => 'invoice',
-                'shippingType' => 'dhl'
-            ]
+                'shippingType' => 'dhl',
+            ],
         ];
 
         $this->runAction($changedData);
@@ -142,11 +142,11 @@ class ChangeCustomTypesTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
                 'fieldname' => 5,
-            ]
+            ],
         ];
 
         $this->runAction($changedData);
@@ -162,11 +162,11 @@ class ChangeCustomTypesTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
                 'fieldname' => 5.44,
-            ]
+            ],
         ];
 
         $this->runAction($changedData);
@@ -182,11 +182,11 @@ class ChangeCustomTypesTest extends TestCase
         $changedData = [
             'type' => [
                 'typeId' => 'type',
-                'key' => 'FOOBAR'
+                'key' => 'FOOBAR',
             ],
             'fields' => [
                 'fieldname' => new DateTimeDecorator(new DateTime()),
-            ]
+            ],
         ];
 
         $this->runAction($changedData);

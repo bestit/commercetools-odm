@@ -31,7 +31,7 @@ class EventsTest extends TestCase
             'preUpdate',
             'postRemove',
             'postPersist',
-            'postLoad'
+            'postLoad',
         ];
 
         array_walk($map, function (string $constValue) {

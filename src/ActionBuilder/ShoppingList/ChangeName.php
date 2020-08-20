@@ -43,7 +43,7 @@ class ChangeName extends ShoppingListActionBuilder
             ShoppingListChangeNameAction::ofName(LocalizedString::fromArray(array_filter(array_merge(
                 $oldData['name'] ?? [],
                 $changedValue
-            ))))
+            )))),
         ];
     }
 }

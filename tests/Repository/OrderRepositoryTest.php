@@ -67,7 +67,7 @@ class OrderRepositoryTest extends TestCase
                 $this->documentManager = static::createMock(DocumentManagerInterface::class),
                 static::createMock(QueryHelper::class),
                 static::createMock(FilterManagerInterface::class),
-                static::createMock(PoolInterface::class)
+                static::createMock(PoolInterface::class),
             ])
             ->getMock();
 
@@ -134,7 +134,7 @@ class OrderRepositoryTest extends TestCase
                 $this->documentManager = static::createMock(DocumentManagerInterface::class),
                 static::createMock(QueryHelper::class),
                 static::createMock(FilterManagerInterface::class),
-                static::createMock(PoolInterface::class)
+                static::createMock(PoolInterface::class),
             ])
             ->getMock();
 

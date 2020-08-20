@@ -66,11 +66,11 @@ class SetChangesTest extends TestCase
         $actions = $this->fixture->createUpdateActions(
             $changes = [
                 [
-                    'resourceTypeId' => $productResource = 'product'
+                    'resourceTypeId' => $productResource = 'product',
                 ],
                 [
-                    'resourceTypeId' => $cartResource = 'cart'
-                ]
+                    'resourceTypeId' => $cartResource = 'cart',
+                ],
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],

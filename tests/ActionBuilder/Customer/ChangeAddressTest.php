@@ -72,12 +72,12 @@ class ChangeAddressTest extends TestCase
 
         $actions = $this->fixture->createUpdateActions(
             $addressMock = [
-                'company' => uniqid()
+                'company' => uniqid(),
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
             [
-                'addresses' => []
+                'addresses' => [],
             ],
             $customer
         );
@@ -102,8 +102,8 @@ class ChangeAddressTest extends TestCase
             [],
             [
                 'addresses' => [
-                    ['id' => uniqid()]
-                ]
+                    ['id' => uniqid()],
+                ],
             ],
             $customer
         );
@@ -128,8 +128,8 @@ class ChangeAddressTest extends TestCase
             [],
             [
                 'addresses' => [
-                    ['id' => uniqid('', true)]
-                ]
+                    ['id' => uniqid('', true)],
+                ],
             ],
             $customer
         );
@@ -158,8 +158,8 @@ class ChangeAddressTest extends TestCase
             [],
             [
                 'addresses' => [
-                    ['id' => $addressId = uniqid('', true)]
-                ]
+                    ['id' => $addressId = uniqid('', true)],
+                ],
             ],
             $customer
         );

@@ -68,14 +68,14 @@ class ChangeLocalizedEnumValuesTest extends TestCase
             'attributes' => [
                 ['name' => 'Denios', 'type' => ['name' => 'lenum']],
                 ['name' => 'Denios 2', 'type' => ['name' => 'enum']],
-            ]
+            ],
         ]);
 
         $oldData = [
             'attributes' => [
                 ['type' => ['name' => 'lenum']],
                 ['type' => ['name' => 'enum']],
-            ]
+            ],
         ];
 
         $this->fixture->setLastFoundMatch([uniqid(), 1]);
@@ -106,10 +106,10 @@ class ChangeLocalizedEnumValuesTest extends TestCase
                         'values' => [
                             $changedValue = ['key' => 'foo', 'label' => ['de' => 'bar']],
                             ['key' => 'denios', 'label' => ['de' => 'Denios']],
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ]);
 
         $oldData = [
@@ -120,10 +120,10 @@ class ChangeLocalizedEnumValuesTest extends TestCase
                         'name' => 'lenum',
                         'values' => [
                             ['key' => 'denios', 'label' => ['de' => 'Denios']],
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ];
 
         $this->fixture->setLastFoundMatch([uniqid(), 0]);
@@ -157,11 +157,11 @@ class ChangeLocalizedEnumValuesTest extends TestCase
                     'type' => [
                         'name' => 'lenum',
                         'values' => [
-                            $changedValue = ['key' => 'foo', 'label' => ['de' => 'bar']]
-                        ]
-                    ]
+                            $changedValue = ['key' => 'foo', 'label' => ['de' => 'bar']],
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ]);
 
         $oldData = [
@@ -172,10 +172,10 @@ class ChangeLocalizedEnumValuesTest extends TestCase
                         'name' => 'lenum',
                         'values' => [
                             ['key' => 'foo', 'label' => ['de' => 'Denios']],
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ];
 
         $this->fixture->setLastFoundMatch([uniqid(), 0]);
@@ -210,10 +210,10 @@ class ChangeLocalizedEnumValuesTest extends TestCase
                         'name' => 'lenum',
                         'values' => [
                             ['key' => 'denios', 'label' => ['de' => 'Denios']],
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ]);
 
         $oldData = [
@@ -226,10 +226,10 @@ class ChangeLocalizedEnumValuesTest extends TestCase
                             ['key' => 'foo', 'label' => ['de' => 'bar']],
                             ['key' => 'denios', 'label' => ['de' => 'Denios']],
                             ['key' => 999, 'label' => ['de' => 'foo']],
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
-            ]
+            ],
         ];
 
         $this->fixture->setLastFoundMatch([uniqid(), 0]);

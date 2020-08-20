@@ -67,7 +67,7 @@ class SetLineItemQuantity extends CartActionBuilder
 
         $changeLineItemQuantityAction = [
             'lineItemId' => $lineItemId,
-            'quantity' => $changedValue['quantity']
+            'quantity' => $changedValue['quantity'],
         ];
 
         if (defined('Commercetools\Core\Model\Cart\LineItem::PRICE_MODE_EXTERNAL_PRICE')
@@ -80,7 +80,7 @@ class SetLineItemQuantity extends CartActionBuilder
                 'externalPrice' => $this->getCorrectPrice(
                     $lineItem->getPrice()->toArray(),
                     $changedValue['quantity']
-                )
+                ),
             ]);
 
             $changeLineItemQuantityAction['externalPrice'] = $this->getCorrectPrice(
