@@ -4,7 +4,22 @@
 
 use BestIt\CommercetoolsODM\Mapping\Annotations\RequestMap;
 
-return [
+$additionalMetaData = [];
+
+// Supported by Commercetools SDK ^2.8
+if (class_exists('Commercetools\Core\Model\Store\Store')) {
+    $additionalMetaData[\Commercetools\Core\Model\Store\Store::class] = [
+        'draft' => \Commercetools\Core\Model\Store\StoreDraft::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Stores\StoreCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Stores\StoreDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Stores\StoreByIdGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Stores\StoreQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Stores\StoreUpdateRequest::class)
+    ];
+}
+
+return array_merge([
     \Commercetools\Core\Model\Cart\Cart::class => [
         'draft' => \Commercetools\Core\Model\Cart\CartDraft::class,
         'repository' => \BestIt\CommercetoolsODM\Repository\CartRepository::class,
@@ -170,4 +185,4 @@ return [
             ->setQuery(\Commercetools\Core\Request\Zones\ZoneQueryRequest::class)
             ->setUpdateById(\Commercetools\Core\Request\Zones\ZoneUpdateRequest::class),
     ]
-];
+], $additionalMetaData);
