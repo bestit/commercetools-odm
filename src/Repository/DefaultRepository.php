@@ -14,6 +14,7 @@ use BestIt\CommercetoolsODM\Helper\QueryHelperAwareTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryInterface;
 use BestIt\CommercetoolsODM\Model\ByKeySearchRepositoryTrait;
+use BestIt\CommercetoolsODM\Pagination\FindByPaginator;
 use BestIt\CommercetoolsODM\RepositoryAwareInterface;
 use BestIt\CTAsyncPool\PoolAwareTrait;
 use BestIt\CTAsyncPool\PoolInterface;
@@ -21,6 +22,7 @@ use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Client\Adapter\Guzzle6Promise;
 use Commercetools\Core\Model\Channel\ChannelReference;
 use Commercetools\Core\Model\Common\Collection;
+use Commercetools\Core\Model\JsonObjectMapper;
 use Commercetools\Core\Request\AbstractApiRequest;
 use Commercetools\Core\Request\AbstractQueryRequest;
 use Commercetools\Core\Request\ClientRequestInterface;
@@ -32,6 +34,7 @@ use GuzzleHttp\Promise\FulfilledPromise;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
+use Traversable;
 use UnexpectedValueException;
 use function array_map;
 use function array_walk;
@@ -549,7 +552,23 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
             $this->setExpands([]);
         }
 
-        return [$request->mapResponse($response), $response, $request];
+        // We let Commercetools map the response if is it an error or no query request ...
+        if ($response->isError() || !$request instanceof AbstractQueryRequest) {
+            return [$request->mapResponse($response), $response, $request];
+        }
+
+        // ... otherwise we mapping the query result ourself.
+        // We map each result individually, manually, because the result mapper from commercetools uses
+        // too much memory and keeps references to the data making the garbage collector useless.
+        // This way there are no references so the garbage collector can clean the memory up.
+        $mapper = new JsonObjectMapper($this->documentManager->getClient()->getConfig()->getContext());
+        $results = json_decode($response->getResponse()->getBody()->getContents(), true)['results'];
+
+        array_walk($results, function ($item) use($mapper) {
+            return $mapper->map($item, $this->getClassName());
+        });
+
+        return [$results, $response, $request];
     }
 
     /**
@@ -611,5 +630,23 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
         $this->clearExpandAfterQuery($clearAfterwards);
 
         return $this;
+    }
+
+    /**
+     * Easy to use shortcut for findBy with pagination.
+     *
+     * @param array $criteria
+     * @param bool $withDetach
+     * @param int $pageSize
+     *
+     * @return Traversable
+     */
+    public function findByPaginated(array $criteria = [], bool $withDetach = true, int $pageSize = 500): Traversable
+    {
+        $paginator = new FindByPaginator($this, $withDetach, $pageSize);
+
+        foreach ($paginator->getIterator($criteria) as $item) {
+            yield $item;
+        }
     }
 }

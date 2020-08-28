@@ -4,7 +4,6 @@ namespace BestIt\CommercetoolsODM\Repository;
 
 use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Filter\FilterManagerInterface;
-use BestIt\CommercetoolsODM\Model\DefaultRepository;
 
 /**
  * Optional DefaultRepository base class with a simplified constructor (for autowiring).
