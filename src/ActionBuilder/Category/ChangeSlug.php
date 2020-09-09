@@ -40,10 +40,14 @@ class ChangeSlug extends CategoryActionBuilder
         array $oldData,
         $sourceObject
     ): array {
+        $changedValue = array_filter($changedValue);
+
+        if (empty($changedValue)) {
+            return [];
+        }
+
         return [
-            CategoryChangeSlugAction::ofSlug(
-                LocalizedString::fromArray($changedValue)
-            ),
+            CategoryChangeSlugAction::ofSlug($sourceObject->getSlug()),
         ];
     }
 }
