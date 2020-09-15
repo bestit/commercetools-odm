@@ -67,6 +67,15 @@ class SetAttributes extends ProductActionBuilder
         foreach ($changedValue as $attrIndex => $attr) {
             $action = $this->startAction($sourceObject, $variantId, $attr, $oldAttrs, $attrIndex);
 
+            // ENUM and LENUM Attributes could contain an empty label (=null) because we only set value and no label.
+            // Therefor, ODM detects a change for the label, which is uninteresting for us.
+            // We don't want any action if the only changed field is the 'null label'.
+            if (array_key_exists('value', $attr) && is_array($attr['value']) && count($attr['value']) === 1) {
+                if (array_key_exists('label', $attr['value']) && $attr['value']['label'] === null) {
+                    continue;
+                }
+            }
+
             if ($attr && isset($attr['value'])) {
                 $action->setValue($this->loadActionValue($attr, $oldAttrs, $attrIndex));
             }
@@ -164,6 +173,12 @@ class SetAttributes extends ProductActionBuilder
             });
 
             ksort($attrValue);
+        }
+
+        // We value is an array with a key field, it must be a ENUM or LENUM.
+        // Therefor, Commercetools expect the key as value only.
+        if (is_array($attrValue) && array_key_exists('key', $attrValue)) {
+            $attrValue = $attrValue['key'];
         }
 
         return $attrValue;

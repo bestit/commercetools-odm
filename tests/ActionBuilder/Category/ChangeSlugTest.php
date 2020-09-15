@@ -9,6 +9,7 @@ use BestIt\CommercetoolsODM\ActionBuilder\Category\ChangeSlug;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use BestIt\CommercetoolsODM\Tests\ActionBuilder\SupportTestTrait;
 use Commercetools\Core\Model\Category\Category;
+use Commercetools\Core\Model\Common\LocalizedString;
 use Commercetools\Core\Request\Categories\Command\CategoryChangeSlugAction;
 use PHPUnit\Framework\TestCase;
 
@@ -64,10 +65,15 @@ class ChangeSlugTest extends TestCase
      */
     public function testCreateUpdateActions()
     {
+        $category = new Category();
+        $category->setSlug(new LocalizedString([
+            'de' => $newGer = uniqid(),
+            'en' => $newEn = uniqid(),
+        ]));
+
         $actions = $this->fixture->createUpdateActions(
             [
-                'de' => $newGer = uniqid(),
-                'en' => $newEn = uniqid(),
+                'de' => $newGer,
             ],
             $this->createMock(ClassMetadataInterface::class),
             [],
@@ -78,7 +84,7 @@ class ChangeSlugTest extends TestCase
                     'en' => uniqid(),
                 ],
             ],
-            new Category()
+            $category
         );
 
         static::assertCount(1, $actions, 'Wrong action count.');
