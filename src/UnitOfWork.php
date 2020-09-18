@@ -22,6 +22,7 @@ use Commercetools\Core\Model\Cart\CartDraft;
 use Commercetools\Core\Model\Common\AbstractJsonDeserializeObject;
 use Commercetools\Core\Model\Common\AssetDraft;
 use Commercetools\Core\Model\Common\AssetDraftCollection;
+use Commercetools\Core\Model\Common\AttributeCollection;
 use Commercetools\Core\Model\Common\DateTimeDecorator;
 use Commercetools\Core\Model\Common\JsonObject;
 use Commercetools\Core\Model\Common\PriceDraft;
@@ -593,7 +594,7 @@ class UnitOfWork implements UnitOfWorkInterface
         $draftClass = $metadata->getDraft();
 
         if ($draftClass === ProductDraft::class) {
-            $values = $this->parseValuesForProductDraft($metadata, $object, $fields);
+            $values = $this->parseValuesForProductDraft($object);
         } elseif ($draftClass === CartDraft::class) {
             $values = $this->parseValuesForCartDraft($metadata, $object, $fields);
         } else {
@@ -1208,17 +1209,12 @@ class UnitOfWork implements UnitOfWorkInterface
      * @todo To hard coupled with the standard object.
      * @todo Not completely tested.
      *
-     * @param ClassMetadataInterface $metadata
      * @param Product $product The source object.
-     * @param array $fields
      *
      * @return array
      */
-    private function parseValuesForProductDraft(
-        ClassMetadataInterface $metadata,
-        Product $product,
-        array $fields
-    ): array {
+    private function parseValuesForProductDraft(Product $product): array
+    {
         $values = [
             'key' => (string) $product->getKey(),
             'productType' => $product->getProductType(),
@@ -1261,10 +1257,24 @@ class UnitOfWork implements UnitOfWorkInterface
 
             /** @var ProductVariant $variant */
             foreach ($variants as $index => $variant) {
+                $attributes = [];
+
+                // If we have a lenum or enum, the value could be an array with a "key" field.
+                // We have to use the content of the "key" field as value instead.
+                if ($variant->getAttributes() instanceof AttributeCollection) {
+                    $attributes = array_map(function (array $attribute) {
+                        if (is_array($attribute['value']) && array_key_exists('key', $attribute['value'])) {
+                            $attribute['value'] = $attribute['value']['key'];
+                        }
+
+                        return $attribute;
+                    }, $variant->getAttributes()->toArray());
+                }
+
                 $variantDraft = ProductVariantDraft::fromArray(
                     array_filter(
                         [
-                            'attributes' => $variant->getAttributes(),
+                            'attributes' => $attributes,
                             'images' => $variant->getImages(),
                             'key' => $variant->getKey(),
                             'sku' => (string) $variant->getSku(),
