@@ -20,6 +20,8 @@ use Commercetools\Core\Request\Products\Command\ProductAddVariantAction;
  */
 class AddVariants extends ProductActionBuilder
 {
+    use ResolveAttributeValueTrait;
+
     /**
      * A PCRE to match the hierarchical field path without delimiter.
      *
@@ -65,10 +67,16 @@ class AddVariants extends ProductActionBuilder
         $actions = [];
 
         foreach ($addedVariants as $variant) {
+            $attributes = array_map(function (array $attribute) {
+                $attribute['value'] = $this->resolveAttributeValue($attribute['value']);
+
+                return $attribute;
+            }, $variant['attributes']);
+
             $actions[] = (new ProductAddVariantAction())
                 ->setSku($variant['sku'])
                 ->setPrices(PriceDraftCollection::fromArray($variant['prices']))
-                ->setAttributes(AttributeCollection::fromArray($variant['attributes']))
+                ->setAttributes(AttributeCollection::fromArray($attributes))
                 ->setImages(ImageCollection::fromArray($variant['images']))
                 ->setAssets(AssetCollection::fromArray($variant['assets']));
         }

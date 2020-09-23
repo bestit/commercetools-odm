@@ -3,6 +3,7 @@
 namespace BestIt\CommercetoolsODM;
 
 use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderProcessorInterface;
+use BestIt\CommercetoolsODM\ActionBuilder\Product\ResolveAttributeValueTrait;
 use BestIt\CommercetoolsODM\Event\LifecycleEventArgs;
 use BestIt\CommercetoolsODM\Event\ListenersInvoker;
 use BestIt\CommercetoolsODM\Event\OnFlushEventArgs;
@@ -78,6 +79,7 @@ class UnitOfWork implements UnitOfWorkInterface
     use EventManagerAwareTrait;
     use ListenerInvokerAwareTrait;
     use LoggerAwareTrait;
+    use ResolveAttributeValueTrait;
 
     /**
      * Handles the change state of given models.
@@ -1259,13 +1261,9 @@ class UnitOfWork implements UnitOfWorkInterface
             foreach ($variants as $index => $variant) {
                 $attributes = [];
 
-                // If we have a lenum or enum, the value could be an array with a "key" field.
-                // We have to use the content of the "key" field as value instead.
                 if ($variant->getAttributes() instanceof AttributeCollection) {
                     $attributes = array_map(function (array $attribute) {
-                        if (is_array($attribute['value']) && array_key_exists('key', $attribute['value'])) {
-                            $attribute['value'] = $attribute['value']['key'];
-                        }
+                        $attribute['value'] = $this->resolveAttributeValue($attribute['value']);
 
                         return $attribute;
                     }, $variant->getAttributes()->toArray());
