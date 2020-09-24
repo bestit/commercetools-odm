@@ -27,6 +27,8 @@ use function ksort;
  */
 class SetAttributes extends ProductActionBuilder
 {
+    use ResolveAttributeValueTrait;
+
     /**
      * A PCRE to match the hierarchical field path without delimiter.
      *
@@ -175,13 +177,7 @@ class SetAttributes extends ProductActionBuilder
             ksort($attrValue);
         }
 
-        // We value is an array with a key field, it must be a ENUM or LENUM.
-        // Therefor, Commercetools expect the key as value only.
-        if (is_array($attrValue) && array_key_exists('key', $attrValue)) {
-            $attrValue = $attrValue['key'];
-        }
-
-        return $attrValue;
+        return $this->resolveAttributeValue($attrValue);
     }
 
     /**

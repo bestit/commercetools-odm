@@ -1,24 +1,34 @@
 <?php
 
-declare(strict_types=1);
-
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
+use Commercetools\Core\Model\Common\Price;
 use Commercetools\Core\Model\Common\PriceDraft;
+use Commercetools\Core\Model\Common\PriceDraftCollection;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductData;
 use Commercetools\Core\Request\AbstractAction;
-use Commercetools\Core\Request\Products\Command\ProductAddPriceAction;
+use Commercetools\Core\Request\Products\Command\ProductSetPricesAction;
 
 /**
- * Adds prices to the product.
+ * Set prices for the product (remove all and add new)
  *
- * @author blange <lange@bestit-online.de>
+ * @author Michel Chowanski <michel.chowanski@bestit.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Product
+ * @subpackage ActionBuilder\Product
  */
-class AddPrices extends PriceActionBuilder
+class SetPrices extends ProductActionBuilder
 {
+    use VariantIdFinderTrait;
+
+    /**
+     * A PCRE to match the hierarchical field path without delimiter.
+     *
+     * @var string
+     */
+    protected $complexFieldFilter = '^masterData/(current|staged)/(masterVariant|variants)/([\d]*)/?prices$';
+
     /**
      * Creates the update actions for the given class and data.
      *
@@ -37,12 +47,6 @@ class AddPrices extends PriceActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        $match = $this->getLastFoundMatch();
-
-        if (!$match || !is_array($changedValue)) {
-            return [];
-        }
-
         list(, $dataId, $variantType, $variantId) = $this->getLastFoundMatch();
 
         if ($variantType === 'masterVariant') {
@@ -51,31 +55,26 @@ class AddPrices extends PriceActionBuilder
             $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantId);
         }
 
-        if ($variantId === null) {
-            return [];
-        }
-
+        $actions = [];
         /** @var ProductData $productData */
         $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
         $variant = $productData->getVariantById($variantId);
 
         if ($variant === null) {
-            return [];
+            return $actions;
         }
 
-        $variantPrices = $variant->getPrices();
+        // We provide all _current_ prices to the action. Commercetools will decide which price should be added,
+        // removed or changed. We don't have to handle it manually. But keep in mind, that changed
+        // prices get an new UUID.
 
-        $actions = [];
-
-        foreach ($changedValue as $index => $priceArray) {
-            if ($priceArray && !$variantPrices->getAt($index)->getId()) {
-                $actions[] = ProductAddPriceAction::ofVariantIdAndPrice(
-                    $variant->getId(),
-                    PriceDraft::fromArray($priceArray)
-                )->setStaged($dataId === 'staged');
+        $priceDrafts = [];
+        foreach ($variant->getPrices() as $price) {
+            if ($price instanceof Price) {
+                $priceDrafts[] = PriceDraft::fromArray($price->toArray());
             }
         }
 
-        return $actions;
+        return [ProductSetPricesAction::ofVariantIdAndPrices($variantId, PriceDraftCollection::fromArray($priceDrafts))];
     }
 }
