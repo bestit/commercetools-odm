@@ -60,7 +60,7 @@ class SetPrices extends ProductActionBuilder
         $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
         $variant = $productData->getVariantById($variantId);
 
-        if ($variant === null) {
+        if ($variantId === null || $variant === null) {
             return $actions;
         }
 
