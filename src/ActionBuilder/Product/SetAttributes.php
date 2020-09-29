@@ -67,18 +67,22 @@ class SetAttributes extends ProductActionBuilder
         list($oldAttrs, $variantId) = $variantData;
 
         foreach ($changedValue as $attrIndex => $attr) {
-            $action = $this->startAction($sourceObject, $variantId, $attr, $oldAttrs, $attrIndex);
+            $attributeName = $attr['name'] ?? $oldAttrs[$attrIndex]['name'];
 
-            // ENUM and LENUM Attributes could contain an empty label (=null) because we only set value and no label.
-            // Therefor, ODM detects a change for the label, which is uninteresting for us.
-            // We don't want any action if the only changed field is the 'null label'.
-            if (array_key_exists('value', $attr) && is_array($attr['value']) && count($attr['value']) === 1) {
-                if (array_key_exists('label', $attr['value']) && $attr['value']['label'] === null) {
-                    continue;
-                }
-            }
+            $action = $this->startAction($sourceObject, $variantId, $attributeName);
 
+            // If $attr is null, the given attribute has no value.
+            // We have to create an action without to set a value. Commercetools will remove the attribute.
             if ($attr && isset($attr['value'])) {
+                // ENUM and LENUM Attributes could contain an empty label (=null) because we only set value and no label.
+                // Therefor, ODM detects a change for the label, which is uninteresting for us.
+                // We don't want any action if the only changed field is the 'null label'.
+                if (is_array($attr['value']) && count($attr['value']) === 1) {
+                    if (array_key_exists('label', $attr['value']) && $attr['value']['label'] === null) {
+                        continue;
+                    }
+                }
+
                 $action->setValue($this->loadActionValue($attr, $oldAttrs, $attrIndex));
             }
 
@@ -185,19 +189,16 @@ class SetAttributes extends ProductActionBuilder
      *
      * @param Product $product
      * @param int $variantId
-     * @param array $attr
-     * @param array $oldVarAttrs
-     * @param int $attrIndex
+     * @param string $attributeName
      *
      * @return ProductSetAttributeAction|ProductSetAttributeInAllVariantsAction
      */
-    private function startAction(Product $product, int $variantId, array $attr, array $oldVarAttrs, int $attrIndex)
+    private function startAction(Product $product, int $variantId, string $attributeName)
     {
         // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
         list(, $productCatalogContainer) = $this->getLastFoundMatch();
 
         $variants = $product->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getVariants();
-        $attributeName = $attr['name'] ?? $oldVarAttrs[$attrIndex]['name'];
 
         if ($variants && count($variants) && !$this->valueIsSameForAllVariants($attributeName, $variants)) {
             $action = ProductSetAttributeAction::ofVariantIdAndName(
