@@ -6,7 +6,7 @@ use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
 use Commercetools\Core\Model\Customer\Customer;
 
 /**
- * The ase class for the customer action builders.s
+ * The base class for the customer action builders.
  *
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\ActionBuilder\Customer
