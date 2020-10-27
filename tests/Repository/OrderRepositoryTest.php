@@ -14,6 +14,7 @@ use BestIt\CommercetoolsODM\UnitOfWorkInterface;
 use Commercetools\Commons\Helper\QueryHelper;
 use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\Order\Order;
+use Commercetools\Core\Request\Carts\CartByIdGetRequest;
 use Commercetools\Core\Request\Orders\OrderCreateFromCartRequest;
 use Commercetools\Core\Response\ApiResponseInterface;
 use Commercetools\Core\Response\ErrorResponse;
@@ -85,15 +86,25 @@ class OrderRepositoryTest extends TestCase
             ->setVersion($orderVersion = mt_rand(1, 10000));
 
         $this->documentManager
-            ->expects(static::once())
+            ->expects($this->atMost(2))
             ->method('createRequest')
-            ->with(
-                Order::class,
-                OrderCreateFromCartRequest::class,
-                $cartId,
-                $cartVersion
+            ->withConsecutive(
+                [
+                    Order::class,
+                    OrderCreateFromCartRequest::class,
+                    $cartId,
+                    $cartVersion,
+                ],
+                [
+                    Cart::class,
+                    CartByIdGetRequest::class,
+                    $cartId,
+                ]
             )
-            ->willReturn($request = OrderCreateFromCartRequest::ofCartIdAndVersion($cartId, $cartVersion));
+            ->willReturnOnConsecutiveCalls(
+                $orderCreateFromCartRequest = OrderCreateFromCartRequest::ofCartIdAndVersion($cartId, $cartVersion),
+                $cartByIdGetRequest = CartByIdGetRequest::ofId($cartId)
+            );
 
         $this->documentManager
             ->expects(static::once())
@@ -101,15 +112,21 @@ class OrderRepositoryTest extends TestCase
             ->willReturn($unitOfWork = static::createMock(UnitOfWorkInterface::class));
 
         $this->fixture
-            ->expects(static::once())
+            ->expects($this->atMost(2))
             ->method('processQuery')
-            ->with($request)
-            ->willReturn([$order, $response = $this->createMock(ApiResponseInterface::class)]);
+            ->withConsecutive(
+                [$orderCreateFromCartRequest],
+                [$cartByIdGetRequest]
+            )
+            ->willReturnOnConsecutiveCalls(
+                [$order, $response = $this->createMock(ApiResponseInterface::class)],
+                [$cart, $response = $this->createMock(ApiResponseInterface::class)]
+            );
 
         $unitOfWork
-            ->expects(static::once())
+            ->expects($this->atMost(2))
             ->method('registerAsManaged')
-            ->with($order, $orderId, $orderVersion);
+            ->withConsecutive([$cart, $cartId, $cartVersion], [$order, $orderId, $orderVersion]);
 
         static::assertSame($order, $this->fixture->createFromCart($cart));
     }

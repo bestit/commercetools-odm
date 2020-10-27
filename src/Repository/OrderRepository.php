@@ -10,6 +10,7 @@ use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\Order\ImportOrder;
 use Commercetools\Core\Model\Order\Order;
+use Commercetools\Core\Request\Carts\CartByIdGetRequest;
 use Commercetools\Core\Request\Orders\OrderCreateFromCartRequest;
 use Commercetools\Core\Request\Orders\OrderImportRequest;
 use Commercetools\Core\Response\ErrorResponse;
@@ -55,7 +56,16 @@ class OrderRepository extends DefaultRepository implements OrderRepositoryInterf
             throw APIException::fromResponse($response);
         }
 
-        $documentManager->getUnitOfWork()->registerAsManaged($order, $order->getId(), $order->getVersion());
+        list($responseObject,,) = $this->processQuery($documentManager->createRequest(Cart::class, CartByIdGetRequest::class, $cart->getId()));
+
+        $unitOfWork = $documentManager->getUnitOfWork();
+
+        if ($responseObject instanceof Cart) {
+            $unitOfWork
+                ->registerAsManaged($responseObject, $responseObject->getId(), $responseObject->getVersion());
+        }
+
+        $unitOfWork->registerAsManaged($order, $order->getId(), $order->getVersion());
 
         return $order;
     }
