@@ -2,7 +2,6 @@
 
 namespace BestIt\CommercetoolsODM\ActionBuilder\Cart;
 
-use BestIt\CommercetoolsODM\ActionBuilder\ActionBuilderAbstract;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Cart\Cart;
 use Commercetools\Core\Model\CustomField\FieldContainer;
@@ -24,7 +23,7 @@ class SetLineItemCustomField extends CartActionBuilder
      *
      * @var string
      */
-    protected $complexFieldFilter = 'lineItems/([^/]+)';
+    protected $complexFieldFilter = 'lineItems/([\d]*)/custom';
 
     /**
      * Creates the update action for the given class and data.
@@ -49,12 +48,15 @@ class SetLineItemCustomField extends CartActionBuilder
         $actions = [];
 
         // Only process if custom fields was changed
-        if (!isset($changedValue['custom']['fields'])) {
+        if (!isset($changedValue['fields'])) {
             return $actions;
         }
 
         $offset = $this->getLastFoundMatch()[1];
         $lineItemId = $sourceObject->getLineItems()->getAt($offset)->getId();
+
+        // Use changed type or old type if not changed
+        $type = TypeReference::fromArray($changedValue['type'] ?? $oldData['lineItems'][$offset]['custom']['type']);
 
         // Do not process on added items
         if (!$lineItemId) {
@@ -63,10 +65,10 @@ class SetLineItemCustomField extends CartActionBuilder
 
         $action = new CartSetLineItemCustomTypeAction();
         $action->setLineItemId($lineItemId);
-        $action->setType(TypeReference::ofKey($changedValue['custom']['type']['key']));
+        $action->setType($type);
         $container = new FieldContainer();
 
-        foreach ($changedValue['custom']['fields'] as $name => $value) {
+        foreach ($changedValue['fields'] as $name => $value) {
             $container->set($name, $value);
         }
 
