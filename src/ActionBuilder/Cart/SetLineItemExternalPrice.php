@@ -5,9 +5,11 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Cart;
 use BestIt\CommercetoolsODM\Helper\PriceHelperTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Cart\Cart;
+use Commercetools\Core\Model\Cart\ExternalLineItemTotalPrice;
 use Commercetools\Core\Model\Cart\LineItem;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Carts\Command\CartSetLineItemPriceAction;
+use Commercetools\Core\Request\Carts\Command\CartSetLineItemTotalPriceAction;
 
 /**
  * Builds the action to change cart item external price which don't updated by recalculate actions
@@ -71,14 +73,29 @@ class SetLineItemExternalPrice extends CartActionBuilder
             return $actions;
         }
 
-        if (defined(static::MODE_CONSTANT) && $lineItem->getPriceMode() === LineItem::PRICE_MODE_EXTERNAL_PRICE) {
-            $actions[] = CartSetLineItemPriceAction::fromArray([
-                'lineItemId' => $lineItemId,
-                'externalPrice' => $this->getCorrectPrice(
-                    $lineItem->getPrice()->toArray(),
-                    $lineItem->getQuantity()
-                ),
-            ]);
+        if (defined(static::MODE_CONSTANT)) {
+            switch ($lineItem->getPriceMode()) {
+                case LineItem::PRICE_MODE_EXTERNAL_PRICE:
+                    $actions[] = CartSetLineItemPriceAction::fromArray([
+                        'lineItemId' => $lineItemId,
+                        'externalPrice' => $this->getCorrectPrice(
+                            $lineItem->getPrice()->toArray(),
+                            $lineItem->getQuantity()
+                        ),
+                    ]);
+
+                    break;
+                case LineItem::PRICE_MODE_EXTERNAL_TOTAL:
+                    $actions[] = CartSetLineItemTotalPriceAction::fromArray([
+                        'lineItemId' => $lineItemId,
+                        'externalTotalPrice' => ExternalLineItemTotalPrice::fromArray([
+                            'price' => $lineItem->getPrice()->getValue(),
+                            'totalPrice' => $lineItem->getTotalPrice()
+                        ]),
+                    ]);
+
+                    break;
+            }
         }
 
         return $actions;
