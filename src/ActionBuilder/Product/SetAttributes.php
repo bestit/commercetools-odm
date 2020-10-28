@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
+use BestIt\CommercetoolsODM\Helper\AttributeFinderTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Product\Product;
@@ -28,6 +29,7 @@ use function ksort;
 class SetAttributes extends ProductActionBuilder
 {
     use ResolveAttributeValueTrait;
+    use AttributeFinderTrait;
 
     /**
      * A PCRE to match the hierarchical field path without delimiter.
@@ -228,7 +230,7 @@ class SetAttributes extends ProductActionBuilder
         $previousValue = null;
 
         foreach ($variants as $variant) {
-            $attribute = $variant->getAttributes()->getByName($attributeName);
+            $attribute = $this->getAttributeByName($variant->getAttributes(), $attributeName);
 
             if (!$attribute instanceof Attribute) {
                 continue;
