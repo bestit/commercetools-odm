@@ -182,10 +182,9 @@ class ChangeLocalizedEnumValuesSet extends ChangeLocalizedEnumValues
                 continue;
             }
 
-            asort($oldValues[$item['key']]);
-            asort($item);
-
-            if ($oldValues[$item['key']] !== $item) {
+            // We only want to check the key / values without the order
+            // https://www.php.net/manual/en/language.operators.array.php
+            if ($oldValues[$item['key']] != $item) {
                 $actions[] = ProductTypeChangeLocalizedEnumLabelAction::fromArray([
                     'attributeName' => $attributeName,
                     'newValue' => $item,

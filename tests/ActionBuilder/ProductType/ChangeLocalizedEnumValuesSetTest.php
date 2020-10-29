@@ -182,7 +182,7 @@ class ChangeLocalizedEnumValuesSetTest extends TestCase
                         'elementType' => [
                             'name' => 'lenum',
                             'values' => [
-                                ['key' => 'foo', 'label' => ['de' => 'Denios']],
+                                ['label' => ['de' => 'Denios'], 'key' => 'foo'],
                             ],
                         ],
                     ],
