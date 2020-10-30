@@ -43,6 +43,12 @@ class SetTaxMode extends CartActionBuilder
                 ]);
 
                 break;
+            case Cart::TAX_MODE_PLATFORM:
+                $actions[] = CartChangeTaxModeAction::fromArray([
+                    'taxMode' => Cart::TAX_MODE_PLATFORM,
+                ]);
+
+                break;
             default:
                 break;
         }
