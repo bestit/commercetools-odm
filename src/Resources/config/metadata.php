@@ -43,6 +43,17 @@ return array_merge([
             ->setUpdateById(\Commercetools\Core\Request\Categories\CategoryUpdateRequest::class)
     ],
 
+    \Commercetools\Core\Model\TaxCategory\TaxCategory::class => [
+        'draft' => \Commercetools\Core\Model\TaxCategory\TaxCategoryDraft::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\TaxCategories\TaxCategoryCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\TaxCategories\TaxCategoryDeleteRequest::class)
+            ->setFindById(\Commercetools\Core\Request\TaxCategories\TaxCategoryByIdGetRequest::class)
+            ->setFindByKey(\Commercetools\Core\Request\TaxCategories\TaxCategoryByKeyGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\TaxCategories\TaxCategoryQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\TaxCategories\TaxCategoryUpdateRequest::class)
+    ],
+
     \Commercetools\Core\Model\Channel\Channel::class => [
         'draft' => \Commercetools\Core\Model\Channel\ChannelDraft::class,
         'repository' => \BestIt\CommercetoolsODM\Repository\ChannelRepository::class,
