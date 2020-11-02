@@ -200,7 +200,7 @@ class SetAttributes extends ProductActionBuilder
         // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
         list(, $productCatalogContainer) = $this->getLastFoundMatch();
 
-        $variants = $product->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getVariants();
+        $variants = $product->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getAllVariants();
 
         if ($variants && count($variants) && !$this->valueIsSameForAllVariants($attributeName, $variants)) {
             $action = ProductSetAttributeAction::ofVariantIdAndName(
