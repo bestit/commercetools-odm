@@ -36,6 +36,16 @@ class SetLineItemExternalPrice extends CartActionBuilder
     protected $complexFieldFilter = 'lineItems/([^/]+)';
 
     /**
+     * Make this a higher priority than the CartSetLineItemTaxAmountAction.
+     *
+     * This action has to be queued before setting tax amounts.
+     * Otherwise commercetools will throw an tax error.
+     *
+     * @var int
+     */
+    protected $priority = 1;
+
+    /**
      * Creates the update action for the given class and data.
      *
      * @param mixed $changedValue
