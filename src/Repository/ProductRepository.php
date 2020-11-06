@@ -14,6 +14,8 @@ use Commercetools\Core\Request\Products\Command\ProductUnpublishAction;
 use Commercetools\Core\Request\Products\ProductImageUploadRequest;
 use Commercetools\Core\Response\ErrorResponse;
 use GuzzleHttp\Psr7\UploadedFile;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use SplFileInfo;
 use function mime_content_type;
 
@@ -23,8 +25,10 @@ use function mime_content_type;
  * @author blange <lange@bestit-online.de>
  * @package BestIt\CommercetoolsODM\Repository
  */
-class ProductRepository extends DefaultRepository implements ProductRepositoryInterface
+class ProductRepository extends DefaultRepository implements ProductRepositoryInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * Adds the given image to the variant of the product.
      *
@@ -103,6 +107,14 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
 
         $request->addAction(new ProductPublishAction());
 
+        if ($this->logger) {
+            $this->logger->emergency('Publish action request', [
+                'id' => $product->getId(),
+                'version' => $product->getVersion(),
+                'actions' => json_encode($request->getActions())
+            ]);
+        }
+
         /** @var Product $product */
         /** @var ErrorResponse $updateResponse */
         list($updatedProduct, $updateResponse) = $this->processQuery($request);
@@ -136,6 +148,14 @@ class ProductRepository extends DefaultRepository implements ProductRepositoryIn
         );
 
         $request->addAction(new ProductUnpublishAction());
+
+        if ($this->logger) {
+            $this->logger->emergency('Unpublish action request', [
+                'id' => $product->getId(),
+                'version' => $product->getVersion(),
+                'actions' => json_encode($request->getActions())
+            ]);
+        }
 
         /** @var Product $product */
         /** @var ErrorResponse $updateResponse */

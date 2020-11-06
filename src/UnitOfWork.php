@@ -648,6 +648,12 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private function createRemovalRequest($model): AbstractDeleteRequest
     {
+        $this->logger->emergency('Create removal request', [
+            'name' => $this->getClassMetadata($model)->getName(),
+            'id' => $model->getId(),
+            'version' => $model->getVersion()
+        ]);
+
         return $this->getDocumentManager()->createRequest(
             $this->getClassMetadata($model)->getName(),
             DocumentManager::REQUEST_TYPE_DELETE_BY_ID,
@@ -727,10 +733,10 @@ class UnitOfWork implements UnitOfWorkInterface
                 array_walk($expands, [$request, 'expand']);
             }
 
-            $this->logger->debug(
+            $this->logger->emergency(
                 'Created the update request.',
                 [
-                    'actions' => $actions,
+                    'actions' => json_encode($actions),
                     'class' => get_class($document),
                     'memory' => memory_get_usage(true) / 1024 / 1024,
                     'objectId' => $document->getId(),
