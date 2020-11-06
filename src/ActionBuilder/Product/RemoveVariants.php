@@ -6,6 +6,7 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductVariant;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductRemoveVariantAction;
 
@@ -39,11 +40,32 @@ class RemoveVariants extends ProductActionBuilder
         array $oldData,
         $sourceObject
     ): array {
+        $actions = [];
+
         if (!is_array($changedValue)) {
-            return [];
+            return $actions;
         }
 
-        return $this->getRemoveVariantActions($changedValue, $sourceObject);
+        $oldVariants = array_merge(
+            $oldData['masterData']['current']['variants'],
+            [$oldData['masterData']['current']['masterVariant']]
+        );
+
+        $oldSkuCollection = array_map(function (array $variant) {
+            return $variant['sku'];
+        }, $oldVariants);
+
+        $currentSkuCollection = array_map(function (ProductVariant $variant) {
+            return $variant->getSku();
+        }, iterator_to_array($sourceObject->getMasterData()->getCurrent()->getAllVariants()));
+
+        foreach ($oldSkuCollection as $oldSku) {
+            if (!in_array($oldSku, $currentSkuCollection)) {
+                $actions[] = ProductRemoveVariantAction::ofSku($oldSku);
+            }
+        }
+
+        return $actions;
     }
 
     /**
@@ -57,50 +79,5 @@ class RemoveVariants extends ProductActionBuilder
     public function getPriority(): int
     {
         return 1;
-    }
-
-    /**
-     * @param array $changedValue
-     * @param Product $sourceObject
-     *
-     * @return ProductRemoveVariantAction[]
-     */
-    private function getRemoveVariantActions(array $changedValue, Product $sourceObject): array
-    {
-        $removedVariantIndexes = $this->findRemovedVariants($changedValue);
-
-        $originalVariants = $sourceObject->getMasterData()->getCurrent()->getVariants();
-
-        $actions = [];
-
-        foreach ($removedVariantIndexes as $index) {
-            $skuToRemove = $originalVariants->getAt($index)->getSku();
-
-            $actions[] = ProductRemoveVariantAction::ofSku($skuToRemove);
-        }
-
-        return $actions;
-    }
-
-    /**
-     * Removed variants are just `null` but with the correct index being set.
-     *
-     * @param array $changedValue
-     *
-     * @return int[]
-     */
-    private function findRemovedVariants(array $changedValue): array
-    {
-        $removedIndexes = [];
-
-        foreach ($changedValue as $index => $variant) {
-            if ($variant !== null) {
-                continue;
-            }
-
-            $removedIndexes[] = $index;
-        }
-
-        return $removedIndexes;
     }
 }
