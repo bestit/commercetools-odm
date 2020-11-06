@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BestIt\CommercetoolsODM\Helper;
 
+use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductVariant;
 use Commercetools\Core\Model\Product\ProductVariantCollection;
 
@@ -52,5 +53,24 @@ trait VariantFinderTrait
         }
 
         return null;
+    }
+
+    /**
+     * Find variant id by variant index
+     *
+     * @param Product $product
+     * @param string|int $variantIndex
+     *
+     * @return int|null
+     */
+    private function findVariantIdByVariantIndex(Product $product, $variantIndex)
+    {
+        $variants = $product->getMasterData()->getCurrent()->getVariants()->toArray();
+
+        if (!isset($variants[$variantIndex])) {
+            return null;
+        }
+
+        return $variants[$variantIndex]['id'] ?? null;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
+use BestIt\CommercetoolsODM\Helper\VariantFinderTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Price;
 use Commercetools\Core\Model\Common\PriceDraft;
@@ -20,7 +21,7 @@ use Commercetools\Core\Request\Products\Command\ProductSetPricesAction;
  */
 class SetPrices extends ProductActionBuilder
 {
-    use VariantIdFinderTrait;
+    use VariantFinderTrait;
 
     /**
      * A PCRE to match the hierarchical field path without delimiter.
@@ -58,7 +59,7 @@ class SetPrices extends ProductActionBuilder
         $actions = [];
         /** @var ProductData $productData */
         $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
-        $variant = $productData->getVariantById($variantId);
+        $variant = $this->getVariantById($productData->getAllVariants(), $variantId);
 
         if ($variantId === null || $variant === null) {
             return $actions;

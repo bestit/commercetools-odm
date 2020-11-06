@@ -2,6 +2,7 @@
 
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
+use BestIt\CommercetoolsODM\Helper\VariantFinderTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\AbstractAction;
@@ -16,7 +17,7 @@ use Commercetools\Core\Request\Products\Command\ProductSetSkuAction;
  */
 class SetSKU extends ProductActionBuilder
 {
-    use VariantIdFinderTrait;
+    use VariantFinderTrait;
 
     /**
      * A PCRE to match the hierarchical field path without delimiter.
