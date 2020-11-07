@@ -612,4 +612,17 @@ class DefaultRepository implements ByKeySearchRepositoryInterface, LoggerAwareIn
 
         return $this;
     }
+
+    /**
+     * Execute modify callback
+     *
+     * @param mixed $object
+     * @param callable $change
+     *
+     * @return mixed
+     */
+    public function modify($object, callable $change)
+    {
+        return $this->documentManager->modify($object, $change);
+    }
 }
