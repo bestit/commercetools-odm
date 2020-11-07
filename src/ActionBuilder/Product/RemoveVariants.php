@@ -55,9 +55,16 @@ class RemoveVariants extends ProductActionBuilder
             return $variant['sku'];
         }, $oldVariants);
 
-        $currentSkuCollection = array_map(function (ProductVariant $variant) {
-            return $variant->getSku();
-        }, iterator_to_array($sourceObject->getMasterData()->getCurrent()->getAllVariants()));
+        $currentSkuCollection = [$sourceObject->getMasterData()->getStaged()->getMasterVariant()->getSku()];
+        $currentSkuCollection = array_merge(
+            $currentSkuCollection,
+            array_map(
+                function (ProductVariant $variant) {
+                    return $variant->getSku();
+                },
+                iterator_to_array($sourceObject->getMasterData()->getStaged()->getVariants())
+            )
+        );
 
         foreach ($oldSkuCollection as $oldSku) {
             if (!in_array($oldSku, $currentSkuCollection)) {
