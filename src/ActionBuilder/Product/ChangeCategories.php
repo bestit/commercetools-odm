@@ -43,7 +43,8 @@ class ChangeCategories extends ProductActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        $actions = [];
+        $removeActions = [];
+        $addActions = [];
 
         list(, $productCatalogData) = $this->getLastFoundMatch();
 
@@ -53,22 +54,22 @@ class ChangeCategories extends ProductActionBuilder
             if ((array_key_exists($index, $oldData['masterData'][$productCatalogData]['categories'])) &&
                 ($oldData['masterData'][$productCatalogData]['categories'])
             ) {
-                $actions[] = ProductRemoveFromCategoryAction::ofCategory(CategoryReference::ofId(
+                $removeActions[] = ProductRemoveFromCategoryAction::ofCategory(CategoryReference::ofId(
                     $oldData['masterData'][$productCatalogData]['categories'][$index]['id']
                 ))->setStaged($isStaging);
             }
 
             if (!is_null($categoryData)) {
                 if (!isset($categoryData['id']) || $categoryData['id'] === null) {
-                    $actions[] = ProductAddToCategoryAction::ofCategory(CategoryReference::ofTypeAndKey(CategoryReference::TYPE_CATEGORY, $categoryData['key']))
+                    $addActions[] = ProductAddToCategoryAction::ofCategory(CategoryReference::ofTypeAndKey(CategoryReference::TYPE_CATEGORY, $categoryData['key']))
                         ->setStaged($isStaging);
                 } else {
-                    $actions[] = ProductAddToCategoryAction::ofCategory(CategoryReference::ofId($categoryData['id']))
+                    $addActions[] = ProductAddToCategoryAction::ofCategory(CategoryReference::ofId($categoryData['id']))
                         ->setStaged($isStaging);
                 }
             }
         }
 
-        return $actions;
+        return array_merge($removeActions, $addActions);
     }
 }
