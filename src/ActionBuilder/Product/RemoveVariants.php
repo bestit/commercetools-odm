@@ -47,8 +47,8 @@ class RemoveVariants extends ProductActionBuilder
         }
 
         $oldVariants = array_merge(
-            $oldData['masterData']['current']['variants'],
-            [$oldData['masterData']['current']['masterVariant']]
+            $oldData['masterData']['staged']['variants'],
+            [$oldData['masterData']['staged']['masterVariant']]
         );
 
         $oldSkuCollection = array_map(function (array $variant) {
