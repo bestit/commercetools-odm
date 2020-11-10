@@ -9,7 +9,6 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductVariant;
-use Commercetools\Core\Model\Product\ProductVariantCollection;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
 use function array_filter;
@@ -240,11 +239,11 @@ class SetAttributes extends ProductActionBuilder
                 continue;
             }
 
-            if ($previousValue !== null && $attribute->getValue() !== $previousValue) {
+            if ($previousValue !== null && $attribute->toArray()['value'] !== $previousValue) {
                 return false;
             }
 
-            $previousValue = $attribute->getValue();
+            $previousValue = $attribute->toArray()['value'];
         }
 
         return true;
