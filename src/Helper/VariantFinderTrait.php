@@ -60,12 +60,13 @@ trait VariantFinderTrait
      *
      * @param Product $product
      * @param string|int $variantIndex
+     * @param string $mode
      *
      * @return int|null
      */
-    private function findVariantIdByVariantIndex(Product $product, $variantIndex)
+    private function findVariantIdByVariantIndex(Product $product, $variantIndex, string $mode)
     {
-        $variants = $product->getMasterData()->getCurrent()->getVariants()->toArray();
+        $variants = $product->getMasterData()->{'get' . ucfirst($mode)}()->getVariants()->toArray();
 
         if (!isset($variants[$variantIndex])) {
             return null;
