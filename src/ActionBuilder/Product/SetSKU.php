@@ -46,7 +46,8 @@ class SetSKU extends ProductActionBuilder
     ): array {
         list(, $dataContainer, , $variantIndex) = $this->getLastFoundMatch();
 
-        $variantId = trim($variantIndex) === '' ? 1 : $this->findVariantIdByVariantIndex($sourceObject, $variantIndex);
+        $variantId = trim($variantIndex) === '' ?
+            1 : $this->findVariantIdByVariantIndex($sourceObject, $variantIndex, $dataContainer);
 
         if ($variantId === null) {
             return [];

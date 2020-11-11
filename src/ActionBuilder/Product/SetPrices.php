@@ -48,20 +48,25 @@ class SetPrices extends ProductActionBuilder
         array $oldData,
         $sourceObject
     ): array {
+        $actions = [];
+
         list(, $dataId, $variantType, $variantId) = $this->getLastFoundMatch();
 
         if ($variantType === 'masterVariant') {
             $variantId = 1;
         } else {
-            $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantId);
+            $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantId, $dataId);
         }
 
-        $actions = [];
+        if ($variantId === null) {
+            return $actions;
+        }
+
         /** @var ProductData $productData */
         $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
         $variant = $this->getVariantById($productData->getAllVariants(), $variantId);
 
-        if ($variantId === null || $variant === null) {
+        if ($variant === null) {
             return $actions;
         }
 

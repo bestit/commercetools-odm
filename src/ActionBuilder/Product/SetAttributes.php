@@ -9,7 +9,6 @@ use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductVariant;
-use Commercetools\Core\Model\Product\ProductVariantCollection;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
 use function array_filter;
@@ -18,6 +17,7 @@ use function count;
 use function current;
 use function Funct\Strings\upperCaseFirst;
 use function is_array;
+use function iterator_to_array;
 use function ksort;
 
 /**
@@ -200,7 +200,10 @@ class SetAttributes extends ProductActionBuilder
         // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
         list(, $productCatalogContainer) = $this->getLastFoundMatch();
 
-        $variants = $product->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getAllVariants();
+        $variants = array_merge(
+            [$product->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getMasterVariant()],
+            iterator_to_array($product->getMasterData()->{'get' . upperCaseFirst($productCatalogContainer)}()->getVariants())
+        );
 
         if ($variants && count($variants) && !$this->valueIsSameForAllVariants($attributeName, $variants)) {
             $action = ProductSetAttributeAction::ofVariantIdAndName(
@@ -221,11 +224,11 @@ class SetAttributes extends ProductActionBuilder
      * Checks if the given attribute has the same value in all variants.
      *
      * @param string $attributeName
-     * @param ProductVariant[]|ProductVariantCollection $variants
+     * @param ProductVariant[] $variants
      *
      * @return bool
      */
-    private function valueIsSameForAllVariants(string $attributeName, ProductVariantCollection $variants): bool
+    private function valueIsSameForAllVariants(string $attributeName, array $variants): bool
     {
         $previousValue = null;
 
@@ -236,11 +239,11 @@ class SetAttributes extends ProductActionBuilder
                 continue;
             }
 
-            if ($previousValue !== null && $attribute->getValue() !== $previousValue) {
+            if ($previousValue !== null && $attribute->toArray()['value'] !== $previousValue) {
                 return false;
             }
 
-            $previousValue = $attribute->getValue();
+            $previousValue = $attribute->toArray()['value'];
         }
 
         return true;
