@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace BestIt\CommercetoolsODM\Helper;
 
 use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductData;
 use Commercetools\Core\Model\Product\ProductVariant;
-use Commercetools\Core\Model\Product\ProductVariantCollection;
 
 /**
  * Helper to get variants by id or sku
@@ -19,35 +19,20 @@ trait VariantFinderTrait
      * Get variant by id or null if not found
      * Alternative for the sdk "->getById" method which can throw exceptions
      *
-     * @param ProductVariantCollection $collection
-     * @param string $id
+     * @param ProductData $productData
+     * @param int $id
      *
      * @return ProductVariant|null
      */
-    private function getVariantById(ProductVariantCollection $collection, string $id)
+    private function getVariantById(ProductData $productData, int $id)
     {
-        foreach ($collection as $variant) {
+        $allVariants = array_merge(
+            [$productData->getMasterVariant()],
+            iterator_to_array($productData->getVariants())
+        );
+
+        foreach ($allVariants as $variant) {
             if ($variant->getId() === $id) {
-                return $variant;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Get variant by sku or null if not found
-     * Alternative for the sdk "->getBySku" method which can throw exceptions
-     *
-     * @param ProductVariantCollection $collection
-     * @param string $sku
-     *
-     * @return ProductVariant|null
-     */
-    private function getVariantBySku(ProductVariantCollection $collection, string $sku)
-    {
-        foreach ($collection as $variant) {
-            if ($variant->getId() === $sku) {
                 return $variant;
             }
         }
