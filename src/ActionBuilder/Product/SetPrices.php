@@ -64,7 +64,7 @@ class SetPrices extends ProductActionBuilder
 
         /** @var ProductData $productData */
         $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
-        $variant = $this->getVariantById($productData->getAllVariants(), $variantId);
+        $variant = $this->getVariantById($productData, $variantId);
 
         if ($variant === null) {
             return $actions;
