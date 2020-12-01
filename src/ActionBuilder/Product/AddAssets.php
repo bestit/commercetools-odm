@@ -6,6 +6,8 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\AssetDraft;
+use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductData;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductAddAssetAction;
 
@@ -42,9 +44,9 @@ class AddAssets extends ProductActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        $variantId = $this->loadOldAssetsVariantIndex($oldData);
+        $sku = $this->loadOldAssetsVariantIndex($oldData);
 
-        if ($variantId === null) {
+        if ($sku === null) {
             return [];
         }
 
@@ -52,8 +54,8 @@ class AddAssets extends ProductActionBuilder
 
         foreach ($changedValue as $assetIndex => $asset) {
             if (!@$asset['id']) {
-                $actions[] = ProductAddAssetAction::ofVariantIdAndAsset(
-                    $variantId,
+                $actions[] = ProductAddAssetAction::ofSkuAndAsset(
+                    $sku,
                     AssetDraft::fromArray($asset)
                 );
             }
@@ -73,10 +75,11 @@ class AddAssets extends ProductActionBuilder
     {
         list(, $productCatalogContainer, $variantContainer, $variantIndex) = $this->getLastFoundMatch();
 
+
         if ($variantContainer === 'masterVariant') {
-            return 1;
+            return $oldData['masterData'][$productCatalogContainer]['masterVariant']['sku'];
         }
 
-        return $oldData['masterData'][$productCatalogContainer][$variantContainer][$variantIndex]['id'] ?? null;
+        return $oldData['masterData'][$productCatalogContainer][$variantContainer][$variantIndex]['sku'] ?? null;
     }
 }

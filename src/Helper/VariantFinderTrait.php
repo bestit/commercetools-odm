@@ -59,4 +59,49 @@ trait VariantFinderTrait
 
         return $variants[$variantIndex]['id'] ?? null;
     }
+
+    /**
+     * Get variant by sku or null if not found
+     *
+     * @param ProductData $productData
+     * @param int $sku
+     *
+     * @return ProductVariant|null
+     */
+    private function getVariantBySku(ProductData $productData, int $sku)
+    {
+        $allVariants = array_merge(
+            [$productData->getMasterVariant()],
+            iterator_to_array($productData->getVariants())
+        );
+
+        /** @var ProductVariant $variant */
+        foreach ($allVariants as $variant) {
+            if ($variant->getSku() === $sku) {
+                return $variant;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find variant id by variant index
+     *
+     * @param Product $product
+     * @param string $sku
+     * @param string $mode
+     *
+     * @return int|null
+     */
+    private function findVariantSkuByVariantIndex(Product $product, string $variantIndex, string $mode)
+    {
+        $variants = $product->getMasterData()->{'get' . ucfirst($mode)}()->getVariants()->toArray();
+
+        if (!isset($variants[$variantIndex])) {
+            return null;
+        }
+
+        return $variants[$variantIndex]['id'] ?? null;
+    }
 }

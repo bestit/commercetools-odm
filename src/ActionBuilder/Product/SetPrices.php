@@ -50,21 +50,22 @@ class SetPrices extends ProductActionBuilder
     ): array {
         $actions = [];
 
-        list(, $dataId, $variantType, $variantId) = $this->getLastFoundMatch();
-
-        if ($variantType === 'masterVariant') {
-            $variantId = 1;
-        } else {
-            $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantId, $dataId);
-        }
-
-        if ($variantId === null) {
-            return $actions;
-        }
+        list(, $dataId, $variantType, $variantIndex) = $this->getLastFoundMatch();
 
         /** @var ProductData $productData */
         $productData = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}();
-        $variant = $this->getVariantById($productData, $variantId);
+
+        if ($variantType === 'masterVariant') {
+            $sku = $oldData['masterData'][$dataId]['masterVariant']['sku'];
+        } else {
+            $sku = $oldData['masterData'][$dataId]['variants'][$variantIndex]['sku'];
+        }
+
+        if ($sku === null) {
+            return $actions;
+        }
+
+        $variant = $this->getVariantBySku($productData, $sku);
 
         if ($variant === null) {
             return $actions;
@@ -81,6 +82,6 @@ class SetPrices extends ProductActionBuilder
             }
         }
 
-        return [ProductSetPricesAction::ofVariantIdAndPrices($variantId, PriceDraftCollection::fromArray($priceDrafts))];
+        return [ProductSetPricesAction::ofSkuAndPrices($sku, PriceDraftCollection::fromArray($priceDrafts))];
     }
 }

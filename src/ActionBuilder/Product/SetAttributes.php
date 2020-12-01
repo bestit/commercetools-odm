@@ -60,18 +60,18 @@ class SetAttributes extends ProductActionBuilder
     ): array {
         $actions = [];
 
-        $variantData = $this->getAttributesAndIdOfVariant($oldData);
+        $variantData = $this->getAttributesAndSkuOfVariant($oldData);
 
         if ($variantData === null) {
             return $actions;
         }
 
-        list($oldAttrs, $variantId) = $variantData;
+        list($oldAttrs, $sku) = $variantData;
 
         foreach ($changedValue as $attrIndex => $attr) {
             $attributeName = $attr['name'] ?? $oldAttrs[$attrIndex]['name'];
 
-            $action = $this->startAction($sourceObject, $variantId, $attributeName);
+            $action = $this->startAction($sourceObject, $sku, $attributeName);
 
             // If $attr is null, the given attribute has no value.
             // We have to create an action without to set a value. Commercetools will remove the attribute.
@@ -101,7 +101,7 @@ class SetAttributes extends ProductActionBuilder
      *
      * @return array|null The first value is the old attribute collection and the second value is the variant id.
      */
-    private function getAttributesAndIdOfVariant(array $oldData)
+    private function getAttributesAndSkuOfVariant(array $oldData)
     {
         // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
         list(, $productCatalogContainer, $variantContainer, $variantIndex) = $this->getLastFoundMatch();
@@ -109,9 +109,9 @@ class SetAttributes extends ProductActionBuilder
         $oldProductCatalogData = $oldData['masterData'][$productCatalogContainer];
         if ($variantContainer === 'masterVariant') {
             $oldAttrs = $oldProductCatalogData['masterVariant']['attributes'];
-            $variantId = 1;
+            $sku = $oldProductCatalogData['masterVariant']['sku'];
 
-            return [$oldAttrs, $variantId];
+            return [$oldAttrs, $sku];
         }
 
         $variant = $oldProductCatalogData[$variantContainer][$variantIndex] ?? null;
@@ -122,9 +122,9 @@ class SetAttributes extends ProductActionBuilder
         }
 
         $oldAttrs = $variant['attributes'];
-        $variantId = $variant['id'];
+        $sku = $variant['sku'];
 
-        return [$oldAttrs, $variantId];
+        return [$oldAttrs, $sku];
     }
 
     /**
@@ -190,12 +190,12 @@ class SetAttributes extends ProductActionBuilder
      * Starts the change action for this variant.
      *
      * @param Product $product
-     * @param int $variantId
+     * @param string $sku
      * @param string $attributeName
      *
      * @return ProductSetAttributeAction|ProductSetAttributeInAllVariantsAction
      */
-    private function startAction(Product $product, int $variantId, string $attributeName)
+    private function startAction(Product $product, string $sku, string $attributeName)
     {
         // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
         list(, $productCatalogContainer) = $this->getLastFoundMatch();
@@ -206,8 +206,8 @@ class SetAttributes extends ProductActionBuilder
         );
 
         if ($variants && count($variants) && !$this->valueIsSameForAllVariants($attributeName, $variants)) {
-            $action = ProductSetAttributeAction::ofVariantIdAndName(
-                $variantId,
+            $action = ProductSetAttributeAction::ofSkuAndName(
+                $sku,
                 $attributeName
             );
         } else {

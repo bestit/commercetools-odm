@@ -44,10 +44,14 @@ class SetSKU extends ProductActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        list(, $dataContainer, , $variantIndex) = $this->getLastFoundMatch();
+        list(, $dataContainer, $variantType, $variantIndex) = $this->getLastFoundMatch();
 
-        $variantId = trim($variantIndex) === '' ?
-            1 : $this->findVariantIdByVariantIndex($sourceObject, $variantIndex, $dataContainer);
+        $oldProductData = $oldData['masterData'][$dataContainer];
+
+        if ($variantType === 'masterVariant') {
+            $variantId = $variantType === 'masterVariant' ?
+                $oldProductData['masterVariant']['id'] ?? null : $oldProductData['variants'][$variantIndex]['id'] ?? null;
+        }
 
         if ($variantId === null) {
             return [];
@@ -58,5 +62,15 @@ class SetSKU extends ProductActionBuilder
                 ->setSku($changedValue)
                 ->setStaged($dataContainer === 'staged'),
         ];
+    }
+
+    /**
+     * Make sure the sku is changed last.
+     *
+     * @return int
+     */
+    public function getPriority(): int
+    {
+        return -1;
     }
 }
