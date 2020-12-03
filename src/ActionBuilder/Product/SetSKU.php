@@ -44,10 +44,13 @@ class SetSKU extends ProductActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        list(, $dataContainer, , $variantIndex) = $this->getLastFoundMatch();
+        list(, $dataContainer, $variantType, $variantOffset) = $this->getLastFoundMatch();
 
-        $variantId = trim($variantIndex) === '' ?
-            1 : $this->findVariantIdByVariantIndex($sourceObject, $variantIndex, $dataContainer);
+        if ($variantType === 'masterVariant') {
+            $variantId = $sourceObject->getMasterData()->{'get' . ucfirst($dataContainer)}()->getMasterVariant()->getId();
+        } else {
+            $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantOffset, $dataContainer);
+        }
 
         if ($variantId === null) {
             return [];

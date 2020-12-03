@@ -46,9 +46,11 @@ class RemoveVariants extends ProductActionBuilder
             return $actions;
         }
 
+        list (, $catalog) = $this->getLastFoundMatch();
+
         $oldVariants = array_merge(
-            $oldData['masterData']['staged']['variants'],
-            [$oldData['masterData']['staged']['masterVariant']]
+            $oldData['masterData'][$catalog]['variants'],
+            [$oldData['masterData'][$catalog]['masterVariant']]
         );
 
         $oldSkuCollection = array_map(function (array $variant) {

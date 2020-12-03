@@ -6,8 +6,10 @@ namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\AssetDraft;
+use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductAddAssetAction;
+use function ucfirst;
 
 /**
  * Adds assets to the products.
@@ -42,7 +44,7 @@ class AddAssets extends ProductActionBuilder
         array $oldData,
         $sourceObject
     ): array {
-        $variantId = $this->loadOldAssetsVariantIndex($oldData);
+        $variantId = $this->loadAssetsVariantIndex($sourceObject);
 
         if ($variantId === null) {
             return [];
@@ -65,18 +67,20 @@ class AddAssets extends ProductActionBuilder
     /**
      * Returns the found variant id.
      *
-     * @param array $oldData
+     * @param Product $sourceObject
      *
      * @return int|null
      */
-    private function loadOldAssetsVariantIndex(array $oldData)
+    private function loadAssetsVariantIndex(Product $sourceObject)
     {
-        list(, $productCatalogContainer, $variantContainer, $variantIndex) = $this->getLastFoundMatch();
+        list(, $productCatalogContainer, $variantContainer, $variantOffset) = $this->getLastFoundMatch();
+
+        $productData = $sourceObject->getMasterData()->{'get' . ucfirst($productCatalogContainer)}();
 
         if ($variantContainer === 'masterVariant') {
-            return 1;
+            return $productData->getMasterVariant()->getId();
         }
 
-        return $oldData['masterData'][$productCatalogContainer][$variantContainer][$variantIndex]['id'] ?? null;
+        return $productData->getVariants()->toArray()[$variantOffset]['id'] ?? null;
     }
 }

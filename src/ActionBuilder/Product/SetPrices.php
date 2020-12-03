@@ -53,7 +53,7 @@ class SetPrices extends ProductActionBuilder
         list(, $dataId, $variantType, $variantId) = $this->getLastFoundMatch();
 
         if ($variantType === 'masterVariant') {
-            $variantId = 1;
+            $variantId = $sourceObject->getMasterData()->{'get' . ucfirst($dataId)}()->getMasterVariant()->getId();
         } else {
             $variantId = $this->findVariantIdByVariantIndex($sourceObject, $variantId, $dataId);
         }
