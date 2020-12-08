@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace BestIt\CommercetoolsODM\ActionBuilder\Product;
 
 use BestIt\CommercetoolsODM\Helper\AttributeFinderTrait;
+use BestIt\CommercetoolsODM\Helper\VariantFinderTrait;
 use BestIt\CommercetoolsODM\Mapping\ClassMetadataInterface;
 use Commercetools\Core\Model\Common\Attribute;
 use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductData;
 use Commercetools\Core\Model\Product\ProductVariant;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeAction;
 use Commercetools\Core\Request\Products\Command\ProductSetAttributeInAllVariantsAction;
@@ -30,6 +32,7 @@ class SetAttributes extends ProductActionBuilder
 {
     use ResolveAttributeValueTrait;
     use AttributeFinderTrait;
+    use VariantFinderTrait;
 
     /**
      * A PCRE to match the hierarchical field path without delimiter.
@@ -60,7 +63,7 @@ class SetAttributes extends ProductActionBuilder
     ): array {
         $actions = [];
 
-        $variantData = $this->getAttributesAndIdOfVariant($oldData);
+        $variantData = $this->getOldAttributesAndIdOfVariant($oldData, $sourceObject);
 
         if ($variantData === null) {
             return $actions;
@@ -98,31 +101,94 @@ class SetAttributes extends ProductActionBuilder
      * Returns the attributes and the id of the changed variant.
      *
      * @param array|null $oldData
+     * @param Product $sourceObject
      *
      * @return array|null The first value is the old attribute collection and the second value is the variant id.
      */
-    private function getAttributesAndIdOfVariant(array $oldData)
+    private function getOldAttributesAndIdOfVariant(array $oldData, Product $sourceObject)
     {
         // TODO don't forget, masterVariant is id 1 but this $variantIndex is the numeric index in the variants array!
-        list(, $productCatalogContainer, $variantContainer, $variantIndex) = $this->getLastFoundMatch();
+        list(, $productCatalogContainer, $variantContainer, $variantOffset) = $this->getLastFoundMatch();
 
         $oldProductCatalogData = $oldData['masterData'][$productCatalogContainer];
-        if ($variantContainer === 'masterVariant') {
-            $oldAttrs = $oldProductCatalogData['masterVariant']['attributes'];
-            $variantId = 1;
+        $newProductData = $sourceObject->getMasterData()->{'get' . ucfirst($productCatalogContainer)}();
 
-            return [$oldAttrs, $variantId];
+        if ($variantContainer === 'masterVariant') {
+            return $this->getOldAttributesForMasterVariant($oldProductCatalogData, $newProductData);
         }
 
-        $variant = $oldProductCatalogData[$variantContainer][$variantIndex] ?? null;
+        return $this->getOldAttributesForVariant(
+            $oldProductCatalogData,
+            $this->findVariantIdByVariantIndex($sourceObject, $variantOffset, $productCatalogContainer)
+        );
+    }
 
-        // When a new variant is being added, no attributes should be set in here
-        if ($variant === null) {
+    /**
+     * Gets the master variant id and returns the old attributes for this id and the id.
+     *
+     * @param array $oldProductCatalogData
+     * @param ProductData $productData
+     *
+     * @return array|null
+     */
+    private function getOldAttributesForMasterVariant(array $oldProductCatalogData, ProductData $productData): ?array
+    {
+        $masterVariantId = $productData->getMasterVariant()->getId();
+
+        if ($masterVariantId === null) {
             return null;
         }
 
-        $oldAttrs = $variant['attributes'];
-        $variantId = $variant['id'];
+        $oldAttrs = null;
+
+        // if master variant did not change
+        if ($masterVariantId !== $oldProductCatalogData['masterVariant']['id']) {
+            $oldAttrs = $oldProductCatalogData['masterVariant']['attributes'];
+        }
+
+        // if it changed search for the old variant with the master id
+        if ($masterVariantId !== $oldProductCatalogData['masterVariant']['id']) {
+            foreach ($oldProductCatalogData['variants'] as $variant) {
+                if ($variant['id'] === $masterVariantId) {
+                    $oldAttrs = $variant['attributes'];
+
+                    break;
+                }
+            }
+        }
+
+        if ($oldAttrs === null) {
+            return null;
+        }
+
+        return [$oldAttrs, $masterVariantId];
+    }
+
+    /**
+     * @param array $oldProductCatalogData
+     * @param int $variantId
+     *
+     * @return array|null
+     */
+    public function getOldAttributesForVariant(array $oldProductCatalogData, ?int $variantId): ?array
+    {
+        if ($variantId === null) {
+            return null;
+        }
+
+        $oldAttrs = null;
+
+        foreach ($oldProductCatalogData['variants'] as $variant) {
+            if ($variant['id'] === $variantId) {
+                $oldAttrs = $variant['attributes'];
+
+                break;
+            }
+        }
+
+        if ($oldAttrs === null) {
+            return null;
+        }
 
         return [$oldAttrs, $variantId];
     }
