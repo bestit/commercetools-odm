@@ -59,4 +59,15 @@ trait VariantFinderTrait
 
         return $variants[$variantIndex]['id'] ?? null;
     }
+
+    /**
+     * @param ProductData $productData
+     * @param array $oldData
+     *
+     * @return int|null
+     */
+    private function findVariantIdBySku(ProductData $productData, array $oldData)
+    {
+
+    }
 }
