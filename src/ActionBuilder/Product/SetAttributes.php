@@ -142,7 +142,7 @@ class SetAttributes extends ProductActionBuilder
         $oldAttrs = null;
 
         // if master variant did not change
-        if ($masterVariantId !== $oldProductCatalogData['masterVariant']['id']) {
+        if ($masterVariantId === $oldProductCatalogData['masterVariant']['id']) {
             $oldAttrs = $oldProductCatalogData['masterVariant']['attributes'];
         }
 

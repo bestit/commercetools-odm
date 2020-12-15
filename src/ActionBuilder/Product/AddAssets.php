@@ -46,6 +46,7 @@ class AddAssets extends ProductActionBuilder
     ): array {
         $variantId = $this->loadAssetsVariantIndex($sourceObject);
 
+        // no update needed for new variants
         if ($variantId === null) {
             return [];
         }

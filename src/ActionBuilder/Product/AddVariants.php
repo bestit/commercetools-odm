@@ -10,11 +10,8 @@ use Commercetools\Core\Model\Common\AttributeCollection;
 use Commercetools\Core\Model\Common\ImageCollection;
 use Commercetools\Core\Model\Common\PriceDraftCollection;
 use Commercetools\Core\Model\Product\Product;
-use Commercetools\Core\Model\Product\ProductData;
-use Commercetools\Core\Model\Product\ProductVariant;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductAddVariantAction;
-use function ucfirst;
 
 /**
  * Action which adds new variants to an existing product.
@@ -55,34 +52,17 @@ class AddVariants extends ProductActionBuilder
         // Filter out removed variants
         $changedValue = array_filter($changedValue);
 
-        list (, $catalog) = $this->getLastFoundMatch();
+        return $this->getAddVariantActions($changedValue);
+    }
 
-        $productData = $sourceObject->getMasterData()->{'get' . ucfirst($catalog)}();
-
-        $oldVariants = array_merge(
-            $oldData['masterData'][$catalog]['variants'],
-            [$oldData['masterData'][$catalog]['masterVariant']]
-        );
-
-        $oldSkuCollection = array_map(function (array $variant) {
-            return $variant['sku'];
-        }, $oldVariants);
-
-        $currentVariants = [];
-
-        /** @var ProductVariant $variant */
-        foreach (iterator_to_array($productData->getVariants()) as $variant) {
-            $currentVariants[$variant->getSku()] = $variant->toArray();
-        }
-
-        $addedVariants = [];
-
-        // compare old and new variants
-        foreach (array_keys($currentVariants) as $currentSku) {
-            if (!in_array($currentSku, $oldSkuCollection)) {
-                $addedVariants[] = $currentVariants[$currentSku];
-            }
-        }
+    /**
+     * @param array $changedValue
+     *
+     * @return ProductAddVariantAction[]
+     */
+    private function getAddVariantActions(array $changedValue): array
+    {
+        $addedVariants = $this->findAddedVariants($changedValue);
 
         $actions = [];
 
@@ -102,5 +82,39 @@ class AddVariants extends ProductActionBuilder
         }
 
         return $actions;
+    }
+
+    /**
+     * New variants must have a SKU set and not have an ID set.
+     *
+     * @param array $changedValue
+     *
+     * @return array
+     */
+    private function findAddedVariants(array $changedValue): array
+    {
+        $addedVariants = [];
+
+        foreach ($changedValue as $value) {
+            if (array_key_exists('id', $value)) {
+                continue;
+            }
+
+            if (!isset($value['sku']) || empty($value['sku'])) {
+                continue;
+            }
+
+            $addedVariants[] = $value;
+        }
+
+        return $addedVariants;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPriority(): int
+    {
+        return -1;
     }
 }

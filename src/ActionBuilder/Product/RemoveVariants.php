@@ -9,6 +9,7 @@ use Commercetools\Core\Model\Product\Product;
 use Commercetools\Core\Model\Product\ProductVariant;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductRemoveVariantAction;
+use function ucfirst;
 
 /**
  * Action which removes variants from an existing product.
@@ -48,29 +49,20 @@ class RemoveVariants extends ProductActionBuilder
 
         list (, $catalog) = $this->getLastFoundMatch();
 
-        $oldVariants = array_merge(
-            $oldData['masterData'][$catalog]['variants'],
-            [$oldData['masterData'][$catalog]['masterVariant']]
+        $oldIds = array_map(function (array $variant) {
+            return $variant['id'];
+        }, $oldData['masterData'][$catalog]['variants']);
+
+        $currentIds = array_map(
+            function (ProductVariant $variant) {
+                return $variant->getId();
+            },
+            iterator_to_array($sourceObject->getMasterData()->{'get' . ucfirst($catalog)}()->getVariants())
         );
 
-        $oldSkuCollection = array_map(function (array $variant) {
-            return $variant['sku'];
-        }, $oldVariants);
-
-        $currentSkuCollection = [$sourceObject->getMasterData()->getStaged()->getMasterVariant()->getSku()];
-        $currentSkuCollection = array_merge(
-            $currentSkuCollection,
-            array_map(
-                function (ProductVariant $variant) {
-                    return $variant->getSku();
-                },
-                iterator_to_array($sourceObject->getMasterData()->getStaged()->getVariants())
-            )
-        );
-
-        foreach ($oldSkuCollection as $oldSku) {
-            if (!in_array($oldSku, $currentSkuCollection)) {
-                $actions[] = ProductRemoveVariantAction::ofSku($oldSku);
+        foreach ($oldIds as $oldId) {
+            if (!in_array($oldId, $currentIds)) {
+                $actions[] = ProductRemoveVariantAction::ofVariantId($oldId);
             }
         }
 
@@ -87,6 +79,6 @@ class RemoveVariants extends ProductActionBuilder
      */
     public function getPriority(): int
     {
-        return 1;
+        return 3;
     }
 }
