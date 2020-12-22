@@ -10,8 +10,12 @@ use Commercetools\Core\Model\Common\AttributeCollection;
 use Commercetools\Core\Model\Common\ImageCollection;
 use Commercetools\Core\Model\Common\PriceDraftCollection;
 use Commercetools\Core\Model\Product\Product;
+use Commercetools\Core\Model\Product\ProductVariant;
+use Commercetools\Core\Model\Product\ProductVariantCollection;
 use Commercetools\Core\Request\AbstractAction;
 use Commercetools\Core\Request\Products\Command\ProductAddVariantAction;
+
+use function iterator_to_array;
 
 /**
  * Action which adds new variants to an existing product.
@@ -49,10 +53,9 @@ class AddVariants extends ProductActionBuilder
             return [];
         }
 
-        // Filter out removed variants
-        $changedValue = array_filter($changedValue);
+        list (, $catalog) = $this->getLastFoundMatch();
 
-        return $this->getAddVariantActions($changedValue);
+        return $this->getAddVariantActions($sourceObject->getMasterData()->{'get' . ucfirst($catalog)}()->getVariants());
     }
 
     /**
@@ -60,9 +63,9 @@ class AddVariants extends ProductActionBuilder
      *
      * @return ProductAddVariantAction[]
      */
-    private function getAddVariantActions(array $changedValue): array
+    private function getAddVariantActions(ProductVariantCollection $variants): array
     {
-        $addedVariants = $this->findAddedVariants($changedValue);
+        $addedVariants = $this->findAddedVariants($variants);
 
         $actions = [];
 
@@ -73,38 +76,40 @@ class AddVariants extends ProductActionBuilder
                 return $attribute;
             }, $variant['attributes']);
 
-            $actions[] = (new ProductAddVariantAction())
-                ->setSku($variant['sku'])
+            $action = (new ProductAddVariantAction())
                 ->setPrices(PriceDraftCollection::fromArray($variant['prices']))
                 ->setAttributes(AttributeCollection::fromArray($attributes))
                 ->setImages(ImageCollection::fromArray($variant['images']))
                 ->setAssets(AssetCollection::fromArray($variant['assets']));
+
+            if (isset($variant['sku'])) {
+                $action->setSku($variant['sku']);
+            }
+
+            $actions[] = $action;
         }
 
         return $actions;
     }
 
     /**
-     * New variants must have a SKU set and not have an ID set.
+     * New variants must not have an ID set.
      *
-     * @param array $changedValue
+     * @param ProductVariantCollection $variants
      *
      * @return array
      */
-    private function findAddedVariants(array $changedValue): array
+    private function findAddedVariants(ProductVariantCollection $variants): array
     {
         $addedVariants = [];
 
-        foreach ($changedValue as $value) {
-            if (array_key_exists('id', $value)) {
+        foreach (iterator_to_array($variants) as $variant) {
+            /** @var ProductVariant $variant */
+            if ($variant->getId() !== null) {
                 continue;
             }
 
-            if (!isset($value['sku']) || empty($value['sku'])) {
-                continue;
-            }
-
-            $addedVariants[] = $value;
+            $addedVariants[] = $variant->toArray();
         }
 
         return $addedVariants;
