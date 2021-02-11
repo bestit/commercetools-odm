@@ -128,7 +128,7 @@ class ChangeManager implements ChangeManagerInterface
 
                 // Sometimes the sdk parses an int to float.
             } else {
-                if ((!$oldDataHasKey) || (($value !== $oldValue) && (!is_numeric($value) || ((float) $value !== (float) $oldValue)))) { // phpcs:ignore
+                if ((!$oldDataHasKey) || (($value !== $oldValue) && ((!is_numeric($value) || !is_numeric($oldValue)) || ((float) $value !== (float) $oldValue)))) { // phpcs:ignore
                     $changedData[$key] = $value;
 
                     if ($isValueArray && is_array($oldValue) && (count($value) < count($oldValue))) {
