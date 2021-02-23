@@ -195,5 +195,18 @@ return array_merge([
             ->setFindById(\Commercetools\Core\Request\Zones\ZoneByIdGetRequest::class)
             ->setQuery(\Commercetools\Core\Request\Zones\ZoneQueryRequest::class)
             ->setUpdateById(\Commercetools\Core\Request\Zones\ZoneUpdateRequest::class),
+    ],
+
+    \Commercetools\Core\Model\Payment\Payment::class => [
+        'draft' => \Commercetools\Core\Model\Payment\PaymentDraft::class,
+        'requestClassMap' => (new RequestMap())
+            ->setCreate(\Commercetools\Core\Request\Payments\PaymentCreateRequest::class)
+            ->setDeleteById(\Commercetools\Core\Request\Payments\PaymentDeleteRequest::class)
+            ->setDeleteByKey(\Commercetools\Core\Request\Payments\PaymentDeleteByKeyRequest::class)
+            ->setFindById(\Commercetools\Core\Request\Payments\PaymentByIdGetRequest::class)
+            ->setFindByKey(\Commercetools\Core\Request\Payments\PaymentByKeyGetRequest::class)
+            ->setQuery(\Commercetools\Core\Request\Payments\PaymentQueryRequest::class)
+            ->setUpdateById(\Commercetools\Core\Request\Payments\PaymentUpdateRequest::class)
+            ->setUpdateByKey(\Commercetools\Core\Request\Payments\PaymentUpdateByKeyRequest::class),
     ]
 ], $additionalMetaData);
