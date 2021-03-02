@@ -6,8 +6,11 @@ use BestIt\CommercetoolsODM\DocumentManagerInterface;
 use BestIt\CommercetoolsODM\Exception\APIException;
 use BestIt\CommercetoolsODM\Model\DefaultRepository;
 use Commercetools\Core\Model\Cart\Cart;
+use Commercetools\Core\Model\Order\Order;
+use Commercetools\Core\Request\Carts\CartReplicateRequest;
 use Commercetools\Core\Request\Carts\CartUpdateRequest;
 use Commercetools\Core\Request\Carts\Command\CartRecalculateAction;
+use Commercetools\Core\Request\InStores\InStoreRequestDecorator;
 use Commercetools\Core\Response\ApiResponseInterface;
 use RuntimeException;
 
@@ -56,6 +59,78 @@ class CartRepository extends DefaultRepository
         }
 
         return $document;
+    }
+
+    /**
+     * Create cart from order
+     *
+     * @param Order $order
+     *
+     * @return Cart
+     */
+    public function createFromOrder(Order $order): Cart
+    {
+        $request = CartReplicateRequest::ofOrderId($order->getId());
+
+        if (class_exists('Commercetools\Core\Request\InStores\InStoreRequestDecorator') && $order->getStore()) {
+            $request = InStoreRequestDecorator::ofStoreKeyAndRequest($order->getStore()->getKey(), $request);
+        }
+
+        list($response) = $this->processQuery($request);
+
+        if (!$response instanceof Cart) {
+            $this->logger->error('Unexpected response for cart from order request', [
+                'cartId' => $order->getId(),
+                'version' => $order->getVersion(),
+                'response' => $response,
+            ]);
+
+            throw new RuntimeException('Unexpected response for cart from order request');
+        }
+
+        $this->getDocumentManager()->getUnitOfWork()->registerAsManaged(
+            $response,
+            $response->getId(),
+            $response->getVersion()
+        );
+
+        return $response;
+    }
+
+    /**
+     * Duplicate cart
+     *
+     * @param Cart $cart
+     *
+     * @return Cart
+     */
+    public function duplicateCart(Cart $cart): Cart
+    {
+        $request = CartReplicateRequest::ofCartId($cart->getId());
+
+        if (class_exists('Commercetools\Core\Request\InStores\InStoreRequestDecorator') && $cart->getStore()) {
+            $request = InStoreRequestDecorator::ofStoreKeyAndRequest($cart->getStore()->getKey(), $request);
+        }
+
+        list($response) = $this->processQuery($request);
+
+        if (!$response instanceof Cart) {
+            $this->logger->error('Unexpected response for cart duplicate request', [
+                'cartId' => $cart->getId(),
+                'version' => $cart->getVersion(),
+                'response' => $response,
+            ]);
+
+            throw new RuntimeException('Unexpected response for cart duplicate request');
+        }
+
+        $this->getDocumentManager()->getUnitOfWork()->registerAsManaged(
+            $response,
+            $response->getId(),
+            $response->getVersion()
+        );
+
+        return $response;
     }
 
     /**
