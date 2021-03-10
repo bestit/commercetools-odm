@@ -268,6 +268,8 @@ class ChangeManager implements ChangeManagerInterface
     {
         if (!$this->contains($model)) {
             $this->objectStates->attach($model, $this->extractData($model));
+        } else {
+            $this->objectStates[$model] = $this->extractData($model);
         }
     }
 
