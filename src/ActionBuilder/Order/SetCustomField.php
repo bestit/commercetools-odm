@@ -23,7 +23,7 @@ class SetCustomField extends OrderActionBuilder
      *
      * @var string
      */
-    protected $complexFieldFilter = 'custom/fields/([^/]*)$';
+    protected $complexFieldFilter = '^custom/fields/([^/]*)$';
 
     /**
      * Creates the update actions for the given class and data.
